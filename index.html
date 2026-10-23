@@ -3,719 +3,172 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DaManAnders — Fortnite Island Creator</title>
-<meta name="description" content="Fortnite islands built solo in UEFN and Verse by Anders. Live island codes, works in progress, devlog, and how to support the work." />
+<title>AndersCraft — Create Your Account</title>
+<meta name="description" content="Sign up for AndersCraft, a Wrath of the Lich King private server with custom races, any-class gear, a hardcore realm and a level 125 arc." />
 <meta name="theme-color" content="#0a0d0c" />
-<!-- Social preview (add a 1200x630 og-cover.png to your repo) -->
-<meta property="og:title" content="DaManAnders — Fortnite Island Creator" />
-<meta property="og:description" content="Fortnite islands built solo in UEFN & Verse. Grab a code and drop in." />
-<meta property="og:type" content="website" />
+<meta property="og:title" content="AndersCraft — Create Your Account" />
+<meta property="og:description" content="A WotLK 3.3.5a server with Goblins, Worgen, any race any class, a hardcore realm and levels up to 125." />
 <meta property="og:url" content="https://damananders.github.io/" />
-<meta property="og:image" content="https://damananders.github.io/og-cover.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="DaManAnders — Fortnite Island Creator" />
-<meta name="twitter:description" content="Fortnite islands built solo in UEFN & Verse. Grab a code and drop in." />
-<meta name="twitter:image" content="https://damananders.github.io/og-cover.png" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237C3AED'/%3E%3Ctext x='32' y='46' font-family='Arial,sans-serif' font-size='40' font-weight='800' fill='%23FFFFFF' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E" />
-<link rel="manifest" href="manifest.webmanifest" />
-
-<!-- ============================================================= -->
-<!-- ====================  EDIT YOUR CONTENT HERE  ================ -->
-<!-- This block is the only part you touch. See README.md for the  -->
-<!-- full launch checklist (what handles/links to paste where).    -->
-<!-- ============================================================= -->
-<script>
-  const SITE = {
-    name: "Anders",
-    handle: "DaManAnders",
-    role: "Solo Dev · Passionate Gamer & Streamer",
-    bio: "Hi, I'm Anders — a solo developer building Fortnite islands in UEFN and Verse. I stream the process, ship the maps, and keep iterating. Grab a code and jump in.",
-    about: "I'm a one-person studio: I design, build, and code every island myself in UEFN and Verse, then share the journey on stream. My goal is simple — make maps that are easy to jump into and hard to put down. This site is my home base and my GitHub. Follow along, play what's live, and tell me what you want to see next.",
-    chips: ["Solo Dev", "Built in UEFN", "Coded in Verse", "Live on Twitch"],
-
-    // Socials — icon options: twitch, youtube, discord, github
-    socials: [
-      { label: "Twitch",  handle: "twitch.tv/damananders",            url: "https://twitch.tv/damananders",     icon: "twitch"  },
-      { label: "YouTube", handle: "@DaManAnders",                     url: "https://youtube.com/@DaManAnders",  icon: "youtube" },
-      { label: "Discord", handle: "discord.gg/FriendsOfDaManAnders",  url: "https://discord.gg/EkdteGwqk",      icon: "discord" },
-      { label: "GitHub",  handle: "github.com/damananders",           url: "https://github.com/damananders",    icon: "github"  },
-    ],
-
-    // Donation — point at Ko-fi (recommended), CashApp, or Venmo
-    donate: { label: "Support on Ko-fi", url: "https://ko-fi.com/damananders" },
-
-    // ---------- OUTREACH / FEATURE SETTINGS ----------
-    repoUrl: "https://github.com/damananders/damananders.github.io",
-    githubUser: "damananders",
-    twitch: { channel: "DaManAnders", parents: ["damananders.github.io"] },
-    emailEndpoint: "https://formspree.io/f/xdavyjdd",
-    analytics: "https://damananders.goatcounter.com/count",
-    soundOnCopy: true,
-    enablePWA: false,
-    ogImage: "og-cover.png",
-
-    footerTag: "DaManAnders™ · 2026 · Solo Dev · Passionate Gamer & Streamer · All Rights Reserved",
-  };
-
-  // ============ LIVE ISLANDS ============  (copy a block to add one)
-  const LIVE_ISLANDS = [
-    {
-      name: "Pier Pressure - FPS",
-      code: "0000-0000-0000",
-      tag: "Arcade FPS",
-      emoji: "⚔️",
-      image: "assets/pier-pressure.jpg",
-      featured: true,
-      description: "Do you remember playing Hijacked on BO2 back in 2012? Have you wished you could experience something nostalgic like that within Fortnite? Then Pier Pressure is for you! Including 3 dynamic events, Fully realized level up system, Lifetime challenges, Killstreaks, Scorestreaks, Custom player classes, Proximity chat & much more!"
-    },
-    // { name:"", code:"1234-5678-9012", tag:"Survival", emoji:"🧟", image:"", featured:false, description:"" },
-  ];
-
-  // ============ WORKS IN PROGRESS ============
-  const WIP = [
-    {
-      title: "Coming Soon...",
-      image: "",
-      emoji: "🚧",
-      status: "In progress",
-      description: "Dodge, Duck, Dip, Dive, & Dodge."
-    },
-    // { title:"", image:"wip/shot.png", emoji:"🛠️", status:"Prototyping", description:"" },
-  ];
-
-  // ============ DEVLOG / UPDATES ============
-  // NOTE: multi-line code MUST use backticks ` ` (not " quotes) so line breaks
-  // and quotes inside the code don't break the page.
-  const DEVLOG = [
-    {
-      date: "2026-06-14",
-      title: "Site is live — first island incoming",
-      tag: "Update",
-      body: "My new website is up and running! This page is all about documenting my work as a game developer and keeping everyone up to date on what i've got going on! Here is a taste of how one of the in-game events was built in Verse; The Heli Event.",
-      code: `OnBegin<override>()<suspends>:void =
-        Print("Heli Event System Booting")
-        HeliEventProp0.Hide()
-        HeliEventCapZone.AgentEntersEvent.Subscribe(OnAgentEntersZone)
-        HeliEventCapZone.AgentExitsEvent.Subscribe(OnAgentExitsZone)
-        Print("Heli Event ready - waiting on the event director")
-
-    # Called by MapEventDirector when this event is chosen for the round
-    StartEvent<public>() : void =
-        if (State = game_state.Waiting):
-            Print("Heli Event window now OPEN")
-            spawn:
-                GameLoop()
-
-    OnAgentEntersZone(Agent : agent):void =
-        if (not PlayersInZone.Find[Agent]):
-            set PlayersInZone += array{Agent}
-
-    OnAgentExitsZone(Agent : agent):void =
-        set PlayersInZone = for (P : PlayersInZone, P <> Agent) { P }
-
-    GameLoop()<suspends>:void =
-        loop:
-            if (State = game_state.Waiting):
-                HandleWaiting()
-            else if (State = game_state.Countdown):
-                HandleCountdown()
-            else if (State = game_state.Active):
-                HandleActive()
-            else if (State = game_state.Overtime):
-                HandleOvertime()
-            else if (State = game_state.Ended):
-                Print("Heli Event loop exiting.")
-                break
-            Sleep(1.0)`,
-      link: ""
-    },
-    // { date:"2026-06-20", title:"How I built the leveling system", tag:"Verse", body:"...", code:`...`, link:"" },
-  ];
-
-</script>
-<!-- ===================  END EDITABLE CONTENT  ================== -->
-
+<meta property="og:image" content="https://damananders.github.io/assets/background.png" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23ff7a1f'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-size='40' font-weight='800' fill='%231a0d03' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=EB+Garamond:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
+
+<!-- ======================  EDIT HERE  ====================== -->
+<script>
+  const ANDERSCRAFT = {
+    // HTTPS address of the sign-up service running on the server PC (start_signup.bat prints it).
+    // Example: "https://your-name.ngrok-free.app/register.php"
+    apiUrl: "https://REPLACE-WITH-NGROK-DOMAIN/register.php",
+    // What players type in Data\enUS\realmlist.wtf
+    realmlist: "set realmlist 136.32.50.107",
+    discord: "https://discord.gg/EkdteGwqk",
+  };
+</script>
+<!-- ========================================================= -->
 
 <style>
   :root{
-    --ink:#07090a;
-    --bg:#0a0d0c; --bg-2:rgba(0,0,0,.30); --surface:rgba(15,17,18,.80); --surface-2:rgba(0,0,0,.46);
+    --ink:#07090a; --surface:rgba(15,17,18,.86); --surface-2:rgba(0,0,0,.46);
     --line:rgba(255,150,70,.18); --line-2:rgba(255,150,70,.34);
-    --text:#ece3d0; --muted:#b3a88f; --text-soft:#d3c8ad;
-    --royal:#ff7a1f; --royal-deep:#e0670f; --royal-soft:rgba(255,122,31,.16); --royal-ink:#1a0d03;
-    --green:#56d98a; --green-soft:rgba(40,160,90,.28);
-    --display:"Cinzel", Georgia, serif;
-    --body:"EB Garamond", Georgia, serif;
-    --mono:"DM Mono", ui-monospace, monospace;
-    --wrap:1140px; --radius:18px;
-    --shadow:0 18px 44px -18px rgba(0,0,0,.72);
-    --shadow-sm:0 8px 22px -10px rgba(0,0,0,.6);
+    --text:#ece3d0; --muted:#b3a88f; --royal:#ff7a1f; --royal-deep:#e0670f; --royal-ink:#1a0d03;
+    --green:#56d98a; --red:#ff6b5e;
+    --display:"Cinzel", Georgia, serif; --body:"EB Garamond", Georgia, serif; --mono:"DM Mono", ui-monospace, monospace;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background-color:var(--ink);background-image:linear-gradient(180deg, rgba(5,7,8,.82), rgba(5,7,8,.58) 42%, rgba(5,7,8,.94)), url("assets/background.png");background-repeat:no-repeat,no-repeat;background-position:center,center top;background-size:cover,cover;background-attachment:fixed,fixed;color:var(--text);font-family:var(--body);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  a{color:inherit;text-decoration:none}
-  img{max-width:100%;display:block}
-  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
-  .eyebrow{font-family:var(--display);font-weight:600;font-size:.8rem;letter-spacing:.13em;text-transform:uppercase;color:var(--royal);display:inline-flex;align-items:center;gap:10px}
-  .eyebrow::before{content:"";width:22px;height:3px;border-radius:3px;background:var(--royal)}
-  h2.sec-title{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.12;margin:14px 0 0;letter-spacing:-.01em;color:var(--text)}
-  .skip{position:absolute;left:-999px;top:0;background:var(--royal);color:#fff;padding:10px 16px;border-radius:10px;z-index:200}
-  .skip:focus{left:16px;top:16px}
-  :focus-visible{outline:2px solid var(--royal);outline-offset:3px;border-radius:8px}
-
-  header.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(14px);background:rgba(250,249,253,.85);border-bottom:1px solid var(--line)}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
-  .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:-.01em;color:var(--text)}
-  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--royal);box-shadow:0 0 0 4px var(--royal-soft);animation:pulse 2.4s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  .nav-toggle{display:none;background:#fff;border:1px solid var(--line-2);color:var(--text);width:44px;height:44px;border-radius:12px;font-size:1.15rem;cursor:pointer}
-  .nav-links{display:flex;align-items:center;gap:26px}
-  .nav-links a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .18s}
-  .nav-links a:hover{color:var(--text)}
-  .nav-cta{font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--royal-ink)!important;background:var(--royal);padding:9px 18px;border-radius:12px;transition:transform .18s, box-shadow .18s;box-shadow:var(--shadow-sm)}
-  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(124,58,237,.5)}
-  @media (max-width:860px){
-    .nav-toggle{display:inline-flex;align-items:center;justify-content:center}
-    .nav-links{position:absolute;top:68px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(255,255,255,.99);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:8px 18px 16px;display:none;box-shadow:var(--shadow)}
-    .nav-links.open{display:flex}
-    .nav-links a{padding:13px 4px;font-size:1rem;border-bottom:1px solid var(--line)}
-    .nav-links a:last-child{border-bottom:0}
-    .nav-cta{margin-top:10px;text-align:center;justify-content:center}
-  }
-
-  .hero{position:relative;padding:clamp(72px,12vw,130px) 0 clamp(58px,9vw,96px);overflow:hidden}
-  .hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
-  .hero-bg::before{content:"";position:absolute;inset:-20%;background:radial-gradient(42% 50% at 14% 8%, rgba(124,58,237,.16), transparent 70%),radial-gradient(40% 48% at 90% 4%, rgba(216,182,255,.30), transparent 70%),radial-gradient(50% 60% at 72% 112%, rgba(184,204,255,.22), transparent 70%);animation:drift 18s ease-in-out infinite alternate}
-  @keyframes drift{from{transform:translate3d(-2%,-1%,0)}to{transform:translate3d(2%,2%,0)}}
-  .hero-inner{position:relative;z-index:1;max-width:780px}
-  .hero h1{font-family:var(--display);font-weight:700;font-size:clamp(2.5rem,7.6vw,4.7rem);line-height:1.05;letter-spacing:-.02em;color:var(--text);margin:20px 0 0}
-  .hero h1 .hl{color:var(--royal)}
-  .hero p.lede{margin:22px 0 0;font-size:clamp(1.04rem,2.3vw,1.22rem);color:var(--text-soft);max-width:620px}
-  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
-  .btn{font-family:var(--display);font-weight:600;font-size:.96rem;padding:13px 24px;border-radius:14px;cursor:pointer;border:0;transition:transform .18s, box-shadow .18s, background .18s, border-color .18s, color .18s;display:inline-flex;align-items:center;gap:9px}
-  .btn svg{width:18px;height:18px;fill:currentColor}
-  .btn-primary{background:var(--royal);color:var(--royal-ink);box-shadow:var(--shadow-sm)}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 32px -12px rgba(124,58,237,.5);background:var(--royal-deep)}
-  .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--line-2)}
-  .btn-ghost:hover{border-color:var(--royal);color:var(--royal);transform:translateY(-2px)}
-  .hero-meta{display:flex;align-items:center;gap:9px;margin-top:30px;color:var(--muted);font-size:.92rem}
-  .hero-meta .live{width:8px;height:8px;border-radius:50%;background:var(--royal);box-shadow:0 0 0 4px var(--royal-soft)}
-
-  section.block{padding:clamp(60px,9vw,98px) 0;scroll-margin-top:80px}
-  .block.alt{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .sec-head{max-width:640px}
-  .sec-head p.sub{color:var(--muted);margin-top:12px;font-size:1.04rem}
-
-  .filterbar{display:none;flex-wrap:wrap;gap:10px;margin-top:22px}
-  .filter-btn{font-family:var(--display);font-weight:600;font-size:.86rem;color:var(--muted);background:#fff;border:1px solid var(--line-2);padding:8px 16px;border-radius:999px;cursor:pointer;transition:all .16s}
-  .filter-btn:hover{color:var(--text);border-color:var(--royal)}
-  .filter-btn.active{color:#fff;background:var(--royal);border-color:var(--royal)}
-
-  .keycard{display:flex;align-items:stretch;margin-top:18px;border:1px solid var(--line-2);border-radius:16px;overflow:hidden;background:#fff}
-  .keycard .code{flex:1;display:flex;align-items:center;gap:12px;padding:13px 16px;min-width:0;font-family:var(--mono);font-weight:500;font-size:clamp(.95rem,2.6vw,1.16rem);letter-spacing:.04em;color:var(--text);border-left:4px solid var(--royal);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .keycard .code .tag-mini{font-family:var(--display);font-weight:600;font-size:.6rem;letter-spacing:.12em;color:var(--royal);text-transform:uppercase;background:var(--royal-soft);padding:4px 8px;border-radius:6px;flex:none}
-  .copy-btn{flex:none;border:0;cursor:pointer;background:var(--royal);color:#fff;font-family:var(--display);font-weight:600;font-size:.86rem;padding:0 22px;transition:filter .18s, transform .12s, background .18s, color .18s;display:flex;align-items:center;gap:7px}
-  .copy-btn:hover{background:var(--royal-deep)}
-  .copy-btn:active{transform:scale(.97)}
-  .copy-btn.copied{background:var(--green-soft);color:var(--green)}
-  .card-actions{margin-top:12px}
-  .share-link{font-family:var(--display);font-weight:600;font-size:.84rem;color:var(--muted);background:transparent;border:0;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px;transition:color .16s}
-  .share-link:hover{color:var(--royal)}
-  .share-link svg{width:15px;height:15px;fill:currentColor}
-
-  .cover{position:relative;display:grid;place-items:center;overflow:hidden;background:linear-gradient(140deg, color-mix(in srgb, var(--accent,#7C3AED) 24%, #fff), color-mix(in srgb, var(--accent,#7C3AED) 9%, #fff))}
-  .cover .glyph{position:relative;font-size:clamp(2.8rem,8vw,4.6rem);filter:drop-shadow(0 5px 14px rgba(124,58,237,.22))}
-  .cover .watermark{position:absolute;bottom:12px;right:16px;font-family:var(--display);font-weight:600;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(60,40,120,.4)}
-  .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .tag{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;font-family:var(--display);font-weight:600;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--royal);background:var(--royal-soft);padding:6px 12px;border-radius:999px}
-
-  .featured-card{margin-top:28px;display:grid;grid-template-columns:1.05fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;box-shadow:var(--shadow);--accent:var(--royal)}
-  .featured-card .cover{min-height:300px}
-  .featured-card .body{padding:clamp(26px,4vw,42px);display:flex;flex-direction:column;justify-content:center}
-  .featured-card h3{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,3.4vw,2.1rem);margin:14px 0 0;line-height:1.12;color:var(--text)}
-  .featured-card .desc{color:var(--text-soft);margin-top:12px;font-size:1.04rem}
-  @media (max-width:820px){.featured-card{grid-template-columns:1fr}.featured-card .cover{min-height:200px}}
-
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;margin-top:24px}
-  .island{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);--accent:var(--royal);transition:transform .2s, box-shadow .2s}
-  .island:hover{transform:translateY(-6px);box-shadow:0 24px 44px -22px rgba(124,58,237,.34)}
-  .island .cover{height:160px}
-  .island .body{padding:20px;display:flex;flex-direction:column;flex:1}
-  .island h3{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:13px 0 0;color:var(--text)}
-  .island .desc{color:var(--muted);font-size:.95rem;margin-top:9px;flex:1}
-
-  .howto{margin-top:26px;border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:var(--shadow-sm)}
-  .howto summary{cursor:pointer;list-style:none;padding:17px 20px;font-family:var(--display);font-weight:600;font-size:.96rem;display:flex;align-items:center;gap:12px;color:var(--text)}
-  .howto summary::-webkit-details-marker{display:none}
-  .howto summary::before{content:"?";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--royal-soft);color:var(--royal);font-size:.8rem;flex:none}
-  .howto[open] summary{border-bottom:1px solid var(--line)}
-  .howto ol{margin:0;padding:18px 22px 22px 42px;color:var(--muted);font-size:.96rem}
-  .howto li{margin-bottom:9px}.howto li b{color:var(--text)}
-
-  .twitch-embed{position:relative;aspect-ratio:16/9;margin-top:24px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#000;box-shadow:var(--shadow-sm)}
-  .twitch-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .watch-link{margin-top:16px}
-  .watch-note{margin-top:10px;color:var(--muted);font-size:.84rem}
-
-  .wip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px;margin-top:30px}
-  .wip{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);--accent:var(--royal);transition:transform .2s, box-shadow .2s}
-  .wip:hover{transform:translateY(-5px);box-shadow:0 24px 44px -22px rgba(124,58,237,.32)}
-  .wcover{position:relative;aspect-ratio:16/9;overflow:hidden;display:grid;place-items:center;background:linear-gradient(140deg, color-mix(in srgb, var(--accent,#7C3AED) 22%, #fff), color-mix(in srgb, var(--accent,#7C3AED) 8%, #fff))}
-  .wcover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .wcover .glyph{position:relative;font-size:clamp(2.6rem,7vw,4rem);filter:drop-shadow(0 5px 14px rgba(124,58,237,.22))}
-  .wip .body{padding:22px;display:flex;flex-direction:column}
-  .wip h3{font-family:var(--display);font-weight:700;font-size:1.3rem;margin:12px 0 0;color:var(--text)}
-  .wip .desc{color:var(--muted);font-size:.96rem;margin-top:9px}
-  .status{align-self:flex-start;font-family:var(--display);font-weight:600;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--royal);background:var(--royal-soft);padding:6px 12px;border-radius:999px}
-
-  .posts{margin-top:28px;display:flex;flex-direction:column;gap:16px}
-  .post{border:1px solid var(--line);border-left:4px solid var(--royal);border-radius:16px;background:#fff;box-shadow:var(--shadow-sm);padding:22px clamp(18px,3vw,26px)}
-  .post-meta{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:500;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-  .post-tag{color:var(--royal);background:var(--royal-soft);padding:4px 10px;border-radius:999px;font-size:.66rem;letter-spacing:.08em}
-  .post h3{font-family:var(--display);font-weight:700;font-size:1.28rem;margin:10px 0 0;color:var(--text)}
-  .post p{color:var(--text-soft);margin-top:8px;font-size:1rem}
-  .snippet{margin-top:14px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:.84rem;color:#2A2540;line-height:1.5;white-space:pre}
-  .post-link{display:inline-block;margin-top:12px;color:var(--royal);font-weight:600;font-size:.92rem}
-
-  .empty{margin-top:28px;border:1.5px dashed var(--line-2);border-radius:var(--radius);padding:46px 28px;text-align:center;color:var(--muted)}
-  .empty .big{font-family:var(--display);font-weight:700;font-size:1.2rem;color:var(--text);margin-bottom:8px}
-
-  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:44px;align-items:center;margin-top:30px}
-  @media (max-width:820px){.about-grid{grid-template-columns:1fr;gap:30px}}
-  .about-grid p.bio{color:var(--text-soft);font-size:1.08rem;margin-top:16px;max-width:560px}
-  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-  .chip{font-family:var(--display);font-weight:600;font-size:.78rem;letter-spacing:.04em;color:var(--text);border:1px solid var(--line-2);background:#fff;padding:8px 15px;border-radius:999px;display:inline-flex;align-items:center;gap:8px}
-  .chip .d{width:6px;height:6px;border-radius:50%;background:var(--royal)}
-  .portrait{aspect-ratio:1;border-radius:24px;border:1px solid var(--line);background:linear-gradient(140deg, var(--royal-soft), #fff);display:grid;place-items:center;font-size:4rem;box-shadow:var(--shadow-sm)}
-  .gh-wrap{margin-top:34px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-  .gh-graph{width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--shadow-sm);padding:18px;overflow-x:auto}
-  .gh-graph img{width:100%;min-width:620px;display:block}
-  .gh-cap{font-size:.82rem;color:var(--muted);margin-top:10px}
-
-  .links-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px}
-  @media (max-width:820px){.links-grid{grid-template-columns:repeat(2,1fr)}}
-  .link-card{display:flex;align-items:center;gap:14px;padding:18px;border-radius:16px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow-sm);transition:transform .18s, border-color .18s, box-shadow .18s}
-  .link-card:hover{transform:translateY(-4px);border-color:var(--royal);box-shadow:0 18px 34px -18px rgba(124,58,237,.34)}
-  .link-card svg{width:26px;height:26px;flex:none;fill:var(--muted);transition:fill .18s}
-  .link-card:hover svg{fill:var(--royal)}
-  .link-card .lt{display:flex;flex-direction:column;line-height:1.25;min-width:0}
-  .link-card .lt b{font-family:var(--display);font-weight:600;font-size:.96rem;color:var(--text)}
-  .link-card .lt span{font-size:.8rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-  .subscribe{margin-top:22px;padding:26px clamp(20px,4vw,34px);border-radius:var(--radius);border:1px solid var(--line);background:#fff;box-shadow:var(--shadow-sm)}
-  .subscribe .stext b{font-family:var(--display);font-weight:700;font-size:1.18rem;display:block;color:var(--text)}
-  .subscribe .stext span{color:var(--muted);font-size:.94rem}
-  #subscribe-form{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-  #subscribe-form input{flex:1;min-width:200px;background:#fff;border:1px solid var(--line-2);border-radius:12px;padding:12px 15px;color:var(--text);font-family:var(--body);font-size:.96rem}
-  #subscribe-form input::placeholder{color:#9b98ad}
-  #subscribe-form input:focus{outline:none;border-color:var(--royal);box-shadow:0 0 0 3px var(--royal-soft)}
-  .form-msg{margin-top:10px;font-size:.9rem;color:var(--royal);min-height:1.2em}
-
-  .support{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;padding:28px clamp(22px,4vw,38px);border-radius:var(--radius);border:1px solid var(--line);background:linear-gradient(120deg, var(--royal-soft), #fff);box-shadow:var(--shadow-sm)}
-  .support .stext b{font-family:var(--display);font-weight:700;font-size:1.25rem;display:block;color:var(--text)}
-  .support .stext span{color:var(--text-soft);font-size:.96rem}
-
-  footer{border-top:1px solid var(--line);padding:32px 0;background:var(--bg)}
-  .foot-inner{display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
-  #footer-tag{font-family:var(--display);font-weight:600;font-size:.86rem;letter-spacing:.01em;color:var(--royal)}
-  .foot-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center}
-  .foot-row a{font-size:.84rem;color:var(--muted);display:inline-flex;align-items:center;gap:7px}
-  .foot-row a:hover{color:var(--text)}
-  .foot-row svg{width:16px;height:16px;fill:currentColor}
-  .sound-toggle{background:#fff;border:1px solid var(--line-2);color:var(--muted);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:.86rem;font-family:var(--body)}
-  .sound-toggle:hover{color:var(--text);border-color:var(--royal)}
-
-  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#fff;border:1px solid var(--line-2);color:var(--text);font-size:.9rem;padding:12px 20px;border-radius:14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:300}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-  /* ============ Worlds Series dark-ember reskin (added) ============ */
-  header.nav{background:rgba(10,12,11,.82)}
-  .nav-links{background:rgba(10,12,11,.97)!important}
-  .nav-toggle,.btn-ghost,.filter-btn,.keycard,.featured-card,.island,.howto,.wip,.post,.chip,.gh-graph,.link-card,.subscribe,.sound-toggle,.toast,#subscribe-form input{background:var(--surface)!important;backdrop-filter:blur(4px)}
-  .cover,.wcover{background:linear-gradient(140deg, color-mix(in srgb, var(--royal) 32%, #000), color-mix(in srgb, var(--royal) 8%, #000))!important}
-  .cover .watermark{color:rgba(255,190,130,.42)}
-  .cover .glyph,.wcover .glyph{filter:drop-shadow(0 6px 16px rgba(255,122,31,.40))}
-  .portrait{background:linear-gradient(140deg, var(--royal-soft), rgba(0,0,0,.45))!important}
-  .support{background:linear-gradient(120deg, var(--royal-soft), rgba(0,0,0,.42))!important}
-  .snippet{color:#ece0c6}
-  .hero h1,h2.sec-title{text-shadow:0 2px 18px rgba(255,122,31,.28)}
-  .hero-bg::before{background:radial-gradient(60% 55% at 50% 120%, rgba(255,122,31,.22), transparent 70%), radial-gradient(40% 40% at 85% 0%, rgba(255,150,70,.10), transparent 70%)!important}
-  /* floating embers */
-  .embers{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-  .ember{position:absolute;bottom:-16px;width:5px;height:5px;border-radius:50%;background:var(--royal);box-shadow:0 0 8px 2px var(--royal-deep);opacity:0;animation:rise linear infinite}
-  @keyframes rise{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:.9}90%{opacity:.5}100%{transform:translateY(-104vh) scale(.4);opacity:0}}
-
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background-color:var(--ink);background-image:linear-gradient(180deg, rgba(5,7,8,.84), rgba(5,7,8,.62) 42%, rgba(5,7,8,.95)), url("assets/background.png");background-size:cover,cover;background-position:center,center top;background-attachment:fixed,fixed;color:var(--text);font-family:var(--body);font-size:1.12rem;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+  a{color:var(--royal)}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
+  nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{font-family:var(--display);font-weight:700;font-size:1.2rem;color:var(--text);text-decoration:none}
+  .back{font-family:var(--display);font-size:.9rem;color:var(--muted);text-decoration:none}
+  .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;margin-top:40px;align-items:start}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .eyebrow{font-family:var(--display);font-weight:600;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--royal)}
+  h1{font-family:var(--display);font-weight:900;font-size:clamp(2.3rem,7vw,4.2rem);line-height:1.04;margin:12px 0 14px;letter-spacing:-.01em}
+  .lead{color:var(--muted);max-width:52ch;margin:0 0 22px}
+  ul.feat{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.feat li{background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--royal);border-radius:12px;padding:10px 14px}
+  ul.feat b{font-family:var(--display);font-weight:600;font-size:.95rem;letter-spacing:.02em}
+  .card{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:26px;box-shadow:0 18px 44px -18px rgba(0,0,0,.72);backdrop-filter:blur(6px)}
+  .card h2{font-family:var(--display);font-weight:700;font-size:1.5rem;margin:0 0 4px}
+  .card p.sub{color:var(--muted);margin:0 0 18px;font-size:1rem}
+  label{display:block;font-family:var(--display);font-weight:600;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+  input{width:100%;font:inherit;font-size:1.05rem;color:var(--text);background:rgba(0,0,0,.5);border:1px solid var(--line-2);border-radius:12px;padding:11px 14px;outline:none;transition:border-color .15s, box-shadow .15s}
+  input:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(255,122,31,.2)}
+  .hint{font-size:.9rem;color:var(--muted);margin-top:4px}
+  .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+  button{margin-top:20px;width:100%;font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.04em;color:var(--royal-ink);background:var(--royal);border:0;border-radius:14px;padding:14px;cursor:pointer;transition:transform .15s, background .15s}
+  button:hover{background:var(--royal-deep);transform:translateY(-1px)}
+  button:disabled{opacity:.6;cursor:wait;transform:none}
+  .msg{margin-top:16px;padding:12px 14px;border-radius:12px;display:none;font-size:1rem}
+  .msg.ok{display:block;background:rgba(40,160,90,.18);border:1px solid var(--green);color:#c9f5da}
+  .msg.err{display:block;background:rgba(255,80,60,.14);border:1px solid var(--red);color:#ffd2cc}
+  .steps{margin-top:28px}
+  .steps h3{font-family:var(--display);font-weight:700;font-size:1.2rem;margin:0 0 10px}
+  .steps ol{margin:0;padding-left:20px;display:grid;gap:6px}
+  code{font-family:var(--mono);font-size:.92rem;background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:8px;padding:2px 7px;word-break:break-all}
+  footer{margin-top:48px;color:var(--muted);font-size:.92rem;text-align:center}
 </style>
 </head>
 <body>
-<a class="skip" href="#islands">Skip to islands</a>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="./">AndersCraft</a>
+    <a class="back" id="discordNav" href="#">Discord</a>
+  </nav>
 
-<!-- floating embers (decorative, matches the Worlds Series look) -->
-<div class="embers" aria-hidden="true">
-  <span class="ember" style="left:5%;animation-duration:9s;animation-delay:0s"></span>
-  <span class="ember" style="left:13%;animation-duration:11s;animation-delay:2s"></span>
-  <span class="ember" style="left:22%;animation-duration:8s;animation-delay:1s"></span>
-  <span class="ember" style="left:31%;animation-duration:13s;animation-delay:3s"></span>
-  <span class="ember" style="left:40%;animation-duration:10s;animation-delay:0s"></span>
-  <span class="ember" style="left:49%;animation-duration:12s;animation-delay:4s"></span>
-  <span class="ember" style="left:58%;animation-duration:9s;animation-delay:2s"></span>
-  <span class="ember" style="left:67%;animation-duration:14s;animation-delay:1s"></span>
-  <span class="ember" style="left:76%;animation-duration:10s;animation-delay:3s"></span>
-  <span class="ember" style="left:85%;animation-duration:12s;animation-delay:0s"></span>
-  <span class="ember" style="left:93%;animation-duration:15s;animation-delay:5s"></span>
-  <span class="ember" style="left:37%;animation-duration:16s;animation-delay:6s"></span>
+  <div class="grid">
+    <section>
+      <div class="eyebrow">Wrath of the Lich King &middot; 3.3.5a</div>
+      <h1>Join AndersCraft</h1>
+      <p class="lead">A private Azeroth built around freedom: play any race as any class, wield whatever you can earn the skill for, and push past the old cap.</p>
+      <ul class="feat">
+        <li><b>Goblin &amp; Worgen</b> &mdash; every race, every class</li>
+        <li><b>Any gear</b> &mdash; buy the proficiency, use the weapon; dual-wield two-handers, relics for everyone</li>
+        <li><b>Level 125</b> &mdash; the journey keeps going after 80</li>
+        <li><b>Hardcore realm</b> &mdash; one life; walk alone as one of Azeroth's Chosen</li>
+        <li><b>Fly anywhere</b> &mdash; old-world flying at 85</li>
+      </ul>
+
+      <div class="steps">
+        <h3>How to play</h3>
+        <ol>
+          <li>Create your account with the form.</li>
+          <li>Get the AndersCraft game client (ask in <a id="discordLink" href="#">Discord</a>).</li>
+          <li>Open <code>Data\enUS\realmlist.wtf</code> and make it say <code id="realmlistText"></code></li>
+          <li>Start <code>AndersCraft.exe</code> and log in with your new username and password.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Create your account</h2>
+      <p class="sub">Your username and password are what you type in the game's login screen.</p>
+      <form id="signup" novalidate>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="100" required />
+
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" maxlength="16" pattern="[A-Za-z0-9]{3,16}" required />
+        <div class="hint">3&ndash;16 letters or numbers.</div>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" maxlength="16" required />
+        <div class="hint">6&ndash;16 characters, no spaces (the game's login limit).</div>
+
+        <label for="password2">Confirm password</label>
+        <input id="password2" name="password2" type="password" autocomplete="new-password" maxlength="16" required />
+
+        <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off" /></div>
+
+        <button id="go" type="submit">Create account</button>
+        <div id="msg" class="msg" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </div>
+
+  <footer>AndersCraft is a fan-run, non-commercial server. World of Warcraft&reg; is a trademark of Blizzard Entertainment.</footer>
 </div>
 
-<header class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="#top"><span class="dot" aria-hidden="true"></span>ANDERS</a>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-    <nav class="nav-links" id="nav-links" aria-label="Primary">
-      <a href="#islands">Islands</a>
-      <a href="#watch">Watch</a>
-      <a href="#wip">Progress</a>
-      <a href="#updates">Updates</a>
-      <a href="#about">About</a>
-      <a href="#connect">Connect</a>
-      <a class="nav-cta" id="nav-donate" href="#connect">♥ Support</a>
-    </nav>
-  </div>
-</header>
-
-<main id="top">
-  <section class="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="wrap hero-inner">
-      <span class="eyebrow" id="role">Solo Dev</span>
-      <h1 id="headline">Fortnite worlds.</h1>
-      <p class="lede" id="lede"></p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#islands">Browse live islands</a>
-        <a class="btn btn-ghost" id="hero-donate" href="#connect">♥ Support me</a>
-      </div>
-      <div class="hero-meta"><span class="live" aria-hidden="true"></span><span id="hero-count"></span></div>
-    </div>
-  </section>
-
-  <section class="block" id="islands">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="eyebrow">Live Islands</span>
-        <h2 class="sec-title">Playable right now</h2>
-        <p class="sub">Copy a code, open Fortnite, and load it from the search bar.</p>
-      </div>
-      <div id="island-filter" class="filterbar"></div>
-      <div id="islands-wrap"></div>
-      <details class="howto">
-        <summary>New to creative? How to play an island code</summary>
-        <ol>
-          <li>Open Fortnite and head to the <b>Discovery / search</b> screen (the magnifying glass).</li>
-          <li>Type or paste the <b>12-digit island code</b> into the search bar.</li>
-          <li>Select the island and hit <b>Play</b> — you'll load straight in. Have fun!</li>
-        </ol>
-      </details>
-    </div>
-  </section>
-
-  <section class="block alt" id="watch">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="eyebrow">Watch Me Build</span>
-        <h2 class="sec-title">Live on Twitch</h2>
-        <p class="sub">Catch the streams — building maps, testing, and hanging out.</p>
-      </div>
-      <div id="watch-wrap"></div>
-    </div>
-  </section>
-
-  <section class="block" id="wip">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="eyebrow">Works in Progress</span>
-        <h2 class="sec-title">On the workbench</h2>
-        <p class="sub">A look at what I'm building next.</p>
-      </div>
-      <div id="wip-wrap"></div>
-    </div>
-  </section>
-
-  <section class="block alt" id="updates">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="eyebrow">Devlog</span>
-        <h2 class="sec-title">Updates & build notes</h2>
-        <p class="sub">Progress, releases, and the occasional Verse trick.</p>
-      </div>
-      <div id="devlog-wrap"></div>
-    </div>
-  </section>
-
-  <section class="block" id="about">
-    <div class="wrap">
-      <div class="about-grid">
-        <div>
-          <span class="eyebrow">About</span>
-          <h2 class="sec-title" id="about-title">Hey, I'm Anders.</h2>
-          <p class="bio" id="about-text"></p>
-          <div class="chips" id="chips-wrap"></div>
-        </div>
-        <div class="portrait"><img src="assets/me.png" alt="Anders" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></div>
-      </div>
-      <div class="gh-wrap" id="gh-wrap"></div>
-    </div>
-  </section>
-
-  <section class="block alt" id="connect">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="eyebrow">Connect</span>
-        <h2 class="sec-title">Come hang out</h2>
-        <p class="sub">Streams, island reveals, and dev updates go out here first.</p>
-      </div>
-      <div class="links-grid" id="socials-wrap"></div>
-      <div id="subscribe-wrap"></div>
-      <div id="support-wrap"></div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="wrap foot-inner">
-    <span id="footer-tag"></span>
-    <div class="foot-row" id="foot-actions"></div>
-  </div>
-</footer>
-
-<div class="visually-hidden" aria-live="polite" id="sr-status"></div>
-<div class="toast" id="toast"></div>
-
 <script>
-/*__APP_START__*/
-(function(){
-  const ICONS = {
-    twitch:  "M4.3 1.6 1.7 5.9v13.7h4.6V22h2.6l2.4-2.4h3.7l5-5V1.6H4.3Zm14.4 11.4-2.9 2.9h-4.6l-2.5 2.5v-2.5H5.5V3.5h13.2v9.5ZM15.4 6.8h-1.7v5.1h1.7V6.8Zm-4.6 0H9.1v5.1h1.7V6.8Z",
-    youtube: "M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z",
-    discord: "M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.4a18 18 0 0 1 4.3 1.4 18.6 18.6 0 0 0-15 0A18 18 0 0 1 8.8 3.4L8.6 3a19.8 19.8 0 0 0-4.9 1.4C.6 9 .1 13.5.3 17.9a20 20 0 0 0 6 3l.7-1.2a13 13 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12 0l.5.4c-.6.4-1.3.7-2 1l.7 1.2a20 20 0 0 0 6-3c.3-5.1-.5-9.5-2.6-13.5zM8.5 15.3c-1.2 0-2.1-1.1-2.1-2.4S7.3 10.5 8.5 10.5s2.2 1.1 2.1 2.4-.9 2.4-2.1 2.4zm7 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4-.9 2.4-2.1 2.4z",
-    github:  "M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.57.1.78-.25.78-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.34-1.28-1.7-1.28-1.7-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.3-5.26-1.28-5.26-5.7 0-1.26.45-2.3 1.2-3.1-.12-.3-.52-1.48.1-3.1 0 0 .97-.3 3.2 1.18a11 11 0 0 1 5.82 0C18.3 4.5 19.27 4.8 19.27 4.8c.62 1.62.22 2.8.1 3.1.75.8 1.2 1.84 1.2 3.1 0 4.43-2.7 5.4-5.28 5.7.42.36.78 1.06.78 2.14v3.18c0 .3.2.66.8.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z",
-    heart:   "M12 21s-7.5-4.6-10-9.3C.6 9 1.4 6 4 5c1.9-.7 3.6.1 4.5 1.3L12 9l3.5-2.7C16.4 5.1 18.1 4.3 20 5c2.6 1 3.4 4 2 6.7C19.5 16.4 12 21 12 21z",
-    share:   "M18 16a3 3 0 0 0-2.3 1.1l-6.8-3.4a3 3 0 0 0 0-1.4l6.8-3.4A3 3 0 1 0 15 6c0 .2 0 .5.1.7L8.3 10A3 3 0 1 0 6 15a3 3 0 0 0 2.3-1l6.8 3.4A3 3 0 1 0 18 16Z"
-  };
-  function icon(k){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+(ICONS[k]||'')+'"/></svg>'; }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function $(id){ return document.getElementById(id); }
+  document.getElementById("realmlistText").textContent = ANDERSCRAFT.realmlist;
+  document.getElementById("discordLink").href = ANDERSCRAFT.discord;
+  document.getElementById("discordNav").href = ANDERSCRAFT.discord;
 
-  // ---- Mobile nav ----
-  var toggle=document.querySelector('.nav-toggle'), navLinks=$('nav-links');
-  toggle.addEventListener('click', function(){ var o=navLinks.classList.toggle('open'); toggle.setAttribute('aria-expanded', o?'true':'false'); });
-  navLinks.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ navLinks.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }); });
+  const form = document.getElementById("signup");
+  const msg = document.getElementById("msg");
+  const go = document.getElementById("go");
+  function show(ok, text) { msg.className = "msg " + (ok ? "ok" : "err"); msg.textContent = text; }
 
-  // ---- Text content ----
-  $('role').textContent = SITE.role;
-  $('headline').innerHTML = 'Fortnite worlds,<br>built by <span class="hl">'+esc(SITE.name)+'</span>.';
-  $('lede').textContent = SITE.bio;
-  $('about-title').textContent = "Hey, I'm "+SITE.name+".";
-  $('about-text').textContent = SITE.about;
-  $('footer-tag').textContent = SITE.footerTag;
-  $('chips-wrap').innerHTML = (SITE.chips||[]).map(function(c){ return '<span class="chip"><span class="d"></span>'+esc(c)+'</span>'; }).join('');
-  var n = LIVE_ISLANDS.length;
-  $('hero-count').textContent = n ? (n+' island'+(n>1?'s':'')+' live · new drops regularly') : 'First island dropping soon';
-
-  // ---- Donate links ----
-  ['nav-donate','hero-donate'].forEach(function(id){ var el=$(id); el.href=SITE.donate.url; el.target='_blank'; el.rel='noopener'; });
-
-  // ---- Socials ----
-  $('socials-wrap').innerHTML = (SITE.socials||[]).map(function(s){
-    return '<a class="link-card" href="'+esc(s.url)+'" target="_blank" rel="noopener">'+icon(s.icon)+'<span class="lt"><b>'+esc(s.label)+'</b><span>'+esc(s.handle)+'</span></span></a>';
-  }).join('');
-
-  // ---- Email capture ----
-  $('subscribe-wrap').innerHTML =
-    '<div class="subscribe"><div class="stext"><b>Get notified on new drops</b><span>New island codes straight to your inbox. No spam.</span></div>'+
-    '<form id="subscribe-form"><input id="sub-email" type="email" required placeholder="you@email.com" aria-label="Email address"><button class="btn btn-primary" type="submit">Notify me</button></form>'+
-    '<p class="form-msg" id="form-msg" role="status"></p></div>';
-  var sform=$('subscribe-form');
-  sform.addEventListener('submit', function(e){
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    var email=$('sub-email').value.trim(), msg=$('form-msg');
-    if(!SITE.emailEndpoint){ msg.textContent='Email signup isn\u2019t connected yet — add your Formspree endpoint in the config.'; return; }
-    msg.textContent='Subscribing\u2026';
-    fetch(SITE.emailEndpoint,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({email:email})})
-      .then(function(r){ if(r.ok){ sform.reset(); msg.textContent='\uD83C\uDF89 You\u2019re on the list!'; } else { msg.textContent='Hmm, that didn\u2019t go through — try again.'; } })
-      .catch(function(){ msg.textContent='Network error — try again in a sec.'; });
-  });
+    const email = form.email.value.trim();
+    const username = form.username.value.trim();
+    const password = form.password.value;
+    if (!/^\S+@\S+\.\S+$/.test(email)) return show(false, "Enter a valid email address.");
+    if (!/^[A-Za-z0-9]{3,16}$/.test(username)) return show(false, "Username: 3-16 letters or numbers.");
+    if (!/^[\x21-\x7E]{6,16}$/.test(password)) return show(false, "Password: 6-16 characters, no spaces.");
+    if (password !== form.password2.value) return show(false, "The passwords don't match.");
 
-  // ---- Support block ----
-  $('support-wrap').innerHTML =
-    '<div class="support"><div class="stext"><b>Enjoying the islands?</b><span>Tips help me build bigger and better drops as a solo dev.</span></div>'+
-    '<a class="btn btn-primary" href="'+esc(SITE.donate.url)+'" target="_blank" rel="noopener">'+icon('heart')+esc(SITE.donate.label)+'</a></div>';
-
-  // ---- Cover helper ----
-  function cover(it, cls){
-    if(it.image) return '<div class="'+cls+'"><img src="'+esc(it.image)+'" alt="'+esc(it.name||it.title)+'"></div>';
-    var wm = it.tag ? '<span class="watermark">'+esc(it.tag)+'</span>' : '';
-    return '<div class="'+cls+'" aria-hidden="true"><span class="glyph">'+(it.emoji||'\uD83C\uDFAE')+'</span>'+wm+'</div>';
-  }
-  function keycard(it){
-    return '<div class="keycard"><span class="code" data-code="'+esc(it.code)+'"><span class="tag-mini">Code</span>'+esc(it.code)+'</span>'+
-      '<button class="copy-btn" type="button" aria-label="Copy code for '+esc(it.name)+'">Copy</button></div>'+
-      '<div class="card-actions"><button class="share-link" data-name="'+esc(it.name)+'" data-code="'+esc(it.code)+'">'+icon('share')+'Share code</button></div>';
-  }
-  function featuredCard(it){
-    return '<article class="featured-card" data-tag="'+esc(it.tag||'')+'">'+cover(it,'cover')+
-      '<div class="body"><span class="tag">\u2605 Featured'+(it.tag?' \u00b7 '+esc(it.tag):'')+'</span><h3>'+esc(it.name)+'</h3>'+
-      '<p class="desc">'+esc(it.description)+'</p>'+keycard(it)+'</div></article>';
-  }
-  function gridCard(it){
-    return '<article class="island" data-tag="'+esc(it.tag||'')+'">'+cover(it,'cover')+
-      '<div class="body">'+(it.tag?'<span class="tag">'+esc(it.tag)+'</span>':'')+'<h3>'+esc(it.name)+'</h3>'+
-      '<p class="desc">'+esc(it.description)+'</p>'+keycard(it)+'</div></article>';
-  }
-
-  // ---- Render islands ----
-  if(!n){
-    $('islands-wrap').innerHTML = '<div class="empty"><div class="big">No islands published yet</div>Your first drop is coming soon — check back!</div>';
-  } else {
-    var feat=LIVE_ISLANDS.filter(function(i){return i.featured;});
-    var rest=LIVE_ISLANDS.filter(function(i){return !i.featured;});
-    var html=feat.map(featuredCard).join('');
-    if(rest.length) html+='<div class="grid">'+rest.map(gridCard).join('')+'</div>';
-    $('islands-wrap').innerHTML=html;
-  }
-
-  // ---- Tag filter (only if 2+ distinct tags) ----
-  var tagSet={}; LIVE_ISLANDS.forEach(function(i){ if(i.tag) tagSet[i.tag]=true; });
-  var tags=Object.keys(tagSet);
-  if(tags.length>=2){
-    var fEl=$('island-filter');
-    fEl.innerHTML='<button class="filter-btn active" data-f="all">All</button>'+tags.map(function(t){return '<button class="filter-btn" data-f="'+esc(t)+'">'+esc(t)+'</button>';}).join('');
-    fEl.style.display='flex';
-    fEl.querySelectorAll('.filter-btn').forEach(function(b){
-      b.addEventListener('click',function(){
-        fEl.querySelectorAll('.filter-btn').forEach(function(x){x.classList.remove('active');});
-        b.classList.add('active');
-        var f=b.getAttribute('data-f');
-        document.querySelectorAll('#islands-wrap [data-tag]').forEach(function(card){
-          card.style.display=(f==='all'||card.getAttribute('data-tag')===f)?'':'none';
-        });
+    go.disabled = true; go.textContent = "Creating...";
+    try {
+      const res = await fetch(ANDERSCRAFT.apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
+        body: JSON.stringify({ email, username, password, website: form.website.value }),
       });
-    });
-  }
-
-  // ---- Twitch ----
-  var tw=SITE.twitch;
-  if(tw && tw.channel && tw.channel!=='yourhandle'){
-    var parents=(tw.parents||[]).map(function(p){return 'parent='+encodeURIComponent(p);}).join('&');
-    var src='https://player.twitch.tv/?channel='+encodeURIComponent(tw.channel)+'&'+parents+'&autoplay=false&muted=true';
-    $('watch-wrap').innerHTML='<div class="twitch-embed"><iframe src="'+src+'" allowfullscreen title="Twitch stream" loading="lazy"></iframe></div>'+
-      '<a class="btn btn-ghost watch-link" href="https://twitch.tv/'+encodeURIComponent(tw.channel)+'" target="_blank" rel="noopener">Watch on Twitch \u2197</a>';
-  } else if(tw && tw.channel==='yourhandle'){
-    $('watch-wrap').innerHTML='<div class="empty"><div class="big">Twitch not connected yet</div>Add your channel in the config and your live player shows up here.</div>';
-  } else {
-    var ws=$('watch'); if(ws) ws.style.display='none';
-  }
-
-  // ---- WIP ----
-  if(!WIP.length){
-    $('wip-wrap').innerHTML='<div class="empty"><div class="big">Nothing on the bench right now</div>New projects show up here as I start them.</div>';
-  } else {
-    $('wip-wrap').innerHTML='<div class="wip-grid">'+WIP.map(function(it){
-      var c=it.image?'<div class="wcover"><img src="'+esc(it.image)+'" alt="'+esc(it.title)+'"></div>':'<div class="wcover" aria-hidden="true"><span class="glyph">'+(it.emoji||'\uD83D\uDEA7')+'</span></div>';
-      return '<article class="wip">'+c+'<div class="body">'+(it.status?'<span class="status">'+esc(it.status)+'</span>':'')+'<h3>'+esc(it.title)+'</h3><p class="desc">'+esc(it.description)+'</p></div></article>';
-    }).join('')+'</div>';
-  }
-
-  // ---- Devlog ----
-  if(!DEVLOG.length){
-    $('devlog-wrap').innerHTML='<div class="empty"><div class="big">No posts yet</div>Build notes and updates will land here.</div>';
-  } else {
-    $('devlog-wrap').innerHTML='<div class="posts">'+DEVLOG.map(function(p){
-      var tag=p.tag?'<span class="post-tag">'+esc(p.tag)+'</span>':'';
-      var code=p.code?'<pre class="snippet">'+esc(p.code)+'</pre>':'';
-      var link=p.link?'<a class="post-link" href="'+esc(p.link)+'" target="_blank" rel="noopener">Read more \u2197</a>':'';
-      return '<article class="post"><div class="post-meta">'+esc(p.date)+tag+'</div><h3>'+esc(p.title)+'</h3><p>'+esc(p.body)+'</p>'+code+link+'</article>';
-    }).join('')+'</div>';
-  }
-
-  // ---- GitHub flex ----
-  var gh='';
-  if(SITE.repoUrl) gh+='<a class="btn btn-ghost" href="'+esc(SITE.repoUrl)+'" target="_blank" rel="noopener">'+icon('github')+'View / fork the source</a>';
-  if(SITE.githubUser) gh+='<div class="gh-graph"><img loading="lazy" src="https://ghchart.rshah.org/ff7a1f/'+encodeURIComponent(SITE.githubUser)+'" alt="'+esc(SITE.githubUser)+' GitHub contribution graph"><div class="gh-cap">My GitHub activity — yes, this site is one of those glowing squares.</div></div>';
-  $('gh-wrap').innerHTML=gh;
-
-  // ---- Sound ----
-  var muted=false, audioCtx=null;
-  function blip(){
-    if(!SITE.soundOnCopy||muted) return;
-    try{
-      audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-      var o=audioCtx.createOscillator(), g=audioCtx.createGain(), t=audioCtx.currentTime;
-      o.type='triangle'; o.frequency.setValueAtTime(620,t); o.frequency.exponentialRampToValueAtTime(880,t+0.08);
-      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.12,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+0.13);
-      o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+0.13);
-    }catch(e){}
-  }
-
-  // ---- Footer actions (view source + sound toggle) ----
-  var fa='';
-  if(SITE.repoUrl) fa+='<a href="'+esc(SITE.repoUrl)+'" target="_blank" rel="noopener">'+icon('github')+'View source</a>';
-  fa+='<button class="sound-toggle" id="sound-toggle" aria-pressed="false">'+(SITE.soundOnCopy?'\uD83D\uDD0A Sound on':'\uD83D\uDD07 Sound off')+'</button>';
-  $('foot-actions').innerHTML=fa;
-  var st=$('sound-toggle');
-  if(st) st.addEventListener('click',function(){ muted=!muted; st.textContent=muted?'\uD83D\uDD07 Sound off':'\uD83D\uDD0A Sound on'; st.setAttribute('aria-pressed',muted?'true':'false'); });
-
-  // ---- Toast ----
-  var toastEl=$('toast'), toastTimer=null;
-  function toast(t){ toastEl.textContent=t; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){toastEl.classList.remove('show');},2200); }
-
-  // ---- Copy to clipboard ----
-  var status=$('sr-status');
-  document.querySelectorAll('.copy-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var code=btn.parentElement.querySelector('.code').getAttribute('data-code');
-      copy(code).then(function(){
-        var original=btn.textContent; btn.textContent='Copied \u2713'; btn.classList.add('copied'); blip();
-        if(status) status.textContent='Copied '+code;
-        setTimeout(function(){ btn.textContent=original; btn.classList.remove('copied'); },1600);
-      });
-    });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { show(true, data.message || "Account created!"); form.reset(); }
+      else show(false, data.message || "Something went wrong. Please try again.");
+    } catch (err) {
+      show(false, "The sign-up server is offline right now. Please try again later.");
+    } finally {
+      go.disabled = false; go.textContent = "Create account";
+    }
   });
-
-  // ---- Share ----
-  document.querySelectorAll('.share-link').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var name=btn.getAttribute('data-name'), code=btn.getAttribute('data-code');
-      var url=location.href.split('#')[0];
-      var text='Play '+name+' in Fortnite — code '+code;
-      if(navigator.share){ navigator.share({title:name,text:text,url:url}).catch(function(){}); }
-      else { copy(text+' '+url).then(function(){ toast('Share text copied!'); }); }
-    });
-  });
-
-  function copy(text){
-    if(navigator.clipboard && window.isSecureContext){ return navigator.clipboard.writeText(text).catch(function(){return fallback(text);}); }
-    return fallback(text);
-  }
-  function fallback(text){
-    return new Promise(function(resolve){
-      var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); resolve();
-    });
-  }
-
-  // ---- Analytics (GoatCounter) ----
-  if(SITE.analytics){ var sc=document.createElement('script'); sc.async=true; sc.src='//gc.zgo.at/count.js'; sc.setAttribute('data-goatcounter',SITE.analytics); document.body.appendChild(sc); }
-
-  // ---- PWA ----
-  if(SITE.enablePWA && 'serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
-})();
-/*__APP_END__*/
 </script>
 </body>
 </html>
