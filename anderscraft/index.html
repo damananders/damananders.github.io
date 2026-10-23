@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AndersCraft — Create Your Account</title>
+<meta name="description" content="Sign up for AndersCraft, a Wrath of the Lich King private server with custom races, any-class gear, a hardcore realm and a level 125 arc." />
+<meta name="theme-color" content="#0a0d0c" />
+<meta property="og:title" content="AndersCraft — Create Your Account" />
+<meta property="og:description" content="A WotLK 3.3.5a server with Goblins, Worgen, any race any class, a hardcore realm and levels up to 125." />
+<meta property="og:url" content="https://damananders.github.io/anderscraft/" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23ff7a1f'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-size='40' font-weight='800' fill='%231a0d03' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=EB+Garamond:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
+
+<!-- ======================  EDIT HERE  ====================== -->
+<script>
+  const ANDERSCRAFT = {
+    // HTTPS address of the sign-up service running on the server PC (start_signup.bat prints it).
+    // Example: "https://your-name.ngrok-free.app/register.php"
+    apiUrl: "https://REPLACE-ME/register.php",
+    // What players type in Data\enUS\realmlist.wtf
+    realmlist: "set realmlist REPLACE-ME",
+    discord: "https://discord.gg/EkdteGwqk",
+  };
+</script>
+<!-- ========================================================= -->
+
+<style>
+  :root{
+    --ink:#07090a; --surface:rgba(15,17,18,.86); --surface-2:rgba(0,0,0,.46);
+    --line:rgba(255,150,70,.18); --line-2:rgba(255,150,70,.34);
+    --text:#ece3d0; --muted:#b3a88f; --royal:#ff7a1f; --royal-deep:#e0670f; --royal-ink:#1a0d03;
+    --green:#56d98a; --red:#ff6b5e;
+    --display:"Cinzel", Georgia, serif; --body:"EB Garamond", Georgia, serif; --mono:"DM Mono", ui-monospace, monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background-color:var(--ink);background-image:linear-gradient(180deg, rgba(5,7,8,.84), rgba(5,7,8,.62) 42%, rgba(5,7,8,.95)), url("../assets/background.png");background-size:cover,cover;background-position:center,center top;background-attachment:fixed,fixed;color:var(--text);font-family:var(--body);font-size:1.12rem;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+  a{color:var(--royal)}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
+  nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{font-family:var(--display);font-weight:700;font-size:1.2rem;color:var(--text);text-decoration:none}
+  .back{font-family:var(--display);font-size:.9rem;color:var(--muted);text-decoration:none}
+  .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;margin-top:40px;align-items:start}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .eyebrow{font-family:var(--display);font-weight:600;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--royal)}
+  h1{font-family:var(--display);font-weight:900;font-size:clamp(2.3rem,7vw,4.2rem);line-height:1.04;margin:12px 0 14px;letter-spacing:-.01em}
+  .lead{color:var(--muted);max-width:52ch;margin:0 0 22px}
+  ul.feat{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.feat li{background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--royal);border-radius:12px;padding:10px 14px}
+  ul.feat b{font-family:var(--display);font-weight:600;font-size:.95rem;letter-spacing:.02em}
+  .card{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:26px;box-shadow:0 18px 44px -18px rgba(0,0,0,.72);backdrop-filter:blur(6px)}
+  .card h2{font-family:var(--display);font-weight:700;font-size:1.5rem;margin:0 0 4px}
+  .card p.sub{color:var(--muted);margin:0 0 18px;font-size:1rem}
+  label{display:block;font-family:var(--display);font-weight:600;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+  input{width:100%;font:inherit;font-size:1.05rem;color:var(--text);background:rgba(0,0,0,.5);border:1px solid var(--line-2);border-radius:12px;padding:11px 14px;outline:none;transition:border-color .15s, box-shadow .15s}
+  input:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(255,122,31,.2)}
+  .hint{font-size:.9rem;color:var(--muted);margin-top:4px}
+  .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+  button{margin-top:20px;width:100%;font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.04em;color:var(--royal-ink);background:var(--royal);border:0;border-radius:14px;padding:14px;cursor:pointer;transition:transform .15s, background .15s}
+  button:hover{background:var(--royal-deep);transform:translateY(-1px)}
+  button:disabled{opacity:.6;cursor:wait;transform:none}
+  .msg{margin-top:16px;padding:12px 14px;border-radius:12px;display:none;font-size:1rem}
+  .msg.ok{display:block;background:rgba(40,160,90,.18);border:1px solid var(--green);color:#c9f5da}
+  .msg.err{display:block;background:rgba(255,80,60,.14);border:1px solid var(--red);color:#ffd2cc}
+  .steps{margin-top:28px}
+  .steps h3{font-family:var(--display);font-weight:700;font-size:1.2rem;margin:0 0 10px}
+  .steps ol{margin:0;padding-left:20px;display:grid;gap:6px}
+  code{font-family:var(--mono);font-size:.92rem;background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:8px;padding:2px 7px;word-break:break-all}
+  footer{margin-top:48px;color:var(--muted);font-size:.92rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="./">AndersCraft</a>
+    <a class="back" href="../">&larr; DaManAnders home</a>
+  </nav>
+
+  <div class="grid">
+    <section>
+      <div class="eyebrow">Wrath of the Lich King &middot; 3.3.5a</div>
+      <h1>Join AndersCraft</h1>
+      <p class="lead">A private Azeroth built around freedom: play any race as any class, wield whatever you can earn the skill for, and push past the old cap.</p>
+      <ul class="feat">
+        <li><b>Goblin &amp; Worgen</b> &mdash; every race, every class</li>
+        <li><b>Any gear</b> &mdash; buy the proficiency, use the weapon; dual-wield two-handers, relics for everyone</li>
+        <li><b>Level 125</b> &mdash; the journey keeps going after 80</li>
+        <li><b>Hardcore realm</b> &mdash; one life; walk alone as one of Azeroth's Chosen</li>
+        <li><b>Fly anywhere</b> &mdash; old-world flying at 85</li>
+      </ul>
+
+      <div class="steps">
+        <h3>How to play</h3>
+        <ol>
+          <li>Create your account with the form.</li>
+          <li>Get the AndersCraft game client (ask in <a id="discordLink" href="#">Discord</a>).</li>
+          <li>Open <code>Data\enUS\realmlist.wtf</code> and make it say <code id="realmlistText"></code></li>
+          <li>Start <code>AndersCraft.exe</code> and log in with your new username and password.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Create your account</h2>
+      <p class="sub">Your username and password are what you type in the game's login screen.</p>
+      <form id="signup" novalidate>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="100" required />
+
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" maxlength="16" pattern="[A-Za-z0-9]{3,16}" required />
+        <div class="hint">3&ndash;16 letters or numbers.</div>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" maxlength="16" required />
+        <div class="hint">6&ndash;16 characters, no spaces (the game's login limit).</div>
+
+        <label for="password2">Confirm password</label>
+        <input id="password2" name="password2" type="password" autocomplete="new-password" maxlength="16" required />
+
+        <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off" /></div>
+
+        <button id="go" type="submit">Create account</button>
+        <div id="msg" class="msg" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </div>
+
+  <footer>AndersCraft is a fan-run, non-commercial server. World of Warcraft&reg; is a trademark of Blizzard Entertainment.</footer>
+</div>
+
+<script>
+  document.getElementById("realmlistText").textContent = ANDERSCRAFT.realmlist;
+  document.getElementById("discordLink").href = ANDERSCRAFT.discord;
+
+  const form = document.getElementById("signup");
+  const msg = document.getElementById("msg");
+  const go = document.getElementById("go");
+  function show(ok, text) { msg.className = "msg " + (ok ? "ok" : "err"); msg.textContent = text; }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = form.email.value.trim();
+    const username = form.username.value.trim();
+    const password = form.password.value;
+    if (!/^\S+@\S+\.\S+$/.test(email)) return show(false, "Enter a valid email address.");
+    if (!/^[A-Za-z0-9]{3,16}$/.test(username)) return show(false, "Username: 3-16 letters or numbers.");
+    if (!/^[\x21-\x7E]{6,16}$/.test(password)) return show(false, "Password: 6-16 characters, no spaces.");
+    if (password !== form.password2.value) return show(false, "The passwords don't match.");
+
+    go.disabled = true; go.textContent = "Creating...";
+    try {
+      const res = await fetch(ANDERSCRAFT.apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
+        body: JSON.stringify({ email, username, password, website: form.website.value }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { show(true, data.message || "Account created!"); form.reset(); }
+      else show(false, data.message || "Something went wrong. Please try again.");
+    } catch (err) {
+      show(false, "The sign-up server is offline right now. Please try again later.");
+    } finally {
+      go.disabled = false; go.textContent = "Create account";
+    }
+  });
+</script>
+</body>
+</html>
