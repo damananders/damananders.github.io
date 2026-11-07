@@ -77,3 +77,21 @@ body.photo{background-color:var(--ink);background-image:linear-gradient(180deg,r
 body.photo .avenue,body.photo .panel,body.photo .game,body.photo .feat li{background:rgba(15,18,22,.82);backdrop-filter:blur(8px)}
 body.photo .hero h1,body.photo .hero .lead,body.photo .hero .eyebrow,body.photo nav{text-shadow:0 2px 12px rgba(0,0,0,.85)}
 body.photo .hero .lead{color:#d5dae0}
+/* Features popup */
+dialog.features{width:min(860px,calc(100vw - 32px));max-height:min(86vh,900px);padding:0;border:1px solid var(--line-2);border-radius:20px;background:#0f1216;color:var(--text);box-shadow:0 40px 90px -30px rgba(0,0,0,.9)}
+dialog.features::backdrop{background:rgba(3,5,8,.72);backdrop-filter:blur(4px)}
+dialog.features .dhead{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 24px;background:#0f1216;border-bottom:1px solid var(--line);z-index:1}
+dialog.features .dhead h2{margin:0}
+dialog.features .x{background:var(--panel-2);border:1px solid var(--line-2);color:var(--text);width:38px;height:38px;border-radius:10px;font-size:1.3rem;cursor:pointer;line-height:1}
+dialog.features .dbody{padding:6px 24px 24px;overflow:auto;max-height:calc(min(86vh,900px) - 76px)}
+dialog.features h3{color:var(--accent);margin:22px 0 6px}
+dialog.features ul{margin:0;padding-left:20px;color:var(--muted);display:grid;gap:4px}
+dialog.features li b,dialog.features p b{color:var(--text)}
+dialog.features p{color:var(--muted)}
+.tbl{overflow-x:auto}
+dialog.features table{border-collapse:collapse;width:100%;font-size:.94rem;margin-top:6px}
+dialog.features th,dialog.features td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+dialog.features th{color:var(--text);font-family:var(--display)}
+dialog.features td{color:var(--muted)}
+.linkbtn{background:none;border:0;padding:0;margin-top:14px;color:var(--accent);font:600 1rem var(--display);cursor:pointer}
+.linkbtn:hover{text-decoration:underline}

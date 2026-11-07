@@ -1,0 +1,8 @@
+.socials{display:flex;gap:10px;flex-wrap:wrap}
+.social{display:inline-flex;align-items:center;gap:9px;font-family:"Space Grotesk",system-ui,sans-serif;font-weight:700;font-size:.98rem;letter-spacing:.01em;text-decoration:none;padding:9px 16px;border-radius:12px;box-shadow:0 8px 22px -12px rgba(0,0,0,.7);transition:transform .15s,filter .15s;text-shadow:none}
+.social:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.social svg{width:22px;height:22px;flex:none}
+.social.kofi{background:#F9F6F0;color:#FF5E5B;border:1px solid #f1e6dd}
+.social.discord{background:#5865F2;color:#fff}
+.social.twitch{background:#9146FF;color:#0E0E10}
+@media (max-width:520px){.social{padding:8px 12px;font-size:.92rem}.social svg{width:20px;height:20px}}

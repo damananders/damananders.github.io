@@ -16,16 +16,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/hub.css" />
+<link rel="stylesheet" href="../assets/socials.css" />
 <script src="../assets/config.js"></script>
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
 <div class="wrap">
   <nav>
     <a class="brand" href="../">&larr; Anders <span>/ AnyPS</span></a>
-    <div class="navlinks">
-      <a href="../anderscraft/">AndersCraft</a>
-      <a href="./" aria-current="page">AnyPS</a>
-      <a href="../vault/">Personal Vault</a>
+    <div class="socials">
+      <a class="social kofi" href="https://ko-fi.com/damananders" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h12A1.5 1.5 0 0 1 18 6.5V8h.75A3.75 3.75 0 0 1 22.5 11.75v.5A3.75 3.75 0 0 1 18.75 16h-1.02A6.5 6.5 0 0 1 11.5 20h-2A6.5 6.5 0 0 1 3 13.5zM18 10v3.98c.25.01.5.02.75.02A1.75 1.75 0 0 0 20.5 12.25v-.5A1.75 1.75 0 0 0 18.75 10z"/><path fill="#fff" d="M10.5 15.6l-2.9-2.75a1.85 1.85 0 0 1 0-2.65 1.9 1.9 0 0 1 2.65 0l.25.25.25-.25a1.9 1.9 0 0 1 2.65 0 1.85 1.85 0 0 1 0 2.65z"/></svg>Donate</a>
+      <a class="social discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" aria-hidden="true" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>Discord</a>
+      <a class="social twitch" href="https://www.twitch.tv/damananders_ttv" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>Twitch</a>
     </div>
   </nav>
 
@@ -41,6 +42,7 @@
         <li><b>Guided first boot</b> &mdash; a simple, kid-friendly setup walks you through adding your games and firmware.</li>
         <li><b>Motion helper</b> &mdash; stick-driven tilt and shake for games that expect a gyro.</li>
       </ul>
+      <button class="linkbtn" id="openFeatures" type="button">See the complete feature list &rarr;</button>
     </section>
 
     <aside class="panel">
@@ -53,13 +55,166 @@
       <ol class="steps">
         <li>Download and unzip the release.</li>
         <li>Run <code>AnyPS.exe</code> and follow the first-boot setup.</li>
-        <li>Add console firmware/BIOS dumped from hardware you own.</li>
-        <li>Add game backups you made from discs you own.</li>
+        <li>Drop console files dumped from hardware you own into <code>AnyPS\System\&lt;console&gt;</code>.</li>
+        <li>Put your own game backups in <code>AnyPS\Games\&lt;console&gt;</code>.</li>
       </ol>
 
       <div class="note"><b>No games, BIOS or firmware are included</b>, and none are provided here or on request. AnyPS is a front end; please only use content you legally own.</div>
     </aside>
   </div>
+
+
+  <dialog class="features" id="features" aria-labelledby="featTitle">
+    <div class="dhead"><h2 id="featTitle">AnyPS: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dbody">
+<p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across five systems, each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
+<h3>1. The app itself</h3>
+<ul>
+<li><b>Single executable.</b> One <code>AnyPS.exe</code> launches everything; no installer, no separate windows to manage.</li>
+<li><b>Boots like a console.</b> Cold-boot chime and animation, then straight to the system picker.</li>
+<li><b>Random colors on boot.</b> The background gradient and ribbon re-roll each launch (can be turned off).</li>
+<li><b>Custom exe icon.</b> "AnyPS" wordmark on a grey→silver→PlayStation-blue badge, built in at every size.</li>
+<li><b>Start with Windows (console mode).</b> Optional — AnyPS launches at sign-in.</li>
+<li><b>Runs windowed, never exclusive fullscreen.</b> Every emulator is forced to borderless windowed so alt-tab and overlays behave.</li>
+<li><b>Keeps emulator windows on AnyPS's monitor</b> (handles multi-monitor setups automatically).</li>
+<li><b>Close with Alt+F4,</b> or ○ / Esc on the system picker brings up an "Are you certain?" exit confirm.</li>
+</ul>
+<h3>2. Systems &amp; emulators (all bundled)</h3>
+<div class="tbl"><table><thead><tr><th>System</th><th>Emulator</th></tr></thead><tbody><tr><td>PS1</td><td>DuckStation</td></tr><tr><td>PS2</td><td>PCSX2</td></tr><tr><td>PSP</td><td>PPSSPP</td></tr><tr><td>PS3</td><td>RPCS3</td></tr><tr><td>PS4</td><td>shadPS4 (nightly), plus RPCS4</td></tr><tr><td>PS5</td><td>(planned — AnyPS5 relinker, not yet set up)</td></tr></tbody></table></div>
+<h3>3. Console-native interface</h3>
+<ul>
+<li><b>System picker</b> with hand-drawn console silhouettes (AnyPS's own art), each showing its emulator and game count.</li>
+<li><b>PS1/PS2/PSP/PS3 use an XMB-style lane</b> (System / Settings / Photo / Game categories) built from your PS3 system software — real Rodin fonts, original category icons, menu sounds, and the coldboot sound.</li>
+<li><b>PS4 uses a PS4-style home row</b> of tiles.</li>
+<li><b>Theme-matched waves and colors</b> per system.</li>
+<li><b>Rounded corners</b> throughout (game art, tiles, menu bars, photo viewer).</li>
+</ul>
+<h3>4. Game library</h3>
+<ul>
+<li><b>Self-contained layout:</b> games live in <code>AnyPS\Games\&lt;console&gt;</code> (PS1, PS2, PSP, PS3, PS4).</li>
+<li><b>Broad format support:</b> PS1 cue+bin / chd / pbp / m3u / folders; PS2 iso / chd / cso; PSP iso / cso; PS3 game folders (PS3_GAME) + PKG updates/DLC; PS4 PKG tiles or unpacked folders.</li>
+<li><b>Box art</b> from each game's own icon, with an online cover fallback (retro covers + GameTDB for PS3/PS4) and custom covers.</li>
+<li><b>Title music</b> from each game (SND0), with an on/off switch.</li>
+<li><b>Multiple library roots</b> supported via <code>AnyPS.ini</code>.</li>
+</ul>
+<h3>5. Browsing &amp; organizing games</h3>
+<ul>
+<li><b>Sort</b> (□ / X button, or F): Default, A-Z, Most played, Recently played.</li>
+<li><b>Search</b> (△ Options ▸ Search games…) filters the list by name; Clear search to reset.</li>
+<li><b>Favorites</b> (△ ▸ Add to favorites): pinned to the top with a ★, and shown in a "Favorites &amp; recent" row on the picker.</li>
+<li><b>Continue</b> (□ on the picker): instantly boots your last-played game.</li>
+<li><b>Recently played row</b> on the picker with play-time captions.</li>
+<li><b>Game count</b> shown under each console.</li>
+<li><b>Rescan games</b> (△ menu): picks up newly added games without restarting.</li>
+<li><b>Rename</b> a game's display title.</li>
+<li><b>Custom cover:</b> pick one of your screenshots, or drop a <code>cover.png</code> in the game's folder.</li>
+<li><b>Hide a game</b> (and unhide later in AnyPS Settings ▸ Hidden games).</li>
+</ul>
+<h3>6. In-game home menu (pause overlay)</h3>
+<p>Opened by the PS/Guide button, holding Share/View, or Ctrl+Shift+Q:</p>
+<ul>
+<li><b>Resume / Quit game.</b></li>
+<li><b>This game's settings</b> (per-game emulator config).</li>
+<li><b>Information</b> page: title, ID, version, add-ons, disc list, <b>trophy progress (earned/total)</b>, play time, launch count, folder.</li>
+<li><b>Change Disc</b> for multi-disc PS1 games, with automatic disc change.</li>
+<li><b>Saves / Memory Cards</b> and <b>Trophies</b> for the current game.</li>
+<li><b>Motion mode</b> toggle (PS3/PS4).</li>
+<li><b>Save states</b> (PS1/PS2/PSP): Save, Load, Next/Previous slot.</li>
+<li><b>Speed</b> (PS1/PS2/PSP): fast-forward on/off, rewind.</li>
+<li><b>Enhancements</b> (PS1/PS2/PSP): graphics quality (performance/balanced/quality), cheats on/off.</li>
+</ul>
+<h3>7. Save data</h3>
+<ul>
+<li><b>Per-game saves browser:</b> PSP SAVEDATA, PS1/PS2 memory cards, PS3/PS4 savedata, with details and timestamps.</li>
+<li><b>Back up</b> any save or memory card.</li>
+<li><b>Restore</b> a save or memory card from a backup.</li>
+<li><b>Export</b> all saves + screenshots to a USB stick (or <code>AnyPS\Export</code>).</li>
+<li><b>Open the backups / export folders</b> in Explorer.</li>
+</ul>
+<h3>8. Trophies &amp; achievements</h3>
+<ul>
+<li><b>PS3 trophies</b> read from RPCS3 (TROPCONF / TROPUSR): per-set lists, grades, locked/hidden, earned counts.</li>
+<li><b>PS4 trophies</b> read from shadPS4 (TROP.XML).</li>
+<li><b>RetroAchievements</b> for PS1/PS2/PSP — labelled "Trophies" for consistency — with in-app sign-in (you type the password; only the token is stored).</li>
+<li><b>RetroAchievements for PS3</b> too (writes into RPCS3's config on sign-in).</li>
+<li><b>Unlock toasts</b> while playing, and a <b>Recent trophies &amp; achievements</b> page.</li>
+<li>Hardcore mode supported where the emulator offers it.</li>
+</ul>
+<h3>9. Settings — native and full</h3>
+<ul>
+<li><b>Console-native settings screens</b> per system (PS1 System Config, PS2 Browser, PSP System Settings, PS3 XMB settings columns, PS4 Settings) — the familiar menus.</li>
+<li><b>Real BIOS shells:</b> PS1 System Menu and PS2 Browser (memory cards, clock, language).</li>
+<li><b>Full emulator settings</b> for every emulator, all from inside AnyPS (DuckStation, PCSX2, PPSSPP, RPCS3, shadPS4, RPCS4) — curated, borderless-locked.</li>
+<li><b>Per-game settings</b> for every system.</li>
+<li>Everything is editable without leaving the app.</li>
+</ul>
+<h3>10. Themes &amp; personalization</h3>
+<ul>
+<li><b>PS3 <code>.p3t</code> themes</b> — install and apply, with wallpaper and icons.</li>
+<li><b>PS4 theme options.</b></li>
+<li><b>Random boot colors</b> (toggle + "new colors now").</li>
+<li><b>Your own wallpaper</b> from any screenshot.</li>
+</ul>
+<h3>11. Controllers &amp; input</h3>
+<ul>
+<li><b>Keyboard-first menus</b> that also fully support a gamepad (SDL2 with XInput fallback, background input).</li>
+<li><b>Controller-aware button glyphs:</b> PlayStation glyphs on a PS pad, Xbox face buttons on an Xbox pad, switched live.</li>
+<li><b>Controller battery</b> shown in the status line.</li>
+<li><b>Quit combo:</b> hold Share/View + Options/Start.</li>
+<li><b>Motion bridge:</b> L3 + R3 turns the right stick into a motion sensor (hold L3 to shake) so Xbox/stick-only pads can play gyro sequences — for RPCS3 and shadPS4. Adjustable sensitivity.</li>
+</ul>
+<h3>12. Multi-disc</h3>
+<ul>
+<li><b>Multi-disc PS1 games</b> (e.g. Legend of Dragoon) merge into one entry; discs swap automatically, with a manual "Change Disc" in the home menu.</li>
+</ul>
+<h3>13. Updates</h3>
+<ul>
+<li><b>System Software Update</b> panel updates each emulator in place (with backups).</li>
+<li><b>Boot-time update check</b> (optional, on by default): a quiet toast if an emulator has a newer build.</li>
+</ul>
+<h3>14. Screenshots &amp; gallery</h3>
+<ul>
+<li><b>Per-system screenshot gallery</b> with a full-screen viewer.</li>
+<li>Set any screenshot as a <b>game cover</b> or the <b>wallpaper</b>.</li>
+</ul>
+<h3>15. Users / profiles</h3>
+<ul>
+<li><b>PS3 users:</b> switch, rename, create. <b>PS4 players.</b> On-screen keyboard with masking.</li>
+<li><b>PSP nickname.</b></li>
+</ul>
+<h3>16. Play stats</h3>
+<ul>
+<li><b>Play time and launch counts</b> tracked per game.</li>
+<li><b>Play time / most played</b> page (ranked, with total hours).</li>
+</ul>
+<h3>17. Accessibility &amp; help</h3>
+<ul>
+<li><b>Text size</b> (Normal / Large) and <b>High contrast</b> mode.</li>
+<li><b>Menu sound effects</b> and <b>game music</b> on/off.</li>
+<li><b>Help screen:</b> controls reference, how to add games, and the one-time console-file setup.</li>
+</ul>
+<h3>18. Setup &amp; sharing</h3>
+<ul>
+<li><b>First-run setup wizard:</b> drop console files into <code>AnyPS\System\&lt;console&gt;</code>; AnyPS auto-finds BIOS (PS1/PS2) and the PS3 firmware (.PUP), installs them, and <b>builds the PlayStation look from your own system software</b>.</li>
+<li><b>"READ ME FIRST"</b> guidance written on first run.</li>
+<li><b>Shareable release</b> (<code>make_release.ps1</code>): a clean copy with the launcher, all emulators and tools — <b>no games, no BIOS/firmware, no Sony artwork or sounds</b> (the look is rebuilt on each player's PC from their own files).</li>
+<li>Designed so <b>a child who can only download and run an exe</b> can set it up.</li>
+</ul>
+<h3>19. Package handling (behind the scenes)</h3>
+<ul>
+<li><b>PS3:</b> installs game, then updates, then DLC on first launch (with <code>.rap</code> licences), driven automatically; base disc registered first.</li>
+<li><b>PS4:</b> unpacks <code>.pkg</code> tiles (game / update / DLC) into the library; patches the DLC-loader stub so games with add-ons boot.</li>
+</ul>
+<h3>Controls at a glance</h3>
+<div class="tbl"><table><thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead><tbody><tr><td>Move</td><td>D-pad / left stick</td><td>Arrows / WASD</td></tr><tr><td>Choose</td><td>✕ / A</td><td>Enter</td></tr><tr><td>Back</td><td>○ / B</td><td>Esc</td></tr><tr><td>Game options</td><td>△ / Y</td><td>Tab</td></tr><tr><td>Sort / Continue</td><td>□ / X</td><td>F</td></tr><tr><td>Home menu (in game)</td><td>PS / Guide, or hold Share/View</td><td>Ctrl+Shift+Q</td></tr><tr><td>Quit game</td><td>hold Share/View + Options/Start</td><td>—</td></tr><tr><td>Close AnyPS</td><td>—</td><td>Alt+F4 (or ○/Esc on picker)</td></tr></tbody></table></div>
+<h3>Not yet</h3>
+<ul>
+<li><b>PS5</b> — the last system, via the AnyPS5 relinker; started only once PS1–PS4 are fully solid.</li>
+<li>A handful of features need a live hands-on check: save states, fast-forward/rewind, the graphics preset, the cheats toggle, and RetroAchievements-on-PS3.</li>
+</ul>
+
+    </div>
+  </dialog>
 
   <footer>
     <p>AnyPS bundles open-source emulators under their own licenses; credit to the DuckStation, PCSX2, PPSSPP, RPCS3 and shadPS4 teams.</p>
@@ -74,6 +229,13 @@
     dl.textContent = "Download AnyPS" + (a.version ? " v" + a.version : "");
     document.getElementById("dlmeta").textContent = [a.sizeLabel, "Hosted on Google Drive"].filter(Boolean).join(" · ");
   }
+  const dlg = document.getElementById("features");
+  const openF = () => { if (!dlg.open) dlg.showModal(); };
+  document.getElementById("openFeatures").addEventListener("click", () => { history.replaceState(null, "", "#features"); openF(); });
+  document.getElementById("closeFeatures").addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener("close", () => { if (location.hash === "#features") history.replaceState(null, "", location.pathname); });
+  if (location.hash === "#features") openF();
 </script>
 </body>
 </html>
