@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AnyPS — One Launcher, Every Generation</title>
+<meta name="description" content="AnyPS is a free, controller-first Windows launcher that brings PS1, PS2, PSP, PS3 and PS4 emulators together in one place. Ships with no games or BIOS." />
+<meta name="theme-color" content="#07090b" />
+<meta property="og:title" content="AnyPS — One Launcher, Every Generation" />
+<meta property="og:description" content="A controller-first launcher for open-source PlayStation emulators. Bring your own games." />
+<meta property="og:url" content="https://damananders.github.io/anyps/" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090b'/%3E%3Ccircle cx='32' cy='32' r='14' fill='%233d8bff'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/hub.css" />
+<script src="../assets/config.js"></script>
+</head>
+<body class="anyps">
+<div class="wrap">
+  <nav>
+    <a class="brand" href="../">&larr; Anders <span>/ AnyPS</span></a>
+    <div class="navlinks">
+      <a href="../anderscraft/">AndersCraft</a>
+      <a href="./" aria-current="page">AnyPS</a>
+      <a href="../vault/">Personal Vault</a>
+    </div>
+  </nav>
+
+  <div class="split">
+    <section>
+      <div class="eyebrow">Launcher &middot; Windows 10/11 &middot; 64-bit</div>
+      <h1>AnyPS</h1>
+      <p class="lead">One launcher for five generations of PlayStation emulation. Plug in a controller, point it at your own games, and play from the couch without touching a mouse.</p>
+      <ul class="feat">
+        <li><b>Five systems, one shelf</b> &mdash; PS1, PS2, PSP, PS3 and PS4 games side by side, powered by the open-source DuckStation, PCSX2, PPSSPP, RPCS3 and shadPS4 projects.</li>
+        <li><b>Controller first</b> &mdash; DualSense, DualShock and Xbox pads work out of the box, including in every settings screen.</li>
+        <li><b>Settings without leaving</b> &mdash; tweak each emulator, globally or per game, from inside the launcher.</li>
+        <li><b>Guided first boot</b> &mdash; a simple, kid-friendly setup walks you through adding your games and firmware.</li>
+        <li><b>Motion helper</b> &mdash; stick-driven tilt and shake for games that expect a gyro.</li>
+      </ul>
+    </section>
+
+    <aside class="panel">
+      <h2>Download</h2>
+      <p class="lead" style="font-size:1rem">Free. Unzip anywhere and run <code>AnyPS.exe</code>.</p>
+      <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
+      <div id="dlmeta" class="meta"></div>
+
+      <h3 style="margin-top:24px">Getting started</h3>
+      <ol class="steps">
+        <li>Download and unzip the release.</li>
+        <li>Run <code>AnyPS.exe</code> and follow the first-boot setup.</li>
+        <li>Add console firmware/BIOS dumped from hardware you own.</li>
+        <li>Add game backups you made from discs you own.</li>
+      </ol>
+
+      <div class="note"><b>No games, BIOS or firmware are included</b>, and none are provided here or on request. AnyPS is a front end; please only use content you legally own.</div>
+    </aside>
+  </div>
+
+  <footer>
+    <p>AnyPS bundles open-source emulators under their own licenses; credit to the DuckStation, PCSX2, PPSSPP, RPCS3 and shadPS4 teams.</p>
+    <p>PlayStation&reg; is a trademark of Sony Interactive Entertainment. AnyPS is a fan project and is not affiliated with or endorsed by Sony.</p>
+  </footer>
+</div>
+<script>
+  const a = (window.SITE || {}).anyps || {};
+  if (a.downloadUrl) {
+    const dl = document.getElementById("dl");
+    dl.href = a.downloadUrl; dl.removeAttribute("aria-disabled");
+    dl.textContent = "Download AnyPS" + (a.version ? " v" + a.version : "");
+    document.getElementById("dlmeta").textContent = [a.sizeLabel, "Hosted on Google Drive"].filter(Boolean).join(" · ");
+  }
+</script>
+</body>
+</html>

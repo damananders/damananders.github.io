@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Personal Vault</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#07090b" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090b'/%3E%3Crect x='18' y='18' width='28' height='28' rx='5' fill='%2336d39a'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/hub.css" />
+<script src="../assets/config.js"></script>
+</head>
+<body class="games">
+<div class="wrap">
+  <nav>
+    <a class="brand" href="../">&larr; Anders <span>/ Personal Vault</span></a>
+    <div class="navlinks">
+      <a href="../anderscraft/">AndersCraft</a>
+      <a href="../anyps/">AnyPS</a>
+      <a href="./" aria-current="page">Personal Vault</a>
+    </div>
+  </nav>
+
+  <header class="hero" style="padding-bottom:8px">
+    <div class="eyebrow">Private &middot; owner only</div>
+    <h1>Personal Vault</h1>
+    <p class="lead">Off-site backups of my own recompiled and preserved builds, kept here so I don't lose them. These files are private and access requests aren't granted.</p>
+  </header>
+
+  <section id="catalogue" class="catalogue" aria-label="Games"></section>
+  <div id="empty" class="empty" hidden>Nothing stored yet.</div>
+
+  <footer>
+    <p>Personal backups only; not for distribution. All game names and trademarks belong to their respective owners.</p>
+  </footer>
+</div>
+<script>
+  const S = window.SITE || {}, g = S.vault || {};
+  const ICONS = {
+    star: '<path d="M12 2.5l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 8.8l6.1-.7z"/><circle cx="12" cy="12" r="2"/>',
+    crystal: '<path d="M12 2l6 7-6 13-6-13z"/><path d="M6 9h12M12 2v20M9 9l3 13 3-13"/>',
+    skull: '<path d="M12 3a8 8 0 0 0-8 8c0 2.6 1.3 4.6 3 5.8V20h10v-3.2c1.7-1.2 3-3.2 3-5.8a8 8 0 0 0-8-8z"/><circle cx="9" cy="11.5" r="1.8"/><circle cx="15" cy="11.5" r="1.8"/><path d="M12 14.5l-1 2h2zM10 20v-2M14 20v-2"/>',
+    disc: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 5.5a6.5 6.5 0 0 1 6.5 6.5"/>',
+  };
+  const list = g.list || [], root = document.getElementById("catalogue");
+  if (!list.length) document.getElementById("empty").hidden = false;
+  for (const game of list) {
+    const el = document.createElement("article"); el.className = "game";
+    const tags = document.createElement("div"); tags.className = "tags";
+    for (const [t, c] of [[game.platform, ""]]) {
+      if (!t) continue; const s = document.createElement("span"); s.className = "tag " + (c || ""); s.textContent = t; tags.append(s);
+    }
+    const h = document.createElement("h3"); h.textContent = game.title;
+    const p = document.createElement("p"); p.textContent = game.blurb || "";
+    const b = document.createElement("a"); b.className = "btn"; b.target = "_blank"; b.rel = "noopener";
+    if (game.url) { b.href = game.url; b.textContent = "Open in Drive"; }
+    else { b.setAttribute("aria-disabled", "true"); b.textContent = "Not uploaded"; }
+    const ic = document.createElement("div"); ic.className = "game-icon";
+    ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[game.icon] || ICONS.disc) + '</svg>';
+    const top = document.createElement("div"); top.className = "game-top"; top.append(ic, tags);
+    el.append(top, h, p, b); root.append(el);
+  }
+</script>
+</body>
+</html>
