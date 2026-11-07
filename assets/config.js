@@ -7,7 +7,7 @@ window.SITE = {
 
   anyps: {
     version: "",            // e.g. "1.0.0"
-    downloadUrl: "https://drive.google.com/file/d/16dYTivH4T5zi-jvhDqNFm1xcsZcMPUbo/view?usp=drive_link",
+    downloadUrl: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link",
     sizeLabel: "",          // e.g. "1.2 GB"
   },
 
