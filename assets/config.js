@@ -13,11 +13,12 @@ window.SITE = {
 
   // Personal Vault: the owner's own backups. Keep each Drive file's sharing
   // set to "Restricted" so only the owner's Google account can open it.
+  // icon: "star" | "crystal" | "skull" | "disc" (see ICONS in vault/index.html)
   vault: {
     list: [
-      { title: "Toy Story Retro Roundup", platform: "PC recomp", blurb: "Portable build with the PS1 additions, ultrawide and per-game rebinding.", url: "https://drive.google.com/file/d/1AhNaY8lvoET3-dZKeihm0D9-tHV44moa/view?usp=drive_link" },
-      { title: "Dissidia Final Fantasy", platform: "PSP recomp", blurb: "Native PC builds of Dissidia and Duodecim 012.", url: "https://drive.google.com/file/d/1sh6hWeJC0vYFgE7hLLEo3iAJl1W4NNsD/view?usp=drive_link" },
-      { title: "LET IT DIE", platform: "PC standalone", blurb: "Standalone build that runs without Steam, with the mod menus.", url: "https://drive.google.com/file/d/1YEXsUo37KMz2njtrTjz1K2qShEE2gwL4/view?usp=drive_link" },
+      { title: "Toy Story Retro Roundup", icon: "star", platform: "PC recomp", blurb: "Portable build with the PS1 additions, ultrawide and per-game rebinding.", url: "https://drive.google.com/file/d/1AhNaY8lvoET3-dZKeihm0D9-tHV44moa/view?usp=drive_link" },
+      { title: "Dissidia Final Fantasy", icon: "crystal", platform: "PSP recomp", blurb: "Native PC builds of Dissidia and Duodecim 012.", url: "https://drive.google.com/file/d/1sh6hWeJC0vYFgE7hLLEo3iAJl1W4NNsD/view?usp=drive_link" },
+      { title: "LET IT DIE", icon: "skull", platform: "PC standalone", blurb: "Standalone build that runs without Steam, with the mod menus.", url: "https://drive.google.com/file/d/1YEXsUo37KMz2njtrTjz1K2qShEE2gwL4/view?usp=drive_link" },
     ],
   },
 };

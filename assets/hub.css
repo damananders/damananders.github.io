@@ -68,3 +68,6 @@ code{font-family:var(--mono);font-size:.88rem;background:var(--panel-2);border:1
 
 footer{margin-top:56px;color:var(--muted);font-size:.88rem;text-align:center;border-top:1px solid var(--line);padding-top:22px}
 footer p{margin:4px 0}
+.game-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.game-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:var(--accent);background:radial-gradient(circle at 30% 25%,rgba(54,211,154,.28),rgba(54,211,154,.06));border:1px solid rgba(54,211,154,.35)}
+.game-icon svg{width:30px;height:30px}
