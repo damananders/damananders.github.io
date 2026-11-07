@@ -7,7 +7,7 @@ window.SITE = {
 
   anyps: {
     version: "",            // e.g. "1.0.0"
-    downloadUrl: "",        // Google Drive share link to the AnyPS release .zip
+    downloadUrl: "https://drive.google.com/file/d/16dYTivH4T5zi-jvhDqNFm1xcsZcMPUbo/view?usp=drive_link",
     sizeLabel: "",          // e.g. "1.2 GB"
   },
 
