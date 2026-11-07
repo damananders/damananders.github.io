@@ -71,3 +71,9 @@ footer p{margin:4px 0}
 .game-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .game-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:var(--accent);background:radial-gradient(circle at 30% 25%,rgba(54,211,154,.28),rgba(54,211,154,.06));border:1px solid rgba(54,211,154,.35)}
 .game-icon svg{width:30px;height:30px}
+/* Full-page photo backgrounds (set --bg on <body>) */
+body.photo{background-color:var(--ink);background-image:linear-gradient(180deg,rgba(7,9,11,.80),rgba(7,9,11,.62) 40%,rgba(7,9,11,.94)),var(--bg);background-size:cover,cover;background-position:center,center;background-attachment:fixed,fixed}
+@media (max-width:860px){body.photo{background-attachment:scroll,scroll}}
+body.photo .avenue,body.photo .panel,body.photo .game,body.photo .feat li{background:rgba(15,18,22,.82);backdrop-filter:blur(8px)}
+body.photo .hero h1,body.photo .hero .lead,body.photo .hero .eyebrow,body.photo nav{text-shadow:0 2px 12px rgba(0,0,0,.85)}
+body.photo .hero .lead{color:#d5dae0}
