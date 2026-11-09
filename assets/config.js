@@ -15,8 +15,8 @@ window.SITE = {
     sizeLabel: "",          // e.g. "903 MB"
     // Older releases, newest first. Add the outgoing build here when you publish a new one.
     oldBuilds: [
-      { version: "1.03", url: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link" },
-      { version: "1.03", url: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link" },
+      { version: "1.02", url: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link" },
+      { version: "1.0", url: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link" },
     ],
   },
 
