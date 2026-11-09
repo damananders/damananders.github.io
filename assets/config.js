@@ -6,8 +6,8 @@ window.SITE = {
   discord: "https://discord.gg/U35dt6Qb2A",
 
   anyps: {
-    version: "1.02",
-    downloadUrl: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link",
+    version: "1.03",
+    downloadUrl: "https://drive.google.com/file/d/1gvnGFOsL-K00whZw_rG7ifXH92wUOM_u/view?usp=drive_link",
     // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
     // compares "version" above with the installed one, and swaps itself. Any Google Drive share link works.
     // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
@@ -15,7 +15,8 @@ window.SITE = {
     sizeLabel: "",          // e.g. "903 MB"
     // Older releases, newest first. Add the outgoing build here when you publish a new one.
     oldBuilds: [
-      { version: "1.0", url: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link" },
+      { version: "1.02", url: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link" },
+      { version: "1.03", url: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link" },
     ],
   },
 
