@@ -46,6 +46,8 @@
         <li><b>Settings without leaving</b> &mdash; tweak each emulator, globally or per game, from inside the launcher.</li>
         <li><b>Guided first boot</b> &mdash; a simple, kid-friendly setup walks you through adding your games and firmware.</li>
         <li><b>Motion helper</b> &mdash; stick-driven tilt and shake for games that expect a gyro.</li>
+        <li><b>Mass install, cheats, online</b> &mdash; one-button install of a whole PS3/PS4 library, a cheats manager for every system, and PS3 online (RPCN) accounts created right inside AnyPS.</li>
+        <li><b>Keeps itself current</b> &mdash; AnyPS checks this page and updates itself in place.</li>
       </ul>
       <button class="linkbtn" id="openFeatures" type="button">See the complete feature list &rarr;</button>
     </section>
@@ -77,14 +79,16 @@
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
-    <div class="dhead"><h2 id="featTitle">AnyPS V1.02: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="featTitle">AnyPS V1.03: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
 <p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across five systems, each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
 <h3>1. The app itself</h3>
 <ul>
 <li><b>Single executable.</b> One <code>AnyPS.exe</code> launches everything; no installer, no separate windows to manage.</li>
 <li><b>Boots like a console.</b> Cold-boot chime and animation, then straight to the system picker.</li>
-<li><b>Random colors on boot.</b> The background gradient and ribbon re-roll each launch (can be turned off).</li>
+<li><b>Random look on boot.</b> The background colors AND the moving shapes re-roll each launch: ribbons, floating circles, rolling squares, rising bubbles, a starfield or drifting hexagons (or pin one).</li>
+<li><b>Boot options.</b> Skip the intro animation; boot chime on/off.</li>
+<li><b>Smooth fades</b> when switching between systems.</li>
 <li><b>Custom exe icon.</b> "AnyPS" wordmark on a grey→silver→PlayStation-blue badge, built in at every size.</li>
 <li><b>Start with Windows (console mode).</b> Optional — AnyPS launches at sign-in.</li>
 <li><b>Runs windowed, never exclusive fullscreen.</b> Every emulator is forced to borderless windowed so alt-tab and overlays behave.</li>
@@ -111,7 +115,11 @@
 </ul>
 <h3>5. Browsing &amp; organizing games</h3>
 <ul>
-<li><b>Sort</b> (□ / X button, or F): Default, A-Z, Most played, Recently played.</li>
+<li><b>Sort</b> (□ / X button, or F): Default, A-Z, Most played, Recently played, Never played.</li>
+<li><b>Box-art grid view</b> as an alternative to the rows: big covers, six across, scrolls by row (any game's △ menu ▸ Game list style, or AnyPS Settings).</li>
+<li><b>Search all games</b> across every console at once (AnyPS Settings).</li>
+<li><b>Only show games likely to run</b> filter (uses your ratings and the emulators' compatibility lists; handy for PS4).</li>
+<li><b>Find duplicate games</b>: the same title in several regions/versions, with one-press hide for the extras.</li>
 <li><b>Search</b> (△ Options ▸ Search games…) filters the list by name; Clear search to reset.</li>
 <li><b>Favorites</b> (△ ▸ Add to favorites): pinned to the top with a ★, and shown in a "Favorites &amp; recent" row on the picker.</li>
 <li><b>Continue</b> (□ on the picker): instantly boots your last-played game.</li>
@@ -133,7 +141,7 @@
 <li><b>Motion mode</b> toggle (PS3/PS4).</li>
 <li><b>Save states</b> (PS1/PS2/PSP): Save, Load, Next/Previous slot.</li>
 <li><b>Speed</b> (PS1/PS2/PSP): fast-forward on/off, rewind.</li>
-<li><b>Enhancements</b> (PS1/PS2/PSP): graphics quality (performance/balanced/quality), cheats on/off.</li>
+<li><b>Enhancements</b> (PS1/PS2/PSP): graphics quality (performance/balanced/quality), cheats on/off, and <b>Cheats for this game</b> (the cheats manager, below).</li>
 </ul>
 <h3>7. Save data</h3>
 <ul>
@@ -142,6 +150,8 @@
 <li><b>Restore</b> a save or memory card from a backup.</li>
 <li><b>Export</b> all saves + screenshots to a USB stick (or <code>AnyPS\Export</code>).</li>
 <li><b>Open the backups / export folders</b> in Explorer.</li>
+<li><b>Automatic save backup</b> on a schedule (daily or weekly), exporting saves and screenshots.</li>
+<li><b>Save-state manager:</b> every save state on disk per console, with dates, and delete.</li>
 </ul>
 <h3>8. Trophies &amp; achievements</h3>
 <ul>
@@ -181,13 +191,17 @@
 </ul>
 <h3>13. Updates</h3>
 <ul>
+<li><b>AnyPS updates itself:</b> AnyPS Settings ▸ AnyPS version checks this website, shows installed vs newest, and “Download and install” swaps in the new build and restarts — games, saves and settings untouched.</li>
 <li><b>System Software Update</b> panel updates each emulator in place (with backups).</li>
+<li><b>Reset a console's settings</b> back to how AnyPS first set it up.</li>
 <li><b>Boot-time update check</b> (optional, on by default): a quiet toast if an emulator has a newer build.</li>
 </ul>
 <h3>14. Screenshots &amp; gallery</h3>
 <ul>
 <li><b>Per-system screenshot gallery</b> with a full-screen viewer.</li>
 <li>Set any screenshot as a <b>game cover</b> or the <b>wallpaper</b>.</li>
+<li><b>Favorite screenshots:</b> press □ on a photo to star it; a Favorite screenshots page collects them.</li>
+<li><b>Idle screensaver / attract mode:</b> leave a menu alone and AnyPS drifts through your games' art and music; any button returns.</li>
 </ul>
 <h3>15. Users / profiles</h3>
 <ul>
@@ -204,10 +218,11 @@
 <li><b>Text size</b> (Normal / Large) and <b>High contrast</b> mode.</li>
 <li><b>Menu sound effects</b> and <b>game music</b> on/off.</li>
 <li><b>Help screen:</b> controls reference, how to add games, and the one-time console-file setup.</li>
+<li><b>Rebuilt on-screen keyboard:</b> a clean grid with a cursor; LT = Shift, RT = Done, LB/RB move the cursor, □ Backspace, △ Space, LT+△ = symbols page, numbers row.</li>
 </ul>
 <h3>18. Setup &amp; sharing</h3>
 <ul>
-<li><b>First-run setup wizard:</b> drop console files into <code>AnyPS\System\&lt;console&gt;</code>; AnyPS auto-finds BIOS (PS1/PS2) and the PS3 firmware (.PUP), installs them, and <b>builds the PlayStation look from your own system software</b>.</li>
+<li><b>Step-by-step set-up wizard:</b> one step per console (PS1, PS2, PS3, checklist) telling you what the file is and where it comes from, with “Pick the file…”, an auto-search of Downloads/Desktop/Documents, and <b>drag-and-drop onto the AnyPS window</b> — BIOS and PS3UPDAT.PUP install themselves, game files and .pkg are filed into the right Games folder. AnyPS then <b>builds the PlayStation look from your own system software</b>.</li>
 <li><b>"READ ME FIRST"</b> guidance written on first run.</li>
 <li><b>Shareable release</b> (<code>make_release.ps1</code>): a clean copy with the launcher, all emulators and tools — <b>no games, no BIOS/firmware, no Sony artwork or sounds</b> (the look is rebuilt on each player's PC from their own files).</li>
 <li>Designed so <b>a child who can only download and run an exe</b> can set it up.</li>
@@ -217,65 +232,73 @@
 <li><b>PS3:</b> installs game, then updates, then DLC on first launch (with <code>.rap</code> licences), driven automatically; base disc registered first.</li>
 <li><b>PS4:</b> unpacks <code>.pkg</code> tiles (game / update / DLC) into the library; patches the DLC-loader stub so games with add-ons boot.</li>
 </ul>
-<h3>20. User Profiles <span class="newtag">New in V1.02</span></h3>
+<h3>20. User Profiles</h3>
 <ul>
 <li>Up to 10 player profiles, each with a name, an avatar (12 colors or any screenshot), and an optional 4-digit passcode — just like a PS3/PS4.</li>
 <li>A “Who's playing?” sign-in screen, reached from a smiley Profile badge in the top bar of the console picker (press Up, or click it).</li>
 <li>“Create New User Profile” tile; Triangle opens “Modify User Profile” (rename / picture / passcode); Square deletes with a confirmation.</li>
 <li>Each profile keeps its OWN play time, favorites, game names, trophies, AND save games (save data is redirected per profile, so switching players swaps saves and nothing is shared by accident). The first profile you make inherits your existing saves — they are moved in, never deleted.</li>
 <li>Unified “Trophies &amp; achievements” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
+<li><b>Profile stats</b> page: total play time, games played, most played, favorite console, launches.</li>
+<li><b>Guest profile</b> (temporary, wiped on sign-out or close), <b>avatar from any image file</b>, and <b>export / import a whole profile</b> as one .zip to move it to another PC.</li>
 </ul>
-<h3>21. Collections <span class="newtag">New in V1.02</span></h3>
+<h3>21. Collections</h3>
 <ul>
 <li>Make your own game folders (Settings &gt; Collections, or a game's Triangle menu &gt; Collections).</li>
 <li>Automatic “Most Played Games” folder: any game you play 10+ hours collects here on its own, sorted most-played first.</li>
 </ul>
-<h3>22. Tutorials <span class="newtag">New in V1.02</span></h3>
+<h3>22. Tutorials</h3>
 <ul>
 <li>First-time, on-screen tips on the system picker, in a game list, and the first time you open the in-game overlay.</li>
 <li>A per-game “How to play” card (shown the first time you launch each game, and in its Triangle menu) with the controls and an editable walkthrough you can fill in yourself.</li>
 <li>Every tutorial has “Turn off all tutorials”; switch them back on or replay them all from Settings &gt; Tutorials.</li>
 </ul>
-<h3>23. Controller Remap (Visual) <span class="newtag">New in V1.02</span></h3>
+<h3>23. Controller Remap (Visual)</h3>
 <ul>
 <li>A visual controller screen (Settings &gt; Remap controller buttons): rebind any button from a live pad diagram, with quick presets (Standard, Swap Cross/Circle, Nintendo layout).</li>
 <li>Writes your layout straight into PS1, PS2 and PS3, with automatic backups and a Reset to default. (PSP and PS4 keep their own controller settings.)</li>
+<li><b>Per-game layouts:</b> a game's △ menu ▸ Controller layout for this game gives that one game its own buttons; AnyPS writes them when the game starts and restores your usual layout when it ends.</li>
 </ul>
-<h3>24. Online / Netplay <span class="newtag">New in V1.02</span></h3>
+<h3>24. Online / Netplay</h3>
 <ul>
-<li>Settings &gt; Online play: set up PlayStation 3 online (RPCN) with a guided account walkthrough, and PSP ad-hoc Wi-Fi (pick a public server) — no account needed for PSP.</li>
-<li>A one-time “Play online?” prompt the first time you open the PS3 and PSP lists. (PS1, PS2 and PS4 have no usable built-in online.)</li>
+<li><b>PS3 online (RPCN) without leaving AnyPS:</b> AnyPS speaks RPCN's own protocol, so creating the free account (username, e-mail, password), entering the e-mailed code, checking the sign-in and resending the code all happen in AnyPS. “I already have an account” too.</li>
+<li><b>“Would you like to enable Netplay?”</b> the first time you start a PS3 game: Yes sets it up on the spot, No opens the PS3 network settings.</li>
+<li><b>PSP ad-hoc Wi-Fi in one tap:</b> networking on and the busiest public server joined. A “Finding PSP players” card gives the 3 rules, the Discords, and a “fresh network ID” button for two PCs that can't see each other. (PS1, PS2 and PS4 have no usable built-in online.)</li>
 </ul>
-<h3>25. Game Compatibility Flags <span class="newtag">New in V1.02</span></h3>
+<h3>25. Game Compatibility Flags</h3>
 <ul>
 <li>Rate how well each game runs (Boots / Playable / Has issues / Runs perfectly) from its Triangle menu; the rating shows on the game's tile.</li>
 <li>PlayStation 3 games auto-fill their rating from RPCS3's official compatibility list. Your own rating always overrides it.</li>
 </ul>
-<h3>26. Game Backgrounds, Music &amp; Video <span class="newtag">New in V1.02</span></h3>
+<h3>26. Game Backgrounds, Music &amp; Video</h3>
 <ul>
 <li>Highlighting a game now shows its full-screen background: the real built-in art on PS3/PS4/PSP, and the box art for PS1/PS2 games that have no background image — so every game shows something.</li>
 <li>Theme music plays on highlight for games that include it (PS3/PS4).</li>
 <li>Optional looping background VIDEO: drop a “background.mp4” in a game's folder, or set one from the game's Triangle menu.</li>
 </ul>
-<h3>27. Library &amp; Quality Of Life <span class="newtag">New in V1.02</span></h3>
+<h3>27. Library &amp; Quality Of Life</h3>
 <ul>
 <li>“New” tag on games added in the last week.</li>
 <li>Play time shown on each game's tile/row.</li>
 <li>Optional “open the last console on startup” (skip the system picker).</li>
 <li>PS4 .pkg files you drop into the PS4 games folder are detected automatically and offered as one-click “install” tiles, with a toast.</li>
+<li><b>Install all</b>: one button installs every pending PS3 update and DLC across the whole library, or every dropped PS4 package — with an AnyPS progress bar (package N of M, %, what's installing) and the emulator kept hidden the entire time.</li>
+<li><b>Import games from a folder</b> (PS1/PS2/PSP): pick a folder of disc images and AnyPS files them in, one folder per game.</li>
+<li><b>Folder watcher:</b> drop games into Games\&lt;console&gt; while AnyPS is open and the list refreshes itself.</li>
+<li><b>About PS4 support</b>: an honest first-open card on what works, what doesn't, and how to follow the shadPS4 project.</li>
 <li>Added game: The Order: 1886 (PlayStation 4).</li>
 </ul>
-<h3>28. Appearance <span class="newtag">New in V1.02</span></h3>
+<h3>28. Appearance</h3>
 <ul>
 <li>Color theme choice: Random (new on every boot), PlayStation blue, or a color per system — plus a custom-color picker (12 shades).</li>
 </ul>
-<h3>29. In A Game <span class="newtag">New in V1.02</span></h3>
+<h3>29. In A Game</h3>
 <ul>
 <li>Quick-resume: the overlay's “Step away (quick pause)” dims to a clean Paused screen with the game's art; any button jumps you back in.</li>
 <li>Screenshot slideshow: press Cross in any photo gallery for a full-screen, auto-advancing slideshow with a slow Ken Burns pan and cross-fade.</li>
 <li>Controller feedback (Settings &gt; Controller feedback): set rumble strength for PS2 and PS3 games; PS1/PS4 rumble and DualSense adaptive triggers are automatic.</li>
 </ul>
-<h3>30. Smoother everyday use <span class="newtag">New in V1.02</span></h3>
+<h3>30. Smoother everyday use</h3>
 <ul>
 <li><b>Native PC mouse everywhere.</b> A real pointer that hides when idle; click anything, single-click to open a game, scroll to move, right-click to go back.</li>
 <li><b>Every setting explained.</b> Each option shows a plain-language name and a description when highlighted.</li>
@@ -283,20 +306,107 @@
 <li><b>PSP controller lockdown.</b> The pad can't trigger fast-forward or PPSSPP's own menu by accident.</li>
 <li><b>Hands-free firmware install.</b> AnyPS confirms RPCS3's install dialog for you.</li>
 </ul>
+<h3>31. Cheats Manager <span class="newtag">New in V1.03</span></h3>
+<ul>
+<li>Any game's △ menu ▸ Cheats (also in the in-game overlay). Each system in its own format, switched with one press.</li>
+<li><b>PS1</b> — pulls the game's entry out of DuckStation's built-in cheat database and lists every cheat; ticked ones are written to the game's settings.</li>
+<li><b>PS2</b> — lists your .pnach cheat files for the game and toggles them.</li>
+<li><b>PSP</b> — lists the cheats in the game's CWCheat file and toggles them (can create the file for you).</li>
+<li><b>PS3</b> — lists the community game patches for your title (60 FPS, unlocks, fixes) and toggles them by version.</li>
+<li><b>PS4</b> — shows the cheat files shadPS4 has downloaded for the game (switching them on happens in shadPS4's own window).</li>
+</ul>
 <h3>Controls at a glance</h3>
 <div class="tbl"><table><thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead><tbody><tr><td>Move</td><td>D-pad / left stick</td><td>Arrows / WASD</td></tr><tr><td>Choose</td><td>✕ / A</td><td>Enter</td></tr><tr><td>Back</td><td>○ / B</td><td>Esc</td></tr><tr><td>Game options</td><td>△ / Y</td><td>Tab</td></tr><tr><td>Sort / Continue</td><td>□ / X</td><td>F</td></tr><tr><td>Home menu (in game)</td><td>PS / Guide, or hold Share/View</td><td>Ctrl+Shift+Q</td></tr><tr><td>Quit game</td><td>hold Share/View + Options/Start</td><td>—</td></tr><tr><td>Close AnyPS</td><td>—</td><td>Alt+F4 (or ○/Esc on picker)</td></tr></tbody></table></div>
 <h3>Not yet</h3>
 <ul>
 <li><b>PS5</b> — the last system, via the AnyPS5 relinker; started only once PS1–PS4 are fully solid.</li>
-<li>A handful of features need a live hands-on check: save states, fast-forward/rewind, the graphics preset, the cheats toggle, and RetroAchievements-on-PS3.</li>
+<li>Features that still want a live hands-on check: cheat toggles in a game, a per-game layout reverting on exit, dragging a BIOS onto the window, the first real RPCN sign-up, and the updater swapping itself.</li>
 </ul>
 
     </div>
   </dialog>
 
   <dialog class="features" id="changelog" aria-labelledby="clTitle">
-    <div class="dhead"><h2 id="clTitle">What's new in V1.02</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="clTitle">What's new in V1.03</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
+<p>Everything new, changed and fixed since V1.02.</p>
+<h3>New Features</h3>
+<h4>Mass install &amp; library intake</h4>
+<ul>
+<li><b>Install all</b>: one button in the PS3 Game column installs every pending update and DLC across the whole library; one tile in the PS4 list unpacks every dropped package. An AnyPS progress bar (package N of M, %, what's installing) replaces the emulator's dialogs, and the emulator stays hidden throughout.</li>
+<li>Import PS1/PS2/PSP games from a folder (one folder per game; a .cue brings its .bin along).</li>
+<li>Folder watcher: drop games into Games\&lt;console&gt; while AnyPS is open and the list refreshes by itself.</li>
+<li>Find duplicate games: the same title in several regions, with one-press hide for the extras.</li>
+<li>Drag-and-drop onto the AnyPS window: BIOS files and PS3UPDAT.PUP install themselves; game files and .pkg are filed into the right Games folder.</li>
+</ul>
+<h4>Set-up wizard</h4>
+<ul>
+<li>First boot is now a 4-step wizard (PS1, PS2, PS3, checklist): what the file is, where it comes from, “Pick the file…”, an automatic search of Downloads/Desktop/Documents, and the drop zone. Also in AnyPS Settings ▸ Set-up wizard.</li>
+</ul>
+<h4>AnyPS updates itself</h4>
+<ul>
+<li>AnyPS Settings ▸ AnyPS version checks this website, shows installed vs newest, and “Download and install” swaps in the new build and restarts. Games, saves and settings are untouched. A quiet toast at boot when a newer version exists.</li>
+</ul>
+<h4>Online: RPCN accounts inside AnyPS</h4>
+<ul>
+<li>AnyPS now talks to RPCN directly: create the free PS3-online account (username, e-mail, password), type in the e-mailed code, check the sign-in, resend the code — all in AnyPS. “I already have an account” too.</li>
+<li>The first time you start a PS3 game: “Would you like to enable Netplay?” Yes sets it up right there; No opens the PS3 network settings.</li>
+<li>PSP online in one tap (networking on, busiest public server), plus a “Finding PSP players” card: the 3 rules, the Discords, and a “fresh network ID” button for two PCs that can't see each other.</li>
+</ul>
+<h4>Cheats manager</h4>
+<ul>
+<li>Any game's △ menu ▸ Cheats (and in the in-game overlay). PS1: the game's cheats from DuckStation's built-in database, one press to switch. PS2: your .pnach files. PSP: the CWCheat list. PS3: the community game patches for your title, by version. PS4: the cheat files shadPS4 has downloaded.</li>
+</ul>
+<h4>Per-game controller layout</h4>
+<ul>
+<li>A game's △ menu ▸ Controller layout for this game: its own buttons, written when the game starts and your usual layout restored when it ends (PS1/PS2/PS3).</li>
+</ul>
+<h4>Browsing</h4>
+<ul>
+<li>Box-art grid view: big covers, six across, scrolls by row (△ menu ▸ Game list style, or AnyPS Settings).</li>
+<li>Search all games across every console at once.</li>
+<li>Sort: Never played. Filter: Only show games likely to run.</li>
+</ul>
+<h4>Profiles</h4>
+<ul>
+<li>Profile stats page (total play time, games played, most played, favorite console, launches).</li>
+<li>Guest profile that leaves no trace; avatar from any image file; export / import a whole profile as one .zip.</li>
+</ul>
+<h4>In-game tools</h4>
+<ul>
+<li>Save-state manager: every save state per console, with dates, and delete.</li>
+<li>Favorite screenshots: press □ on a photo to star it.</li>
+<li>Reset a console's settings back to AnyPS defaults.</li>
+<li>Automatic save backup on a schedule (daily / weekly).</li>
+</ul>
+<h4>Look &amp; feel</h4>
+<ul>
+<li>Six background animations, a different one each boot: ribbons, floating circles, rolling squares, rising bubbles, a starfield, drifting hexagons — or pin one.</li>
+<li>Idle screensaver / attract mode that drifts through your games' art and music.</li>
+<li>Smooth fades between systems; skip the boot animation; boot chime on/off.</li>
+<li>Controller battery indicator in the top bar.</li>
+<li>An honest “About PS4 support” card on first open: what works, what doesn't, how to follow the shadPS4 project.</li>
+</ul>
+<h3>Improvements &amp; Changes</h3>
+<ul>
+<li>On-screen keyboard rebuilt: a clean grid with a cursor; LT = Shift, RT = Done, LB/RB move the cursor, □ Backspace, △ Space, LT+△ = symbols page, numbers row.</li>
+<li>Profile badge moved to the top-left so it no longer collides with the clock and controller info.</li>
+<li>RPCS3's “don't show this again” on install dialogs is ticked for you during mass install.</li>
+<li>shadPS4 updated to the 2026-11-08 nightly; the emulator updater now shows the real installed build.</li>
+<li>Version shown as V1.03 on the boot screen and in Settings.</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
+<li>Fixed the Profile badge overlapping the date/time and controller info on the system picker.</li>
+<li>Fixed the on-screen keyboard jumping to the far left/right of the bottom row while typing.</li>
+</ul>
+<h3>Notes</h3>
+<ul>
+<li>PS4: The Order: 1886 crashes about 11 seconds in, and inFAMOUS Second Son renders only the sky after the intro. Both are shadPS4 renderer gaps, not settings; AnyPS rides the nightlies.</li>
+<li>PlayStation 5 support is still “coming soon”.</li>
+<li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the release.</li>
+</ul>
+<details><summary><b>Earlier: what was new in V1.02</b></summary>
 <p>Everything new, changed and fixed since V1.</p>
 <h3>New Features</h3>
 <h4>User Profiles</h4>
@@ -384,6 +494,7 @@
 <li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the shareable release — AnyPS builds its PlayStation look on your own PC from your own PS3 system-software file.</li>
 </ul>
 
+</details>
     </div>
   </dialog>
 
