@@ -95,3 +95,18 @@ dialog.features th{color:var(--text);font-family:var(--display)}
 dialog.features td{color:var(--muted)}
 .linkbtn{background:none;border:0;padding:0;margin-top:14px;color:var(--accent);font:600 1rem var(--display);cursor:pointer}
 .linkbtn:hover{text-decoration:underline}
+/* AnyPS: preview video, changelog, old builds */
+.preview{margin:18px 0 6px;border-radius:16px;overflow:hidden;border:1px solid var(--line-2);box-shadow:0 24px 60px -28px rgba(0,0,0,.9);background:#000;aspect-ratio:1600/662}
+.preview video{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.dlrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.dlrow .linkbtn{margin-top:0}
+.oldbuilds{position:relative;font-size:.95rem}
+.oldbuilds summary{cursor:pointer;list-style:none;color:var(--muted);padding:6px 12px;border:1px solid var(--line-2);border-radius:10px;user-select:none}
+.oldbuilds summary::-webkit-details-marker{display:none}
+.oldbuilds summary::after{content:" \25BE"}
+.oldbuilds[open] summary{color:var(--text);border-color:var(--accent)}
+.oldbuilds ul{position:absolute;right:0;top:calc(100% + 6px);min-width:180px;margin:0;padding:6px;list-style:none;background:#0f1216;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 18px 40px -16px rgba(0,0,0,.9);z-index:5}
+.oldbuilds li a{display:block;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--text)}
+.oldbuilds li a:hover{background:var(--panel-2);color:var(--accent)}
+dialog.features h4{margin:16px 0 4px;font-family:var(--display);color:var(--text)}
+.newtag{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;margin-left:6px;padding:2px 7px;border-radius:999px;border:1px solid var(--accent);color:var(--accent)}

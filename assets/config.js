@@ -6,9 +6,13 @@ window.SITE = {
   discord: "https://discord.gg/U35dt6Qb2A",
 
   anyps: {
-    version: "",            // e.g. "1.0.0"
-    downloadUrl: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link",
-    sizeLabel: "",          // e.g. "1.2 GB"
+    version: "1.02",
+    downloadUrl: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link",
+    sizeLabel: "",          // e.g. "903 MB"
+    // Older releases, newest first. Add the outgoing build here when you publish a new one.
+    oldBuilds: [
+      { version: "1.0", url: "https://drive.google.com/file/d/1WTz6VA1pCxiSANa9F9x6i9o4d-274HyM/view?usp=drive_link" },
+    ],
   },
 
   // Personal Vault: the owner's own backups. Keep each Drive file's sharing
