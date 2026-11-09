@@ -8,6 +8,10 @@ window.SITE = {
   anyps: {
     version: "1.02",
     downloadUrl: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link",
+    // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
+    // compares "version" above with the installed one, and swaps itself. Any Google Drive share link works.
+    // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
+    exeUrl: "",
     sizeLabel: "",          // e.g. "903 MB"
     // Older releases, newest first. Add the outgoing build here when you publish a new one.
     oldBuilds: [
