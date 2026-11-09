@@ -35,6 +35,11 @@
       <div class="eyebrow">Launcher &middot; Windows 10/11 &middot; 64-bit</div>
       <h1>AnyPS</h1>
       <p class="lead">One launcher for five generations of PlayStation emulation. Plug in a controller, point it at your own games, and play from the couch without touching a mouse.</p>
+      <div class="preview">
+        <video id="preview" autoplay muted loop playsinline preload="auto" poster="../assets/anyps-preview.jpg" aria-label="AnyPS in action (silent preview)" disablepictureinpicture disableremoteplayback>
+          <source src="../assets/anyps-preview.mp4" type="video/mp4" />
+        </video>
+      </div>
       <ul class="feat">
         <li><b>Five systems, one shelf</b> &mdash; PS1, PS2, PSP, PS3 and PS4 games side by side, powered by the open-source DuckStation, PCSX2, PPSSPP, RPCS3 and shadPS4 projects.</li>
         <li><b>Controller first</b> &mdash; DualSense, DualShock and Xbox pads work out of the box, including in every settings screen.</li>
@@ -50,6 +55,13 @@
       <p class="lead" style="font-size:1rem">Free. Unzip anywhere and run <code>AnyPS.exe</code>.</p>
       <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
       <div id="dlmeta" class="meta"></div>
+      <div class="dlrow">
+        <button class="linkbtn" id="openChangelog" type="button">Changelog</button>
+        <details class="oldbuilds" id="oldBuilds" hidden>
+          <summary>Old builds</summary>
+          <ul id="oldList"></ul>
+        </details>
+      </div>
 
       <h3 style="margin-top:24px">Getting started</h3>
       <ol class="steps">
@@ -65,7 +77,7 @@
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
-    <div class="dhead"><h2 id="featTitle">AnyPS: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="featTitle">AnyPS V1.02: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
 <p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across five systems, each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
 <h3>1. The app itself</h3>
@@ -205,12 +217,171 @@
 <li><b>PS3:</b> installs game, then updates, then DLC on first launch (with <code>.rap</code> licences), driven automatically; base disc registered first.</li>
 <li><b>PS4:</b> unpacks <code>.pkg</code> tiles (game / update / DLC) into the library; patches the DLC-loader stub so games with add-ons boot.</li>
 </ul>
+<h3>20. User Profiles <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Up to 10 player profiles, each with a name, an avatar (12 colors or any screenshot), and an optional 4-digit passcode — just like a PS3/PS4.</li>
+<li>A “Who's playing?” sign-in screen, reached from a smiley Profile badge in the top bar of the console picker (press Up, or click it).</li>
+<li>“Create New User Profile” tile; Triangle opens “Modify User Profile” (rename / picture / passcode); Square deletes with a confirmation.</li>
+<li>Each profile keeps its OWN play time, favorites, game names, trophies, AND save games (save data is redirected per profile, so switching players swaps saves and nothing is shared by accident). The first profile you make inherits your existing saves — they are moved in, never deleted.</li>
+<li>Unified “Trophies &amp; achievements” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
+</ul>
+<h3>21. Collections <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Make your own game folders (Settings &gt; Collections, or a game's Triangle menu &gt; Collections).</li>
+<li>Automatic “Most Played Games” folder: any game you play 10+ hours collects here on its own, sorted most-played first.</li>
+</ul>
+<h3>22. Tutorials <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>First-time, on-screen tips on the system picker, in a game list, and the first time you open the in-game overlay.</li>
+<li>A per-game “How to play” card (shown the first time you launch each game, and in its Triangle menu) with the controls and an editable walkthrough you can fill in yourself.</li>
+<li>Every tutorial has “Turn off all tutorials”; switch them back on or replay them all from Settings &gt; Tutorials.</li>
+</ul>
+<h3>23. Controller Remap (Visual) <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>A visual controller screen (Settings &gt; Remap controller buttons): rebind any button from a live pad diagram, with quick presets (Standard, Swap Cross/Circle, Nintendo layout).</li>
+<li>Writes your layout straight into PS1, PS2 and PS3, with automatic backups and a Reset to default. (PSP and PS4 keep their own controller settings.)</li>
+</ul>
+<h3>24. Online / Netplay <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Settings &gt; Online play: set up PlayStation 3 online (RPCN) with a guided account walkthrough, and PSP ad-hoc Wi-Fi (pick a public server) — no account needed for PSP.</li>
+<li>A one-time “Play online?” prompt the first time you open the PS3 and PSP lists. (PS1, PS2 and PS4 have no usable built-in online.)</li>
+</ul>
+<h3>25. Game Compatibility Flags <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Rate how well each game runs (Boots / Playable / Has issues / Runs perfectly) from its Triangle menu; the rating shows on the game's tile.</li>
+<li>PlayStation 3 games auto-fill their rating from RPCS3's official compatibility list. Your own rating always overrides it.</li>
+</ul>
+<h3>26. Game Backgrounds, Music &amp; Video <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Highlighting a game now shows its full-screen background: the real built-in art on PS3/PS4/PSP, and the box art for PS1/PS2 games that have no background image — so every game shows something.</li>
+<li>Theme music plays on highlight for games that include it (PS3/PS4).</li>
+<li>Optional looping background VIDEO: drop a “background.mp4” in a game's folder, or set one from the game's Triangle menu.</li>
+</ul>
+<h3>27. Library &amp; Quality Of Life <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>“New” tag on games added in the last week.</li>
+<li>Play time shown on each game's tile/row.</li>
+<li>Optional “open the last console on startup” (skip the system picker).</li>
+<li>PS4 .pkg files you drop into the PS4 games folder are detected automatically and offered as one-click “install” tiles, with a toast.</li>
+<li>Added game: The Order: 1886 (PlayStation 4).</li>
+</ul>
+<h3>28. Appearance <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Color theme choice: Random (new on every boot), PlayStation blue, or a color per system — plus a custom-color picker (12 shades).</li>
+</ul>
+<h3>29. In A Game <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li>Quick-resume: the overlay's “Step away (quick pause)” dims to a clean Paused screen with the game's art; any button jumps you back in.</li>
+<li>Screenshot slideshow: press Cross in any photo gallery for a full-screen, auto-advancing slideshow with a slow Ken Burns pan and cross-fade.</li>
+<li>Controller feedback (Settings &gt; Controller feedback): set rumble strength for PS2 and PS3 games; PS1/PS4 rumble and DualSense adaptive triggers are automatic.</li>
+</ul>
+<h3>30. Smoother everyday use <span class="newtag">New in V1.02</span></h3>
+<ul>
+<li><b>Native PC mouse everywhere.</b> A real pointer that hides when idle; click anything, single-click to open a game, scroll to move, right-click to go back.</li>
+<li><b>Every setting explained.</b> Each option shows a plain-language name and a description when highlighted.</li>
+<li><b>Tidier emulator settings.</b> RPCS3 and shadPS4 options grouped into Graphics / Sound / Controller / System, with developer options under Advanced.</li>
+<li><b>PSP controller lockdown.</b> The pad can't trigger fast-forward or PPSSPP's own menu by accident.</li>
+<li><b>Hands-free firmware install.</b> AnyPS confirms RPCS3's install dialog for you.</li>
+</ul>
 <h3>Controls at a glance</h3>
 <div class="tbl"><table><thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead><tbody><tr><td>Move</td><td>D-pad / left stick</td><td>Arrows / WASD</td></tr><tr><td>Choose</td><td>✕ / A</td><td>Enter</td></tr><tr><td>Back</td><td>○ / B</td><td>Esc</td></tr><tr><td>Game options</td><td>△ / Y</td><td>Tab</td></tr><tr><td>Sort / Continue</td><td>□ / X</td><td>F</td></tr><tr><td>Home menu (in game)</td><td>PS / Guide, or hold Share/View</td><td>Ctrl+Shift+Q</td></tr><tr><td>Quit game</td><td>hold Share/View + Options/Start</td><td>—</td></tr><tr><td>Close AnyPS</td><td>—</td><td>Alt+F4 (or ○/Esc on picker)</td></tr></tbody></table></div>
 <h3>Not yet</h3>
 <ul>
 <li><b>PS5</b> — the last system, via the AnyPS5 relinker; started only once PS1–PS4 are fully solid.</li>
 <li>A handful of features need a live hands-on check: save states, fast-forward/rewind, the graphics preset, the cheats toggle, and RetroAchievements-on-PS3.</li>
+</ul>
+
+    </div>
+  </dialog>
+
+  <dialog class="features" id="changelog" aria-labelledby="clTitle">
+    <div class="dhead"><h2 id="clTitle">What's new in V1.02</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
+    <div class="dbody">
+<p>Everything new, changed and fixed since V1.</p>
+<h3>New Features</h3>
+<h4>User Profiles</h4>
+<ul>
+<li>Up to 10 player profiles, each with a name, an avatar (12 colors or any screenshot), and an optional 4-digit passcode — just like a PS3/PS4.</li>
+<li>A “Who's playing?” sign-in screen, reached from a smiley Profile badge in the top bar of the console picker (press Up, or click it).</li>
+<li>“Create New User Profile” tile; Triangle opens “Modify User Profile” (rename / picture / passcode); Square deletes with a confirmation.</li>
+<li>Each profile keeps its OWN play time, favorites, game names, trophies, AND save games (save data is redirected per profile, so switching players swaps saves and nothing is shared by accident). The first profile you make inherits your existing saves — they are moved in, never deleted.</li>
+<li>Unified “Trophies &amp; achievements” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
+</ul>
+<h4>Collections</h4>
+<ul>
+<li>Make your own game folders (Settings &gt; Collections, or a game's Triangle menu &gt; Collections).</li>
+<li>Automatic “Most Played Games” folder: any game you play 10+ hours collects here on its own, sorted most-played first.</li>
+</ul>
+<h4>Tutorials</h4>
+<ul>
+<li>First-time, on-screen tips on the system picker, in a game list, and the first time you open the in-game overlay.</li>
+<li>A per-game “How to play” card (shown the first time you launch each game, and in its Triangle menu) with the controls and an editable walkthrough you can fill in yourself.</li>
+<li>Every tutorial has “Turn off all tutorials”; switch them back on or replay them all from Settings &gt; Tutorials.</li>
+</ul>
+<h4>Controller Remap (Visual)</h4>
+<ul>
+<li>A visual controller screen (Settings &gt; Remap controller buttons): rebind any button from a live pad diagram, with quick presets (Standard, Swap Cross/Circle, Nintendo layout).</li>
+<li>Writes your layout straight into PS1, PS2 and PS3, with automatic backups and a Reset to default. (PSP and PS4 keep their own controller settings.)</li>
+</ul>
+<h4>Online / Netplay</h4>
+<ul>
+<li>Settings &gt; Online play: set up PlayStation 3 online (RPCN) with a guided account walkthrough, and PSP ad-hoc Wi-Fi (pick a public server) — no account needed for PSP.</li>
+<li>A one-time “Play online?” prompt the first time you open the PS3 and PSP lists. (PS1, PS2 and PS4 have no usable built-in online.)</li>
+</ul>
+<h4>Game Compatibility Flags</h4>
+<ul>
+<li>Rate how well each game runs (Boots / Playable / Has issues / Runs perfectly) from its Triangle menu; the rating shows on the game's tile.</li>
+<li>PlayStation 3 games auto-fill their rating from RPCS3's official compatibility list. Your own rating always overrides it.</li>
+</ul>
+<h4>Game Backgrounds, Music &amp; Video</h4>
+<ul>
+<li>Highlighting a game now shows its full-screen background: the real built-in art on PS3/PS4/PSP, and the box art for PS1/PS2 games that have no background image — so every game shows something.</li>
+<li>Theme music plays on highlight for games that include it (PS3/PS4).</li>
+<li>Optional looping background VIDEO: drop a “background.mp4” in a game's folder, or set one from the game's Triangle menu.</li>
+</ul>
+<h4>Library &amp; Quality Of Life</h4>
+<ul>
+<li>“New” tag on games added in the last week.</li>
+<li>Play time shown on each game's tile/row.</li>
+<li>Optional “open the last console on startup” (skip the system picker).</li>
+<li>PS4 .pkg files you drop into the PS4 games folder are detected automatically and offered as one-click “install” tiles, with a toast.</li>
+<li>Added game: The Order: 1886 (PlayStation 4).</li>
+</ul>
+<h4>Appearance</h4>
+<ul>
+<li>Color theme choice: Random (new on every boot), PlayStation blue, or a color per system — plus a custom-color picker (12 shades).</li>
+</ul>
+<h4>In A Game</h4>
+<ul>
+<li>Quick-resume: the overlay's “Step away (quick pause)” dims to a clean Paused screen with the game's art; any button jumps you back in.</li>
+<li>Screenshot slideshow: press Cross in any photo gallery for a full-screen, auto-advancing slideshow with a slow Ken Burns pan and cross-fade.</li>
+<li>Controller feedback (Settings &gt; Controller feedback): set rumble strength for PS2 and PS3 games; PS1/PS4 rumble and DualSense adaptive triggers are automatic.</li>
+</ul>
+<h3>Improvements &amp; Changes</h3>
+<ul>
+<li>Native PC mouse everywhere: a real pointer that appears when you move the mouse and hides when idle, click anything, single-click to open a game, scroll wheel to move, right-click to go back.</li>
+<li>Every setting now shows a plain-language name and a description when you highlight it — across shadPS4, RPCS3 and the PS1/PS2/PSP screens.</li>
+<li>RPCS3 and shadPS4 settings reorganized: the options you actually change are grouped into Graphics / Sound / Controller / System, and the hundreds of low-level developer options are tucked into an “Advanced” submenu.</li>
+<li>PSP controller lockdown: the pad can no longer trigger fast-forward, speed or PPSSPP's own menu by accident, and AnyPS pauses PSP games without ever showing PPSSPP's menu.</li>
+<li>PS/Home button (and Ctrl+Shift+Q) toggles the overlay open and closed; the overlay can be closed with Back as well.</li>
+<li>Firmware install made hands-free: AnyPS brings RPCS3 to the front and confirms the install dialog for you.</li>
+<li>shadPS4 (PS4 emulator) updated to the latest nightly build.</li>
+<li>Version now shown as V1.02 on the boot screen and in Settings.</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
+<li>Fixed the recurring “double PS-button menu”: the overlay no longer flashes a stale/duplicate menu when you return to a game, and a single PS-button press can no longer open-then-reopen it.</li>
+<li>Fixed the in-game overlay sometimes appearing but not taking control, and the game not returning to the foreground on resume.</li>
+<li>Fixed PS4 games getting stuck in “emulation paused” after using the overlay (the overlay no longer double-toggles shadPS4's pause).</li>
+<li>Fixed Back at the overlay's main menu going to the game list instead of resuming the game.</li>
+<li>Fixed the PS4 game list hanging while scanning a very large dropped-in .pkg file (the scan now runs in the background).</li>
+<li>Fixed PS1/PS2 games showing a blank background on highlight (they now fall back to box art).</li>
+<li>Fixed cover-art fallback (now uses GameTDB; the old source was offline).</li>
+</ul>
+<h3>Not Included / Notes</h3>
+<ul>
+<li>PlayStation 5 support is still “coming soon” and not part of this build.</li>
+<li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the shareable release — AnyPS builds its PlayStation look on your own PC from your own PS3 system-software file.</li>
 </ul>
 
     </div>
@@ -226,9 +397,27 @@
   if (a.downloadUrl) {
     const dl = document.getElementById("dl");
     dl.href = a.downloadUrl; dl.removeAttribute("aria-disabled");
-    dl.textContent = "Download AnyPS" + (a.version ? " v" + a.version : "");
+    dl.textContent = "Download AnyPS" + (a.version ? " V" + a.version : "");
     document.getElementById("dlmeta").textContent = [a.sizeLabel, "Hosted on Google Drive"].filter(Boolean).join(" · ");
   }
+  const old = a.oldBuilds || [];
+  if (old.length) {
+    const ul = document.getElementById("oldList");
+    for (const b of old) {
+      const li = document.createElement("li"), link = document.createElement("a");
+      link.href = b.url; link.target = "_blank"; link.rel = "noopener";
+      link.textContent = "AnyPS V" + b.version + (b.note ? " · " + b.note : "");
+      li.append(link); ul.append(li);
+    }
+    document.getElementById("oldBuilds").hidden = false;
+  }
+  const cl = document.getElementById("changelog");
+  document.getElementById("openChangelog").addEventListener("click", () => cl.showModal());
+  cl.querySelector("[data-close]").addEventListener("click", () => cl.close());
+  cl.addEventListener("click", e => { if (e.target === cl) cl.close(); });
+  const vid = document.getElementById("preview");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { vid.removeAttribute("autoplay"); vid.pause(); }
+  vid.muted = true; vid.play && vid.play().catch(() => {});
   const dlg = document.getElementById("features");
   const openF = () => { if (!dlg.open) dlg.showModal(); };
   document.getElementById("openFeatures").addEventListener("click", () => { history.replaceState(null, "", "#features"); openF(); });
