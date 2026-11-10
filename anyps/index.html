@@ -56,6 +56,14 @@ body.photo .faq details{background:rgba(15,18,22,.82)}
 .faq details[open] summary::before{content:"\2039 "}
 .faq details > *:not(summary){color:var(--muted);font-size:.93rem;margin:0 0 12px}
 .sysreq{font-family:var(--mono);font-size:.82rem}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.ctrl{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+body.photo .ctrl{background:rgba(15,18,22,.82);backdrop-filter:blur(8px)}
+.ctrl .g{display:flex;gap:6px;align-items:center;flex:0 0 auto}
+.gly{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--anyps);color:var(--anyps);font-size:.95rem;font-weight:700;background:rgba(61,139,255,.08)}
+.key{font-family:var(--mono);font-size:.72rem;color:var(--muted);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:6px;padding:3px 7px;background:var(--panel-2);white-space:nowrap}
+.ctrl .lbl{color:var(--text);font-size:.92rem;font-weight:600}
+.ctrl .lbl small{display:block;color:var(--muted);font-weight:400;font-size:.8rem}
 </style>
 <script src="../assets/config.js"></script>
 </head>
@@ -173,6 +181,21 @@ body.photo .faq details{background:rgba(15,18,22,.82)}
       <p>No. AnyPS ships with no games, no BIOS or firmware, and no Sony artwork or sounds. The PlayStation look you see is rebuilt on your own PC from your own system-software file. Please only use content you legally own.</p></details>
     <details><summary>How does AnyPS update itself?</summary>
       <p>In <i>AnyPS Settings &rsaquo; AnyPS version</i>: it checks this page, shows your installed build against the newest, and &ldquo;Download and install&rdquo; swaps itself in and restarts. Your games, saves and settings are untouched.</p></details>
+  </section>
+
+  <section class="sec" aria-label="Controls">
+    <h2>Controls at a glance</h2>
+    <p class="lead" style="font-size:1rem">The whole interface drives from a controller &mdash; or a keyboard. PlayStation glyphs on a PlayStation pad, Xbox buttons on an Xbox pad, switched live.</p>
+    <div class="ctrls">
+      <div class="ctrl"><span class="g"><span class="gly">&#10005;</span><span class="key">Enter</span></span><span class="lbl">Choose<small>open a game or setting</small></span></div>
+      <div class="ctrl"><span class="g"><span class="gly">&#9711;</span><span class="key">Esc</span></span><span class="lbl">Back<small>up a level, or exit</small></span></div>
+      <div class="ctrl"><span class="g"><span class="gly">&#9651;</span><span class="key">Tab</span></span><span class="lbl">Options<small>a game&rsquo;s &amp; the system menu</small></span></div>
+      <div class="ctrl"><span class="g"><span class="gly">&#9633;</span><span class="key">F</span></span><span class="lbl">Sort / Continue<small>last game from the picker</small></span></div>
+      <div class="ctrl"><span class="g"><span class="key">PS</span><span class="key">hold View</span></span><span class="lbl">In-game overlay<small>saves, states, cheats, quit</small></span></div>
+      <div class="ctrl"><span class="g"><span class="key">D-pad</span><span class="key">&#8592;&#8593;&#8594;&#8595;</span></span><span class="lbl">Move<small>left stick or WASD too</small></span></div>
+      <div class="ctrl"><span class="g"><span class="key">L1</span><span class="key">R1</span></span><span class="lbl">Jump by letter<small>in long game lists</small></span></div>
+      <div class="ctrl"><span class="g"><span class="key">View</span><span class="key">+ Start</span></span><span class="lbl">Quit a game<small>hold both together</small></span></div>
+    </div>
   </section>
 
   <section class="sec" aria-label="Report a problem">
