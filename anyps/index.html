@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AnyPS — One Launcher, Every Generation</title>
-<meta name="description" content="AnyPS is a free, controller-first Windows launcher that brings PS1, PS2, PSP, PS3 and PS4 emulators together in one place. Ships with no games or BIOS." />
+<meta name="description" content="AnyPS is a free, controller-first Windows launcher that brings PS1, PS2, PSP, PS Vita, PS3 and PS4 emulators together in one place. Ships with no games or BIOS." />
 <meta name="theme-color" content="#07090b" />
 <meta property="og:title" content="AnyPS — One Launcher, Every Generation" />
 <meta property="og:description" content="A controller-first launcher for open-source PlayStation emulators. Bring your own games." />
@@ -17,6 +17,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/hub.css" />
 <link rel="stylesheet" href="../assets/socials.css" />
+<style>
+.vsound{position:absolute;right:10px;bottom:10px;z-index:2;font:600 .8rem var(--display);color:var(--text);background:rgba(10,12,16,.72);border:1px solid var(--line-2);border-radius:999px;padding:6px 12px;cursor:pointer;backdrop-filter:blur(6px)}
+.vsound[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.gallery{margin:14px 0 4px;display:grid;grid-template-columns:36px 1fr 36px;align-items:center;gap:8px}
+.gstage{display:grid;grid-template-columns:1fr 3.2fr 1fr;align-items:center;gap:10px;min-width:0}
+.gside{display:block;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;opacity:.55;transition:opacity .2s,transform .2s;aspect-ratio:2560/1080}
+.gside:hover,.gside:focus-visible{opacity:.9;transform:scale(1.03);outline:none}
+.gside img{display:block;width:100%;height:100%;object-fit:cover}
+.gmain{margin:0;border:1px solid var(--line-2);border-radius:14px;overflow:hidden;background:#000;box-shadow:0 20px 50px -26px rgba(0,0,0,.9)}
+.gmain img{display:block;width:100%;aspect-ratio:2560/1080;object-fit:cover;transition:opacity .25s}
+.gmain figcaption{padding:8px 12px;font-size:.88rem;color:var(--muted);background:rgba(15,18,22,.9);border-top:1px solid var(--line)}
+.garr{width:36px;height:64px;border:1px solid var(--line-2);border-radius:12px;background:var(--panel);color:var(--text);font-size:1.6rem;line-height:1;cursor:pointer}
+.garr:hover,.garr:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+.gdots{grid-column:1/-1;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.gdots button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--line-2);cursor:pointer}
+.gdots button[aria-selected="true"]{background:var(--accent);transform:scale(1.3)}
+@media (max-width:640px){.gstage{grid-template-columns:1fr}.gside{display:none}.gallery{grid-template-columns:28px 1fr 28px}}
+</style>
 <script src="../assets/config.js"></script>
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -34,19 +52,32 @@
     <section>
       <div class="eyebrow">Launcher &middot; Windows 10/11 &middot; 64-bit</div>
       <h1>AnyPS</h1>
-      <p class="lead">One launcher for five generations of PlayStation emulation. Plug in a controller, point it at your own games, and play from the couch without touching a mouse.</p>
-      <div class="preview">
-        <video id="preview" autoplay muted loop playsinline preload="auto" poster="../assets/anyps-preview.jpg" aria-label="AnyPS in action (silent preview)" disablepictureinpicture disableremoteplayback>
-          <source src="../assets/anyps-preview.mp4" type="video/mp4" />
+      <p class="lead">One launcher for six generations of PlayStation emulation. Plug in a controller, point it at your own games, and play from the couch without touching a mouse.</p>
+      <div class="preview" style="aspect-ratio:16/9;position:relative">
+        <video id="preview" autoplay muted loop playsinline preload="metadata" poster="../assets/anyps-preview-v2.jpg" aria-label="AnyPS walkthrough" disablepictureinpicture disableremoteplayback>
+          <source src="../assets/anyps-preview-v2.mp4" type="video/mp4" />
         </video>
+        <button class="vsound" id="vsound" type="button" aria-pressed="false" title="Sound">&#128263; Sound off</button>
+      </div>
+      <div class="gallery" id="gallery" aria-label="What AnyPS looks like">
+        <button class="garr" id="gprev" type="button" aria-label="Previous screen">&#8249;</button>
+        <div class="gstage">
+          <button class="gside" id="gsidel" type="button" aria-label="Previous screen"><img alt="" loading="lazy" /></button>
+          <figure class="gmain"><img id="gimg" alt="" /><figcaption id="gcap"></figcaption></figure>
+          <button class="gside" id="gsider" type="button" aria-label="Next screen"><img alt="" loading="lazy" /></button>
+        </div>
+        <button class="garr" id="gnext" type="button" aria-label="Next screen">&#8250;</button>
+        <div class="gdots" id="gdots" role="tablist" aria-label="Screens"></div>
       </div>
       <ul class="feat">
-        <li><b>Five systems, one shelf</b> &mdash; PS1, PS2, PSP, PS3 and PS4 games side by side, powered by the open-source DuckStation, PCSX2, PPSSPP, RPCS3 and shadPS4 projects.</li>
+        <li><b>Six systems, one shelf</b> &mdash; PS1, PS2, PSP, PS Vita, PS3 and PS4 games side by side, powered by the open-source DuckStation, PCSX2, PPSSPP, Vita3K, RPCS3 and shadPS4 projects.</li>
         <li><b>Controller first</b> &mdash; DualSense, DualShock and Xbox pads work out of the box, including in every settings screen.</li>
         <li><b>Settings without leaving</b> &mdash; tweak each emulator, globally or per game, from inside the launcher.</li>
         <li><b>Guided first boot</b> &mdash; a simple, kid-friendly setup walks you through adding your games and firmware.</li>
         <li><b>Motion helper</b> &mdash; stick-driven tilt and shake for games that expect a gyro.</li>
         <li><b>Mass install, cheats, online</b> &mdash; one-button install of a whole PS3/PS4 library, a cheats manager for every system, and PS3 online (RPCN) accounts created right inside AnyPS.</li>
+        <li><b>Memory tools, save vault, smart lists</b> &mdash; find and freeze values in a running game, roll saves back in time, and browse by Unplayed / In progress / Finished / Franchise.</li>
+        <li><b>No seams</b> &mdash; a launch screen until the game is really playing, emulator pop-ups answered for you, and a crash guard that reverts bad settings.</li>
         <li><b>Keeps itself current</b> &mdash; AnyPS checks this page and updates itself in place.</li>
       </ul>
       <button class="linkbtn" id="openFeatures" type="button">See the complete feature list &rarr;</button>
@@ -79,9 +110,9 @@
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
-    <div class="dhead"><h2 id="featTitle">AnyPS V1.03: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="featTitle">AnyPS V1.04: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
-<p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across five systems, each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
+<p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across six systems (PS1, PS2, PSP, PS Vita, PS3, PS4), each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
 <h3>1. The app itself</h3>
 <ul>
 <li><b>Single executable.</b> One <code>AnyPS.exe</code> launches everything; no installer, no separate windows to manage.</li>
@@ -96,19 +127,19 @@
 <li><b>Close with Alt+F4,</b> or ○ / Esc on the system picker brings up an "Are you certain?" exit confirm.</li>
 </ul>
 <h3>2. Systems &amp; emulators (all bundled)</h3>
-<div class="tbl"><table><thead><tr><th>System</th><th>Emulator</th></tr></thead><tbody><tr><td>PS1</td><td>DuckStation</td></tr><tr><td>PS2</td><td>PCSX2</td></tr><tr><td>PSP</td><td>PPSSPP</td></tr><tr><td>PS3</td><td>RPCS3</td></tr><tr><td>PS4</td><td>shadPS4 (nightly), plus RPCS4</td></tr><tr><td>PS5</td><td>(planned — AnyPS5 relinker, not yet set up)</td></tr></tbody></table></div>
+<div class="tbl"><table><thead><tr><th>System</th><th>Emulator</th></tr></thead><tbody><tr><td>PS1</td><td>DuckStation</td></tr><tr><td>PS2</td><td>PCSX2</td></tr><tr><td>PSP</td><td>PPSSPP</td></tr><tr><td>PS Vita</td><td>Vita3K</td></tr><tr><td>PS3</td><td>RPCS3</td></tr><tr><td>PS4</td><td>shadPS4 (nightly), plus RPCS4</td></tr><tr><td>PS5</td><td>(planned — AnyPS5 relinker, not yet set up)</td></tr></tbody></table></div>
 <h3>3. Console-native interface</h3>
 <ul>
 <li><b>System picker</b> with hand-drawn console silhouettes (AnyPS's own art), each showing its emulator and game count.</li>
-<li><b>PS1/PS2/PSP/PS3 use an XMB-style lane</b> (System / Settings / Photo / Game categories) built from your PS3 system software — real Rodin fonts, original category icons, menu sounds, and the coldboot sound.</li>
+<li><b>PS1/PS2/PSP/Vita/PS3 use an XMB-style lane</b> (System / Settings / Photo / Game categories) built from your PS3 system software — real Rodin fonts, original category icons, menu sounds, and the coldboot sound.</li>
 <li><b>PS4 uses a PS4-style home row</b> of tiles.</li>
 <li><b>Theme-matched waves and colors</b> per system.</li>
 <li><b>Rounded corners</b> throughout (game art, tiles, menu bars, photo viewer).</li>
 </ul>
 <h3>4. Game library</h3>
 <ul>
-<li><b>Self-contained layout:</b> games live in <code>AnyPS\Games\&lt;console&gt;</code> (PS1, PS2, PSP, PS3, PS4).</li>
-<li><b>Broad format support:</b> PS1 cue+bin / chd / pbp / m3u / folders; PS2 iso / chd / cso; PSP iso / cso; PS3 game folders (PS3_GAME) + PKG updates/DLC; PS4 PKG tiles or unpacked folders.</li>
+<li><b>Self-contained layout:</b> games live in <code>AnyPS\Games\&lt;console&gt;</code> (PS1, PS2, PSP, Vita, PS3, PS4).</li>
+<li><b>Broad format support:</b> PS1 cue+bin / chd / pbp / m3u / folders; PS2 iso / chd / cso; PSP iso / cso; Vita .vpk / .zip / dumped folders + .pkg with zRIF; PS3 game folders (PS3_GAME) + PKG updates/DLC; PS4 PKG tiles or unpacked folders.</li>
 <li><b>Box art</b> from each game's own icon, with an online cover fallback (retro covers + GameTDB for PS3/PS4) and custom covers.</li>
 <li><b>Title music</b> from each game (SND0), with an on/off switch.</li>
 <li><b>Multiple library roots</b> supported via <code>AnyPS.ini</code>.</li>
@@ -139,13 +170,13 @@
 <li><b>Change Disc</b> for multi-disc PS1 games, with automatic disc change.</li>
 <li><b>Saves / Memory Cards</b> and <b>Trophies</b> for the current game.</li>
 <li><b>Motion mode</b> toggle (PS3/PS4).</li>
-<li><b>Save states</b> (PS1/PS2/PSP): Save, Load, Next/Previous slot.</li>
+<li><b>Save states</b> (PS1/PS2/PSP/PS3): save to a slot, load, list, delete; auto-checkpoints and rewind.</li>
 <li><b>Speed</b> (PS1/PS2/PSP): fast-forward on/off, rewind.</li>
 <li><b>Enhancements</b> (PS1/PS2/PSP): graphics quality (performance/balanced/quality), cheats on/off, and <b>Cheats for this game</b> (the cheats manager, below).</li>
 </ul>
 <h3>7. Save data</h3>
 <ul>
-<li><b>Per-game saves browser:</b> PSP SAVEDATA, PS1/PS2 memory cards, PS3/PS4 savedata, with details and timestamps.</li>
+<li><b>Per-game saves browser:</b> PSP SAVEDATA, Vita Saved Data, PS1/PS2 memory cards (with editors), PS3/PS4 savedata, with details and timestamps.</li>
 <li><b>Back up</b> any save or memory card.</li>
 <li><b>Restore</b> a save or memory card from a backup.</li>
 <li><b>Export</b> all saves + screenshots to a USB stick (or <code>AnyPS\Export</code>).</li>
@@ -156,17 +187,17 @@
 <h3>8. Trophies &amp; achievements</h3>
 <ul>
 <li><b>PS3 trophies</b> read from RPCS3 (TROPCONF / TROPUSR): per-set lists, grades, locked/hidden, earned counts.</li>
-<li><b>PS4 trophies</b> read from shadPS4 (TROP.XML).</li>
+<li><b>PS4 trophies</b> read from shadPS4 (TROP.XML). <b>Vita trophies</b> read from Vita3K (TROP.SFM / TROPUSR.DAT).</li>
 <li><b>RetroAchievements</b> for PS1/PS2/PSP — labelled "Trophies" for consistency — with in-app sign-in (you type the password; only the token is stored).</li>
-<li><b>RetroAchievements for PS3</b> too (writes into RPCS3's config on sign-in).</li>
+<li><b>RetroAchievements for PS3</b> too: PS3 games without a Sony trophy set show their RetroAchievements set, with a friendly two-step Web API key card.</li>
 <li><b>Unlock toasts</b> while playing, and a <b>Recent trophies &amp; achievements</b> page.</li>
 <li>Hardcore mode supported where the emulator offers it.</li>
 </ul>
 <h3>9. Settings — native and full</h3>
 <ul>
-<li><b>Console-native settings screens</b> per system (PS1 System Config, PS2 Browser, PSP System Settings, PS3 XMB settings columns, PS4 Settings) — the familiar menus.</li>
+<li><b>Console-native settings screens</b> per system (PS1 System Config, PS2 Browser, PSP System Settings, Vita System Configuration, PS3 XMB settings columns, PS4 Settings) — the familiar menus.</li>
 <li><b>Real BIOS shells:</b> PS1 System Menu and PS2 Browser (memory cards, clock, language).</li>
-<li><b>Full emulator settings</b> for every emulator, all from inside AnyPS (DuckStation, PCSX2, PPSSPP, RPCS3, shadPS4, RPCS4) — curated, borderless-locked.</li>
+<li><b>Full emulator settings</b> for every emulator, all from inside AnyPS (DuckStation, PCSX2, PPSSPP, Vita3K, RPCS3, shadPS4, RPCS4) — curated, borderless-locked.</li>
 <li><b>Per-game settings</b> for every system.</li>
 <li>Everything is editable without leaving the app.</li>
 </ul>
@@ -222,7 +253,7 @@
 </ul>
 <h3>18. Setup &amp; sharing</h3>
 <ul>
-<li><b>Step-by-step set-up wizard:</b> one step per console (PS1, PS2, PS3, checklist) telling you what the file is and where it comes from, with “Pick the file…”, an auto-search of Downloads/Desktop/Documents, and <b>drag-and-drop onto the AnyPS window</b> — BIOS and PS3UPDAT.PUP install themselves, game files and .pkg are filed into the right Games folder. AnyPS then <b>builds the PlayStation look from your own system software</b>.</li>
+<li><b>Step-by-step set-up wizard:</b> one step per console (PS1, PS2, PS3, Vita, checklist) telling you what the file is and where it comes from, with “Pick the file…”, an auto-search of Downloads/Desktop/Documents, and <b>drag-and-drop onto the AnyPS window</b> — BIOS and PS3UPDAT.PUP install themselves, game files and .pkg are filed into the right Games folder. AnyPS then <b>builds the PlayStation look from your own system software</b>.</li>
 <li><b>"READ ME FIRST"</b> guidance written on first run.</li>
 <li><b>Shareable release</b> (<code>make_release.ps1</code>): a clean copy with the launcher, all emulators and tools — <b>no games, no BIOS/firmware, no Sony artwork or sounds</b> (the look is rebuilt on each player's PC from their own files).</li>
 <li>Designed so <b>a child who can only download and run an exe</b> can set it up.</li>
@@ -256,7 +287,7 @@
 <h3>23. Controller Remap (Visual)</h3>
 <ul>
 <li>A visual controller screen (Settings &gt; Remap controller buttons): rebind any button from a live pad diagram, with quick presets (Standard, Swap Cross/Circle, Nintendo layout).</li>
-<li>Writes your layout straight into PS1, PS2 and PS3, with automatic backups and a Reset to default. (PSP and PS4 keep their own controller settings.)</li>
+<li>Writes your layout straight into PS1, PS2, PSP, Vita and PS3, with automatic backups and a Reset to default. (PS4 keeps its own controller settings.)</li>
 <li><b>Per-game layouts:</b> a game's △ menu ▸ Controller layout for this game gives that one game its own buttons; AnyPS writes them when the game starts and restores your usual layout when it ends.</li>
 </ul>
 <h3>24. Online / Netplay</h3>
@@ -306,7 +337,7 @@
 <li><b>PSP controller lockdown.</b> The pad can't trigger fast-forward or PPSSPP's own menu by accident.</li>
 <li><b>Hands-free firmware install.</b> AnyPS confirms RPCS3's install dialog for you.</li>
 </ul>
-<h3>31. Cheats Manager <span class="newtag">New in V1.03</span></h3>
+<h3>31. Cheats Manager</h3>
 <ul>
 <li>Any game's △ menu ▸ Cheats (also in the in-game overlay). Each system in its own format, switched with one press.</li>
 <li><b>PS1</b> — pulls the game's entry out of DuckStation's built-in cheat database and lists every cheat; ticked ones are written to the game's settings.</li>
@@ -314,21 +345,157 @@
 <li><b>PSP</b> — lists the cheats in the game's CWCheat file and toggles them (can create the file for you).</li>
 <li><b>PS3</b> — lists the community game patches for your title (60 FPS, unlocks, fixes) and toggles them by version.</li>
 <li><b>PS4</b> — shows the cheat files shadPS4 has downloaded for the game (switching them on happens in shadPS4's own window).</li>
+<li><b>Vita</b> — VitaCheat .psv codes per game, one press each, with a community database download.</li>
+<li><b>Your own cheats</b> found with the Memory tools (PS3 / PS2 / PSP / Vita) live beside these and switch on from the same page.</li>
+</ul>
+<h3>32. PlayStation Vita <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li><b>A seventh console</b> (Vita3K) with its own lane, settings, saves, trophies, cheats, screenshots, texture packs, crash guard, remap, vault and sync — nothing of Vita3K's own interface ever shows unless you open it yourself.</li>
+<li><b>Games</b>: .vpk, .zip or dumped folders in <code>Games\Vita</code>. Dumps are linked, not copied; the licence (work.bin) goes where Vita3K reads it; .pkg packages with a zRIF key install headless (games, updates, DLC). “Install all waiting games and add-ons” in the lane.</li>
+<li><b>Set-up</b>: PSVUPDAT.PUP (and the optional font pack) install from drag-and-drop, the picker or the auto-search, with no emulator window.</li>
+<li><b>Settings</b>: resolution multiplier, anisotropic filtering, screen filter (incl. FSR), V-Sync, renderer, accuracy, sound, language, confirm button, date/time, PS TV mode, motion, LiveArea page, cheats, texture packs, screenshot key, online; Smooth / Sharp / Safe quick presets. One file for every game (a Vita3K limit), applied next launch or with “Restart the game now”.</li>
+<li><b>Trophies</b> read from Vita3K's TROP.SFM / TROPUSR.DAT, matched to the game. <b>Saved Data</b> browser with back up / restore.</li>
+<li><b>Cheats</b>: per-game VitaCheat .psv files, each code on/off, community database download, add your own; master switch.</li>
+<li>Not available on the Vita: save states, RetroAchievements (Vita3K / RA limits).</li>
+</ul>
+<h3>33. Memory tools &amp; cheats <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li>Overlay ▸ Memory tools &amp; cheats on PS3, PS2, PSP and Vita: pick a width, type the value you see, scan, change it in the game, narrow, then set, freeze, watch, or save as a named cheat (<code>cheats\&lt;system&gt;\&lt;id&gt;.json</code>) re-applied every launch.</li>
+<li>Value watch window; pattern capture / re-find after a reload.</li>
+<li>Cheat databases: PS1 built in, PSP cheat.db, Vita VitaCheat, PS3 community patches; export / import a game's cheats as a zip.</li>
+</ul>
+<h3>34. Save states, checkpoints &amp; vault <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li>Overlay save states on PS1/PS2/PSP/PS3: slot save, load, list with dates, delete; auto-checkpoints every N minutes and “Go back in time”; Continue loads the newest state; Save a state then quit.</li>
+<li>Save vault: rolling copies of a game's saves every N minutes and at quit, keep N, restore from the △ menu or overlay.</li>
+<li>Save sync between PCs through a synced folder or WebDAV (off by default). Play-anywhere: profile export/import + saves export.</li>
+<li>Memory-card editors: PS1 (list, export, import, delete) and PS2 (titles, export .psu, import .psu, delete). Memory-card swap per game.</li>
+</ul>
+<h3>35. Lists, hubs &amp; notes <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li>Smart lists (Unplayed, In progress, Finished, Local co-op, Verified, Quick sessions, Long haul, Added this week, Favorites), each hideable; Finished / Co-op marks per game.</li>
+<li>Franchise hubs across consoles; per-game Notes; Guides (GameFAQs + your links); Play next queue; Settings presets per game; Verify this dump; Texture packs; Storage analyzer; Your PC and what it can run.</li>
+</ul>
+<h3>36. No seams <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li>Launch screen until the emulator is really playing; dialog sweeper answers and logs emulator pop-ups; emulator OSD / hints off; the overlay is the only overlay.</li>
+<li>Crash guard card with revert-to-last-good, restart and a report zip; ✓ Verified after 30 trouble-free minutes; Restart the game now; Quit and play the next.</li>
+</ul>
+<h3>37. Profiles, family &amp; rewards <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li>Player 2 for local co-op (both credited); six avatar colours unlocked by milestones; Family activity feed; Controller slots (PS3 players 1–4).</li>
+</ul>
+<h3>38. Automation <span class="newtag">New in V1.04</span></h3>
+<ul>
+<li>Phone remote page on your LAN; webhook on launch/exit; pre-launch / post-exit scripts; <code>AnyPS.exe --play "name"</code>; System check; log cleaner; Behind-the-curtain toggles for every automatic behaviour.</li>
 </ul>
 <h3>Controls at a glance</h3>
 <div class="tbl"><table><thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead><tbody><tr><td>Move</td><td>D-pad / left stick</td><td>Arrows / WASD</td></tr><tr><td>Choose</td><td>✕ / A</td><td>Enter</td></tr><tr><td>Back</td><td>○ / B</td><td>Esc</td></tr><tr><td>Game options</td><td>△ / Y</td><td>Tab</td></tr><tr><td>Sort / Continue</td><td>□ / X</td><td>F</td></tr><tr><td>Home menu (in game)</td><td>PS / Guide, or hold Share/View</td><td>Ctrl+Shift+Q</td></tr><tr><td>Quit game</td><td>hold Share/View + Options/Start</td><td>—</td></tr><tr><td>Close AnyPS</td><td>—</td><td>Alt+F4 (or ○/Esc on picker)</td></tr></tbody></table></div>
 <h3>Not yet</h3>
 <ul>
 <li><b>PS5</b> — the last system, via the AnyPS5 relinker; started only once PS1–PS4 are fully solid.</li>
-<li>Features that still want a live hands-on check: cheat toggles in a game, a per-game layout reverting on exit, dragging a BIOS onto the window, the first real RPCN sign-up, and the updater swapping itself.</li>
+<li>Vita3K has no save states and keeps one settings file for every game; RetroAchievements has no Vita sets. Audio EQ, HDR, turbo/macros and colour-blind filters need hooks none of the emulators offer.</li>
 </ul>
 
     </div>
   </dialog>
 
   <dialog class="features" id="changelog" aria-labelledby="clTitle">
-    <div class="dhead"><h2 id="clTitle">What's new in V1.03</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="clTitle">What's new in V1.04</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
+<p>Everything new, changed and fixed since V1.03. <b>The V1.04 download appears on this page the moment it is packaged;</b> until then the button above still serves V1.03.</p>
+<h3>New Features</h3>
+<h4>PlayStation Vita joins the shelf</h4>
+<ul>
+<li><b>A seventh console card</b> between PSP and PS3, powered by the open-source Vita3K project — with everything the other lanes have, so it never feels like the odd one out.</li>
+<li><b>Games</b>: drop a .vpk, a .zip, or a dumped game folder (NoNpDRM) into <code>Games\Vita</code>. Dumps are <i>linked</i> into Vita3K, not copied; .vpk files are unpacked; the dump's licence (work.bin) is put where Vita3K reads it, automatically.</li>
+<li><b>Updates and add-ons</b>: a <code>patch\</code> or <code>addcont\</code> folder beside the game, or <b>.pkg packages with their zRIF key</b> (a KEY.txt next to the file). Vita3K installs packages headless; “Install all waiting games and add-ons” does the whole folder in one press.</li>
+<li><b>Set-up</b>: the system software (PSVUPDAT.PUP) installs itself from a drag-and-drop, the file picker, or the auto-search — no Vita3K window, ever. The font pack (PSP2UPDAT.PUP) is optional and handled the same way.</li>
+<li><b>Vita settings screen</b> in plain language: resolution multiplier, filters, FSR, V-Sync, renderer, accuracy, sound, language, buttons, PS TV mode, motion, LiveArea, cheats, texture packs, screenshot key, online. <b>Quick presets</b>: Smooth / Sharp / Safe.</li>
+<li><b>Real Vita trophies</b> (TROP.SFM / TROPUSR.DAT) in the Trophies page and the game's Information card.</li>
+<li><b>Saves</b>: Saved Data browser, back up / restore, the save vault, save sync and per-profile saves all cover the Vita.</li>
+<li><b>Cheats</b>: VitaCheat-format .psv files per game, each code switched with one press, “Get this game's codes from the community database”, add your own.</li>
+<li><b>Memory tools &amp; cheats</b> work inside Vita games too (AnyPS reads the emulator's own memory block).</li>
+<li>Screenshots (F12) in the Photo column, texture packs, crash guard, play-time, smart lists, franchises, rewards, controller remap — all wired for the Vita.</li>
+<li>Nothing of Vita3K's own interface shows unless you open it yourself from Behind the curtain.</li>
+</ul>
+<h4>Memory tools &amp; a bigger cheats story</h4>
+<ul>
+<li><b>Memory tools &amp; cheats</b> in the in-game overlay for PS3, PS2, PSP and Vita: search a value (1/2/4 bytes), narrow it, set it, freeze it, watch it, and <b>save it as a named cheat</b> that AnyPS re-applies every launch of that game.</li>
+<li><b>Value watch</b> window and a pattern finder for re-finding an address after a reload.</li>
+<li><b>PSP community cheat database</b> (cheat.db) download with per-game seeding; <b>Vita community database</b> per title; <b>export / import cheats</b> as a zip to share with another AnyPS player.</li>
+</ul>
+<h4>Save states, checkpoints, rewind</h4>
+<ul>
+<li><b>Save states from the overlay</b> on PS1, PS2, PSP and PS3: save to a slot, load, see every state with dates, delete. (Vita3K and shadPS4 have no save states; the overlay says so honestly.)</li>
+<li><b>Auto-checkpoints</b>: a state every N minutes (your choice) so “Go back in time” can rewind a bad decision.</li>
+<li><b>Continue loads the newest state</b>; <b>Save a state, then quit</b>; optional “Quit always saves a state first”.</li>
+</ul>
+<h4>No seams</h4>
+<ul>
+<li><b>Launch screen</b>: AnyPS stays in front with the game's art until the emulator is really playing (RPCS3's shader-compiling wait included), then hands off cleanly.</li>
+<li><b>Dialog sweeper</b>: any emulator pop-up is read, answered and logged for you; you get an AnyPS toast instead. Emulator on-screen messages, hints and overlays are switched off.</li>
+<li><b>Crash guard</b>: a game that dies within a minute gets a “That didn't go well” card — revert to the last-known-good settings, restart, or save a report zip. Games that ran 30 minutes without a fatal error earn a ✓ Verified badge.</li>
+<li><b>Restart the game now</b> from the overlay to apply changed settings straight away; <b>Quit and play the next</b> from your Play next queue.</li>
+</ul>
+<h4>Saves: vault and sync</h4>
+<ul>
+<li><b>Save vault</b>: rolling snapshots of a game's saves every N minutes and at quit, keep N, restore any from the game's △ menu or the overlay.</li>
+<li><b>Save sync</b> between two PCs through any synced folder (OneDrive, Drive, Dropbox, NAS, USB) or WebDAV (Nextcloud); off by default.</li>
+<li><b>PS1 memory-card editor</b>: list, export, import and delete individual saves. <b>PS2 memory-card editor</b>: the 8 MB card as a file system — titles, export .psu, import .psu, delete.</li>
+<li><b>Memory-card swap</b> per game (PS1 per-game vs shared card, PS2 slot 1/2) with restart-now.</li>
+</ul>
+<h4>Library, lists and hubs</h4>
+<ul>
+<li><b>Smart lists</b>: Unplayed, In progress, Finished, Local co-op, Verified, Quick sessions, Long haul, Added this week, Favorites — each one yours to show or hide; mark games Finished or Co-op from their △ menu.</li>
+<li><b>Franchise hubs</b>: series across consoles, oldest first, automatic by title with a per-game override.</li>
+<li><b>Notes</b> per game, <b>Guides</b> (GameFAQs search plus your own links), <b>Play next</b> queue, <b>Settings presets</b> (Smooth / Sharp / Safe) per game.</li>
+<li><b>Verify this dump</b> against Redump DATs (MD5 / SHA-1 / CRC32); <b>Texture packs</b> per game with zip import; <b>Storage</b> analyzer with cache clear; <b>Your PC and what it can run</b>.</li>
+<li>PS3 add-on-only folders now attach to their game instead of listing as games; orphan DLC collapses into one “add-ons waiting for the game” entry.</li>
+</ul>
+<h4>Profiles and family</h4>
+<ul>
+<li><b>Player 2</b>: sign a second profile in for local co-op; both get the play time and trophies.</li>
+<li><b>Rewards</b>: six avatar colours unlocked by milestones (hours, trophies, games, verified titles).</li>
+<li><b>Family activity</b>: what every profile on this PC played and earned, newest first.</li>
+<li><b>Controller slots</b> (PS3 players 1–4) in the overlay and Settings.</li>
+</ul>
+<h4>RetroAchievements on PS3</h4>
+<ul>
+<li>PS3 games without a Sony trophy set show their RetroAchievements set under Trophies. A two-step, friendly set-up card for the RetroAchievements Web API key; lists for PS1/PS2/PSP/PS3 come from the Web API.</li>
+</ul>
+<h4>Automation &amp; power users</h4>
+<ul>
+<li><b>Phone remote</b>: a page on your LAN with the pad buttons and a text box. <b>Webhook</b> on launch/exit, <b>pre-launch / post-exit scripts</b>, and <code>AnyPS.exe --play "name"</code> for Stream Decks and shortcuts.</li>
+<li><b>System check</b>: emulators, BIOS, folders, save links, tools, disk space — one list, anything missing marked. <b>Log cleaner</b> at boot.</li>
+<li><b>Behind the curtain</b> settings: launch screen, dialog sweeper, continue-loads-state, checkpoint interval, overlay button (PS, hold View, either, L3+R3), quit-saves-state, vault minutes/keep, low-power idle, trim logs.</li>
+</ul>
+<h4>Controller remap everywhere</h4>
+<ul>
+<li>Your layout (and per-game layouts) now also go into <b>PPSSPP</b> and <b>Vita3K</b>, alongside DuckStation, PCSX2 and RPCS3.</li>
+</ul>
+<h3>Improvements &amp; Changes</h3>
+<ul>
+<li>Motion bridge: a flick of the stick is a real gyro flick now (Folklore's combat works); a steady tilt holds.</li>
+<li>The in-game overlay is the only overlay: the emulators' own home menus are detached from the PS button.</li>
+<li>“This game's settings” says plainly that changes apply next launch, and Restart now applies them.</li>
+<li>Low-power idle: the background animation rests while a game runs or after two idle minutes (toggle).</li>
+<li>PS1 and PS2 save titles decode properly (Japanese code page registered).</li>
+<li>Seven console cards fit the picker; names and spacing scale with the count.</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
+<li>Folklore: a settings change made from the overlay during play crashed the intro movie on the next start; the crash guard now offers the last-known-good settings instead of a dark screen.</li>
+<li>Vita: the dump's licence was never installed, so games failed to decrypt on start; .pkg add-ons were ignored; installs copied instead of linking. All three fixed, with an install log in <code>emu\vita3k\anyps_install.log</code>.</li>
+<li>Soulcalibur showed 44 “games” in its franchise hub: orphan PS3 DLC folders no longer count as games.</li>
+</ul>
+<h3>Notes</h3>
+<ul>
+<li>Vita3K has no save states and one settings file for every game; RetroAchievements has no Vita sets (real Vita trophies are shown instead). The Vita lane is new: report anything odd on Discord.</li>
+<li>PlayStation 5 support is still “coming soon”.</li>
+<li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the release.</li>
+</ul>
+<details><summary><b>Earlier: what was new in V1.03</b></summary>
 <p>Everything new, changed and fixed since V1.02.</p>
 <h3>New Features</h3>
 <h4>Mass install &amp; library intake</h4>
@@ -406,6 +573,7 @@
 <li>PlayStation 5 support is still “coming soon”.</li>
 <li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the release.</li>
 </ul>
+</details>
 <details><summary><b>Earlier: what was new in V1.02</b></summary>
 <p>Everything new, changed and fixed since V1.</p>
 <h3>New Features</h3>
@@ -499,7 +667,7 @@
   </dialog>
 
   <footer>
-    <p>AnyPS bundles open-source emulators under their own licenses; credit to the DuckStation, PCSX2, PPSSPP, RPCS3 and shadPS4 teams.</p>
+    <p>AnyPS bundles open-source emulators under their own licenses; credit to the DuckStation, PCSX2, PPSSPP, Vita3K, RPCS3 and shadPS4 teams.</p>
     <p>PlayStation&reg; is a trademark of Sony Interactive Entertainment. AnyPS is a fan project and is not affiliated with or endorsed by Sony.</p>
   </footer>
 </div>
@@ -529,6 +697,55 @@
   const vid = document.getElementById("preview");
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { vid.removeAttribute("autoplay"); vid.pause(); }
   vid.muted = true; vid.play && vid.play().catch(() => {});
+  const vs = document.getElementById("vsound");
+  vs.addEventListener("click", () => { vid.muted = !vid.muted; vs.setAttribute("aria-pressed", String(!vid.muted)); vs.innerHTML = vid.muted ? "&#128263; Sound off" : "&#128266; Sound on"; if (!vid.muted) vid.play && vid.play().catch(() => {}); });
+
+  // ---- screenshot carousel: the current screen in the middle, the previous and next as side previews
+  const shots = [
+    ["1_consoles", "System picker: seven consoles on one shelf, recently played below"],
+    ["43_ps3_lane_real", "PlayStation 3 lane: the XMB, with Install all for updates and DLC"],
+    ["37_ps1_lane_real", "PlayStation lane"],
+    ["41_ps2_lane_real", "PlayStation 2 lane"],
+    ["42_psp_lane_real", "PSP lane"],
+    ["31c_vita_lane", "PS Vita lane: new in V1.04"],
+    ["7_ps4", "PlayStation 4 home row"],
+    ["2_consoles_ps5", "PlayStation 5: coming soon"],
+    ["70_grid", "Box-art grid view"],
+    ["14_home", "In-game overlay on the PS button: settings, presets, notes, vault, saves, trophies"],
+    ["77_states", "Save states from the overlay"],
+    ["72_cheats", "Cheats manager"],
+    ["13_trophies", "Trophies"],
+    ["35_hub", "AnyPS Settings hub"],
+    ["31d_vita_settings", "PS Vita settings in plain language"],
+    ["54_remap", "Visual controller remap"],
+    ["87_smartlists", "Smart lists"],
+    ["94_vault", "Save vault"],
+    ["44_profiles_select", "Who's playing? Profiles with passcodes and avatars"],
+    ["71_wizard", "Set-up wizard"],
+    ["61_slideshow", "Screenshot slideshow"],
+  ];
+  const gimg = document.getElementById("gimg"), gcap = document.getElementById("gcap"), gdots = document.getElementById("gdots");
+  const sideL = document.getElementById("gsidel"), sideR = document.getElementById("gsider");
+  const src = i => "../assets/shots/" + shots[(i + shots.length) % shots.length][0] + ".webp";
+  let cur = 0;
+  shots.forEach((_, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab"); b.setAttribute("aria-label", shots[i][1]); b.addEventListener("click", () => show(i)); gdots.append(b); });
+  function show(i) {
+    cur = (i + shots.length) % shots.length;
+    gimg.style.opacity = 0;
+    const im = new Image(); im.onload = () => { gimg.src = im.src; gimg.alt = shots[cur][1]; gimg.style.opacity = 1; }; im.src = src(cur);
+    gcap.textContent = (cur + 1) + " / " + shots.length + "  ·  " + shots[cur][1];
+    sideL.querySelector("img").src = src(cur - 1); sideL.title = shots[(cur - 1 + shots.length) % shots.length][1];
+    sideR.querySelector("img").src = src(cur + 1); sideR.title = shots[(cur + 1) % shots.length][1];
+    [...gdots.children].forEach((d, k) => d.setAttribute("aria-selected", String(k === cur)));
+  }
+  document.getElementById("gprev").addEventListener("click", () => show(cur - 1));
+  document.getElementById("gnext").addEventListener("click", () => show(cur + 1));
+  sideL.addEventListener("click", () => show(cur - 1)); sideR.addEventListener("click", () => show(cur + 1));
+  document.addEventListener("keydown", e => { if (document.querySelector("dialog[open]")) return; if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
+  let tx = null; const gal = document.getElementById("gallery");
+  gal.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+  gal.addEventListener("touchend", e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 40) show(dx < 0 ? cur + 1 : cur - 1); }, { passive: true });
+  show(0);
   const dlg = document.getElementById("features");
   const openF = () => { if (!dlg.open) dlg.showModal(); };
   document.getElementById("openFeatures").addEventListener("click", () => { history.replaceState(null, "", "#features"); openF(); });
