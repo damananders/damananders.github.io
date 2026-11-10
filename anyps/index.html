@@ -9,7 +9,9 @@
 <meta property="og:title" content="AnyPS — One Launcher, Every Generation" />
 <meta property="og:description" content="A controller-first launcher for open-source PlayStation emulators. Bring your own games." />
 <meta property="og:url" content="https://damananders.github.io/anyps/" />
-<meta property="og:image" content="https://damananders.github.io/assets/anyps-bg.jpg" />
+<meta property="og:image" content="https://damananders.github.io/assets/og-anyps.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090b'/%3E%3Ccircle cx='32' cy='32' r='14' fill='%233d8bff'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,6 +36,26 @@
 .gdots button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--line-2);cursor:pointer}
 .gdots button[aria-selected="true"]{background:var(--accent);transform:scale(1.3)}
 @media (max-width:640px){.gstage{grid-template-columns:1fr}.gside{display:none}.gallery{grid-template-columns:28px 1fr 28px}}
+.sec{margin-top:40px}
+.sec h2{font-family:var(--display);margin:0 0 14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--anyps);border-radius:14px;padding:16px}
+body.photo .card{background:rgba(15,18,22,.82);backdrop-filter:blur(8px)}
+.card h3{margin:0 0 4px;font-size:1rem;font-family:var(--display)}
+.card p,.card li{color:var(--muted);font-size:.92rem;margin:4px 0}
+.card .big{font-family:var(--mono);color:var(--text);font-size:.9rem}
+.updrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.updrow .chip{font-size:.85rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+body.photo .updrow .chip{background:rgba(15,18,22,.82)}
+.updrow .chip b{color:var(--text)}
+.faq details{border:1px solid var(--line);border-radius:12px;padding:0 14px;margin:8px 0;background:var(--panel)}
+body.photo .faq details{background:rgba(15,18,22,.82)}
+.faq summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--text);list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"\203A ";color:var(--anyps);font-weight:700}
+.faq details[open] summary::before{content:"\2039 "}
+.faq details > *:not(summary){color:var(--muted);font-size:.93rem;margin:0 0 12px}
+.sysreq{font-family:var(--mono);font-size:.82rem}
 </style>
 <script src="../assets/config.js"></script>
 </head>
@@ -107,6 +129,56 @@
       <div class="note"><b>No games, BIOS or firmware are included</b>, and none are provided here or on request. AnyPS is a front end; please only use content you legally own.</div>
     </aside>
   </div>
+
+  <section class="sec" aria-label="Recent updates">
+    <h2>Latest: AnyPS V1.04</h2>
+    <p class="lead" style="font-size:1rem">What landed in the newest build. <button class="linkbtn" id="openChangelog2" type="button" style="margin-top:0">Full changelog &rarr;</button></p>
+    <div class="updrow">
+      <span class="chip"><b>PS Vita</b> added as a seventh console (Vita3K)</span>
+      <span class="chip"><b>Memory tools &amp; cheats</b> in-game on PS3/PS2/PSP/Vita</span>
+      <span class="chip"><b>Save states, checkpoints &amp; rewind</b></span>
+      <span class="chip"><b>Save vault &amp; cloud sync</b></span>
+      <span class="chip"><b>No seams:</b> launch screen, dialog sweeper, crash guard</span>
+      <span class="chip"><b>Smart lists &amp; franchise hubs</b></span>
+      <span class="chip"><b>PS2 memory-card editor</b></span>
+      <span class="chip"><b>RetroAchievements on PS3</b></span>
+    </div>
+  </section>
+
+  <section class="sec" aria-label="What is in the box">
+    <h2>What&rsquo;s in the box</h2>
+    <p class="lead" style="font-size:1rem">AnyPS bundles these open-source emulators, ready to run and locked to borderless windowed. No games, BIOS or firmware &mdash; you bring those.</p>
+    <div class="cards" id="emuCards"></div>
+  </section>
+
+  <section class="sec" aria-label="System requirements">
+    <h2>What your PC needs</h2>
+    <div class="cards">
+      <div class="card"><h3>PS1 &middot; PS2 &middot; PSP &middot; Vita</h3><p>Anything from the last ten years. PS2 at high resolution and the Vita want a Vulkan (or OpenGL&nbsp;4.4) GPU; 4&nbsp;threads and 8&nbsp;GB are plenty.</p></div>
+      <div class="card"><h3>PS3 &nbsp;(RPCS3)</h3><p class="sysreq">AVX2 CPU, 8+ threads, 16&nbsp;GB RAM, a Vulkan GPU. TSX helps. AnyPS tells you, in <i>Settings &rsaquo; Your PC and what it can run</i>, whether yours measures up.</p></div>
+      <div class="card"><h3>PS4 &nbsp;(shadPS4)</h3><p class="sysreq">A modern 8-thread CPU, 16&nbsp;GB RAM, Vulkan&nbsp;1.3. Game support, not hardware, is the real limit today &mdash; AnyPS rides the shadPS4 nightlies.</p></div>
+      <div class="card"><h3>Windows</h3><p>Windows&nbsp;10 or&nbsp;11, 64-bit. A controller is recommended but not required &mdash; the whole interface works with a mouse too.</p></div>
+    </div>
+  </section>
+
+  <section class="sec faq" aria-label="Setup and FAQ">
+    <h2>Setup &amp; FAQ</h2>
+    <details><summary>Which console files does each system need?</summary>
+      <p>PS1 and PS2 need a <b>BIOS</b> (a <code>.bin</code> dumped from a console you own). PS3 needs the <b>system software</b> <code>PS3UPDAT.PUP</code> (Sony still publishes it). PS&nbsp;Vita needs <code>PSVUPDAT.PUP</code> (and, optionally, the font pack <code>PSP2UPDAT.PUP</code>). PSP and PS4 need no console file. Drop each into <code>AnyPS\System\&lt;console&gt;</code> &mdash; or just drag it onto the AnyPS window and the setup wizard installs it.</p></details>
+    <details><summary>Where do games go, and what formats work?</summary>
+      <p>Into <code>AnyPS\Games\&lt;console&gt;</code>. PS1: cue+bin, chd, pbp, m3u, or a folder. PS2: iso, chd, cso. PSP: iso, cso. PS&nbsp;Vita: a <code>.vpk</code>, a <code>.zip</code>, or a dumped game folder (NoNpDRM), plus <code>.pkg</code> add-ons with their zRIF key in a text file beside them. PS3: a game folder (with <code>PS3_GAME</code>) plus any <code>.pkg</code> updates/DLC. PS4: a <code>.pkg</code> tile or an unpacked folder.</p></details>
+    <details><summary>My PS Vita game won&rsquo;t start &mdash; why?</summary>
+      <p>A Vita dump carries its licence inside <code>sce_sys\package\work.bin</code>; without it the game can&rsquo;t be decrypted. AnyPS installs that licence for you automatically when it installs or first launches the game, so a game that won&rsquo;t start usually just needs a re-launch from AnyPS. If a game shows boxes instead of letters, install the optional Vita font pack (<code>PSP2UPDAT.PUP</code>).</p></details>
+    <details><summary>Is anything copyrighted included?</summary>
+      <p>No. AnyPS ships with no games, no BIOS or firmware, and no Sony artwork or sounds. The PlayStation look you see is rebuilt on your own PC from your own system-software file. Please only use content you legally own.</p></details>
+    <details><summary>How does AnyPS update itself?</summary>
+      <p>In <i>AnyPS Settings &rsaquo; AnyPS version</i>: it checks this page, shows your installed build against the newest, and &ldquo;Download and install&rdquo; swaps itself in and restarts. Your games, saves and settings are untouched.</p></details>
+  </section>
+
+  <section class="sec" aria-label="Report a problem">
+    <h2>Something broke?</h2>
+    <p class="lead" style="font-size:1rem">If a game crashes, AnyPS shows a &ldquo;That didn&rsquo;t go well&rdquo; card that can revert the change and save a <b>report zip</b> (logs + the settings in play). Send that zip on <a href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener" style="color:var(--anyps)">the AnyPS Discord</a> and it&rsquo;s usually a quick fix.</p>
+  </section>
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
@@ -692,6 +764,18 @@
     document.getElementById("oldBuilds").hidden = false;
   }
   const cl = document.getElementById("changelog");
+  const emus = [
+    ["PlayStation", "DuckStation", "0.1.12640"],
+    ["PlayStation 2", "PCSX2", "v2.8.2"],
+    ["PSP", "PPSSPP", "v1.20.4"],
+    ["PS Vita", "Vita3K", "0.2.1 (build 4282)"],
+    ["PlayStation 3", "RPCS3", "0.0.43-20565"],
+    ["PlayStation 4", "shadPS4", "nightly 2026-11-08"],
+  ];
+  const ec = document.getElementById("emuCards");
+  if (ec) for (const [sys, emu, ver] of emus) { const d = document.createElement("div"); d.className = "card"; d.innerHTML = "<h3>" + sys + "</h3><p>" + emu + "</p><p class=\"big\">" + ver + "</p>"; ec.append(d); }
+  const oc2 = document.getElementById("openChangelog2");
+  if (oc2) oc2.addEventListener("click", () => cl.showModal());
   document.getElementById("openChangelog").addEventListener("click", () => cl.showModal());
   cl.querySelector("[data-close]").addEventListener("click", () => cl.close());
   cl.addEventListener("click", e => { if (e.target === cl) cl.close(); });
