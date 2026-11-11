@@ -1,0 +1,8 @@
+{
+  "_help": "Extra details for Personal Vault items, matched by the exact title used in assets/config.js. Blank fields are simply not shown. date is YYYY-MM-DD (when the backup was uploaded).",
+  "items": {
+    "Toy Story Retro Roundup": { "version": "", "size": "", "date": "", "note": "" },
+    "Dissidia Final Fantasy": { "version": "", "size": "", "date": "", "note": "" },
+    "LET IT DIE": { "version": "", "size": "", "date": "", "note": "" }
+  }
+}

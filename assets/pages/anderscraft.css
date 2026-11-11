@@ -1,0 +1,204 @@
+/* pages/anderscraft.css: the AndersCraft page's own upgrades (see assets/README.md).
+ * Everything is prefixed ac- and uses the page's own tokens (--surface --surface-2 --line --line-2 --text --muted
+ * --royal --green --red), which assets/chrome.css re-defines for the light theme, so both themes follow along.
+ * The page's inline stylesheet styles bare button / input / label: anything added here resets those itself.
+ */
+
+/* ---------- shared bits ---------- */
+.ac-sec{margin-top:64px;scroll-margin-top:calc(var(--sx-header-h,0px) + 18px)}
+#ac-signup{scroll-margin-top:calc(var(--sx-header-h,0px) + 18px)}
+.ac-sec[hidden]{display:none}
+.ac-head{margin:0 0 18px}
+.ac-h{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,3.6vw,2.05rem);line-height:1.15;margin:6px 0 0;color:var(--text)}
+.ac-lede{color:var(--muted);margin:6px 0 0;max-width:60ch}
+
+/* a small quiet button (resets the page's full-width orange button rule) */
+.ac-btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 13px;border-radius:10px;cursor:pointer;
+  font-family:var(--display);font-weight:700;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;line-height:1;white-space:nowrap;
+  color:var(--text);background:var(--surface-2);border:1px solid var(--line-2);transition:border-color .15s,color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.ac-btn:hover{border-color:var(--royal);color:var(--royal);background:var(--surface-2);transform:none}
+.ac-btn:focus-visible,.ac-check:focus-visible,.ac-tab:focus-visible,.ac-eye:focus-visible,.ac-q summary:focus-visible,.ac-links a:focus-visible,.ac-jump:focus-visible{outline:2px solid var(--royal);outline-offset:2px}
+.ac-btn svg{width:16px;height:16px;flex:none}
+.ac-btn[disabled]{opacity:.5;cursor:default}
+.ac-btn[disabled]:hover{border-color:var(--line-2);color:var(--text)}
+
+/* ---------- hero column ---------- */
+.ac-jump{display:none}
+.ac-summary{display:flex;align-items:center;gap:9px;margin:0 0 16px;color:var(--text);font-size:1.02rem}
+.ac-summary[hidden]{display:none}
+.ac-summary::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--green);flex:none}
+.ac-facts{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.ac-facts li{background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--royal);border-radius:12px;padding:10px 14px}
+.ac-facts b{font-family:var(--display);font-weight:600;font-size:.95rem;letter-spacing:.02em}
+.ac-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.ac-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;text-decoration:none;
+  font-family:var(--display);font-weight:600;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text);background:var(--surface-2);border:1px solid var(--line-2);transition:border-color .15s,color .15s}
+.ac-links a:hover{border-color:var(--royal);color:var(--royal)}
+
+/* ---------- sign-up card: status chip, offline note ---------- */
+.ac-cardhead{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;margin:0 0 4px}
+.ac-cardhead h2{margin:0}
+.ac-chipwrap{display:inline-flex;min-height:28px;align-items:center}
+:root:not(.ac-js) .ac-chip{visibility:hidden}          /* space is reserved; shown once the script is running */
+.ac-chip[hidden]{display:none}
+.ac-offnote{margin:14px 0 0;padding:10px 14px;border-radius:12px;font-size:1rem;line-height:1.45;color:var(--text);
+  background:var(--surface-2);border:1px solid var(--line-2);border-left:4px solid var(--sx-warn)}
+.ac-offnote[hidden]{display:none}
+.ac-offnote b{font-weight:600}
+
+/* ---------- sign-up card: live hints, meter, show / hide ---------- */
+.ac-hintrow{display:flex;justify-content:space-between;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.ac-matchrow{min-height:1.5em}
+.ac-live{font-size:.9rem;color:var(--muted);text-align:right}
+.ac-live[data-ac-state="ok"]{color:var(--green)}
+.ac-live[data-ac-state="warn"]{color:var(--sx-warn)}
+.ac-live[data-ac-state="err"]{color:var(--red)}
+.ac-pwfield{position:relative}
+.ac-pwfield.ac-has-eye input{padding-right:52px}
+.ac-eye{all:unset;box-sizing:border-box;position:absolute;right:4px;top:50%;width:40px;height:40px;margin-top:-20px;display:grid;place-items:center;border-radius:9px;cursor:pointer;
+  color:var(--muted);-webkit-tap-highlight-color:transparent;transition:color .15s}
+.ac-eye:hover{color:var(--royal);background:none;transform:none}
+.ac-eye[aria-pressed="true"]{color:var(--royal)}
+.ac-eye svg{width:21px;height:21px}
+.ac-meter{display:flex;align-items:center;gap:12px;min-height:22px;margin-top:4px}
+:root:not(.ac-js) .ac-meter{visibility:hidden}
+.ac-meter-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;flex:1 1 auto;min-width:0}
+.ac-meter-bars i{display:block;height:6px;border-radius:999px;background:var(--line-2);transition:background-color .2s}
+.ac-meter[data-ac-level="1"] .ac-meter-bars i:nth-child(-n+1){background:var(--red)}
+.ac-meter[data-ac-level="1"][data-ac-tone="warn"] .ac-meter-bars i:nth-child(-n+1){background:var(--sx-warn)}
+.ac-meter[data-ac-level="2"] .ac-meter-bars i:nth-child(-n+2){background:var(--sx-warn)}
+.ac-meter[data-ac-level="3"] .ac-meter-bars i:nth-child(-n+3){background:var(--green)}
+.ac-meter[data-ac-level="4"] .ac-meter-bars i{background:var(--green)}
+.ac-meter-t{flex:0 0 auto;min-width:9.5em}
+
+/* ---------- realm cards ---------- */
+.ac-realms{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ac-realm{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line-2);border-top:4px solid var(--royal);border-radius:18px;padding:22px 24px}
+.ac-realm--hc{border-top-color:var(--red)}
+.ac-realm-top{display:flex;align-items:center;gap:14px}
+.ac-realm-ico{width:44px;height:44px;flex:none;padding:9px;border-radius:12px;color:var(--royal);background:var(--surface-2);border:1px solid var(--line)}
+.ac-realm--hc .ac-realm-ico{color:var(--red)}
+.ac-realm-name{font-family:var(--display);font-weight:700;font-size:1.3rem;line-height:1.2;margin:0;color:var(--text)}
+.ac-realm-tag{margin:2px 0 0;color:var(--muted);font-size:1rem;line-height:1.35}
+.ac-realm-live{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:14px 0 0;font-size:1rem;color:var(--text)}
+.ac-realm-live[hidden]{display:none}
+.ac-rules{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:7px}
+.ac-rules li{position:relative;padding-left:24px}
+.ac-rules li::before{content:"";position:absolute;left:3px;top:.62em;width:9px;height:9px;border:2px solid var(--royal);transform:rotate(45deg)}
+.ac-realm--hc .ac-rules li::before{border-color:var(--red)}
+.ac-best{margin:auto 0 0;padding-top:2px;color:var(--muted)}
+.ac-best b{display:block;font-family:var(--display);font-weight:600;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--royal);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.ac-realm--hc .ac-best b{color:var(--red)}
+
+/* ---------- what's custom ---------- */
+.ac-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ac-tile{display:flex;align-items:flex-start;gap:13px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;transition:border-color .2s}
+.ac-tile:hover{border-color:var(--line-2)}
+.ac-tile svg{width:40px;height:40px;flex:none;padding:8px;border-radius:11px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+  color:var(--royal);background:var(--surface-2);border:1px solid var(--line)}
+.ac-tile b{display:block;font-family:var(--display);font-weight:600;font-size:.98rem;letter-spacing:.02em;line-height:1.3;color:var(--text)}
+.ac-tile span{display:block;color:var(--muted);font-size:1rem;line-height:1.4;margin-top:3px}
+
+/* ---------- how to play (a plain ordered list until the script turns it into a checklist) ---------- */
+.ac-wiz{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:22px 24px}
+.ac-wiz-top{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;margin:0 0 16px}
+.ac-prog{flex:1 1 80px;min-width:60px;height:10px;background:var(--surface-2);border-color:var(--line-2)}
+.ac-prog>i{background:var(--royal)}
+.ac-wiz-count{font-family:var(--display);font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.ac-steps{margin:0;padding-left:24px;display:grid;gap:12px}
+.ac-step-t{display:block;font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.01em;color:var(--text)}
+.ac-step-d{display:block;color:var(--muted)}
+.ac-rl{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin-top:8px}
+.ac-rl code{font-size:.98rem;padding:8px 12px;color:var(--text)}
+:root:not(.sx-js) .ac-copy{display:none}                 /* the copy hook lives in the site core */
+.ac-wiz.ac-on .ac-steps{list-style:none;padding:0;gap:0}
+.ac-wiz.ac-on .ac-step{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.ac-wiz.ac-on .ac-step:last-child{padding-bottom:0}
+.ac-wiz.ac-on .ac-step-body{flex:1 1 auto;min-width:0;padding-top:6px}
+.ac-check{all:unset;box-sizing:border-box;flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;cursor:pointer;
+  font-family:var(--display);font-weight:700;font-size:1.05rem;line-height:1;color:var(--royal);background:var(--surface-2);border:2px solid var(--line-2);
+  transition:border-color .15s,background-color .2s,color .2s;-webkit-tap-highlight-color:transparent}
+.ac-check:hover{border-color:var(--royal);background:var(--surface-2);transform:none}
+.ac-check svg{width:22px;height:22px;display:none}
+.ac-check[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--ink)}
+.ac-check[aria-pressed="true"]:hover{background:var(--green);border-color:var(--green)}
+.ac-check[aria-pressed="true"] svg{display:block}
+.ac-check[aria-pressed="true"] .ac-check-n{display:none}
+.ac-step.ac-done .ac-step-t{color:var(--muted)}
+.ac-step.ac-done .ac-step-t::after{content:" \2713";color:var(--green)}
+
+/* ---------- latest ---------- */
+.ac-news{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ac-news li{background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--royal);border-radius:12px;padding:14px 16px}
+.ac-news-date{display:block;font-family:var(--display);font-weight:600;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--royal)}
+.ac-news-title{font-family:var(--display);font-weight:700;font-size:1.05rem;line-height:1.3;margin:5px 0 4px;color:var(--text)}
+.ac-news-body{margin:0;color:var(--muted);font-size:1rem;line-height:1.45}
+
+/* ---------- leaderboard ---------- */
+.ac-board{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:18px 24px 14px}
+.ac-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+.ac-tab{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;min-height:42px;padding:0 18px;border-radius:999px;cursor:pointer;
+  font-family:var(--display);font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;line-height:1;
+  color:var(--muted);background:var(--surface-2);border:1px solid var(--line-2);transition:border-color .15s,color .15s,background-color .15s;-webkit-tap-highlight-color:transparent}
+.ac-tab:hover{color:var(--text);border-color:var(--royal);background:var(--surface-2);transform:none}
+.ac-tab[aria-selected="true"],.ac-tab[aria-selected="true"]:hover{color:var(--royal-ink);background:var(--royal);border-color:var(--royal)}
+.ac-panel[hidden]{display:none}
+.ac-rows{list-style:none;margin:0;padding:0}
+.ac-row{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:11px 0;border-top:1px solid var(--line)}
+.ac-row:first-child{border-top:0}
+.ac-rank{font-family:var(--display);font-weight:700;color:var(--royal);font-size:1.05rem}
+.ac-who{min-width:0}
+.ac-name{display:block;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--text);overflow-wrap:anywhere}
+.ac-meta{display:block;color:var(--muted);font-size:.98rem;line-height:1.35}
+.ac-lvl{font-family:var(--display);font-weight:700;font-size:.95rem;color:var(--text);white-space:nowrap;text-align:right}
+.ac-lvl small{display:block;font-family:var(--body);font-weight:400;font-size:.9rem}
+.ac-alive{color:var(--green)} .ac-fallen{color:var(--muted)}
+.ac-row.ac-is-fallen .ac-name{color:var(--muted)}
+.ac-empty{margin:0;padding:14px 0;color:var(--muted)}
+
+/* ---------- FAQ ---------- */
+.ac-faq{display:grid;gap:10px}
+.ac-q{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;transition:border-color .2s}
+.ac-q[open],.ac-q:hover{border-color:var(--line-2)}
+.ac-q summary{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:52px;padding:10px 18px;cursor:pointer;list-style:none;border-radius:13px;
+  font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.01em;line-height:1.3;color:var(--text)}
+.ac-q summary::-webkit-details-marker{display:none}
+.ac-q summary::after{content:"";flex:none;width:9px;height:9px;margin:-4px 4px 0 0;border-right:2px solid var(--royal);border-bottom:2px solid var(--royal);transform:rotate(45deg);transition:transform .2s}
+.ac-q[open] summary::after{transform:rotate(-135deg);margin-top:5px}
+.ac-a{padding:0 18px 16px;color:var(--muted)}
+.ac-a p{margin:0;max-width:70ch}
+
+/* ---------- reduced motion: everything is instant ---------- */
+:root[data-motion="reduce"] .ac-btn,:root[data-motion="reduce"] .ac-check,:root[data-motion="reduce"] .ac-tab,:root[data-motion="reduce"] .ac-eye,
+:root[data-motion="reduce"] .ac-tile,:root[data-motion="reduce"] .ac-q,:root[data-motion="reduce"] .ac-q summary::after,:root[data-motion="reduce"] .ac-links a,
+:root[data-motion="reduce"] .ac-meter-bars i,:root[data-motion="reduce"] .ac-prog>i{transition:none}
+
+/* ---------- smaller screens ---------- */
+@media (max-width:960px){
+  .ac-tiles,.ac-news{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:860px){
+  .ac-jump{display:inline-flex;align-items:center;gap:9px;min-height:46px;padding:0 20px;margin:0 0 20px;border-radius:14px;text-decoration:none;
+    font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:.04em;color:var(--royal-ink);background:var(--royal)}
+  .ac-jump svg{width:18px;height:18px}
+  .ac-sec{margin-top:48px}
+}
+@media (max-width:700px){
+  .ac-realms{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .ac-tiles,.ac-news{grid-template-columns:1fr}
+  .ac-realm,.ac-wiz{padding:18px 16px}
+  .ac-board{padding:14px 16px 10px}
+  .ac-wiz.ac-on .ac-step{gap:12px}
+  .ac-q summary{padding:10px 14px}
+  .ac-a{padding:0 14px 14px}
+  .ac-meter-t{min-width:8.5em}
+  .ac-rl code{font-size:.86rem;padding:8px 10px}
+}
+
+/* ---------- keep the whole sign-up card inside a laptop screen, offline note included ---------- */
+#ac-signup .sub{margin-bottom:10px}
+#ac-signup form > label{margin-top:11px}
+@media (min-width:861px){ .ac-offnote{font-size:.95rem;padding:8px 13px;margin-top:8px} }

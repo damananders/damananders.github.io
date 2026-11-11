@@ -1,0 +1,85 @@
+/* pages/vault.css: Personal Vault upgrades (see assets/README.md). Everything is prefixed vt-.
+ *   vt-door   arrival animation (additive overlay; the page is visible without it)
+ *   vt-meta   per-item detail chips and note
+ *   vt-gate   optional passphrase form
+ *   vt-tools  owner switch and Lock button
+ */
+
+/* ---- Unlock animation ----
+   :root.vt-pre is set by a tiny inline script in vault/index.html so the page doesn't flash before the door
+   is drawn. That script also removes it once the page's scripts have finished loading (or failed to), and as a
+   last resort the cover fades itself out after 1s, so a slow or broken load never leaves a dark screen. */
+:root.vt-pre::before{content:"";position:fixed;inset:0;z-index:2147482000;background:var(--ink);pointer-events:none;animation:vt-cover-out .3s linear 1s forwards}
+:root[data-motion="reduce"].vt-pre::before{display:none}
+@keyframes vt-cover-out{to{opacity:0;visibility:hidden}}
+
+.vt-door{position:fixed;inset:0;z-index:2147482000;display:grid;place-items:center;cursor:pointer;
+  background:radial-gradient(520px 520px at 50% 50%,color-mix(in srgb,var(--accent,var(--sx-accent)) 16%,transparent),transparent 70%),var(--ink);
+  animation:vt-door-out .4s var(--sx-ease) .8s forwards}
+.vt-door__svg{width:min(240px,58vw);height:auto;overflow:visible;animation:vt-door-open .4s var(--sx-ease) .8s forwards}
+.vt-door__frame{fill:var(--panel-2);stroke:var(--line-2);stroke-width:2}
+.vt-door__plate{fill:var(--panel);stroke:var(--accent,var(--sx-accent));stroke-width:2.5}
+.vt-door__ring{fill:none;stroke:var(--line-2);stroke-width:1.5}
+.vt-door__rivet{fill:var(--muted);stroke:none}
+.vt-door__bolt{fill:var(--accent,var(--sx-accent));stroke:none;animation:vt-bolt .28s var(--sx-ease) .5s forwards}
+.vt-door__bolt--n{--vt-bx:0px;--vt-by:20px} .vt-door__bolt--s{--vt-bx:0px;--vt-by:-20px}
+.vt-door__bolt--e{--vt-bx:-20px;--vt-by:0px} .vt-door__bolt--w{--vt-bx:20px;--vt-by:0px}
+.vt-door__dial{transform-box:fill-box;transform-origin:center;animation:vt-dial .62s cubic-bezier(.5,0,.3,1) forwards}
+.vt-door__dial circle{fill:var(--panel-2);stroke:var(--text);stroke-width:2}
+.vt-door__dial line{stroke:var(--muted);stroke-width:1.6;stroke-linecap:round}
+.vt-door__dial .vt-door__mark{stroke:var(--accent,var(--sx-accent));stroke-width:3}
+.vt-door__dial .vt-door__spoke{stroke:var(--text);stroke-width:3.5}
+.vt-door__dial .vt-door__hub{fill:var(--accent,var(--sx-accent));stroke:none}
+@keyframes vt-dial{0%{transform:rotate(0)}45%{transform:rotate(-150deg)}100%{transform:rotate(95deg)}}
+@keyframes vt-bolt{to{transform:translate(var(--vt-bx),var(--vt-by))}}
+@keyframes vt-door-open{to{transform:scale(1.18);opacity:0}}
+@keyframes vt-door-out{to{opacity:0;visibility:hidden}}
+/* the page content rises in as the door fades (the class is only ever added together with the overlay) */
+:root.vt-opening .wrap > .hero,:root.vt-opening .wrap > #catalogue,:root.vt-opening .wrap > #empty,:root.vt-opening .wrap > .vt-tools,:root.vt-opening .wrap > footer{animation:vt-rise .42s var(--sx-ease) .8s both}
+:root.vt-opening .wrap > #catalogue{animation-delay:.86s}
+@keyframes vt-rise{from{opacity:0;transform:translateY(18px)}}
+:root[data-motion="reduce"] .vt-door{display:none}
+
+/* ---- Per-item details ---- */
+.vt-meta{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 0;padding:0;list-style:none}
+.vt-chip{display:inline-flex;align-items:baseline;gap:6px;font:500 .74rem/1.2 var(--sx-mono);letter-spacing:.03em;color:var(--text);
+  background:var(--panel-2);border:1px solid var(--line-2);border-radius:999px;padding:4px 9px;max-width:100%;overflow-wrap:anywhere}
+.vt-chip__k{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:.66rem}
+.game .vt-note{margin:2px 0 0;padding-left:10px;border-left:2px solid var(--accent,var(--sx-accent));color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+
+/* ---- Passphrase gate ----
+   :root.vt-locked is set before first paint by the inline script in vault/index.html (so it only exists when
+   scripts run) and kept or removed by vault.js. */
+:root.vt-locked #catalogue,:root.vt-locked #empty,:root.vt-locked .vt-tools{display:none}
+.vt-gate{display:grid;gap:10px;max-width:440px;margin:22px 0 0;padding:22px;border-radius:18px;background:var(--sx-glass);border:1px solid var(--line-2);backdrop-filter:blur(8px)}
+.vt-gate__head{display:flex;align-items:center;gap:12px}
+.vt-gate__icon{display:grid;place-items:center;width:44px;height:44px;flex:none;border-radius:12px;color:var(--accent,var(--sx-accent));
+  background:color-mix(in srgb,var(--accent,var(--sx-accent)) 14%,transparent);border:1px solid color-mix(in srgb,var(--accent,var(--sx-accent)) 40%,transparent)}
+.vt-gate__icon svg{width:24px;height:24px}
+.vt-gate__title{margin:0;font:700 1.25rem/1.2 var(--sx-display);color:var(--text)}
+.vt-gate__hint{margin:0;color:var(--muted);font-size:.95rem}
+.vt-gate__label{display:block;margin:4px 0 0;font:600 .9rem/1.3 var(--sx-display);color:var(--text)}
+.vt-gate__row{display:flex;gap:10px;flex-wrap:wrap}
+.vt-gate__input{flex:1 1 180px;min-width:0;box-sizing:border-box;height:46px;margin:0;padding:0 14px;border-radius:12px;font:500 1rem/1 var(--sx-body);
+  color:var(--text);background:var(--panel-2);border:1px solid var(--line-2)}
+.vt-gate__input:focus-visible{outline:2px solid var(--accent,var(--sx-accent));outline-offset:2px}
+.vt-gate__input[aria-invalid="true"]{border-color:var(--sx-err)}
+.vt-gate__go{flex:0 0 auto;height:46px;margin:0}
+.vt-gate__go:focus-visible,.vt-btn:focus-visible,.vt-switch:focus-visible{outline:2px solid var(--accent,var(--sx-accent));outline-offset:2px}
+.vt-gate__msg{margin:0;min-height:1.4em;font-size:.92rem;font-weight:600;color:var(--sx-err)}
+
+/* ---- Owner tools ---- */
+.vt-tools{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;margin-top:22px;padding:10px 14px;border-radius:14px;
+  background:var(--sx-glass);border:1px solid var(--line);backdrop-filter:blur(8px)}
+.vt-switch{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:12px;min-height:44px;cursor:pointer;color:var(--text);font:500 .95rem/1.3 var(--sx-body);-webkit-tap-highlight-color:transparent;border-radius:10px}
+.vt-switch__track{position:relative;flex:none;width:44px;height:26px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line-2);transition:background .18s,border-color .18s}
+.vt-switch__track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:transform .18s var(--sx-ease),background .18s}
+.vt-switch[aria-checked="true"] .vt-switch__track{background:color-mix(in srgb,var(--accent,var(--sx-accent)) 30%,var(--panel-2));border-color:var(--accent,var(--sx-accent))}
+.vt-switch[aria-checked="true"] .vt-switch__track::after{transform:translateX(18px);background:var(--accent,var(--sx-accent))}
+.vt-switch__hint{color:var(--muted)}
+.vt-btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:12px;cursor:pointer;
+  font:600 .95rem/1 var(--sx-display);color:var(--text);background:var(--panel-2);border:1px solid var(--line-2);transition:border-color .15s,color .15s;-webkit-tap-highlight-color:transparent}
+.vt-btn:hover{border-color:var(--accent,var(--sx-accent));color:var(--accent,var(--sx-accent))}
+.vt-btn svg{width:18px;height:18px}
+:root[data-motion="reduce"] .vt-switch__track,:root[data-motion="reduce"] .vt-switch__track::after{transition:none}
+@media (max-width:520px){.vt-gate{padding:18px}.vt-gate__go{flex:1 1 100%}}

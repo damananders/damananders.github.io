@@ -1,0 +1,387 @@
+/* Site chrome: the interface layer shared by every page (see assets/README.md).
+ *
+ *   1. Light theme, finished      tokens tuned for contrast + everything the pages hard-code dark
+ *   2. Header                     sticky glass bar that shrinks, compact on phones, tools area
+ *   3. Logo mark and wordmark     CSS only, on .brand
+ *   4. Theme button               sun / moon swap
+ *   5. Settings panel             anchored under the header, drawn by chrome.js from Site.settings.list()
+ *   6. Back to top                floating button with a scroll-progress ring
+ *   7. Skip link and focus        one :focus-visible treatment for the whole site
+ *   8. Reduced motion, print
+ *
+ * New classes, keyframes and custom properties are prefixed ch-. The rules that reach for existing page
+ * classes (.brand, .social, .btn, .avenue ...) are the point of this file: they retheme and tidy what is
+ * already on the pages without editing the pages.
+ */
+
+:root{
+  --ch-t:.22s;                                                        /* header shrink timing */
+  --ch-bar:var(--sx-glass);                                           /* sticky header glass */
+  --ch-bar-shade:rgba(0,0,0,.7);
+}
+@supports (background:color-mix(in srgb,red 50%,blue)){
+  :root{--ch-bar:color-mix(in srgb,var(--sx-surface) 88%,transparent)}
+}
+
+/* =====================================================================================================
+   1. LIGHT THEME
+   fx.css flips the base tokens. Here: (a) the tokens are tightened so body text, muted text and accent
+   text all reach 4.5:1 on white cards AND on the washed photo backgrounds, (b) every spot the pages
+   hard-code dark gets a light counterpart.
+   ===================================================================================================== */
+:root[data-theme="light"]{
+  --muted:#525d69; --sx-muted:#525d69;
+  --line:rgba(12,18,28,.13);
+  --craft:#9a4100; --anyps:#1858bd; --games:#096845;
+  --sx-ok:#096845; --sx-warn:#7d4e00; --sx-err:#a82c22; --sx-info:#1858bd;
+  --sx-accent:#8a4f00;
+  /* a stronger wash than the core default: the photos are mostly dark, and text sits straight on them */
+  --sx-photo-overlay:linear-gradient(180deg,rgba(243,241,236,.93),rgba(243,241,236,.9) 40%,rgba(243,241,236,.97));
+  --ch-card:rgba(255,255,255,.84);                                    /* translucent card over the photo */
+  --ch-bar-shade:rgba(20,30,50,.3);
+}
+:root[data-theme="light"][data-page="anyps"]{--sx-accent:#1858bd}
+:root[data-theme="light"][data-page="vault"]{--sx-accent:#096845}
+
+/* ---- hub.css pages (hub, AnyPS, Vault, 404) ---- */
+:root[data-theme="light"] body.photo .avenue,
+:root[data-theme="light"] body.photo .panel,
+:root[data-theme="light"] body.photo .game,
+:root[data-theme="light"] body.photo .feat li,
+:root[data-theme="light"] body.photo .card,
+:root[data-theme="light"] body.photo .updrow .chip,
+:root[data-theme="light"] body.photo .faq details,
+:root[data-theme="light"] body.photo .ctrl{background:var(--ch-card)}
+:root[data-theme="light"] body.photo .hero h1,
+:root[data-theme="light"] body.photo .hero .lead,
+:root[data-theme="light"] body.photo .hero .eyebrow,
+:root[data-theme="light"] body.photo nav{text-shadow:none}
+:root[data-theme="light"] body.photo .hero .lead{color:var(--muted);color:color-mix(in srgb,var(--text) 62%,var(--muted))}
+:root[data-theme="light"] .btn:not(.ghost):not([aria-disabled="true"]),
+:root[data-theme="light"] .sform button.send{color:var(--sx-on-accent)}
+:root[data-theme="light"] .tag.beta{color:var(--sx-warn);border-color:var(--sx-warn)}
+:root[data-theme="light"] .preview{box-shadow:0 24px 60px -32px rgba(20,30,50,.55)}
+:root[data-theme="light"] dialog.features{background:var(--panel);box-shadow:0 40px 90px -40px rgba(20,30,50,.6)}
+:root[data-theme="light"] dialog.features .dhead{background:var(--panel)}
+:root[data-theme="light"] dialog.features::backdrop{background:rgba(30,36,46,.45)}
+:root[data-theme="light"] .oldbuilds ul{background:var(--panel);box-shadow:0 18px 40px -20px rgba(20,30,50,.45)}
+:root[data-theme="light"] .game-icon{background:radial-gradient(circle at 30% 25%,rgba(9,104,69,.2),rgba(9,104,69,.05));border-color:rgba(9,104,69,.4)}
+
+/* 404: the "Back to the hub" button sets --accent:#eef0f3 in an inline style (a near-white button, right for the
+   dark theme only). !important is deliberate here: it is the only way to override that inline style. */
+:root[data-theme="light"][data-page="404"] .btn[style*="--accent"]{--accent:var(--text)!important}
+
+/* ---- AnyPS (styles written inline in anyps/index.html) ---- */
+:root[data-theme="light"] .vsound{color:var(--text);background:rgba(255,255,255,.9)}
+:root[data-theme="light"] .gmain{box-shadow:0 20px 50px -30px rgba(20,30,50,.6)}
+:root[data-theme="light"] .gmain figcaption{background:var(--panel)}
+:root[data-theme="light"] .gdots button:not([aria-selected="true"]){background:rgba(12,18,28,.32)}
+:root[data-theme="light"] .sform ::placeholder{color:var(--muted);opacity:1}
+:root[data-theme="light"] .sform .status.ok{color:var(--sx-ok)}
+:root[data-theme="light"] .sform .status.err{color:var(--sx-err)}
+/* the screenshot lightbox stays dark in both themes, so its controls keep a light focus colour */
+:root[data-theme="light"] dialog.lightbox{color-scheme:dark;--accent:#9cc3ff}
+
+/* The fourth header button on AnyPS is a bare <button>: give it a surface that follows the theme */
+.social.suggest{-webkit-appearance:none;appearance:none;font-family:"Space Grotesk",system-ui,sans-serif;font-weight:700;font-size:.98rem;line-height:inherit;
+  color:var(--sx-text);background:var(--sx-glass);border:1px solid var(--sx-line-2)}
+
+/* Donate button: the brand red on its cream fill is only 2.8:1, so the label and cup are a deeper red (4.9:1).
+   On the light theme's pale bar the cream button also needs an edge of its own. */
+.wrap > nav .social.kofi{color:#c8312e}
+:root[data-theme="light"] .wrap > nav .social.kofi{background:#f6f0e6;border-color:rgba(110,60,20,.34)}
+
+/* ---- AndersCraft (its own stylesheet and tokens, written inline in anderscraft/index.html) ---- */
+:root[data-theme="light"][data-page="anderscraft"]{
+  --ink:#f3efe7; --surface:rgba(255,253,249,.9); --surface-2:rgba(255,253,249,.74);
+  --line:rgba(110,55,10,.2); --line-2:rgba(110,55,10,.38);
+  --text:#23180c; --muted:#62523d; --royal:#9a4100; --royal-deep:#843700; --royal-ink:#fff;
+  --green:#1a6b3c; --red:#a82c22;
+  --sx-accent:#9a4100; --sx-muted:#62523d;
+}
+:root[data-theme="light"][data-page="anderscraft"] body{background-color:var(--ink);background-image:var(--sx-photo-overlay),url("/assets/background.webp")}
+:root[data-theme="light"][data-page="anderscraft"] .card{box-shadow:0 18px 44px -26px rgba(60,30,5,.5)}
+:root[data-theme="light"][data-page="anderscraft"] input:not(.ch-range){background:rgba(255,255,255,.92)}
+:root[data-theme="light"][data-page="anderscraft"] input:not(.ch-range):focus{box-shadow:0 0 0 3px rgba(154,65,0,.2)}
+:root[data-theme="light"][data-page="anderscraft"] .msg.ok{background:rgba(26,107,60,.1);color:#14502d}
+:root[data-theme="light"][data-page="anderscraft"] .msg.err{background:rgba(168,44,34,.08);color:#7c1f17}
+:root[data-theme="light"][data-page="anderscraft"] code{background:rgba(110,55,10,.08)}
+
+/* =====================================================================================================
+   2. HEADER
+   The <nav> inside .wrap becomes sticky (only once chrome.js is running: without it the header stays the
+   plain header it always was). The glass bar is a pseudo-element stretched to the viewport edges; chrome.js
+   measures how far (--ch-bl / --ch-br) so it can never cause sideways scrolling.
+   No content jump: whatever height the header loses by shrinking, chrome.js hands back as extra bottom padding
+   (--ch-comp), so the nav box keeps its size and nothing under it moves. That extra strip is invisible and
+   lets clicks through; the glass bar stops above it.
+   ===================================================================================================== */
+.wrap > nav{position:relative;isolation:isolate;gap:10px 12px;padding-block:6px calc(6px + var(--ch-comp,0px));margin-block:-6px}
+:root.ch-on .wrap > nav{position:sticky;top:0;z-index:var(--sx-z-header);pointer-events:none}
+:root.ch-on .wrap > nav > *{pointer-events:auto}
+:root.ch-on.ch-open .wrap > nav{z-index:var(--sx-z-pop)}
+/* Things that get scrolled into view (focus, #links, the skip link) stop clear of the sticky header. This is a margin
+   on the content and not scroll-padding on the page: the header's own buttons sit inside that padding and can never
+   leave it, so every Tab along the header dragged the page towards the top. Kept just strong enough to survive the
+   buttons that reset themselves with all:unset, and weak enough that a page's own scroll-margin rules still win.
+   The header's own items are pinned to no margin at all (also for the controller focus class). */
+html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(:not(nav *,dialog *,.ch-top,.ch-skip)){scroll-margin-top:calc(var(--sx-header-h,0px) + 14px)}
+:root.ch-on .wrap > nav :is(a,button,input,[tabindex]){scroll-margin-top:0}
+
+.wrap > nav::before{content:"";position:absolute;z-index:-1;top:0;bottom:var(--ch-comp,0px);left:calc(-1*var(--ch-bl,0px));right:calc(-1*var(--ch-br,0px));
+  background:var(--ch-bar);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
+  border-bottom:1px solid var(--sx-line);box-shadow:0 14px 30px -22px var(--ch-bar-shade);
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s .22s}
+:root.ch-scrolled .wrap > nav::before{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .22s ease}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .wrap > nav::before{background:var(--sx-surface)}
+}
+
+.wrap > nav .socials{margin-left:auto}
+.wrap > nav .social{transition:transform .15s,filter .15s,padding var(--ch-t) var(--sx-ease),font-size var(--ch-t) var(--sx-ease),border-radius var(--ch-t) var(--sx-ease)}
+.wrap > nav .social svg{transition:width var(--ch-t) var(--sx-ease),height var(--ch-t) var(--sx-ease)}
+.sx-tools .sx-iconbtn{transition:transform .15s,border-color .15s,color .15s,width var(--ch-t) var(--sx-ease),height var(--ch-t) var(--sx-ease),border-radius var(--ch-t) var(--sx-ease)}
+/* AndersCraft styles every bare <button> on hover (orange fill): keep the header tools on their own surface */
+.sx-tools .sx-iconbtn:hover{background:var(--sx-glass)}
+
+/* Space for the tools is held before chrome.js adds them, so the social buttons do not slide on load
+   (data-page is set by the inline head script, so this only applies when scripts run at all) */
+:root[data-page]:not(.ch-js) .wrap > nav .socials{margin-right:100px}
+:root[data-page="hub"]:not(.ch-js) .wrap > nav .socials{margin-right:148px}
+
+/* shrunk: a little scrolling tightens everything and brings in the glass, hairline and shadow */
+:root.ch-scrolled .wrap > nav .social{padding:6px 13px;font-size:.92rem;border-radius:10px}
+:root.ch-scrolled .wrap > nav .social svg{width:19px;height:19px}
+:root.ch-scrolled .sx-tools .sx-iconbtn{width:36px;height:36px;border-radius:10px}
+:root.ch-scrolled .wrap > nav .brand{min-height:36px}
+:root.ch-scrolled .wrap > nav .brand::before{width:23px;height:23px}
+
+/* =====================================================================================================
+   3. LOGO MARK AND WORDMARK (CSS only)
+   ===================================================================================================== */
+.wrap > nav .brand{display:inline-flex;align-items:center;gap:.34em;min-height:40px;white-space:nowrap;line-height:1.12;letter-spacing:-.012em;text-decoration:none;border-radius:10px}
+.wrap > nav .brand::before{content:"";flex:none;width:26px;height:26px;margin-right:calc(9px - .34em);border-radius:27%;
+  background:url("/assets/icons/logo.svg") center/cover no-repeat;box-shadow:0 0 0 1px var(--sx-line-2),0 6px 14px -8px rgba(0,0,0,.7);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1),width var(--ch-t) var(--sx-ease),height var(--ch-t) var(--sx-ease)}
+.wrap > nav .brand span{letter-spacing:0;transition:color .15s}
+.wrap > nav .brand:focus-visible::before{transform:rotate(-10deg) scale(1.12)}
+@media (hover:hover){
+  .wrap > nav .brand:hover::before{transform:rotate(-10deg) scale(1.12)}
+  .wrap > nav .brand:hover span{color:inherit}
+}
+:root[data-page="anderscraft"] .wrap > nav .brand{font-size:1.06rem;letter-spacing:.03em}
+
+/* ---- header at smaller widths (after the wordmark rules above, so these win) ---- */
+/* chrome.js wraps each social button's text in .ch-label. Where a button turns icon-only the label is hidden
+   visually but still read out. AnyPS: "Suggestions / Comments" is long, so between phone and desktop widths it is an icon. */
+@media (min-width:521px) and (max-width:940px){
+  .wrap > nav .social.suggest{font-size:0;gap:0;padding-inline:11px}
+  .wrap > nav .social.suggest .ch-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+}
+
+/* two rows below 760px: brand + tools, then the social buttons; one compact row of icons once scrolled */
+@media (max-width:760px){
+  :root{--ch-t:0s}
+  :root[data-page]:not(.ch-js) .wrap > nav .socials{margin-right:0}
+  .wrap > nav{gap:8px}
+  .wrap > nav .sx-tools{order:1;margin-left:auto}
+  .wrap > nav .socials{order:2;flex:1 0 100%;margin-left:0}
+  :root.ch-scrolled .wrap > nav .socials{order:1;flex:0 1 auto;margin-left:auto;gap:6px}
+  :root.ch-scrolled .wrap > nav .sx-tools{order:2;margin-left:0;gap:6px}
+  :root.ch-scrolled .wrap > nav .social{flex:none;min-width:36px;height:36px;padding:0 8px;gap:6px;justify-content:center;font-size:.82rem}
+  :root.ch-scrolled .wrap > nav .ch-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+}
+@media (max-width:520px){
+  /* the wordmark stays on one line; if it ever cannot fit, its tail is cut with an ellipsis instead of wrapping */
+  .wrap > nav .brand{display:flex;flex:1 1 0;min-width:0;font-size:1.02rem;overflow:hidden;text-overflow:ellipsis}
+  .wrap > nav .brand span{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  :root[data-page="anderscraft"] .wrap > nav .brand{display:block;line-height:40px;font-size:.86rem;letter-spacing:.01em}
+  :root[data-page="anderscraft"] .wrap > nav .brand::before{display:inline-block;vertical-align:middle;margin-right:9px}
+  .wrap > nav .sx-tools{margin-left:0}
+  .wrap > nav .socials{gap:8px}
+  .wrap > nav .social{flex:1 1 auto;justify-content:center}
+  /* AnyPS: "Suggestions / Comments" is an icon here too, so it shares the row instead of taking one of its own */
+  .wrap > nav .social.suggest{flex:none;min-width:40px;font-size:0;gap:0;padding-inline:9px}
+  .wrap > nav .social.suggest .ch-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+  :root.ch-scrolled .wrap > nav .brand{flex:none;min-height:40px;font-size:0;gap:0}
+  :root.ch-scrolled .wrap > nav .brand::before{width:26px;height:26px;margin-right:0}
+  :root.ch-scrolled .wrap > nav .social{flex:none;min-width:40px;height:40px;padding:0 10px}
+  :root.ch-scrolled .wrap > nav .social svg{width:20px;height:20px}
+  :root.ch-scrolled .sx-tools .sx-iconbtn{width:40px;height:40px;border-radius:12px}
+}
+/* small phones: tighter buttons so Donate, Discord and Twitch still share one row, and a smaller wordmark */
+@media (max-width:389px){
+  .wrap > nav .brand{font-size:.94rem}
+  :root[data-page="anderscraft"]:not(.ch-scrolled) .wrap > nav .brand{font-size:.76rem}
+  :root:not(.ch-scrolled) .wrap > nav .social{padding-inline:9px;gap:6px;font-size:.88rem}
+  :root:not(.ch-scrolled) .wrap > nav .social.suggest{font-size:0;gap:0}
+}
+/* AnyPS has a fourth button: tighter still, so all four share the row */
+@media (max-width:520px){
+  :root[data-page="anyps"]:not(.ch-scrolled) .wrap > nav .social{padding-inline:9px;gap:6px;font-size:.88rem}
+  :root[data-page="anyps"]:not(.ch-scrolled) .wrap > nav .social.suggest{font-size:0;gap:0}
+}
+@media (max-width:389px){
+  :root[data-page="anyps"]:not(.ch-scrolled) .wrap > nav .socials{gap:6px}
+  :root[data-page="anyps"]:not(.ch-scrolled) .wrap > nav .social{padding-inline:7px;gap:5px;font-size:.85rem}
+  :root[data-page="anyps"]:not(.ch-scrolled) .wrap > nav .social.suggest{padding-inline:9px;font-size:0;gap:0}
+}
+/* while chrome.js re-measures the full-size header nothing in it may animate */
+:root.ch-measuring .wrap > nav,:root.ch-measuring .wrap > nav *,:root.ch-measuring .wrap > nav::before,:root.ch-measuring .wrap > nav .brand::before{transition:none}
+
+/* =====================================================================================================
+   4. THEME BUTTON (sits in Site.tools(), order 10)
+   ===================================================================================================== */
+.ch-theme .ch-ico{grid-area:1/1;transition:transform .45s var(--sx-ease),opacity .25s ease}
+.ch-theme .ch-ico--moon{opacity:0;transform:rotate(60deg) scale(.5)}
+:root[data-theme="light"] .ch-theme .ch-ico--sun{opacity:0;transform:rotate(-60deg) scale(.5)}
+:root[data-theme="light"] .ch-theme .ch-ico--moon{opacity:1;transform:none}
+/* cross-fade the whole page when the theme changes (only where the browser can) */
+:root.ch-vt::view-transition-old(root){animation:.26s ease both -ua-view-transition-fade-out}
+:root.ch-vt::view-transition-new(root){animation:.26s ease both -ua-view-transition-fade-in}
+
+/* =====================================================================================================
+   5. SETTINGS PANEL (gear in Site.tools(), order 20; the panel hangs under the header, right aligned)
+   Every button resets itself with all:unset because the AndersCraft page styles bare button/input elements.
+   ===================================================================================================== */
+.ch-gear svg{transition:transform .45s var(--sx-ease)}
+.ch-gear[aria-expanded="true"]{border-color:var(--accent,var(--sx-accent));color:var(--accent,var(--sx-accent))}
+.ch-gear[aria-expanded="true"] svg{transform:rotate(60deg)}
+
+.ch-panel{position:absolute;top:calc(100% - var(--ch-comp,0px) + 8px);right:0;z-index:1;box-sizing:border-box;width:min(344px,calc(100vw - 32px));
+  max-height:calc(100vh - var(--sx-header-h,64px) - 32px);overflow:auto;overscroll-behavior:contain;padding:14px 16px 16px;border-radius:16px;
+  color:var(--sx-text);background:var(--sx-surface);border:1px solid var(--sx-line-2);box-shadow:var(--sx-shadow);
+  font:400 .95rem/1.45 var(--sx-body);letter-spacing:0;text-align:left;text-shadow:none;text-transform:none;
+  opacity:0;transform:translateY(-6px) scale(.98);transform-origin:100% 0;transition:opacity .16s ease,transform .22s var(--sx-ease)}
+@supports (height:100dvh){.ch-panel{max-height:calc(100dvh - var(--sx-header-h,64px) - 32px)}}
+.ch-panel[hidden]{display:none}
+.ch-panel.is-in{opacity:1;transform:none}
+.ch-panel:focus{outline:none}
+.ch-panel__head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.ch-panel .ch-panel__title{margin:0;font:700 1.08rem/1.2 var(--sx-display);letter-spacing:-.005em;color:var(--sx-text)}
+.ch-panel__x{all:unset;box-sizing:border-box;display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:10px;cursor:pointer;
+  color:var(--sx-muted);border:1px solid transparent;transition:color .15s,background .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
+.ch-panel .ch-panel__x:hover{color:var(--sx-text);background:var(--sx-surface-2);border-color:var(--sx-line-2);transform:none}
+.ch-panel__x svg{width:18px;height:18px}
+.ch-panel__rows{display:grid}
+.ch-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 14px;padding:12px 0;border-top:1px solid var(--sx-line)}
+.ch-row:last-child{padding-bottom:2px}
+.ch-row__text{min-width:0}
+.ch-row__label{font-weight:600;color:var(--sx-text)}
+.ch-row__hint{margin-top:1px;font-size:.84rem;line-height:1.4;color:var(--sx-muted)}
+.ch-row__val{font:500 .8rem/1 var(--sx-mono);color:var(--sx-muted);font-variant-numeric:tabular-nums}
+/* range rows: the value sits on the label's baseline, in line with the switches above it */
+.ch-row--range > .ch-row__text,.ch-row--range > .ch-row__val{align-self:baseline}
+.ch-row--range > .ch-row__val{padding-right:3px}
+
+/* choice: a segmented row of buttons, aria-pressed marks the current one */
+.ch-seg{grid-column:1/-1;display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
+.ch-seg__btn{all:unset;box-sizing:border-box;flex:1 1 auto;display:grid;place-items:center;min-height:36px;padding:4px 10px;border-radius:9px;cursor:pointer;
+  font:600 .86rem/1.15 var(--sx-body);text-align:center;color:var(--sx-muted);transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.ch-panel .ch-seg__btn:hover{color:var(--sx-text);background:none;transform:none}
+.ch-panel .ch-seg__btn[aria-pressed="true"]{color:var(--sx-on-accent);background:var(--accent,var(--sx-accent))}
+
+/* toggle: a switch (role="switch"); the button is 40px tall, the track is drawn inside it */
+.ch-switch{all:unset;box-sizing:border-box;position:relative;flex:none;width:52px;height:40px;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ch-panel .ch-switch:hover{background:none;transform:none}
+.ch-switch::before{content:"";position:absolute;left:3px;right:3px;top:7px;height:26px;box-sizing:border-box;border-radius:999px;
+  background:var(--sx-surface-2);border:1px solid var(--sx-line-2);transition:background .18s,border-color .18s}
+.ch-switch::after{content:"";position:absolute;left:8px;top:12px;width:16px;height:16px;border-radius:50%;background:var(--sx-muted);
+  transition:transform .22s var(--sx-ease),background .18s}
+.ch-switch:hover::before{border-color:var(--accent,var(--sx-accent))}
+.ch-switch[aria-checked="true"]::before{background:var(--accent,var(--sx-accent));border-color:transparent}
+.ch-switch[aria-checked="true"]::after{transform:translateX(20px);background:var(--sx-on-accent)}
+.ch-switch[aria-disabled="true"]{cursor:default;opacity:.55}
+.ch-switch[aria-disabled="true"]:hover::before{border-color:var(--sx-line-2)}
+.ch-switch[aria-disabled="true"][aria-checked="true"]:hover::before{border-color:transparent}
+
+/* range: a slider with a filled track (--ch-fill is set by chrome.js) */
+.ch-range{all:unset;box-sizing:border-box;grid-column:1/-1;display:block;width:100%;height:32px;margin:-4px 0;border-radius:8px;cursor:pointer;
+  -webkit-appearance:none;appearance:none;background:none;-webkit-tap-highlight-color:transparent}
+.ch-range::-webkit-slider-runnable-track{height:6px;border-radius:999px;
+  background:linear-gradient(90deg,var(--accent,var(--sx-accent)) var(--ch-fill,0%),var(--sx-surface-2) var(--ch-fill,0%));box-shadow:0 0 0 1px var(--sx-line-2)}
+.ch-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;margin-top:-7px;border-radius:50%;
+  background:var(--sx-text);border:3px solid var(--sx-surface);box-shadow:0 0 0 1px var(--sx-line-2)}
+.ch-range::-moz-range-track{height:6px;border-radius:999px;background:var(--sx-surface-2);box-shadow:0 0 0 1px var(--sx-line-2)}
+.ch-range::-moz-range-progress{height:6px;border-radius:999px;background:var(--accent,var(--sx-accent))}
+.ch-range::-moz-range-thumb{box-sizing:border-box;width:20px;height:20px;border-radius:50%;background:var(--sx-text);border:3px solid var(--sx-surface);box-shadow:0 0 0 1px var(--sx-line-2)}
+
+:root[data-page="anderscraft"] .ch-panel{font-size:1.06rem}
+:root[data-page="anderscraft"] .ch-seg__btn{font-size:.98rem}
+:root[data-page="anderscraft"] .ch-row__hint{font-size:.94rem}
+
+@media (max-width:520px){
+  .ch-panel{left:0;right:0;width:auto;transform-origin:50% 0}
+  .ch-panel__x{width:40px;height:40px}
+  .ch-seg__btn{min-height:40px}
+  .ch-range{height:40px;margin:-6px 0}
+}
+
+/* =====================================================================================================
+   6. BACK TO TOP (bottom right; chrome.js lifts it with --ch-lift when a toast would sit under it)
+   ===================================================================================================== */
+.ch-top{all:unset;box-sizing:border-box;position:fixed;z-index:var(--sx-z-float);right:max(18px,env(safe-area-inset-right,0px));
+  bottom:max(calc(18px + env(safe-area-inset-bottom,0px)),var(--ch-lift,0px));
+  display:grid;place-items:center;width:48px;height:48px;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  color:var(--sx-text);background:var(--sx-glass);border:1px solid var(--sx-line-2);box-shadow:var(--sx-shadow);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;transform:translateY(12px) scale(.9);
+  transition:opacity .2s ease,transform .25s var(--sx-ease),visibility 0s .25s,bottom .2s var(--sx-ease),color .15s,border-color .15s}
+.ch-top.is-on{opacity:1;visibility:visible;transform:none;transition:opacity .2s ease,transform .25s var(--sx-ease),bottom .2s var(--sx-ease),color .15s,border-color .15s}
+.ch-top.is-on:hover{color:var(--accent,var(--sx-accent));background:var(--sx-glass);border-color:var(--accent,var(--sx-accent));transform:translateY(-2px)}
+.ch-top svg{width:22px;height:22px}
+/* thin ring that fills as the page is read (--ch-p runs 0..1) */
+.ch-top::before{content:"";position:absolute;inset:-1px;border-radius:50%;padding:2px;pointer-events:none;
+  background:conic-gradient(var(--accent,var(--sx-accent)) calc(var(--ch-p,0)*1turn),transparent 0);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+@media (max-width:520px){
+  .ch-top{width:44px;height:44px;right:max(12px,env(safe-area-inset-right,0px));bottom:max(calc(12px + env(safe-area-inset-bottom,0px)),var(--ch-lift,0px))}
+  .ch-top svg{width:20px;height:20px}
+}
+
+/* =====================================================================================================
+   7. SKIP LINK AND FOCUS
+   ===================================================================================================== */
+/* Parked off the left edge until it has focus (so pointer and controller navigation never land on it by accident) */
+.ch-skip{position:fixed;z-index:calc(var(--sx-z-pop) + 10);left:-999px;top:10px;padding:11px 16px;border-radius:10px;white-space:nowrap;
+  font:600 .95rem/1.2 var(--sx-body);letter-spacing:0;text-decoration:none;text-shadow:none;color:var(--sx-text);background:var(--sx-surface);
+  border:1px solid var(--sx-line-2);box-shadow:var(--sx-shadow)}
+.ch-skip:focus{left:12px;animation:ch-skip-in .18s var(--sx-ease)}
+@keyframes ch-skip-in{from{transform:translateY(-160%)}}
+[data-ch-skip-target]:focus{outline:none}
+
+/* One focus treatment everywhere: links, buttons, fields, summaries, the hub cards, the social buttons.
+   :root in front lifts it above the page rules that switch outlines off (.avenue, the AnyPS gallery, AndersCraft inputs). */
+:root :is(a,button,input,select,textarea,summary,[tabindex]:not([tabindex="-1"])):focus-visible{outline:2px solid var(--accent,var(--sx-accent));outline-offset:2px}
+:root :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),select,textarea):focus-visible{outline-offset:1px}
+/* stronger while a controller is connected: the focus ring is the cursor */
+:root[data-gamepad] :is(a,button,input,select,textarea,summary,[tabindex]:not([tabindex="-1"])):focus-visible{outline-width:3px;outline-offset:3px;
+  box-shadow:0 0 0 7px color-mix(in srgb,var(--accent,var(--sx-accent)) 30%,transparent)}
+
+/* =====================================================================================================
+   8. REDUCED MOTION, PRINT
+   ===================================================================================================== */
+:root[data-motion="reduce"]{--ch-t:0s}
+:root[data-motion="reduce"] .wrap > nav::before,
+:root[data-motion="reduce"] .wrap > nav .brand::before,
+:root[data-motion="reduce"] .wrap > nav .social,
+:root[data-motion="reduce"] .sx-tools .sx-iconbtn,
+:root[data-motion="reduce"] .ch-theme .ch-ico,
+:root[data-motion="reduce"] .ch-gear svg,
+:root[data-motion="reduce"] .ch-panel,
+:root[data-motion="reduce"] .ch-seg__btn,
+:root[data-motion="reduce"] .ch-switch::before,
+:root[data-motion="reduce"] .ch-switch::after,
+:root[data-motion="reduce"] .ch-top{transition:none}
+:root[data-motion="reduce"] .ch-skip:focus{animation:none}
+:root[data-motion="reduce"] .wrap > nav .brand:hover::before,
+:root[data-motion="reduce"] .wrap > nav .brand:focus-visible::before,
+:root[data-motion="reduce"] .ch-gear[aria-expanded="true"] svg,
+:root[data-motion="reduce"] .ch-top.is-on:hover{transform:none}
+:root[data-motion="reduce"] .ch-panel{transform:none}
+:root[data-motion="reduce"] .ch-top{transform:none}
+
+@media print{
+  :root.ch-on .wrap > nav{position:relative}
+  .wrap > nav::before,.sx-tools,.ch-panel,.ch-top,.ch-skip{display:none}
+}

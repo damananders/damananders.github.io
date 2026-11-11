@@ -1,0 +1,11 @@
+[
+  {
+    "tag_name": "v0.0-demo", "html_url": "https://github.com/", "published_at": "2026-11-11T00:00:00Z", "draft": false, "prerelease": false,
+    "assets": [
+      { "name": "AnyPS_demo_win64.7z", "size": 252179492, "download_count": 128, "browser_download_url": "https://github.com/" },
+      { "name": "AnyPS_demo_win32.7z", "size": 17825792, "download_count": 9, "browser_download_url": "https://github.com/" }
+    ]
+  },
+  { "tag_name": "v0.0-older-demo", "html_url": "https://github.com/", "published_at": "2026-11-10T00:00:00Z", "draft": false, "prerelease": false,
+    "assets": [ { "name": "AnyPS_older_demo.7z", "size": 250000000, "download_count": 301, "browser_download_url": "https://github.com/" } ] }
+]

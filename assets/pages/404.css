@@ -1,0 +1,73 @@
+/* pages/404.css: the "Lost at sea." page. See assets/README.md.
+ * Everything here is prefixed nf-. The light beam is drawn in CSS only and sits on the lamp of the lighthouse
+ * in the background photo (assets/hub-bg.webp, 1920x1012, lamp at 58.6% across and 15.8% down).
+ */
+:root{
+  /* size of the photo as "background-size:cover" draws it, and where its lamp lands */
+  --nf-h:100vh;
+  --nf-img-w:max(100vw,calc(var(--nf-h)*1.8972));
+  --nf-img-h:calc(var(--nf-img-w)/1.8972);
+  --nf-lamp-x:calc(50vw + var(--nf-img-w)*.086);
+  --nf-lamp-y:calc(var(--nf-h)*.5 - var(--nf-img-h)*.342);
+  --nf-ray:255,236,190;          /* beam colour (r,g,b) */
+  --nf-ray-a:.34;                /* beam strength at the lamp */
+  --nf-reach:max(70vw,70vh);
+}
+/* Daylight: a beam cannot read as light against a pale sky (any colour dark enough to show looks like a smudge
+   behind the heading), so the light theme keeps only a pale warm glow on the lamp itself. */
+:root[data-theme="light"]{--nf-ray:255,200,104}
+:root[data-theme="light"] .nf-beam{display:none}
+
+/* ---- the sky layer: behind the page content, never clickable, never scrollable ---- */
+.nf-sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict}
+/* on phones the photo scrolls with the page (hub.css), so the layer does too */
+@media (max-width:860px){.nf-sky{position:absolute;inset:0 0 auto 0;height:var(--nf-h)}}
+
+.nf-lamp{position:absolute;left:var(--nf-lamp-x);top:var(--nf-lamp-y);width:0;height:0}
+.nf-beam{position:absolute;left:0;top:calc(var(--nf-reach)*-.09);width:var(--nf-reach);height:calc(var(--nf-reach)*.18);
+  transform-origin:0 50%;transform:rotate(-7deg) scaleX(-1);
+  clip-path:polygon(0 48.5%,100% 0,100% 100%,0 51.5%);
+  background:linear-gradient(90deg,rgba(var(--nf-ray),var(--nf-ray-a)) 0,rgba(var(--nf-ray),calc(var(--nf-ray-a)*.42)) 34%,rgba(var(--nf-ray),0) 100%);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%)}
+.nf-glow{position:absolute;left:-70px;top:-70px;width:140px;height:140px;border-radius:50%;opacity:.75;
+  background:radial-gradient(circle,rgba(var(--nf-ray),.95) 0,rgba(var(--nf-ray),.5) 9%,rgba(var(--nf-ray),.16) 34%,rgba(var(--nf-ray),0) 68%)}
+:root[data-theme="light"] .nf-glow{opacity:.8}
+
+/* The lamp turns: seen from the shore the beam swings out to one side, shortens as it points at you, then swings out the other way. */
+:root:not([data-motion="reduce"]) .nf-beam{animation:nf-sweep 11s ease-in-out infinite alternate}
+:root:not([data-motion="reduce"]) .nf-glow{animation:nf-flash 11s ease-in-out infinite alternate}
+@keyframes nf-sweep{from{transform:rotate(-7deg) scaleX(-1)}to{transform:rotate(-7deg) scaleX(1)}}
+@keyframes nf-flash{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.5)}}
+:root:not([data-motion="reduce"]) .nf-sky.nf-paused .nf-beam,
+:root:not([data-motion="reduce"]) .nf-sky.nf-paused .nf-glow{animation-play-state:paused}
+
+/* ---- hero ---- */
+.nf-hero{padding-top:12vh}
+.nf-path{margin:14px 0 0;max-width:60ch;color:var(--muted);font-size:.98rem;line-height:1.7}
+:root:not([data-theme="light"]) .nf-path{color:#c3cad2;text-shadow:0 2px 12px rgba(0,0,0,.85)}
+.nf-path__text{display:inline;font-family:var(--mono);font-size:.9rem;color:var(--text);background:var(--sx-glass);border:1px solid var(--line-2);border-radius:8px;padding:3px 8px;
+  overflow-wrap:anywhere;word-break:break-word;-webkit-box-decoration-break:clone;box-decoration-break:clone;text-shadow:none}
+.nf-hint{margin:10px 0 0;max-width:60ch;min-height:1.7em;color:var(--muted);font-size:1.02rem;line-height:1.7}
+:root:not([data-theme="light"]) .nf-hint{color:#d5dae0;text-shadow:0 2px 12px rgba(0,0,0,.85)}
+.nf-hint a{color:var(--nf-pick,var(--sx-accent));font-family:var(--display);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;border-radius:6px;
+  display:inline-block;padding:6px 0;margin:-6px 0}
+.nf-hint__go{white-space:nowrap}
+.nf-hint a:hover{text-decoration-thickness:2px}
+.nf-hint a:focus-visible{outline:2px solid var(--nf-pick,var(--sx-accent));outline-offset:2px}
+.nf-hint--craft{--nf-pick:var(--craft)} .nf-hint--anyps{--nf-pick:var(--anyps)} .nf-hint--vault{--nf-pick:var(--games)}
+:root[data-theme="light"] .nf-hint--craft{--nf-pick:#a84a06} :root[data-theme="light"] .nf-hint--anyps{--nf-pick:#1a5fc4} :root[data-theme="light"] .nf-hint--vault{--nf-pick:#0a7a54}
+
+.nf-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.nf-actions .btn{min-height:46px}
+.nf-actions .btn.ghost{background:var(--sx-glass)}
+.nf-actions .btn:focus-visible{outline:2px solid var(--sx-accent);outline-offset:3px}
+/* the avenue the path points to */
+.nf-go.nf-is-pick{border-color:var(--nf-pick);box-shadow:0 0 0 1px var(--nf-pick),0 14px 34px -18px var(--nf-pick)}
+.nf-go--craft{--nf-pick:var(--craft)} .nf-go--anyps{--nf-pick:var(--anyps)}
+.nf-go.nf-is-pick::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--nf-pick);flex:none}
+
+@media (max-width:520px){
+  .nf-hero{padding-top:7vh}
+  .nf-actions .btn{flex:1 1 auto}
+  .nf-actions .btn:first-child{flex-basis:100%}
+}

@@ -1,0 +1,78 @@
+/* Site-wide motion and input: the styles for assets/interact.js (see assets/README.md).
+ * Cursor ring, page transitions, button press and ripple, controller focus, confetti canvas.
+ * Everything new is prefixed ix-. Colours come from the shared tokens, so both themes are covered.
+ */
+
+/* ---- Page transitions (item 41) ----
+ * Browsers with cross-document View Transitions do the work from these rules alone.
+ * interact.js skips the transition when the visitor reduced motion or features.transitions is false,
+ * and runs the ix-leave / ix-enter fallback below in browsers without them. */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:.2s ease both ix-vt-out}
+::view-transition-new(root){animation:.2s ease both ix-vt-in}
+/* The old page only fades. The new one rises a few pixels, drawn a touch larger than the screen while it
+   moves so no edge of it ever shows; equal timing on both keeps the cross-fade from dipping in brightness. */
+@keyframes ix-vt-out{to{opacity:0}}
+@keyframes ix-vt-in{from{opacity:0;transform:translateY(.6%) scale(1.014)}}
+:root[data-motion="reduce"]::view-transition-group(root),
+:root[data-motion="reduce"]::view-transition-old(root),
+:root[data-motion="reduce"]::view-transition-new(root){animation:none}
+
+/* Fallback: the content fades, the page background stays put, so there is never a blank screen. */
+:root.ix-leave body{opacity:0;transition:opacity .14s ease-in}
+:root.ix-enter body{animation:ix-enter .24s ease-out}
+@keyframes ix-enter{from{opacity:0}}
+:root[data-motion="reduce"].ix-leave body{opacity:1;transition:none}
+:root[data-motion="reduce"].ix-enter body{animation:none}
+
+/* ---- Cursor ring (item 40): fine pointers only, drawn above everything, never catches the pointer ----
+ * The outer box is moved by the script; the inner circle carries the size and colour changes.
+ * The inset/margin/border/padding/background lines also undo the browser's default popover box
+ * (the ring is shown as a manual popover so it stays above open dialogs). */
+.ix-ring{position:fixed;inset:0 auto auto 0;width:0;height:0;margin:0;padding:0;border:0;background:none;overflow:visible;
+  pointer-events:none;z-index:2147483600;opacity:0;transition:opacity .2s;will-change:transform;
+  --ix-ring-line:var(--sx-text);--ix-ring-halo:var(--sx-surface);--ix-ring-accent:var(--accent,var(--sx-accent))}
+.ix-ring--show{opacity:1}
+.ix-ring-c{position:absolute;left:-15px;top:-15px;width:30px;height:30px;box-sizing:border-box;border-radius:50%;
+  border:1.5px solid var(--ix-ring-line);background-color:transparent;opacity:.9;
+  /* a thin halo in the opposite tone keeps the ring readable on any background, in both themes */
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--ix-ring-halo) 60%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--ix-ring-halo) 60%,transparent);
+  transition:transform .22s var(--sx-ease),border-color .18s,background-color .18s,opacity .18s}
+.ix-ring--hot .ix-ring-c{transform:scale(1.55);opacity:1;border-color:var(--ix-ring-accent);background-color:color-mix(in srgb,var(--ix-ring-accent) 14%,transparent)}
+.ix-ring--down .ix-ring-c{transform:scale(.8)}
+.ix-ring--hot.ix-ring--down .ix-ring-c{transform:scale(1.3)}
+:root[data-motion="reduce"] .ix-ring{display:none}
+
+/* ---- Button press (item 46) ---- */
+:root .btn:active,:root .social:active,:root #go:active,
+:root .btn.ix-press,:root .social.ix-press,:root #go.ix-press{transform:translateY(1px) scale(.975);transition-duration:.07s}
+:root .sx-iconbtn:active,:root .sx-iconbtn.ix-press{transform:scale(.92);transition-duration:.07s}
+:root .linkbtn:active,:root .linkbtn.ix-press{transform:translateY(1px)}
+:root #go:disabled:active{transform:none}
+/* reduced motion: no movement, a plain dim instead */
+:root[data-motion="reduce"] .btn:active,:root[data-motion="reduce"] .social:active,:root[data-motion="reduce"] #go:active,
+:root[data-motion="reduce"] .sx-iconbtn:active,:root[data-motion="reduce"] .linkbtn:active,
+:root[data-motion="reduce"] .btn.ix-press,:root[data-motion="reduce"] .social.ix-press,:root[data-motion="reduce"] #go.ix-press,
+:root[data-motion="reduce"] .sx-iconbtn.ix-press,:root[data-motion="reduce"] .linkbtn.ix-press{transform:none;opacity:.82}
+
+/* ---- Ripple (item 46): lives in its own clipped box, so the button itself never needs overflow:hidden ---- */
+.ix-rel{position:relative}
+.ix-ripple{position:absolute;inset:0;display:block;margin:0;padding:0;border:0;background:none;overflow:hidden;border-radius:inherit;pointer-events:none}
+.ix-ripple-ink{position:absolute;display:block;margin:0;padding:0;border-radius:50%;background:currentColor;opacity:0;transform:scale(0);
+  animation:ix-ripple .55s var(--sx-ease) forwards}
+@keyframes ix-ripple{from{opacity:.26;transform:scale(0)}to{opacity:0;transform:scale(1)}}
+:root[data-motion="reduce"] .ix-ripple{display:none}
+
+/* ---- Controller navigation: the element the D-pad is on ----
+ * Same look as the site's controller focus ring in chrome.css (:root[data-gamepad] ...:focus-visible); this class
+ * makes sure it shows even when the browser decides a script-moved focus is not "focus-visible".
+ * Doubled class so page rules that switch outlines off (.avenue, AndersCraft inputs) don't win. */
+.ix-pad-focus.ix-pad-focus{outline:3px solid var(--accent,var(--sx-accent));outline-offset:3px;
+  box-shadow:0 0 0 7px color-mix(in srgb,var(--accent,var(--sx-accent)) 30%,transparent);
+  scroll-margin:calc(var(--sx-header-h,0px) + 20px) 16px 24px}
+
+/* ---- Konami confetti (item 48): a temporary full-screen canvas, removed when the party ends ---- */
+.ix-confetti{position:fixed;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:none;overflow:visible;
+  pointer-events:none;z-index:2147483500}
+
+@media print{.ix-ring,.ix-confetti,.ix-ripple{display:none}}

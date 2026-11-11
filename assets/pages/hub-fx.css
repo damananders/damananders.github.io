@@ -1,0 +1,112 @@
+/* pages/hub-fx.css: visual effects on the hub page (prefix hx-). See assets/README.md.
+ * Typing headline, parallax photo layers, card tilt + glare, accent glow, ambient motes, day and night.
+ * hx-hidden (tab hidden) and hx-rest (no input for a minute, or window in the background) pause the looping animations.
+ * Everything here is switched on by a class that assets/pages/hub-fx.js puts on <html> (hx-layers, hx-tilt,
+ * hx-glow ...), so with the script missing the page looks exactly as it did. The only fixed colours are the
+ * ones painted on the photo itself (night tint, lamp light); surfaces and text use the tokens.
+ */
+:root{
+  --hx-glow-lo:.2; --hx-glow-hi:.72; --hx-glow-on:1;      /* card glow: resting range and hover strength */
+  --hx-glare:rgba(255,255,255,.13);                        /* card glare */
+  --hx-tint-k:1; --hx-veil-n:.2; --hx-veil-w:.08; --hx-lamp-k:1;
+}
+:root[data-theme="light"]{
+  --hx-glow-lo:.1; --hx-glow-hi:.36; --hx-glow-on:.62;
+  --hx-glare:color-mix(in srgb,var(--accent,var(--sx-accent)) 13%,transparent);
+  --hx-tint-k:.6; --hx-veil-n:.07; --hx-veil-w:.06; --hx-lamp-k:.5;
+}
+
+/* =========================================================================================
+   1. Typing headline
+   Before the script runs, an invisible copy of the longest line (keep it the same as LINES in hub-fx.js)
+   is floated behind the heading so the heading already has its final height: nothing below it moves.
+   The heading text is held back for at most 1.2s so the full line doesn't flash before it is typed;
+   if the script never arrives the animation simply ends and the plain heading shows.
+   ========================================================================================= */
+:root:not([data-motion="reduce"]):not(.hx-type-off) .hero h1:not(.hx-typed){display:flow-root;animation:hx-hold 1.2s step-end backwards}
+:root:not([data-motion="reduce"]):not(.hx-type-off) .hero h1:not(.hx-typed)::before{
+  content:"One launcher, six PlayStations?";float:left;width:100%;margin-right:-100%;visibility:hidden;pointer-events:none}
+@keyframes hx-hold{from{opacity:0}}
+
+/* After the script: every line is stacked in one grid cell, so the cell is as tall as the tallest line at any width. */
+.hx-typed{display:grid}
+.hx-typed > .hx-ghost,.hx-typed > .hx-line{grid-area:1/1;min-width:0}
+.hx-ghost{visibility:hidden;pointer-events:none;-webkit-user-select:none;user-select:none}
+/* the caret takes no room in the line (the negative margin cancels its width), so it can never change the wrapping */
+.hx-caret{display:inline-block;width:.07em;height:.86em;margin-left:.05em;margin-right:-.12em;vertical-align:-.07em;border-radius:1px;
+  background:var(--sx-accent);box-shadow:none}
+.hx-caret--blink{animation:hx-blink 1.06s step-end infinite}
+@keyframes hx-blink{50%{opacity:0}}
+:root[data-motion="reduce"] .hx-caret{display:none}
+:root.hx-hidden .hx-caret--blink,:root.hx-rest .hx-caret--blink{animation-play-state:paused}
+
+/* =========================================================================================
+   2. Scene: fixed layers behind the content (photo, tint, wash, lamp, motes). A child of <html>, below <body>.
+   ========================================================================================= */
+.hx-scene{position:fixed;z-index:-1;top:0;left:0;width:100%;height:100vh;height:100lvh;overflow:hidden;pointer-events:none}
+.hx-scene > *,.hx-back > *,.hx-move > *{position:absolute;top:0;left:0;width:100%;height:100%}
+.hx-back{opacity:0;transition:opacity .55s ease-out}
+.hx-back.hx-in{opacity:1}
+:root[data-motion="reduce"] .hx-back{transition:none}
+.hx-move{transform-origin:50% 50%;backface-visibility:hidden}
+.hx-photo{background:center/cover no-repeat}
+.hx-wash{background-image:var(--sx-photo-overlay)}
+/* the page's own background picture is switched off only once the layers above are showing */
+:root.hx-layers body.photo{background-image:none}
+
+/* ---- day and night: --hx-night and --hx-warm (0..1) are set by the script from the visitor's clock ---- */
+.hx-tint--night{background:linear-gradient(180deg,rgba(5,10,38,.66),rgba(8,14,44,.52) 55%,rgba(3,6,20,.7));opacity:calc(var(--hx-night,0) * var(--hx-tint-k))}
+.hx-tint--warm{background:linear-gradient(180deg,rgba(255,132,56,.34),rgba(255,176,96,.14) 55%,rgba(70,30,60,.22));opacity:calc(var(--hx-warm,0) * var(--hx-tint-k))}
+.hx-veil{background-color:rgb(8 16 56 / calc(var(--hx-night,0) * var(--hx-veil-n)));
+  background-image:linear-gradient(180deg,rgb(255 138 58 / calc(var(--hx-warm,0) * var(--hx-veil-w))),rgb(255 138 58 / 0) 72%)}
+
+/* ---- the lighthouse lamp (night only). --hx-s is the photo's on-screen scale, so the light keeps the lamp's size. ---- */
+.hx-lamp{width:0;height:0;opacity:calc(var(--hx-night,0) * var(--hx-lamp-k))}
+.hx-move > .hx-lamp{width:0;height:0}
+.hx-lamp > *{position:absolute;pointer-events:none}
+.hx-lamp-glow{left:calc(var(--hx-s,1) * -170px);top:calc(var(--hx-s,1) * -170px);width:calc(var(--hx-s,1) * 340px);height:calc(var(--hx-s,1) * 340px);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,212,138,.42) 0,rgba(255,190,110,.2) 20%,rgba(255,170,90,.07) 46%,rgba(255,170,90,0) 68%);
+  animation:hx-lamp 5.2s ease-in-out infinite}
+.hx-lamp-core{left:calc(var(--hx-s,1) * -30px);top:calc(var(--hx-s,1) * -24px);width:calc(var(--hx-s,1) * 60px);height:calc(var(--hx-s,1) * 48px);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,246,220,.85),rgba(255,216,146,.45) 48%,rgba(255,200,120,0));
+  animation:hx-lamp 5.2s ease-in-out infinite}
+.hx-beam{left:0;top:calc(var(--hx-s,1) * -80px);width:calc(var(--hx-s,1) * 700px);height:calc(var(--hx-s,1) * 160px);transform-origin:0 50%;
+  clip-path:polygon(0 47%,100% 0,100% 100%,0 53%);
+  background:linear-gradient(90deg,rgba(255,236,180,.42),rgba(255,226,160,.13) 45%,rgba(255,226,160,0));
+  animation:hx-sweep 20s linear infinite}
+@keyframes hx-lamp{0%,100%{opacity:.72;transform:scale(.96)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes hx-sweep{from{transform:perspective(900px) rotateY(0deg)}to{transform:perspective(900px) rotateY(360deg)}}
+:root[data-motion="reduce"] .hx-lamp-glow,:root[data-motion="reduce"] .hx-lamp-core{animation:none}
+:root[data-motion="reduce"] .hx-beam{display:none}
+:root.hx-hidden .hx-lamp > *,:root.hx-rest .hx-lamp > *{animation-play-state:paused}
+
+/* =========================================================================================
+   3. Card tilt + glare. Driven by --hx-rx / --hx-ry / --hx-l (lift 0..1) that the script eases every frame.
+   The hover lift and border colour from hub.css stay; only the transform is taken over while the pointer is on a card.
+   ========================================================================================= */
+:root.hx-tilt .avenues{perspective:1300px}
+:root.hx-tilt .avenue.hx-tilting{
+  transform:translate3d(0,calc(var(--hx-l,0) * -3px),0) rotateX(calc(var(--hx-rx,0) * 1deg)) rotateY(calc(var(--hx-ry,0) * 1deg));
+  transition-property:border-color,box-shadow;will-change:transform}
+.hx-glare{position:absolute;z-index:3;top:0;left:0;width:100%;height:100%;border-radius:inherit;pointer-events:none;opacity:var(--hx-go,0);
+  background:radial-gradient(circle at var(--hx-gx,50%) var(--hx-gy,50%),var(--hx-glare) 0,transparent 58%)}
+:root[data-motion="reduce"] .hx-glare{display:none}
+
+/* =========================================================================================
+   4. Accent glow: a soft inner rim in the card's own colour that breathes slowly (opacity only, so it is cheap).
+   ========================================================================================= */
+:root.hx-glow .avenue::after{content:"";position:absolute;z-index:3;top:0;left:0;width:100%;height:100%;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 1px var(--accent),inset 0 0 30px -8px var(--accent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 30px -8px color-mix(in srgb,var(--accent) 70%,transparent);
+  opacity:var(--hx-glow-lo);transition:opacity .3s;animation:hx-breathe 6.6s ease-in-out infinite}
+:root.hx-glow .avenue.anyps::after{animation-delay:-2.2s}
+:root.hx-glow .avenue.games::after{animation-delay:-4.4s}
+:root.hx-glow .avenue:hover::after,:root.hx-glow .avenue:focus-visible::after{animation:none;opacity:var(--hx-glow-on)}
+@keyframes hx-breathe{0%,100%{opacity:var(--hx-glow-lo)}50%{opacity:var(--hx-glow-hi)}}
+:root.hx-glow[data-motion="reduce"] .avenue::after{animation:none}
+:root.hx-glow.hx-hidden .avenue::after,:root.hx-glow.hx-rest .avenue::after{animation-play-state:paused}
+
+/* =========================================================================================
+   5. Ambient motes canvas (inside the scene, above the wash, below the content)
+   ========================================================================================= */
+.hx-motes{display:block}

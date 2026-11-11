@@ -12,8 +12,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/assets/hub.css" />
 <link rel="stylesheet" href="/assets/socials.css" />
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","404");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<style>@view-transition{navigation:auto}</style>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/interact.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/404.css" />
+<!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/hub-bg.webp')">
+<div class="nf-sky" id="nf-sky" aria-hidden="true"><div class="nf-lamp"><i class="nf-beam"></i><i class="nf-glow"></i></div></div>
 <div class="wrap">
   <nav>
     <a class="brand" href="/">Anders <span>/ hub</span></a>
@@ -23,16 +35,28 @@
       <a class="social twitch" href="https://www.twitch.tv/damananders_ttv" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>Twitch</a>
     </div>
   </nav>
-  <header class="hero" style="padding-top:12vh">
-    <div class="eyebrow">Error 404</div>
-    <h1>Lost at sea.</h1>
-    <p class="lead">This page doesn't exist, or it moved. The lighthouse will get you back.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
+  <header class="hero nf-hero">
+    <div class="eyebrow" data-reveal>Error 404</div>
+    <h1 data-reveal data-reveal-delay="60">Lost at sea.</h1>
+    <p class="lead" data-reveal data-reveal-delay="120">This page doesn't exist, or it moved. The lighthouse will get you back.</p>
+    <p class="nf-path" data-reveal data-reveal-delay="180"><span class="nf-path__label">Nothing at</span> <code class="nf-path__text" id="nf-path">this address</code></p>
+    <p class="nf-hint" id="nf-hint" aria-live="polite" data-reveal data-reveal-delay="240">Pick a page below to get back on course.</p>
+    <div class="nf-actions" data-reveal data-reveal-delay="300">
       <a class="btn" href="/" style="--accent:#eef0f3">Back to the hub</a>
-      <a class="btn ghost" href="/anderscraft/">AndersCraft</a>
-      <a class="btn ghost" href="/anyps/">AnyPS</a>
+      <a class="btn ghost nf-go nf-go--craft" id="nf-go-craft" href="/anderscraft/">AndersCraft</a>
+      <a class="btn ghost nf-go nf-go--anyps" id="nf-go-anyps" href="/anyps/">AnyPS</a>
     </div>
   </header>
 </div>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/interact.js"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/404.js"></script>
+<!-- /site:scripts -->
 </body>
 </html>
