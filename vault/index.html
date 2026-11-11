@@ -15,6 +15,15 @@
 <link rel="stylesheet" href="../assets/hub.css" />
 <link rel="stylesheet" href="../assets/socials.css" />
 <script src="../assets/config.js"></script>
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","vault");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/vault.css" />
+<!-- /site:head -->
 </head>
 <body class="games photo" style="--bg:url('/assets/vault-bg.webp')">
 <div class="wrap">
@@ -67,5 +76,14 @@
     el.append(top, h, p, b); root.append(el);
   }
 </script>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/vault.js"></script>
+<!-- /site:scripts -->
 </body>
 </html>

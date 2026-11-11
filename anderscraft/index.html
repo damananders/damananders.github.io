@@ -9,7 +9,10 @@
 <meta property="og:title" content="AndersCraft — Create Your Account" />
 <meta property="og:description" content="A WotLK 3.3.5a server with Goblins, Worgen, any race any class, a hardcore realm and levels up to 125." />
 <meta property="og:url" content="https://damananders.github.io/anderscraft/" />
-<meta property="og:image" content="https://damananders.github.io/assets/background.png" />
+<meta property="og:image" content="https://damananders.github.io/assets/og/anderscraft.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23ff7a1f'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-size='40' font-weight='800' fill='%231a0d03' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,7 +42,7 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{background-color:var(--ink);background-image:linear-gradient(180deg, rgba(5,7,8,.84), rgba(5,7,8,.62) 42%, rgba(5,7,8,.95)), url("../assets/background.png");background-size:cover,cover;background-position:center,center top;background-attachment:fixed,fixed;color:var(--text);font-family:var(--body);font-size:1.12rem;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+  body{background-color:var(--ink);background-image:linear-gradient(180deg, rgba(5,7,8,.84), rgba(5,7,8,.62) 42%, rgba(5,7,8,.95)), url("../assets/background.webp");background-size:cover,cover;background-position:center,center top;background-attachment:fixed,fixed;color:var(--text);font-family:var(--body);font-size:1.12rem;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
   a{color:var(--royal)}
   .wrap{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
   nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -74,6 +77,15 @@
   code{font-family:var(--mono);font-size:.92rem;background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:8px;padding:2px 7px;word-break:break-all}
   footer{margin-top:48px;color:var(--muted);font-size:.92rem;text-align:center}
 </style>
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","anderscraft");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/anderscraft.css" />
+<!-- /site:head -->
 </head>
 <body>
 <div class="wrap">
@@ -175,5 +187,14 @@
     }
   });
 </script>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/anderscraft.js"></script>
+<!-- /site:scripts -->
 </body>
 </html>

@@ -1,0 +1,6 @@
+{
+  "_help": "The 'Now' card on the hub. Any entry with a blank title is hidden; if both are blank the whole card is hidden. url is optional.",
+  "updated": "2026-11-11",
+  "building": { "title": "AnyPS for Linux and macOS", "note": "Native ports are in the works. The 32-bit Windows edition just landed.", "url": "/anyps/" },
+  "playing": { "title": "", "note": "", "url": "" }
+}

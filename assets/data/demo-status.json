@@ -1,0 +1,21 @@
+{
+  "_help": "DEMO DATA for testing the AndersCraft status widgets with ?sx=status:demo. Never shown to visitors. The real numbers come from the status endpoint set in assets/site-config.js.",
+  "ok": true,
+  "generated": "2026-11-11T12:00:00Z",
+  "signup": true,
+  "realms": [
+    { "id": 1, "name": "AndersCraft", "online": true, "players": 3, "bots": 412 },
+    { "id": 2, "name": "Andersian Hardcore", "online": true, "players": 1, "bots": 0 }
+  ],
+  "leaderboard": {
+    "topLevel": [
+      { "name": "Demoone", "level": 125, "race": "Worgen", "class": "Paladin", "realm": 1 },
+      { "name": "Demotwo", "level": 118, "race": "Goblin", "class": "Druid", "realm": 1 },
+      { "name": "Demothree", "level": 97, "race": "Human", "class": "Mage", "realm": 1 }
+    ],
+    "hardcore": [
+      { "name": "Demofour", "level": 61, "race": "Orc", "class": "Hunter", "alive": true },
+      { "name": "Demofive", "level": 44, "race": "Dwarf", "class": "Priest", "alive": false }
+    ]
+  }
+}

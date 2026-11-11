@@ -9,7 +9,9 @@
 <meta property="og:title" content="Anders — Choose Your Avenue" />
 <meta property="og:description" content="AndersCraft server sign-up and the AnyPS launcher." />
 <meta property="og:url" content="https://damananders.github.io/" />
-<meta property="og:image" content="https://damananders.github.io/assets/hub-bg.jpg" />
+<meta property="og:image" content="https://damananders.github.io/assets/og/hub.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090b'/%3E%3Ccircle cx='20' cy='40' r='8' fill='%23ff7a1f'/%3E%3Ccircle cx='32' cy='24' r='8' fill='%233d8bff'/%3E%3Ccircle cx='44' cy='40' r='8' fill='%2336d39a'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,12 +20,23 @@
 <link rel="stylesheet" href="assets/hub.css" />
 <link rel="stylesheet" href="assets/socials.css" />
 <style>
-  .craft .art{background-image:linear-gradient(180deg,rgba(7,9,11,.15),rgba(7,9,11,.35)),url("assets/background.png");background-position:center 30%}
+  .craft .art{background-image:linear-gradient(180deg,rgba(7,9,11,.15),rgba(7,9,11,.35)),url("assets/background.webp");background-position:center 30%}
   .anyps .art{background-image:url("assets/anyps-bg.webp");background-position:center}
   .x-anyps{background-image:radial-gradient(circle at 30% 40%,rgba(61,139,255,.55),transparent 55%),radial-gradient(circle at 80% 70%,rgba(140,90,255,.35),transparent 50%),repeating-linear-gradient(115deg,rgba(255,255,255,.04) 0 2px,transparent 2px 22px)}
   .games .art{background-image:url("assets/vault-bg.webp");background-position:center 60%}
   .x-games{background-image:radial-gradient(circle at 70% 30%,rgba(54,211,154,.5),transparent 55%),radial-gradient(circle at 20% 80%,rgba(54,170,211,.3),transparent 50%),repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 14px),repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 14px)}
 </style>
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","hub");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/audio.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/hub.css" />
+<link rel="stylesheet" href="/assets/pages/hub-fx.css" />
+<!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/hub-bg.webp')">
 <div class="wrap">
@@ -89,5 +102,16 @@
     <p>World of Warcraft&reg; is a trademark of Blizzard Entertainment. PlayStation&reg; is a trademark of Sony Interactive Entertainment. Neither is affiliated with or endorses these projects.</p>
   </footer>
 </div>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/config.js"></script>
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/hub.js"></script>
+<script defer src="/assets/pages/hub-fx.js"></script>
+<!-- /site:scripts -->
 </body>
 </html>

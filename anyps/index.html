@@ -86,6 +86,15 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 </style>
 <script src="../assets/config.js"></script>
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","anyps");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/anyps-plus.css" />
+<!-- /site:head -->
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
 <div class="wrap">
@@ -987,5 +996,14 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   dlg.addEventListener("close", () => { if (location.hash === "#features") history.replaceState(null, "", location.pathname); });
   if (location.hash === "#features") openF();
 </script>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/anyps-plus.js"></script>
+<!-- /site:scripts -->
 </body>
 </html>

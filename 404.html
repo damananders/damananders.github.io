@@ -12,6 +12,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/assets/hub.css" />
 <link rel="stylesheet" href="/assets/socials.css" />
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","404");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/404.css" />
+<!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/hub-bg.webp')">
 <div class="wrap">
@@ -34,5 +43,14 @@
     </div>
   </header>
 </div>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/404.js"></script>
+<!-- /site:scripts -->
 </body>
 </html>

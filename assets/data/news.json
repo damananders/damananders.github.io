@@ -1,0 +1,17 @@
+{
+  "_help": "Site-wide news. Newest first is not required (the site sorts by date). tag is one of: site, anyps, anderscraft, vault. url is optional and may be a path on this site. Leave date as \"\" for an undated note.",
+  "items": [
+    { "date": "2026-11-11", "tag": "site", "title": "The hub got a big refresh", "body": "Live status chips, a theme switch, controller navigation, a news ticker and a lot of polish across every page.", "url": "/" },
+    { "date": "2026-11-11", "tag": "anyps", "title": "AnyPS V1.05.1 is out", "body": "A snappier in-game overlay, PS3 memory tools fixed, and a saved-values list with stay-on mods.", "url": "/anyps/" },
+    { "date": "2026-11-11", "tag": "anyps", "title": "AnyPS now has a 32-bit Windows edition", "body": "A small PSP-only build for older 32-bit PCs.", "url": "/anyps/" },
+    { "date": "2026-11-11", "tag": "anyps", "title": "AnyPS V1.05: one-press updates", "body": "AnyPS can now update itself in place and keeps your games, saves and sign-ins. Also a redesigned start-up screen.", "url": "/anyps/" },
+    { "date": "2026-11-10", "tag": "anyps", "title": "AnyPS V1.04: PS Vita joins the shelf", "body": "PlayStation Vita support, memory tools, save states and checkpoints, a save vault and smart lists.", "url": "/anyps/" },
+    { "date": "2026-11-09", "tag": "anyps", "title": "AnyPS V1.03", "body": "Mass install, a set-up wizard, a cheats manager, PS3 online accounts inside AnyPS and the first self-updater.", "url": "/anyps/" },
+    { "date": "2026-11-08", "tag": "anyps", "title": "AnyPS V1.02", "body": "User profiles, collections, tutorials, a visual controller remap and game backgrounds, music and video.", "url": "/anyps/" },
+    { "date": "2026-11-07", "tag": "anyps", "title": "AnyPS V1.0 released", "body": "The first public build of the launcher.", "url": "/anyps/" },
+    { "date": "2026-11-07", "tag": "site", "title": "Choose your avenue", "body": "The site became a hub for AndersCraft, AnyPS and the Personal Vault.", "url": "/" },
+    { "date": "2026-10-23", "tag": "anderscraft", "title": "AndersCraft sign-ups are open", "body": "Create a game account right from the website.", "url": "/anderscraft/" },
+    { "date": "", "tag": "anderscraft", "title": "Level cap raised to 125", "body": "The journey keeps going after 80, with combat tuned for the new levels.", "url": "/anderscraft/" },
+    { "date": "", "tag": "anderscraft", "title": "Quality-of-life pack", "body": "Transmog, account-wide mounts, dungeons that scale to your group, cross-faction battlegrounds, a bigger bank, Mythic+ and a stocked auction house.", "url": "/anderscraft/" }
+  ]
+}
