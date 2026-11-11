@@ -141,7 +141,7 @@ async function reviews(g, box) {
     box.append(ta, el("button", { class: "btn gm-btn", type: "button", text: "Send review", onclick: async () => {
       const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
       const { error } = await sb.from("reviews").insert({ user_id: user.id, game_id: g.id, body });
-      note.textContent = error ? (error.code === "23505" ? "You've already reviewed this game." : "That didn't send: " + error.message) : "Thanks! It will show here once it's been approved.";
+      note.textContent = error ? (error.code === "23505" ? "You've already reviewed this game." : "That didn't send: " + error.message) : "Thanks! Your review is up.";
       if (!error) ta.value = "";
     } }), note);
   }
