@@ -1,0 +1,46 @@
+/* pages/games.css: the game ratings page (prefix gm-). Uses the shared --sx-* colours. */
+.gm-wrap{display:grid;gap:18px;max-width:880px}
+.gm-auth{border:1px solid var(--sx-line-2,rgba(255,255,255,.14));border-radius:14px;padding:14px 16px;background:var(--sx-surface-2,rgba(255,255,255,.04))}
+.gm-auth__line{margin:0 0 10px;color:var(--sx-text,#e8e8ea)}
+.gm-auth__line:last-child{margin-bottom:0}
+.gm-auth__row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.gm-ok{color:var(--sx-ok,#36d39a)}
+.gm-out{margin-top:8px}
+.gm-btn{font-size:.95rem;padding:9px 16px}
+.gm-search{width:100%;box-sizing:border-box;font:500 1.05rem var(--sx-body,Inter,system-ui,sans-serif);color:var(--sx-text,#e8e8ea);background:var(--sx-surface-2,rgba(255,255,255,.05));border:1px solid var(--sx-line-2,rgba(255,255,255,.16));border-radius:12px;padding:13px 14px}
+.gm-search:focus-visible{outline:2px solid var(--sx-accent,#3d8bff);outline-offset:2px}
+.gm-tabs{display:flex;flex-wrap:wrap;gap:8px}
+.gm-tab{all:unset;cursor:pointer;padding:6px 13px;border-radius:999px;border:1px solid var(--sx-line-2,rgba(255,255,255,.16));color:var(--sx-muted,#a8abb3);font:600 .85rem var(--sx-display,"Space Grotesk",sans-serif)}
+.gm-tab.is-on{background:var(--sx-accent,#3d8bff);border-color:transparent;color:#06080c}
+.gm-tab:focus-visible{outline:2px solid var(--sx-accent,#3d8bff);outline-offset:2px}
+.gm-head{margin:6px 0 0;font:600 1.1rem var(--sx-display,"Space Grotesk",sans-serif)}
+.gm-status{min-height:1.2em;margin:0;font-size:.9rem;color:var(--sx-muted,#a8abb3)}
+.gm-status.gm-bad{color:var(--sx-err,#ff6b6b)}
+.gm-list{display:grid;gap:10px}
+.gm-card{border:1px solid var(--sx-line,rgba(255,255,255,.1));border-radius:14px;padding:12px 14px;background:var(--sx-surface,rgba(255,255,255,.03));display:grid;gap:8px}
+.gm-card__top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.gm-console{font:600 .72rem var(--sx-mono,"DM Mono",monospace);letter-spacing:.06em;color:var(--sx-accent,#3d8bff);border:1px solid currentColor;border-radius:6px;padding:1px 6px}
+.gm-title{margin:0;font:600 1.02rem var(--sx-display,"Space Grotesk",sans-serif);flex:1 1 220px}
+.gm-score{font:600 .95rem var(--sx-mono,"DM Mono",monospace);color:var(--sx-text,#e8e8ea)}
+.gm-votes{font-size:.82rem;color:var(--sx-muted,#a8abb3)}
+.gm-rate{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.gm-rate__lock{font-size:.85rem;color:var(--sx-muted,#a8abb3)}
+.gm-pip,.gm-zero{all:unset;cursor:pointer;width:34px;height:34px;display:inline-grid;place-items:center;border-radius:9px;border:1px solid var(--sx-line-2,rgba(255,255,255,.16));color:var(--sx-muted,#8d919b);font:600 1.05rem var(--sx-display,sans-serif);transition:transform .12s,color .12s,border-color .12s}
+.gm-pip:hover,.gm-zero:hover{transform:translateY(-1px);color:var(--sx-text,#fff)}
+.gm-pip:focus-visible,.gm-zero:focus-visible{outline:2px solid var(--sx-accent,#3d8bff);outline-offset:2px}
+.gm-zero{font-size:.85rem}
+.gm-zero.is-on{color:var(--sx-text,#fff);border-color:currentColor}
+.gm-pip--1.is-on,.gm-pip--5.is-on{color:#8ce2ac;border-color:currentColor}
+.gm-pip--2.is-on{color:#f47882;border-color:currentColor}
+.gm-pip--3.is-on{color:#84b2ff;border-color:currentColor}
+.gm-pip--4.is-on{color:#ec8ac8;border-color:currentColor}
+.gm-clear,.gm-toggle{font-size:.82rem;margin:0;justify-self:start}
+.gm-more{display:grid;gap:8px;padding-top:4px}
+.gm-review{margin:0;padding:8px 12px;border-left:3px solid var(--sx-accent,#3d8bff);background:var(--sx-surface-2,rgba(255,255,255,.04));border-radius:0 10px 10px 0}
+.gm-review p{margin:0 0 4px}
+.gm-review footer{font-size:.8rem;color:var(--sx-muted,#a8abb3);border:0;padding:0;margin:0;text-align:left}
+.gm-ta{width:100%;box-sizing:border-box;font:inherit;color:var(--sx-text,#e8e8ea);background:var(--sx-surface-2,rgba(255,255,255,.05));border:1px solid var(--sx-line-2,rgba(255,255,255,.16));border-radius:10px;padding:9px 11px;resize:vertical}
+.gm-note,.gm-empty{margin:0;font-size:.88rem;color:var(--sx-muted,#a8abb3)}
+.gm-add{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.gm-add__line{margin:0;flex:1 1 100%}
+.gm-sel{font:inherit;color:var(--sx-text,#e8e8ea);background:var(--sx-surface-2,#12161d);border:1px solid var(--sx-line-2,rgba(255,255,255,.16));border-radius:9px;padding:8px 10px}
