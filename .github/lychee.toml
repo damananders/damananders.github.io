@@ -1,0 +1,48 @@
+# lychee settings for .github/workflows/link-check.yml
+# Run locally from the repo root:
+#   lychee --config .github/lychee.toml --root-dir "$PWD" "./**/*.html"
+
+# Be patient with slow hosts, but do not hang.
+max_retries = 3
+retry_wait_time = 4
+timeout = 20
+max_redirects = 8
+max_concurrency = 8
+
+# 429 (rate limited) is not a broken link.
+accept = ["200..=299", "429"]
+
+# Only real web links and local files; skip mailto: and tel:.
+scheme = ["https", "http", "file"]
+include_mail = false
+
+# Also look at links inside <code> and <pre> blocks? No: those are examples, not links.
+include_verbatim = false
+
+user_agent = "Mozilla/5.0 (compatible; lychee link checker)"
+
+# Hosts that block bots or are private by design. A failure here says nothing about the site.
+exclude = [
+  # AndersCraft sign-up service: a tunnel that only answers POSTs from this site
+  '^https?://([a-z0-9-]+\.)*ngrok-free\.dev',
+  # Google Drive share links (downloads, and the vault's Restricted files)
+  '^https?://drive\.google\.com',
+  # Social and donation sites turn away automated requests
+  '^https?://(www\.)?discord\.gg',
+  '^https?://([a-z0-9-]+\.)?discord\.com',
+  '^https?://(www\.)?ko-fi\.com',
+  '^https?://([a-z0-9-]+\.)?twitch\.tv',
+  '^https?://(www\.)?x\.com',
+  '^https?://([a-z0-9-]+\.)?reddit\.com',
+  # Form endpoint: POST only
+  '^https?://(www\.)?formspree\.io',
+  # Font preconnect hints are bare hosts, not pages
+  '^https?://fonts\.googleapis\.com',
+  '^https?://fonts\.gstatic\.com',
+  # Local preview addresses mentioned in docs
+  '^https?://localhost',
+  '^https?://127\.0\.0\.1',
+]
+
+# Never scan generated or vendored folders if they ever appear.
+exclude_path = ["node_modules", ".git"]

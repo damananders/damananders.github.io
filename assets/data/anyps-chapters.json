@@ -1,0 +1,19 @@
+{
+  "_about": "Chapter dots for the AnyPS preview video, keyed by the video's file name. Times are seconds from the start; labels say what is on screen at that point. A video file that is not listed here gets evenly spaced, unlabelled dots instead.",
+  "anyps-preview-v2.mp4": {
+    "duration": 170.4,
+    "chapters": [
+      { "t": 0, "label": "Start-up screen" },
+      { "t": 8, "label": "System picker" },
+      { "t": 16, "label": "Who's playing? Profiles" },
+      { "t": 25, "label": "PlayStation lane" },
+      { "t": 37, "label": "PlayStation 2 lane" },
+      { "t": 52, "label": "PSP lane" },
+      { "t": 66, "label": "PS Vita lane" },
+      { "t": 80, "label": "PlayStation 3 lane" },
+      { "t": 96, "label": "PlayStation 4 home row" },
+      { "t": 115, "label": "AnyPS Settings" },
+      { "t": 131, "label": "System Software Update" }
+    ]
+  }
+}

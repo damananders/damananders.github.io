@@ -17,6 +17,7 @@
 <script src="../assets/config.js"></script>
 <!-- site:head (shared site upgrades, see assets/README.md) -->
 <script>(function(){var r=document.documentElement;r.setAttribute("data-page","vault");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<style>@view-transition{navigation:auto}</style>
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fx.css" />
@@ -25,6 +26,8 @@
 <link rel="stylesheet" href="/assets/social-live.css" />
 <link rel="stylesheet" href="/assets/pages/vault.css" />
 <!-- /site:head -->
+<!-- Vault arrival animation: holds a plain cover until assets/pages/vault.js draws the door (once per session, never with reduced motion). The cover is CSS only and fades by itself. -->
+<script>(function(){try{var r=document.documentElement;if(!r.hasAttribute("data-motion")&&sessionStorage.getItem("vt.door")!=="1")r.classList.add("vt-pre")}catch(e){}})();</script>
 </head>
 <body class="games photo" style="--bg:url('/assets/vault-bg.webp')">
 <div class="wrap">

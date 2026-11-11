@@ -1,1 +1,383 @@
-/* chrome.js: see assets/README.md */
+/* Site chrome: the interface layer shared by every page (styles in chrome.css, overview in assets/README.md).
+ *
+ *   header     makes the existing <nav> sticky, shrinks it after a little scrolling, keeps --sx-header-h current
+ *   skip link  "Skip to content" as the first focusable element
+ *   theme      sun / moon button in Site.tools() (order 10)
+ *   settings   gear button (order 20) and the panel that draws Site.settings.list()
+ *   top        floating back-to-top button
+ *
+ * Every part is wrapped in Site.ready so one failure cannot stop the rest, and each can be switched off in
+ * site-config.js with features.stickyHeader / skipLink / themeToggle / settingsPanel / backToTop = false
+ * (all default to on). If this file never loads, the pages are simply the plain pages they were.
+ *
+ * Settings rows come from Site.settings.register(row) (see README). Besides the documented fields the panel
+ * also understands, for rows that need it:
+ *   on / off      the stored values a toggle switches between (default true / false)
+ *   get(), set(v) read / write the value yourself instead of Site.pref(row.pref)
+ *   disabled()    return true to show the control but not let it change
+ *   hint          may be a function returning the text
+ */
+(function () {
+  "use strict";
+  if (!window.Site) return;
+
+  var Site = window.Site, root = document.documentElement, el = Site.el, svg = Site.svg;
+  var nav = document.querySelector(".wrap > nav") || document.querySelector("nav");
+  root.classList.add("ch-js");
+
+  function feat(name) { var f = (Site.config && Site.config.features) || {}; return f[name] !== false; }
+  function sfx(name) { try { Site.sfx(name); } catch (e) {} }
+  function focusQuietly(n) { if (!n) return; try { n.focus({ preventScroll: true }); } catch (e) { try { n.focus(); } catch (e2) {} } }
+  function scrollY() { return window.pageYOffset || root.scrollTop || 0; }
+
+  /* Icons: plain original line drawings on the shared 24x24 grid. */
+  var ICON = {
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
+    moon: '<path d="M20.2 13.6A8.4 8.4 0 1 1 10.4 3.8a7 7 0 0 0 9.8 9.8Z"/>',
+    gear: '<path d="M9.8 5L10.1 2.6L13.9 2.6L14.2 5L15.4 5.5L17.3 4L20 6.7L18.5 8.6L19 9.8L21.4 10.1L21.4 13.9L19 14.2L18.5 15.4L20 17.3L17.3 20L15.4 18.5L14.2 19L13.9 21.4L10.1 21.4L9.8 19L8.6 18.5L6.7 20L4 17.3L5.5 15.4L5 14.2L2.6 13.9L2.6 10.1L5 9.8L5.5 8.6L4 6.7L6.7 4L8.6 5.5Z"/><circle cx="12" cy="12" r="3"/>',
+    close: '<path d="M6 6l12 12M18 6 6 18"/>',
+    up: '<path d="M12 19V5.5M5.5 12 12 5.5l6.5 6.5"/>'
+  };
+
+  /* Change the theme with a short cross-fade where the browser supports view transitions; instantly otherwise. */
+  function switchTheme(apply) {
+    var before = Site.theme.get(), ran = false;
+    function run() { if (!ran) { ran = true; apply(); } }
+    if (Site.reducedMotion || document.hidden || typeof document.startViewTransition !== "function") { run(); return before !== Site.theme.get(); }
+    try {
+      root.classList.add("ch-vt");
+      var vt = document.startViewTransition(run), done = function () { root.classList.remove("ch-vt"); };
+      if (vt && vt.finished) vt.finished.then(done, done); else done();
+      if (vt && vt.ready && vt.ready.catch) vt.ready.catch(function () {});
+    } catch (e) { root.classList.remove("ch-vt"); run(); }
+    return true;
+  }
+
+  /* ------------------------------------------------------------------------------------------------
+     Sticky, shrinking header
+     ------------------------------------------------------------------------------------------------ */
+  Site.ready(function () {
+    if (!nav || !feat("stickyHeader")) return;
+
+    /* Wrap each social button's bare text in a span so CSS can hide it (the button keeps its name for screen readers). */
+    Array.prototype.forEach.call(nav.querySelectorAll(".social"), function (b) {
+      if (b.querySelector(".ch-label")) return;
+      for (var n = b.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3 && n.nodeValue.trim()) { var s = el("span", { class: "ch-label" }); b.insertBefore(s, n); s.appendChild(n); break; }
+      }
+    });
+
+    var scrolled = false, fullC = 0, pad = 0, toggledAt = -1e9, settleTimer = 0, remeasureTimer = 0, lastW = root.clientWidth, lastHeaderH = -1;
+
+    /* Height of the nav's content (its rows of buttons), straight from layout: fractional, and unaffected by
+       transforms on ancestors. The header people see is this plus the fixed padding above and below. */
+    function contentH() {
+      var cs = getComputedStyle(nav), h = parseFloat(cs.height);
+      if (cs.boxSizing === "border-box") h -= (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+      return h > 0 ? h : 0;
+    }
+
+    /* How far the glass bar must reach left and right of the nav to touch the viewport edges. */
+    function bleed() {
+      var r = nav.getBoundingClientRect(), vw = root.clientWidth;
+      nav.style.setProperty("--ch-bl", Math.max(0, r.left).toFixed(1) + "px");
+      nav.style.setProperty("--ch-br", Math.max(0, vw - r.right).toFixed(1) + "px");
+    }
+
+    /* Publish the header height, and hand any height the content lost by shrinking back as bottom padding
+       (--ch-comp) so the nav box keeps its size. fullC is the content height of the full-size header. */
+    function apply(c) {
+      if (!(c > 0)) return;
+      if (!scrolled && Date.now() - toggledAt > 420) fullC = c;
+      nav.style.setProperty("--ch-comp", Math.max(0, fullC - c).toFixed(2) + "px");
+      var hh = Math.round(c + 2 * pad);
+      if (hh !== lastHeaderH) { lastHeaderH = hh; root.style.setProperty("--sx-header-h", hh + "px"); }
+      bleed();
+    }
+
+    /* While shrunk, find out how tall the full-size header would be right now (after a resize, or after another
+       script added a button). Done in one go with transitions off, so nothing is painted in between. */
+    function remeasure() {
+      if (!scrolled) { apply(contentH()); return; }
+      root.classList.add("ch-measuring"); root.classList.remove("ch-scrolled");
+      var c = contentH();
+      root.classList.add("ch-scrolled");
+      void nav.offsetHeight;
+      root.classList.remove("ch-measuring");
+      if (c > 0) fullC = c;
+      apply(contentH());
+    }
+    function remeasureSoon() { clearTimeout(remeasureTimer); remeasureTimer = setTimeout(remeasure, 160); }
+
+    function onScroll() {
+      var y = scrollY(), s = scrolled ? y > 8 : y > 24;
+      if (s === scrolled) return;
+      scrolled = s; toggledAt = Date.now();
+      root.classList.toggle("ch-scrolled", s);
+      clearTimeout(settleTimer); settleTimer = setTimeout(function () { apply(contentH()); }, 460);
+    }
+
+    root.classList.add("ch-on");
+    pad = parseFloat(getComputedStyle(nav).paddingTop) || 0;
+    fullC = contentH(); apply(fullC);
+    onScroll();
+
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(function (entries) {
+        var e = entries[entries.length - 1], b = e && e.contentBoxSize, c = b ? (b[0] ? b[0].blockSize : b.blockSize) : 0;
+        apply(c > 0 ? c : contentH());
+      }).observe(nav);
+    }
+    if ("MutationObserver" in window) {
+      new MutationObserver(function (list) {
+        for (var i = 0; i < list.length; i++) { var t = list[i].target; if (!(t && t.closest && t.closest(".ch-panel"))) { remeasureSoon(); return; } }
+      }).observe(nav, { childList: true, subtree: true });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", function () {
+      bleed();
+      var w = root.clientWidth; if (w !== lastW) { lastW = w; remeasureSoon(); }
+    });
+    window.addEventListener("load", remeasureSoon);
+    if (document.fonts && document.fonts.ready && document.fonts.ready.then) document.fonts.ready.then(remeasureSoon, function () {});
+  }, "chrome:header");
+
+  /* ------------------------------------------------------------------------------------------------
+     Skip link
+     ------------------------------------------------------------------------------------------------ */
+  Site.ready(function () {
+    if (!feat("skipLink") || !document.body) return;
+    var target = document.querySelector("main") || document.querySelector(".split") || document.querySelector(".grid") || document.querySelector(".hero");
+    if (!target) return;
+    if (!target.id) target.id = "ch-content";
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.setAttribute("data-ch-skip-target", "");
+    var link = el("a", { class: "ch-skip", href: "#" + target.id, text: "Skip to content" });
+    link.addEventListener("click", function (e) {
+      e.preventDefault();                       /* no hash in the address bar: AnyPS uses the hash for its own dialog */
+      focusQuietly(target);
+      try { target.scrollIntoView({ block: "start", behavior: "auto" }); } catch (err) { target.scrollIntoView(true); }
+    });
+    document.body.insertBefore(link, document.body.firstChild);
+  }, "chrome:skip");
+
+  /* ------------------------------------------------------------------------------------------------
+     Theme button
+     ------------------------------------------------------------------------------------------------ */
+  Site.ready(function () {
+    if (!feat("themeToggle")) return;
+    var tools = Site.tools(); if (!tools) return;
+    var btn = el("button", { type: "button", class: "sx-iconbtn ch-theme", style: { order: "10" }, "aria-label": "Light theme", "aria-pressed": "false" },
+      svg(ICON.sun, { class: "ch-ico ch-ico--sun" }), svg(ICON.moon, { class: "ch-ico ch-ico--moon" }));
+    function sync() {
+      var light = Site.theme.get() === "light";
+      btn.setAttribute("aria-pressed", String(light));
+      btn.title = light ? "Switch to the dark theme" : "Switch to the light theme";
+    }
+    btn.addEventListener("click", function () { switchTheme(function () { Site.theme.toggle(); }); sfx("toggle"); });
+    Site.on("pref:theme", sync); sync();
+    tools.appendChild(btn);
+  }, "chrome:theme");
+
+  /* ------------------------------------------------------------------------------------------------
+     Settings panel
+     ------------------------------------------------------------------------------------------------ */
+  Site.ready(function () {
+    if (!feat("settingsPanel")) return;
+
+    Site.settings.register({
+      id: "theme", label: "Theme", type: "choice", pref: "theme", order: 10,
+      choices: [{ value: "dark", label: "Dark" }, { value: "light", label: "Light" }, { value: "auto", label: "Match device" }],
+      set: function (v) { switchTheme(function () { Site.setPref("theme", v); }); }
+    });
+    /* Stored as motion "off" (reduced) or "auto" (follow the device). When the device itself asks for less motion
+       the switch shows on and cannot be turned off here, because "auto" would reduce motion anyway. */
+    function motionForcedByDevice() { return Site.reducedMotion && Site.pref("motion") !== "off"; }
+    Site.settings.register({
+      id: "motion", label: "Reduce motion", type: "toggle", pref: "motion", order: 20,
+      hint: function () { return motionForcedByDevice() ? "On, because your device asks for less motion." : "Turns off animations and moving effects."; },
+      get: function () { return Site.reducedMotion; },
+      set: function (v) { Site.setPref("motion", v ? "off" : "auto"); },
+      disabled: motionForcedByDevice
+    });
+
+    var tools = Site.tools(); if (!tools || !nav) return;
+
+    var open = false, dirty = true, drawing = false, syncers = [];
+    var rowsBox = el("div", { class: "ch-panel__rows" });
+    var closeBtn = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Close settings" }, svg(ICON.close));
+    var panel = el("div", { class: "ch-panel", id: "ch-settings", role: "dialog", "aria-modal": "false", "aria-labelledby": "ch-settings-title", tabindex: "-1", hidden: true },
+      el("div", { class: "ch-panel__head" }, el("h2", { class: "ch-panel__title", id: "ch-settings-title", text: "Settings" }), closeBtn),
+      rowsBox);
+    var gear = el("button", { type: "button", class: "sx-iconbtn ch-gear", style: { order: "20" }, "aria-label": "Settings", "aria-haspopup": "dialog", "aria-expanded": "false", "aria-controls": "ch-settings" },
+      svg(ICON.gear));
+
+    function read(row) { return typeof row.get === "function" ? row.get() : Site.pref(row.pref); }
+    function write(row, v) { if (typeof row.set === "function") row.set(v); else Site.setPref(row.pref, v); }
+    function locked(row) { return typeof row.disabled === "function" && !!row.disabled(); }
+    function hintOf(row) { return typeof row.hint === "function" ? row.hint() : row.hint; }
+
+    function buildRow(row, n) {
+      if (!row || !row.label || (!row.pref && typeof row.get !== "function")) return null;
+      var base = "ch-set-" + n, lid = base + "-l", hid = base + "-h", key = String(row.id);
+      var label = el("div", { class: "ch-row__label", id: lid, text: String(row.label) });
+      var hint = el("div", { class: "ch-row__hint", id: hid });
+      var text = el("div", { class: "ch-row__text" }, label, hint);
+      var node = el("div", { class: "ch-row ch-row--" + row.type }, text);
+      function syncHint() { var h = hintOf(row); hint.textContent = h ? String(h) : ""; hint.hidden = !h; }
+
+      if (row.type === "toggle") {
+        var onV = "on" in row ? row.on : true, offV = "off" in row ? row.off : false;
+        var sw = el("button", { type: "button", class: "ch-switch", role: "switch", "aria-checked": "false", "aria-labelledby": lid, "aria-describedby": hid, "data-ch-key": key });
+        var isOn = function () { var v = read(row); return typeof row.get === "function" ? !!v : v === onV; };
+        sw.addEventListener("click", function () {
+          if (locked(row)) return;
+          var next = !isOn(); write(row, typeof row.set === "function" ? next : (next ? onV : offV)); sfx("toggle");
+        });
+        node.appendChild(sw);
+        syncers.push(function () {
+          sw.setAttribute("aria-checked", String(isOn()));
+          if (locked(row)) sw.setAttribute("aria-disabled", "true"); else sw.removeAttribute("aria-disabled");
+          syncHint();
+        });
+      } else if (row.type === "choice") {
+        var choices = Array.isArray(row.choices) ? row.choices : [];
+        if (!choices.length) return null;
+        var seg = el("div", { class: "ch-seg", role: "group", "aria-labelledby": lid, "aria-describedby": hid });
+        var btns = choices.map(function (c, i) {
+          var b = el("button", { type: "button", class: "ch-seg__btn", "aria-pressed": "false", "data-ch-key": key + ":" + i, text: String(c.label != null ? c.label : c.value) });
+          b.addEventListener("click", function () { if (locked(row) || read(row) === c.value) return; write(row, c.value); sfx("toggle"); });
+          seg.appendChild(b); return b;
+        });
+        node.appendChild(seg);
+        syncers.push(function () {
+          var v = read(row);
+          btns.forEach(function (b, i) { b.setAttribute("aria-pressed", String(choices[i].value === v)); });
+          syncHint();
+        });
+      } else if (row.type === "range") {
+        var min = row.min != null ? +row.min : 0, max = row.max != null ? +row.max : 1, step = row.step != null ? +row.step : (max - min) / 20;
+        var out = el("span", { class: "ch-row__val", "aria-hidden": "true" });
+        var input = el("input", { type: "range", class: "ch-range", min: String(min), max: String(max), step: String(step), "aria-labelledby": lid, "aria-describedby": hid, "data-ch-key": key });
+        var show = function (v) {
+          var pct = max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0;
+          input.style.setProperty("--ch-fill", (pct * 100).toFixed(1) + "%");
+          var txt = max <= 1 && min >= 0 ? Math.round(v * 100) + "%" : String(Math.round(v * 100) / 100);
+          out.textContent = txt; input.setAttribute("aria-valuetext", txt);
+        };
+        input.addEventListener("input", function () { var v = parseFloat(input.value); if (isNaN(v) || locked(row)) return; show(v); write(row, v); });
+        node.appendChild(out); node.appendChild(input);
+        syncers.push(function () {
+          var v = parseFloat(read(row)); if (isNaN(v)) v = min;
+          if (document.activeElement !== input || parseFloat(input.value) !== v) input.value = String(v);
+          show(v); syncHint();
+        });
+      } else return null;
+      return node;
+    }
+
+    function syncAll() { syncers.forEach(function (fn) { try { fn(); } catch (e) { console.error("[site] settings row", e); } }); }
+
+    function draw() {
+      dirty = false; drawing = true;
+      var act = document.activeElement, key = act && rowsBox.contains(act) ? act.getAttribute("data-ch-key") : null;
+      syncers = []; rowsBox.textContent = "";
+      Site.settings.list().forEach(function (row, i) { var n = null; try { n = buildRow(row, i); } catch (e) { console.error("[site] settings row", e); } if (n) rowsBox.appendChild(n); });
+      syncAll();
+      if (key != null) {
+        var again = null;
+        Array.prototype.forEach.call(rowsBox.querySelectorAll("[data-ch-key]"), function (c) { if (!again && c.getAttribute("data-ch-key") === key) again = c; });
+        focusQuietly(again || panel);
+      }
+      drawing = false;
+    }
+
+    /* focus: "back" returns it to the gear, "auto" does so only if it was inside the panel, "leave" never moves it */
+    function setOpen(v, focus) {
+      if (v === open) return;
+      open = v;
+      gear.setAttribute("aria-expanded", String(v));
+      root.classList.toggle("ch-open", v);
+      if (v) {
+        if (dirty) draw(); else syncAll();
+        panel.hidden = false; void panel.offsetWidth; panel.classList.add("is-in");
+        focusQuietly(rowsBox.querySelector("[data-ch-key]:not([aria-disabled='true'])") || closeBtn);
+        sfx("open");
+      } else {
+        var inside = panel.contains(document.activeElement);
+        panel.classList.remove("is-in"); panel.hidden = true;
+        if (focus === "back" || (focus === "auto" && inside)) focusQuietly(gear);
+        sfx("close");
+      }
+    }
+    function toggle() { setOpen(!open, "back"); }
+
+    gear.addEventListener("click", toggle);
+    closeBtn.addEventListener("click", function () { setOpen(false, "back"); });
+    document.addEventListener("keydown", function (e) { if (open && e.key === "Escape") { e.preventDefault(); setOpen(false, "back"); } });
+    document.addEventListener("pointerdown", function (e) {
+      if (!open) return; var t = e.target;
+      if (t && t.nodeType === 1 && (panel.contains(t) || gear.contains(t))) return;
+      setOpen(false, "auto");
+    }, true);
+    /* Tabbing (or steering with a controller) out of the panel closes it; focus stays where the visitor put it. */
+    panel.addEventListener("focusout", function (e) {
+      if (!open || drawing) return; var to = e.relatedTarget;
+      if (to && !panel.contains(to) && to !== gear) setOpen(false, "leave");
+    });
+
+    Site.on("ui:escape", function () { if (open) setOpen(false, "back"); });
+    Site.on("ui:settings", toggle);
+    Site.on("settings:changed", function () { dirty = true; if (open) draw(); });
+    Site.on("pref", function () { if (open) syncAll(); });
+    Site.on("pref:theme", function () { if (open) syncAll(); });    /* also fired when the device theme changes */
+    Site.on("pref:motion", function () { if (open) syncAll(); });   /* also fired when the device motion setting changes */
+
+    tools.appendChild(gear);
+    nav.appendChild(panel);
+  }, "chrome:settings");
+
+  /* ------------------------------------------------------------------------------------------------
+     Back to top
+     ------------------------------------------------------------------------------------------------ */
+  Site.ready(function () {
+    if (!feat("backToTop") || !document.body) return;
+    var shown = false, raf = 0, host = null;
+    var btn = el("button", { type: "button", class: "ch-top", "aria-label": "Back to top" }, svg(ICON.up));
+
+    function update() {
+      raf = 0;
+      var y = scrollY(), on = y > 600;
+      if (on !== shown) { shown = on; btn.classList.toggle("is-on", on); }
+      if (on) btn.style.setProperty("--ch-p", Math.min(1, y / Math.max(1, root.scrollHeight - window.innerHeight)).toFixed(3));
+    }
+    function onScroll() { if (!raf && !document.hidden) raf = requestAnimationFrame(update); }
+
+    /* Toasts live at the bottom centre. On narrow screens they can reach the corner, so step up above them. */
+    function lift() {
+      var up = 0;
+      if (host && host.childElementCount) {
+        var t = host.getBoundingClientRect(), cs = getComputedStyle(btn);
+        var left = root.clientWidth - (parseFloat(cs.right) || 0) - btn.offsetWidth;
+        if (t.width > 0 && t.right > left - 10) up = Math.max(0, window.innerHeight - t.top + 10);
+      }
+      if (up) btn.style.setProperty("--ch-lift", Math.round(up) + "px"); else btn.style.removeProperty("--ch-lift");
+    }
+    function watchToasts() {
+      var h = document.getElementById("sx-toasts"); if (!h || h === host) return;
+      host = h; new MutationObserver(lift).observe(host, { childList: true }); lift();
+    }
+
+    btn.addEventListener("click", function () {
+      sfx("nav");
+      try { window.scrollTo({ top: 0, behavior: Site.reducedMotion ? "auto" : "smooth" }); } catch (e) { window.scrollTo(0, 0); }
+      focusQuietly(nav && nav.querySelector("a[href],button"));     /* keyboard focus goes back to the top with the page */
+    });
+    document.body.appendChild(btn);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", function () { onScroll(); lift(); });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) onScroll(); });
+    if ("MutationObserver" in window) { new MutationObserver(watchToasts).observe(document.body, { childList: true }); watchToasts(); }
+    update();
+  }, "chrome:top");
+})();

@@ -1,1 +1,59 @@
-/* social-live.css: see assets/README.md */
+/* social-live.css: live badges on the header social buttons (Twitch live, Discord member count, Ko-fi goal).
+ * Everything is prefixed sl-. The badges sit inside the buttons, which keep their brand colours in both
+ * themes, so the badge colours are derived from the button's own colour (currentColor) or are fixed brand-safe values.
+ * Nothing here changes the button's height: badges are shorter than the icon, and on small screens they
+ * become corner badges that take no room at all.
+ */
+.social.sl-on{position:relative}
+
+/* ---- shared badge shape ---- */
+.sl-badge{display:inline-flex;align-items:center;gap:5px;flex:none;box-sizing:border-box;height:20px;margin:0;padding:0 7px;border-radius:999px;
+  font:500 .7rem/1 var(--sx-mono);letter-spacing:.06em;white-space:nowrap;text-shadow:none;pointer-events:none}
+
+/* ---- Twitch: LIVE badge + glow ---- */
+.sl-live{color:#fff;background:#c9141a;text-transform:uppercase}
+.sl-live__dot{display:block;width:6px;height:6px;border-radius:50%;background:#fff;flex:none}
+.social.twitch.sl-is-live{box-shadow:0 0 0 2px rgba(145,70,255,.55),0 0 22px 2px rgba(145,70,255,.6)}
+:root:not([data-motion="reduce"]) .social.twitch.sl-is-live{animation:sl-glow 2.2s ease-in-out infinite}
+:root:not([data-motion="reduce"]) .sl-live__dot{animation:sl-blink 1.2s ease-in-out infinite}
+@keyframes sl-glow{
+  0%,100%{box-shadow:0 0 0 2px rgba(145,70,255,.45),0 0 12px 0 rgba(145,70,255,.35)}
+  50%{box-shadow:0 0 0 3px rgba(145,70,255,.75),0 0 28px 5px rgba(145,70,255,.7)}
+}
+@keyframes sl-blink{50%{opacity:.35}}
+
+/* ---- Discord: member count pill ---- */
+.sl-count{color:#fff;background:#3a43a8;letter-spacing:.02em} /* a darker shade of the button colour; opaque so it also reads when it overhangs the corner */
+
+/* ---- Ko-fi: goal bar along the bottom edge + popover ---- */
+.sl-goal{position:absolute;left:12px;right:12px;bottom:3px;height:3px;border-radius:999px;overflow:hidden;pointer-events:none;
+  background:color-mix(in srgb,currentColor 24%,transparent)}
+.sl-goal > i{display:block;height:100%;width:var(--sl-p,0%);border-radius:inherit;background:currentColor}
+.sl-pop{position:absolute;top:calc(100% + 9px);left:var(--sl-x,0px);z-index:var(--sx-z-pop,300);box-sizing:border-box;width:max-content;min-width:190px;max-width:min(250px,calc(100vw - 24px));
+  display:grid;gap:6px;margin:0;padding:11px 13px 12px;border-radius:12px;text-align:left;white-space:normal;cursor:default;
+  font:500 .86rem/1.35 var(--sx-body);letter-spacing:0;text-transform:none;text-shadow:none;
+  color:var(--sx-text);background:var(--sx-surface);border:1px solid var(--sx-line-2);box-shadow:var(--sx-shadow);
+  opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .16s,transform .16s var(--sx-ease),visibility 0s .16s}
+.sl-pop::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px} /* keeps hover alive across the gap */
+.social.sl-has-goal:hover > .sl-pop,.social.sl-has-goal:focus-visible > .sl-pop{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.social.sl-has-goal.sl-pop-off > .sl-pop{opacity:0;visibility:hidden}
+.sl-pop__title{display:block;font:700 .92rem/1.25 var(--sx-display);color:var(--sx-text);overflow-wrap:anywhere}
+.sl-pop__row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;color:var(--sx-muted)}
+.sl-pop__row b{font-weight:600;color:var(--sx-text)}
+.sl-pop__bar{display:block;height:6px;border-radius:999px;overflow:hidden;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
+.sl-pop__bar > i{display:block;height:100%;width:var(--sl-p,0%);border-radius:inherit;background:#ff5e5b}
+:root[data-theme="light"] .sl-pop__bar > i{background:#d8403d}
+:root[data-motion="reduce"] .sl-pop{transition:none;transform:none}
+
+/* ---- Below 1180px the header row is tight (an inline badge could push the buttons onto a second line and
+   change the header height), and labels may be hidden, so badges ride the button's corner and take no room ---- */
+@media (max-width:1180px){
+  .sl-badge{position:absolute;top:-7px;right:-5px;height:18px;padding:0 6px;font-size:.64rem;box-shadow:0 0 0 2px var(--ink,var(--sx-surface))}
+}
+/* While the page is scrolled on a narrow screen the header (assets/chrome.css) shrinks the buttons to icons
+   (:root.ch-scrolled, max-width 760px). The badges then sit centred on the top edge so neighbours don't touch.
+   Without that class nothing here applies and the corner badges above are used. */
+@media (max-width:760px){
+  :root.ch-scrolled .sl-badge{left:50%;right:auto;top:-4px;transform:translateX(-50%);height:16px;padding:0 5px;gap:3px;font-size:.58rem;letter-spacing:.04em}
+  :root.ch-scrolled .sl-live__dot{width:5px;height:5px}
+}

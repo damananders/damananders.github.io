@@ -79,7 +79,7 @@ body.photo{background-image:var(--sx-photo-overlay),var(--bg)}
 /* ---- Icon button (resets the AndersCraft page's global button styles) ---- */
 .sx-iconbtn{all:unset;box-sizing:border-box;display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;cursor:pointer;
   color:var(--sx-text);background:var(--sx-glass);border:1px solid var(--sx-line-2);transition:transform .15s,border-color .15s,color .15s;-webkit-tap-highlight-color:transparent}
-.sx-iconbtn:hover{border-color:var(--accent,var(--sx-accent));color:var(--accent,var(--sx-accent));transform:translateY(-1px)}
+.sx-iconbtn:hover{background:var(--sx-glass);border-color:var(--accent,var(--sx-accent));color:var(--accent,var(--sx-accent));transform:translateY(-1px)}
 .sx-iconbtn:focus-visible{outline:2px solid var(--accent,var(--sx-accent));outline-offset:2px}
 .sx-iconbtn svg{width:20px;height:20px}
 
@@ -105,7 +105,7 @@ dialog.sx-modal::backdrop{background:rgba(3,5,8,.72);backdrop-filter:blur(4px)}
 .sx-modal__body a{color:var(--accent,var(--sx-accent))}
 .sx-x{all:unset;box-sizing:border-box;display:grid;place-items:center;width:38px;height:38px;border-radius:10px;font-size:1.3rem;line-height:1;cursor:pointer;flex:none;
   color:var(--sx-text);background:var(--sx-surface-2);border:1px solid var(--sx-line-2)}
-.sx-x:hover{border-color:var(--accent,var(--sx-accent))} .sx-x:focus-visible{outline:2px solid var(--accent,var(--sx-accent));outline-offset:2px}
+.sx-x:hover{background:var(--sx-surface-2);border-color:var(--accent,var(--sx-accent));transform:none} .sx-x:focus-visible{outline:2px solid var(--accent,var(--sx-accent));outline-offset:2px}
 :root:not([data-motion="reduce"]) dialog.sx-modal[open]{animation:sx-pop .22s var(--sx-ease)}
 @keyframes sx-pop{from{opacity:0;transform:translateY(10px) scale(.98)}}
 @media (max-width:520px){.sx-modal__head{padding:14px 16px}.sx-modal__body{padding:14px 16px 18px}}

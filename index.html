@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Anders — Choose Your Avenue</title>
-<meta name="description" content="Pick your path: join the AndersCraft WoW server, download the AnyPS launcher, or visit the personal vault." />
+<meta name="description" content="Pick your path: join the AndersCraft WoW server or download the AnyPS launcher." />
 <meta name="theme-color" content="#07090b" />
 <meta property="og:title" content="Anders — Choose Your Avenue" />
 <meta property="og:description" content="AndersCraft server sign-up and the AnyPS launcher." />
@@ -28,6 +28,7 @@
 </style>
 <!-- site:head (shared site upgrades, see assets/README.md) -->
 <script>(function(){var r=document.documentElement;r.setAttribute("data-page","hub");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<style>@view-transition{navigation:auto}</style>
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fx.css" />
@@ -51,14 +52,17 @@
   </nav>
 
   <header class="hero">
-    <div class="eyebrow">Choose your avenue</div>
+    <div class="eyebrow" data-reveal>Choose your avenue</div>
     <h1>Where do you want to go?</h1>
-    <p class="lead">A WoW server to join, a launcher to download, and my personal vault. Pick one to learn more.</p>
+    <p class="lead" id="hb-lead" data-reveal data-reveal-delay="90">A WoW server to join and a launcher to download. Pick one to learn more.</p>
   </header>
 
-  <main class="avenues">
+  <!-- Latest-update ticker: filled by assets/pages/hub.js from assets/data/news.json. The empty box keeps its height so nothing jumps. -->
+  <section class="hb-ticker" id="hb-ticker" aria-label="Latest updates" data-reveal data-reveal-delay="160"></section>
+
+  <main class="avenues" id="main">
     <a class="avenue craft" href="anderscraft/">
-      <div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/></svg></div>
+      <div class="art"><span class="hb-chips" id="hb-chips-craft"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/></svg></div>
       <div class="body">
         <div class="eyebrow">Private server &middot; WotLK 3.3.5a</div>
         <h2>AndersCraft</h2>
@@ -73,7 +77,7 @@
     </a>
 
     <a class="avenue anyps" href="anyps/">
-      <div class="art"><video autoplay muted loop playsinline preload="metadata" poster="assets/anyps-preview-v2.jpg" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"><source src="assets/anyps-preview-v2.mp4" type="video/mp4" /></video><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h4M8 9v4"/><circle cx="15" cy="12" r=".6" fill="currentColor"/><circle cx="18" cy="10" r=".6" fill="currentColor"/><path d="M17.3 5H6.7a4 4 0 0 0-3.96 3.4l-.9 6.3A2.6 2.6 0 0 0 4.4 17.7c.8 0 1.5-.4 2-1l1.5-1.7h8.2l1.5 1.7c.5.6 1.2 1 2 1a2.6 2.6 0 0 0 2.57-3l-.9-6.3A4 4 0 0 0 17.3 5Z"/></svg></div>
+      <div class="art"><video class="hb-vid" id="hb-vid" muted loop playsinline disablepictureinpicture preload="none" width="1280" height="720" poster="assets/anyps-preview-v2.jpg" data-hb-src="assets/anyps-preview-v2.mp4" aria-hidden="true" tabindex="-1"></video><span class="hb-chips" id="hb-chips-anyps"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h4M8 9v4"/><circle cx="15" cy="12" r=".6" fill="currentColor"/><circle cx="18" cy="10" r=".6" fill="currentColor"/><path d="M17.3 5H6.7a4 4 0 0 0-3.96 3.4l-.9 6.3A2.6 2.6 0 0 0 4.4 17.7c.8 0 1.5-.4 2-1l1.5-1.7h8.2l1.5 1.7c.5.6 1.2 1 2 1a2.6 2.6 0 0 0 2.57-3l-.9-6.3A4 4 0 0 0 17.3 5Z"/></svg></div>
       <div class="body">
         <div class="eyebrow">Launcher &middot; Windows</div>
         <h2>AnyPS</h2>
@@ -88,7 +92,7 @@
     </a>
 
     <a class="avenue games" href="vault/">
-      <div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M12 17v-1.5M15.5 12H17M7 12h1.5M7 20v1M17 20v1"/></svg></div>
+      <div class="art"><span class="hb-chips" id="hb-chips-vault"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M12 17v-1.5M15.5 12H17M7 12h1.5M7 20v1M17 20v1"/></svg></div>
       <div class="body">
         <div class="eyebrow">Private &middot; owner only</div>
         <h2>Personal Vault</h2>
@@ -98,7 +102,13 @@
     </a>
   </main>
 
-  <footer>
+  <!-- Shown by assets/pages/hub.js on devices with a keyboard and mouse -->
+  <p class="hb-hint" id="hb-hint" data-reveal><kbd class="sx-kbd">Arrow keys</kbd> or a controller move between avenues. <kbd class="sx-kbd">Enter</kbd> opens one.</p>
+
+  <!-- "Now" card: filled by assets/pages/hub.js from assets/data/now.json -->
+  <section class="hb-now" id="hb-now" aria-label="What I'm up to now" data-reveal hidden></section>
+
+  <footer data-reveal>
     <p>Fan projects, made for fun and learning. Non-commercial.</p>
     <p>World of Warcraft&reg; is a trademark of Blizzard Entertainment. PlayStation&reg; is a trademark of Sony Interactive Entertainment. Neither is affiliated with or endorses these projects.</p>
   </footer>
