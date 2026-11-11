@@ -160,9 +160,11 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   </div>
 
   <section class="sec" aria-label="Recent updates">
-    <h2>Latest: AnyPS V1.05</h2>
+    <h2>Latest: AnyPS V1.05.1</h2>
     <p class="lead" style="font-size:1rem">What landed in the newest build. <button class="linkbtn" id="openChangelog2" type="button" style="margin-top:0">Full changelog &rarr;</button></p>
     <div class="updrow">
+      <span class="chip"><b>Snappy in-game overlay</b> &mdash; no more missed presses</span>
+      <span class="chip"><b>Memory tools fixed on PS3</b>, with saved values &amp; stay-on mods</span>
       <span class="chip"><b>One-press updates</b> &mdash; keeps all your games, saves &amp; sign-ins</span>
       <span class="chip"><b>Redesigned start-up screen</b></span>
       <span class="chip"><b>PlayStation face-button</b> console separators</span>
@@ -222,7 +224,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
-    <div class="dhead"><h2 id="featTitle">AnyPS V1.05: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="featTitle">AnyPS V1.05.1: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
 <p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across six systems (PS1, PS2, PSP, PS Vita, PS3, PS4), each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
 <h3>1. The app itself</h3>
@@ -472,6 +474,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 </ul>
 <h3>33. Memory tools &amp; cheats <span class="newtag">New in V1.04</span></h3>
 <ul>
+<li><b>My saved values <span class="newtag">New in V1.05.1</span>:</b> found addresses are kept per game in one list with live values; add with one press, set to common amounts or double without typing, lock a value as a mod that AnyPS re-applies every launch, and narrow searches by went up / went down / changed / stayed the same.</li>
 <li>Overlay ▸ Memory tools &amp; cheats on PS3, PS2, PSP and Vita: pick a width, type the value you see, scan, change it in the game, narrow, then set, freeze, watch, or save as a named cheat (<code>cheats\&lt;system&gt;\&lt;id&gt;.json</code>) re-applied every launch.</li>
 <li>Value watch window; pattern capture / re-find after a reload.</li>
 <li>Cheat databases: PS1 built in, PSP cheat.db, Vita VitaCheat, PS3 community patches; export / import a game's cheats as a zip.</li>
@@ -515,6 +518,17 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   <dialog class="features" id="changelog" aria-labelledby="clTitle">
     <div class="dhead"><h2 id="clTitle">What's new in V1.05</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
+<h3>V1.05.1 update</h3>
+<ul>
+<li><b>The in-game overlay answers straight away.</b> While a game was running, the controller was only being read a few times a second, so button presses went missing and the menu felt stuck. It is read 60 times a second again.</li>
+<li><b>Memory tools work on PS3.</b> They used to stop with a &ldquo;file is in use&rdquo; message; that is fixed, and narrowing a search no longer loses good matches.</li>
+<li><b>My saved values</b>: every address you find is kept in one list for that game, with live values, while you search for the next one. Add with one press; set to 99 / 999 / 9,999&hellip; or double it without typing.</li>
+<li><b>Mods that stay on</b>: lock a value and AnyPS holds it while you play and switches it back on every time you start that game. A note at game start lists the mods that are on.</li>
+<li>Narrow a search by &ldquo;went up&rdquo;, &ldquo;went down&rdquo;, &ldquo;changed&rdquo; or &ldquo;stayed the same&rdquo;; values accept negatives and hex. A search that gets down to one address saves it for you.</li>
+<li>A one-time note per game explains that value mods don&rsquo;t always take (some games move their values between launches).</li>
+<li>Fixed: Back in the cheats and memory menus stepped onto an old copy of the menu, as if the last change had been undone. Back now leaves the menu.</li>
+</ul>
+<h3>V1.05</h3>
 <p>Everything new, changed and fixed since V1.04.</p>
 <h3>New Features</h3>
 <h4>Updating is one press now</h4>
