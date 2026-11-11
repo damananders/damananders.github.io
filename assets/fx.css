@@ -12,6 +12,10 @@
   --sx-shadow:0 24px 60px -28px rgba(0,0,0,.9);
   --sx-radius:14px; --sx-ease:cubic-bezier(.2,.7,.2,1);
   --sx-header-h:0px; /* assets/chrome.css sets the real sticky header height */
+  /* the wash laid over full-page photo backgrounds (body.photo, AndersCraft body) */
+  --sx-photo-overlay:linear-gradient(180deg,rgba(7,9,11,.80),rgba(7,9,11,.62) 40%,rgba(7,9,11,.94));
+  /* layers: page content 0-10, sticky header 100, floating buttons 200, popovers 300, toasts and cursor above everything */
+  --sx-z-header:100; --sx-z-float:200; --sx-z-pop:300;
   color-scheme:dark;
 }
 :root[data-page="anderscraft"]{--sx-accent:#ff7a1f;--sx-text:#ece3d0;--sx-muted:#b3a88f;--sx-line:rgba(255,150,70,.18);--sx-line-2:rgba(255,150,70,.34);--sx-on-accent:#1a0d03;
@@ -30,14 +34,21 @@
   --sx-text:#12161b; --sx-muted:#56616d; --sx-on-accent:#ffffff;
   --sx-accent:#b86a00;
   --sx-shadow:0 24px 60px -30px rgba(20,30,50,.45);
+  --sx-photo-overlay:linear-gradient(180deg,rgba(243,241,236,.88),rgba(243,241,236,.74) 40%,rgba(243,241,236,.96));
 }
 :root[data-theme="light"][data-page="anderscraft"]{--sx-accent:#c2560a;--sx-text:#23180c;--sx-muted:#6b5a44;--sx-line:rgba(120,60,10,.18);--sx-line-2:rgba(120,60,10,.34);--sx-on-accent:#fff}
 :root[data-theme="light"][data-page="anyps"]{--sx-accent:#1f6fe0}
 :root[data-theme="light"][data-page="vault"]{--sx-accent:#0d8f62}
 
+/* ---- Photo backgrounds read their wash from the token, so themes and effects can swap it ---- */
+body.photo{background-image:var(--sx-photo-overlay),var(--bg)}
+
 /* ---- Utilities ---- */
 .sx-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .sx-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ---- Header tools container (Site.tools()) ---- */
+.sx-tools{display:flex;align-items:center;gap:8px;flex:none}
 
 /* ---- Scroll reveal (only hides content once the script is running) ---- */
 :root.sx-js:not([data-motion="reduce"]) [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s var(--sx-ease),transform .6s var(--sx-ease)}

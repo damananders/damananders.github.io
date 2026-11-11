@@ -287,6 +287,14 @@
     list: function () { return settingsRows.filter(function (r) { return !r.pages || r.pages.indexOf(page) >= 0; }).sort(function (a, b) { return (a.order || 50) - (b.order || 50); }); }
   };
 
+  /* ---------- header tools: one shared container at the right end of <nav> for small header buttons ----------
+     Site.tools() returns it (created on first use). Give your button style="order:N" to place it (theme 10, settings 20, sound 30). */
+  function tools() {
+    var t = document.getElementById("sx-tools"); if (t) return t;
+    var nav = document.querySelector("nav"); if (!nav) return null;
+    t = el("div", { id: "sx-tools", class: "sx-tools" }); nav.appendChild(t); return t;
+  }
+
   /* ---------- formatting ---------- */
   function fmtDate(iso) {
     if (!iso) return ""; var d = new Date(String(iso).slice(0, 10) + "T12:00:00"); if (isNaN(d)) return String(iso);
@@ -317,7 +325,7 @@
     toast: toast, copy: copy, sfx: sfx, registerSfx: function (fn) { sfxImpl = fn; },
     data: data, fetchJSON: fetchJSON, news: news, live: live,
     reveal: reveal, dialog: { open: openDialog, close: closeDialog }, modal: modal,
-    gamepad: gamepad, settings: settings,
+    gamepad: gamepad, settings: settings, tools: tools,
     fmtDate: fmtDate, fmtNum: fmtNum, fmtBytes: fmtBytes
   };
 
