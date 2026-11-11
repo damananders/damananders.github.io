@@ -41,6 +41,16 @@
 .ix-ring--hot .ix-ring-c{transform:scale(1.55);opacity:1;border-color:var(--ix-ring-accent);background-color:color-mix(in srgb,var(--ix-ring-accent) 14%,transparent)}
 .ix-ring--down .ix-ring-c{transform:scale(.8)}
 .ix-ring--hot.ix-ring--down .ix-ring-c{transform:scale(1.3)}
+/* the exact pointer position, and the normal cursor hidden while the ring is on screen (deliberate !important: beats every cursor rule on the site) */
+.ix-ring-dot{position:absolute;left:-2.5px;top:-2.5px;width:5px;height:5px;border-radius:50%;background:var(--ix-ring-line);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--ix-ring-halo) 70%,transparent)}
+.ix-ring--hot .ix-ring-dot{background:var(--ix-ring-accent)}
+:root.ix-nocursor,:root.ix-nocursor *,:root.ix-nocursor *::before,:root.ix-nocursor *::after{cursor:none!important}
+/* AnyPS page: face-button shapes instead of the plain ring */
+.ix-ring--shapes .ix-ring-c,.ix-ring--shapes.ix-ring--hot .ix-ring-c{border-color:transparent;box-shadow:none;background-color:transparent;border-radius:0}
+.ix-ring-shape{position:absolute;inset:-1.5px;color:var(--ix-ring-line);filter:drop-shadow(0 0 1px var(--ix-ring-halo)) drop-shadow(0 0 1px var(--ix-ring-halo))}
+.ix-ring-shape svg{display:block;width:100%;height:100%}
+.ix-ring--hot .ix-ring-shape{color:var(--ix-ring-accent)}
 :root[data-motion="reduce"] .ix-ring{display:none}
 
 /* ---- Button press (item 46) ---- */

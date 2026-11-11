@@ -16,7 +16,7 @@
 
     var host = location.hostname;
     if (location.protocol === "file:" || !host || host === "localhost" || host === "127.0.0.1" || host === "[::1]") return;
-    if (Site.page === "vault") return;
+    if (Site.page === "vault" || Site.page === "locker") return;
     var dnt = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
     if (dnt === "1" || dnt === "yes") return;
     if (Site.owner) return;

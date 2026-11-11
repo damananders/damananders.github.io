@@ -48,6 +48,15 @@ window.SITE_EXTRA = {
     hideOnHub: true,
   },
 
+  /* ---- PS Locker (/locker/, reached with a code from the hidden mark at the bottom of the hub) ----
+     Paste your private Drive links here. Keep those Drive items on "Restricted" sharing: that is the real lock. */
+  locker: {
+    list: [
+      { title: "System files", note: "BIOS and firmware dumped from my own consoles.", url: "" },
+      { title: "Game backups", note: "Backups of games I own.", url: "" },
+    ],
+  },
+
   /* ---- Analytics (privacy friendly, no cookies). Your GoatCounter site code, e.g. "damananders". Blank = off. ---- */
   analytics: { goatcounter: "" },
 

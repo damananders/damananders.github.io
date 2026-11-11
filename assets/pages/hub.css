@@ -129,3 +129,17 @@
   .hb-now{padding:16px 16px 18px}
   .hb-now__link{padding:8px 0;margin:-8px 0}   /* 40px tap target */
 }
+
+/* ---- Hidden door: a faint mark at the very bottom; five quick clicks open a code box ---- */
+.hb-door-row{margin:18px 0 0}
+.hb-door{all:unset;box-sizing:border-box;display:inline-grid;place-items:center;width:64px;height:40px;cursor:pointer;color:var(--sx-muted);opacity:.28;transition:opacity .2s;-webkit-tap-highlight-color:transparent}
+.hb-door svg{width:44px;height:11px;display:block}
+.hb-door:hover{opacity:.5}
+.hb-door:focus-visible{opacity:.9;outline:2px solid var(--sx-accent);outline-offset:2px;border-radius:8px}
+.hb-code{display:grid;gap:12px}
+.hb-code label{font:600 .9rem var(--sx-display);color:var(--sx-text)}
+.hb-code input{font:500 1.05rem var(--sx-mono);color:var(--sx-text);background:var(--sx-surface-2);border:1px solid var(--sx-line-2);border-radius:10px;padding:11px 12px;width:100%;box-sizing:border-box}
+.hb-code input:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
+.hb-code__msg{min-height:1.3em;margin:0;font-size:.9rem;color:var(--sx-err)}
+:root:not([data-motion="reduce"]) .hb-code--no input{animation:hb-shake .3s}
+@keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}

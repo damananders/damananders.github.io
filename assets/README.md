@@ -17,6 +17,7 @@ Plain HTML, CSS and JavaScript on GitHub Pages. No build step. Paths starting wi
 | `assets/audio.js` (+ `audio.css` on the hub) | Optional UI sounds and the hub soundscape. All sound is synthesised in the browser; nothing is downloaded. Always starts off. |
 | `assets/social-live.js` + `.css` | Twitch live badge, Discord member count, Ko-fi goal bar. |
 | `assets/analytics.js` | Loads GoatCounter only when a code is set in `site-config.js`. |
+| `locker/index.html` + `assets/pages/locker.js/.css` | PS Locker: owner-only links from `locker.list` in `site-config.js` (noindex). Reached by clicking the faint mark at the bottom of the hub five times and typing a code (hashes live in `assets/pages/hub.js`). The code is a convenience, not security: keep the Drive items on Restricted sharing. |
 | `assets/pages/<page>.js` + `.css` | Each page's own upgrades: `hub`, `hub-fx` (effects), `anderscraft`, `anyps-plus`, `vault`, `404`. |
 
 Every page has two marked blocks, `<!-- site:head -->` in `<head>` and `<!-- site:scripts -->` before `</body>`. Keep them when editing a page.

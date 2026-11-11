@@ -59,9 +59,29 @@
     var x = 0, y = 0, tx = 0, ty = 0, hot = null, layer = null;
 
     function wanted() { return finePointer.matches && !Site.reducedMotion && Site.pref("cursor") !== false; }
-    function place() { ring.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)"; }
-    function show() { if (!shown) { shown = true; ring.classList.add("ix-ring--show"); } }
-    function hide() { if (ring && shown) { shown = false; ring.classList.remove("ix-ring--show", "ix-ring--down"); } }
+    var dot = null, shapeEl = null, shape = -1;
+    /* The ring trails the pointer; the dot inside it sits exactly on the pointer, so aiming stays precise
+       now that the normal cursor is hidden while the ring is showing. */
+    function place() {
+      ring.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+      if (dot) dot.style.transform = "translate3d(" + (tx - x).toFixed(1) + "px," + (ty - y).toFixed(1) + "px,0)";
+    }
+    function show() { if (!shown) { shown = true; ring.classList.add("ix-ring--show"); root.classList.add("ix-nocursor"); } }
+    function hide() { root.classList.remove("ix-nocursor"); if (ring && shown) { shown = false; ring.classList.remove("ix-ring--show", "ix-ring--down"); } }
+    /* AnyPS page: the ring becomes one of the four face-button shapes, re-rolled on every click. */
+    var SHAPES = [
+      '<path d="M7 7 23 23M23 7 7 23"/>',
+      '<circle cx="15" cy="15" r="11"/>',
+      '<path d="M15 4.5 26.5 24.5H3.5Z"/>',
+      '<rect x="5" y="5" width="20" height="20" rx="1.5"/>'
+    ];
+    function roll() {
+      if (!shapeEl) return;
+      var n; do { n = Math.floor(Math.random() * SHAPES.length); } while (n === shape);
+      shape = n;
+      shapeEl.textContent = "";
+      shapeEl.appendChild(Site.svg(SHAPES[n], { viewBox: "0 0 30 30", "stroke-width": "2.2" }));
+    }
 
     /* One loop. It eases the ring towards the pointer and stops as soon as it has caught up. */
     function frame(t) {
@@ -89,7 +109,8 @@
     function onMove(e) {
       if (e.pointerType === "touch") { hide(); return; }
       tx = e.clientX; ty = e.clientY;
-      if (!shown) { x = tx; y = ty; place(); setHot(closest(e, HOT)); show(); }
+      if (!shown) { x = tx; y = ty; setHot(closest(e, HOT)); show(); }
+      place();
       wake();
     }
     function onOver(e) {
@@ -99,7 +120,7 @@
       if (d !== layer) { layer = d; topLayer(ring); }
     }
     function onDown(e) { if (e.pointerType === "touch") hide(); else if (shown) ring.classList.add("ix-ring--down"); }
-    function onUp() { if (ring) ring.classList.remove("ix-ring--down"); }
+    function onUp(e) { if (ring) ring.classList.remove("ix-ring--down"); if (e && e.type === "pointerup") roll(); }
     function onVisible() { if (!doc.hidden && (x !== tx || y !== ty)) wake(); }
     function onDialog() { if (ring) { layer = null; topLayer(ring); } }
 
@@ -113,7 +134,10 @@
     function enable() {
       if (active || !doc.body) return;
       active = true;
-      ring = Site.el("div", { class: "ix-ring", "aria-hidden": "true" }, Site.el("span", { class: "ix-ring-c" }));
+      dot = Site.el("span", { class: "ix-ring-dot" });
+      shapeEl = Site.page === "anyps" ? Site.el("span", { class: "ix-ring-shape" }) : null;
+      ring = Site.el("div", { class: "ix-ring" + (shapeEl ? " ix-ring--shapes" : ""), "aria-hidden": "true" }, Site.el("span", { class: "ix-ring-c" }, shapeEl), dot);
+      shape = -1; roll();
       doc.body.appendChild(ring);
       topLayer(ring);
       wiring.forEach(function (w) { w[0].addEventListener(w[1], w[2], passive); });
@@ -125,12 +149,13 @@
       raf = 0;
       wiring.forEach(function (w) { w[0].removeEventListener(w[1], w[2], passive); });
       if (ring) ring.remove();
-      ring = null;
+      ring = null; dot = null; shapeEl = null;
+      root.classList.remove("ix-nocursor");
     }
     function sync() {
       if (finePointer.matches && !registered) {
         registered = true;
-        Site.settings.register({ id: "cursor", label: "Cursor ring", hint: "A soft ring that follows your mouse pointer.", type: "toggle", pref: "cursor", order: 30 });
+        Site.settings.register({ id: "cursor", label: "Cursor ring", hint: "Replaces your mouse pointer with a ring.", type: "toggle", pref: "cursor", order: 30 });
       }
       if (wanted()) enable(); else disable();
     }
