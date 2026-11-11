@@ -6,13 +6,13 @@ window.SITE = {
   discord: "https://discord.gg/U35dt6Qb2A",
 
   anyps: {
-    version: "1.04",
-    date: "2026-11-10",
+    version: "1.05",
+    date: "2026-11-11",
     downloadUrl: "https://drive.google.com/file/d/1oeCnn8dW4SxLYS06BmRO3eHZlAhLptHq/view?usp=sharing",
     // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
     // compares "version" above with the installed one, and swaps itself. Any Google Drive share link works.
     // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
-    exeUrl: "",
+    exeUrl: "https://damananders.github.io/anyps/AnyPS.exe",
     sizeLabel: "",          // e.g. "903 MB"
     // Older releases, newest first. Add the outgoing build here when you publish a new one.
     oldBuilds: [
