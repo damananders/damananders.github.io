@@ -1,9 +1,13 @@
 /* pages/games.css: the game ratings page (prefix gm-). Uses the shared --sx-* colours. */
 .gm-wrap{display:grid;gap:18px;max-width:880px}
-.gm-auth{border:1px solid var(--sx-line-2,rgba(255,255,255,.14));border-radius:14px;padding:14px 16px;background:var(--sx-surface-2,rgba(255,255,255,.04))}
-.gm-auth__line{margin:0 0 10px;color:var(--sx-text,#e8e8ea)}
-.gm-auth__line:last-child{margin-bottom:0}
-.gm-auth__row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+/* Slim single-line sign-in bar, sitting right under the Donate/Discord/Twitch nav banner */
+.gm-auth{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:2px 0 6px;padding:7px 14px;font-size:.86rem;border:1px solid var(--sx-line,rgba(255,255,255,.08));border-radius:999px;background:var(--sx-surface,rgba(255,255,255,.03))}
+.gm-auth__line{margin:0;color:var(--sx-muted,#a8abb3)}
+.gm-auth__line.gm-ok{color:var(--sx-ok,#36d39a)}
+.gm-auth__row{display:contents}
+.gm-auth .gm-btn{padding:5px 13px;font-size:.82rem}
+.gm-auth .linkbtn{font-size:.82rem;margin:0}
+.gm-auth .gm-out{margin:0 0 0 auto;font-size:.82rem}
 .gm-ok{color:var(--sx-ok,#36d39a)}
 .gm-out{margin-top:8px}
 .gm-btn{font-size:.95rem;padding:9px 16px}

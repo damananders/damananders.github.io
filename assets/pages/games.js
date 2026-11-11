@@ -45,17 +45,17 @@ async function onSession(session) {
   user = session ? session.user : null; member = false;
   const box = $("gm-auth"); box.replaceChildren();
   if (!user) {
-    box.append(el("p", { class: "gm-auth__line", text: "Rating games is a perk for members of the Discord server." }),
+    box.append(el("p", { class: "gm-auth__line", text: "Rating is a Discord-server perk." }),
       el("div", { class: "gm-auth__row" },
         el("button", { class: "btn gm-btn", type: "button", onclick: signIn, text: "Sign in with Discord" }),
         el("a", { class: "linkbtn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the server first" })));
   } else {
-    box.append(el("p", { class: "gm-auth__line", text: "Checking your Discord membership…" }));
+    box.append(el("p", { class: "gm-auth__line", text: "Checking membership…" }));
     const p = await refreshMember(session);
     box.replaceChildren();
     const name = (p && p.name) || (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || "you";
-    if (member) box.append(el("p", { class: "gm-auth__line gm-ok", text: "Signed in as " + name + ". You're in the server, so your votes count." }));
-    else box.append(el("p", { class: "gm-auth__line", text: "Signed in as " + name + ", but you're not in the Discord server yet. Join it, then check again." }),
+    if (member) box.append(el("p", { class: "gm-auth__line gm-ok", text: "Signed in as " + name + " · in the server, votes count." }));
+    else box.append(el("p", { class: "gm-auth__line", text: "Signed in as " + name + " · not in the server yet." }),
       el("div", { class: "gm-auth__row" },
         el("a", { class: "btn gm-btn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
         el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "I've joined — check again" })));
