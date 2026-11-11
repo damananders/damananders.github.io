@@ -26,7 +26,7 @@ function el(tag, attrs, ...kids) {
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
-let user = null, member = false, consoleFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "";
+let user = null, member = false, consoleFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "", loadSeq = 0;
 
 /* ---------------- sign-in and membership ---------------- */
 function signIn() {
@@ -105,6 +105,7 @@ function card(g) {
   return c;
 }
 async function load() {
+  const seq = ++loadSeq;
   const q = $("gm-q").value.trim(); lastQuery = q;
   const list = $("gm-list"), head = $("gm-head");
   let req = sb.from("game_scores").select("id,console,title,votes,average");
@@ -112,18 +113,21 @@ async function load() {
   if (q.length >= 2) { req = req.ilike("title", "%" + q.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).order("title").limit(40); head.textContent = "Results for “" + q + "”"; }
   else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = (consoleFilter || "All-time") + " top rated"; }
   const { data, error } = await req;
-  if (q !== lastQuery) return;                       // a newer search is already on its way
+  if (seq !== loadSeq) return;                        // a newer load is already on its way
   if (error) { say("Couldn't load the games: " + error.message, true); return; }
-  mine = new Map();
+  const myMap = new Map();
   if (user && data.length) {
     const r = await sb.from("ratings").select("game_id,stars").in("game_id", data.map((g) => g.id));
-    for (const x of r.data || []) mine.set(x.game_id, x.stars);
+    if (seq !== loadSeq) return;
+    for (const x of r.data || []) myMap.set(x.game_id, x.stars);
   }
-  reviewCounts = new Map();
+  const counts = new Map();
   if (data.length) {
     const rc = await sb.from("public_reviews").select("game_id").in("game_id", data.map((g) => g.id));
-    for (const x of rc.data || []) reviewCounts.set(x.game_id, (reviewCounts.get(x.game_id) || 0) + 1);
+    if (seq !== loadSeq) return;
+    for (const x of rc.data || []) counts.set(x.game_id, (counts.get(x.game_id) || 0) + 1);
   }
+  mine = myMap; reviewCounts = counts;               // publish both only once this load is the live one
   list.replaceChildren(...data.map(card));
   if (!data.length) list.append(el("p", { class: "gm-empty", text: q.length >= 2 ? "No game by that name in the list yet." : "No ratings here yet. Search for a game and be the first." }));
   addBox(q, data);
