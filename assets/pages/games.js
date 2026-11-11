@@ -26,7 +26,7 @@ function el(tag, attrs, ...kids) {
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
-let user = null, member = false, consoleFilter = "", mine = new Map(), searchTimer = 0, lastQuery = "";
+let user = null, member = false, consoleFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "";
 
 /* ---------------- sign-in and membership ---------------- */
 function signIn() {
@@ -77,24 +77,30 @@ function ratingRow(g) {
   const my = mine.has(g.id) ? mine.get(g.id) : null;
   const row = el("div", { class: "gm-rate", role: "group", "aria-label": "Your rating for " + g.title });
   if (!user || !member) { row.append(el("span", { class: "gm-rate__lock", text: user ? "Join the Discord to rate" : "Sign in to rate" })); return row; }
-  row.append(el("button", { class: "gm-zero" + (my === 0 ? " is-on" : ""), type: "button", title: "0 out of 5", text: "0", onclick: () => rate(g, 0) }));
+  row.append(el("button", { class: "gm-zero" + (my === 0 ? " is-on" : ""), type: "button", title: my === 0 ? "rated 0 — click to remove" : "0 out of 5", text: "0", onclick: () => rate(g, my === 0 ? null : 0) }));
   for (let i = 1; i <= 5; i++)
-    row.append(el("button", { class: "gm-pip gm-pip--" + i + (my != null && i <= my ? " is-on" : ""), type: "button", title: i + " out of 5", "aria-label": i + " out of 5", text: SHAPES[i - 1], onclick: () => rate(g, i) }));
-  if (my != null) row.append(el("button", { class: "linkbtn gm-clear", type: "button", text: "clear", onclick: () => rate(g, null) }));
+    row.append(el("button", { class: "gm-pip gm-pip--" + i + (my != null && i <= my ? " is-on" : ""), type: "button", title: my === i ? i + " — click again to remove your rating" : i + " out of 5", "aria-label": i + " out of 5", text: SHAPES[i - 1], onclick: () => rate(g, my === i ? null : i) }));
   return row;
 }
 function card(g) {
   const score = g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated yet";
   const more = el("div", { class: "gm-more", hidden: true });
+  const n = reviewCounts.get(g.id) || 0;
+  const toggle = el("button", { class: "linkbtn gm-toggle", type: "button", "aria-expanded": "false" });
+  function sync(open) {
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.replaceChildren(document.createTextNode("Reviews (" + n + ") "),
+      el("span", { class: "gm-toggle__i gm-toggle__i--" + (open ? "o" : "x"), "aria-hidden": "true", text: open ? "○" : "✕" }));
+  }
+  sync(false);
+  toggle.addEventListener("click", () => { const open = more.hidden; more.hidden = !open; sync(open); if (open) reviews(g, more); });
   const c = el("article", { class: "gm-card" },
     el("div", { class: "gm-card__top" },
       el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
       el("h3", { class: "gm-title", text: g.title }),
       el("span", { class: "gm-score", text: score }),
       el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" })),
-    ratingRow(g),
-    el("button", { class: "linkbtn gm-toggle", type: "button", text: "Reviews", onclick: () => { more.hidden = !more.hidden; if (!more.hidden) reviews(g, more); } }),
-    more);
+    ratingRow(g), toggle, more);
   c.dataset.id = g.id;
   return c;
 }
@@ -112,6 +118,11 @@ async function load() {
   if (user && data.length) {
     const r = await sb.from("ratings").select("game_id,stars").in("game_id", data.map((g) => g.id));
     for (const x of r.data || []) mine.set(x.game_id, x.stars);
+  }
+  reviewCounts = new Map();
+  if (data.length) {
+    const rc = await sb.from("public_reviews").select("game_id").in("game_id", data.map((g) => g.id));
+    for (const x of rc.data || []) reviewCounts.set(x.game_id, (reviewCounts.get(x.game_id) || 0) + 1);
   }
   list.replaceChildren(...data.map(card));
   if (!data.length) list.append(el("p", { class: "gm-empty", text: q.length >= 2 ? "No game by that name in the list yet." : "No ratings here yet. Search for a game and be the first." }));
