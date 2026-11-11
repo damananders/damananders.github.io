@@ -712,4 +712,45 @@
     footer.appendChild(el("p", { "class": "ap-cr__p" }, btn));
     Site.on("ui:escape", function () { if (dlg && dlg.open) { Site.dialog.close(dlg); try { btn.focus(); } catch (e) {} } });
   }, "anyps:credits");
+  /* ---- hidden door (the same one as on the hub page): a faint face-button mark at the bottom left; five quick
+     clicks open a code box. The codes are stored as SHA-256 hashes, not as text. A convenience, not security:
+     the pages behind it are protected by Drive's Restricted sharing, not by the code. ---- */
+  Site.ready(function () {
+    if (doc.getElementById("hb-door")) return;
+    var row = el("div", { "class": "hb-door-row" });
+    row.innerHTML = '<button class="hb-door" id="hb-door" type="button" aria-label="Hidden door" title=""><svg viewBox="0 0 64 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5 14 13.5H2Z"/><circle cx="24" cy="8" r="5.5"/><path d="M35 3 45 13M45 3 35 13"/><rect x="51" y="2.5" width="11" height="11" rx="1"/></svg></button>';
+    var footer = doc.querySelector("footer"), wrap = footer;
+    while (wrap && wrap.parentNode && wrap.parentNode !== doc.body) wrap = wrap.parentNode;
+    if (wrap && wrap.parentNode === doc.body) doc.body.insertBefore(row, wrap.nextSibling); else doc.body.appendChild(row);
+    var btn = doc.getElementById("hb-door"); if (!btn) return;
+    var DOORS = { "fabd43b9d8c7ac6e8e88b9bfeb7479dc68b55540d41e5c0a3492011f9b240fed": "/vault/", "57548c4cdac3905a5f2e7ad5a00d2eb03f2204a28ac962664a94e64e3ceebd13": "/locker/" };
+    var n = 0, timer = 0, dlg = null, input = null, msg = null, form = null;
+    function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
+    function open() {
+      if (!dlg) {
+        input = el("input", { id: "hb-code-in", type: "password", autocomplete: "off", autocapitalize: "off", spellcheck: "false", maxlength: "64" });
+        msg = el("p", { "class": "hb-code__msg", role: "status", "aria-live": "polite" });
+        form = el("form", { "class": "hb-code", novalidate: true }, el("label", { "for": "hb-code-in", text: "Enter code" }), input, msg);
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var v = input.value.trim().toLowerCase(); if (!v) return;
+          if (!(window.crypto && crypto.subtle && window.TextEncoder)) { msg.textContent = "This browser can't check codes."; return; }
+          crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (buf) {
+            var to = DOORS[hex(buf)];
+            if (to) { Site.sfx("success"); location.href = to; return; }
+            msg.textContent = "Nothing happens."; Site.sfx("error");
+            form.classList.remove("hb-code--no"); void form.offsetWidth; form.classList.add("hb-code--no");
+            input.select();
+          }, function () { msg.textContent = "This browser can't check codes."; });
+        });
+        dlg = Site.modal({ id: "hb-code", title: "△ ○ ✕ □", body: form });
+      }
+      input.value = ""; msg.textContent = ""; form.classList.remove("hb-code--no");
+      Site.dialog.open(dlg); input.focus();
+    }
+    btn.addEventListener("click", function () {
+      n++; clearTimeout(timer); timer = setTimeout(function () { n = 0; }, 2500);
+      if (n >= 5) { n = 0; clearTimeout(timer); open(); }
+    });
+  }, "anyps:hidden door");
 })();
