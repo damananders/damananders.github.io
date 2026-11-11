@@ -68,7 +68,7 @@ async function onSession(session) {
 function tabs() {
   const t = $("gm-tabs"); t.replaceChildren();
   for (const c of ["", ...CONSOLES]) {
-    t.append(el("button", { class: "gm-tab" + (c === consoleFilter ? " is-on" : ""), type: "button", "aria-pressed": c === consoleFilter ? "true" : "false",
+    t.append(el("button", { class: "gm-tab" + (c === consoleFilter ? " is-on" : ""), "data-c": c || "all", type: "button", "aria-pressed": c === consoleFilter ? "true" : "false",
       text: c || "All", onclick: () => { consoleFilter = c; tabs(); load(); } }));
   }
 }
@@ -88,7 +88,7 @@ function card(g) {
   const more = el("div", { class: "gm-more", hidden: true });
   const c = el("article", { class: "gm-card" },
     el("div", { class: "gm-card__top" },
-      el("span", { class: "gm-console", text: g.console }),
+      el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
       el("h3", { class: "gm-title", text: g.title }),
       el("span", { class: "gm-score", text: score }),
       el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" })),

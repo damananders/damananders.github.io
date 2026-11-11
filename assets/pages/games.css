@@ -44,3 +44,23 @@
 .gm-add{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .gm-add__line{margin:0;flex:1 1 100%}
 .gm-sel{font:inherit;color:var(--sx-text,#e8e8ea);background:var(--sx-surface-2,#12161d);border:1px solid var(--sx-line-2,rgba(255,255,255,.16));border-radius:9px;padding:8px 10px}
+
+/* Per-console colour: the card chip and the selected filter tab. Spread across the hue wheel so each reads apart. */
+.gm-console[data-c="PS1"]{color:#9aa6b4}
+.gm-console[data-c="PS2"]{color:#3f83ff}
+.gm-console[data-c="PSP"]{color:#1ec5b3}
+.gm-console[data-c="PS3"]{color:#f0a93b}
+.gm-console[data-c="Vita"]{color:#c069ff}
+.gm-console[data-c="PS4"]{color:#6c7bff}
+.gm-console[data-c="PS5"]{color:#ff6076}
+.gm-tab[data-c="PS1"].is-on{background:#9aa6b4}
+.gm-tab[data-c="PS2"].is-on{background:#3f83ff}
+.gm-tab[data-c="PSP"].is-on{background:#1ec5b3}
+.gm-tab[data-c="PS3"].is-on{background:#f0a93b}
+.gm-tab[data-c="Vita"].is-on{background:#c069ff}
+.gm-tab[data-c="PS4"].is-on{background:#6c7bff}
+.gm-tab[data-c="PS5"].is-on{background:#ff6076}
+/* a faint dot of the console's colour on the unselected tabs, so the key is visible before you click */
+.gm-tab[data-c="PS1"]:not(.is-on)::before,.gm-tab[data-c="PS2"]:not(.is-on)::before,.gm-tab[data-c="PSP"]:not(.is-on)::before,.gm-tab[data-c="PS3"]:not(.is-on)::before,.gm-tab[data-c="Vita"]:not(.is-on)::before,.gm-tab[data-c="PS4"]:not(.is-on)::before,.gm-tab[data-c="PS5"]:not(.is-on)::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle;background:currentColor}
+.gm-tab[data-c="PS1"]{color:#9aa6b4}.gm-tab[data-c="PS2"]{color:#3f83ff}.gm-tab[data-c="PSP"]{color:#1ec5b3}.gm-tab[data-c="PS3"]{color:#f0a93b}.gm-tab[data-c="Vita"]{color:#c069ff}.gm-tab[data-c="PS4"]{color:#6c7bff}.gm-tab[data-c="PS5"]{color:#ff6076}
+.gm-tab.is-on{color:#06080c}
