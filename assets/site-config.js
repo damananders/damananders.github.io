@@ -52,8 +52,8 @@ window.SITE_EXTRA = {
      Paste your private Drive links here. Keep those Drive items on "Restricted" sharing: that is the real lock. */
   locker: {
     list: [
-      { title: "System files", note: "BIOS and firmware dumped from my own consoles.", url: "" },
-      { title: "Game backups", note: "Backups of games I own.", url: "" },
+      { title: "System files (BIOS)", note: "BIOS and firmware dumped from my own consoles.", url: "https://drive.google.com/file/d/1GVubmlchUBJHizTVjjkYwlXVXw7xcC1p/view?usp=sharing" },
+      { title: "PS1 games", note: "Backups of games I own.", url: "https://drive.google.com/file/d/1jCCjTKj4cLumR0Q2f-NyTntzVBwJfBL5/view?usp=sharing" },
     ],
   },
 
