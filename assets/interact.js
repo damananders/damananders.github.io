@@ -68,19 +68,37 @@
     }
     function show() { if (!shown) { shown = true; ring.classList.add("ix-ring--show"); root.classList.add("ix-nocursor"); } }
     function hide() { root.classList.remove("ix-nocursor"); if (ring && shown) { shown = false; ring.classList.remove("ix-ring--show", "ix-ring--down"); } }
-    /* AnyPS page: the ring becomes one of the four face-button shapes, re-rolled on every click. */
-    var SHAPES = [
+    /* Themed cursors. AnyPS page: one of the four face-button shapes, re-rolled at random on every click.
+       AndersCraft page: weapon outlines that cycle sword, arrow, axe on every click. Hub: the plain ring,
+       which turns into the matching set while the pointer is over the AnyPS or AndersCraft card. */
+    var FACE = [
       '<path d="M7 7 23 23M23 7 7 23"/>',
       '<circle cx="15" cy="15" r="11"/>',
       '<path d="M15 4.5 26.5 24.5H3.5Z"/>',
       '<rect x="5" y="5" width="20" height="20" rx="1.5"/>'
     ];
+    var WEAPONS = [
+      /* sword */ '<path d="M26.5 3.5 25 10 12.5 22.5 7.5 17.5 20 5Z"/><path d="M4.5 14.5 15.5 25.5M10 20 5.2 24.8"/><circle cx="4" cy="26" r="1.7"/>',
+      /* arrow */ '<path d="M27 3 24.5 12.5 17.5 5.5Z"/><path d="M21 9 5 25M5 25V19.5L8.5 16M5 25H10.5L14 21.5"/>',
+      /* axe   */ '<g transform="rotate(28 15 15)"><path d="M14 2.5V27.5"/><path d="M14 6.5C18 6.5 21 5 23 3 27 8 27 15.5 23 20.5 21 18.5 18 17 14 17Z"/><path d="M14 9H9.5V14.5H14"/></g>'
+    ];
+    FACE.random = true;
+    var PAGE_SET = Site.page === "anyps" ? FACE : Site.page === "anderscraft" ? WEAPONS : null;
+    var set = null;
     function roll() {
-      if (!shapeEl) return;
-      var n; do { n = Math.floor(Math.random() * SHAPES.length); } while (n === shape);
+      if (!shapeEl || !set) return;
+      var n = shape;
+      if (set.random) { do { n = Math.floor(Math.random() * set.length); } while (n === shape); }
+      else n = (shape + 1) % set.length;
       shape = n;
       shapeEl.textContent = "";
-      shapeEl.appendChild(Site.svg(SHAPES[n], { viewBox: "0 0 30 30", "stroke-width": "2.2" }));
+      shapeEl.appendChild(Site.svg(set[n], { viewBox: "0 0 30 30", "stroke-width": "2" }));
+    }
+    function useSet(next) {
+      if (!ring || next === set) return;
+      set = next; shape = -1;
+      ring.classList.toggle("ix-ring--shapes", !!set);
+      if (set) roll(); else if (shapeEl) shapeEl.textContent = "";
     }
 
     /* One loop. It eases the ring towards the pointer and stops as soon as it has caught up. */
@@ -105,6 +123,11 @@
       var c = "";
       if (h && h.classList.contains("avenue")) { try { c = getComputedStyle(h).getPropertyValue("--accent").trim(); } catch (e) {} }
       if (c) ring.style.setProperty("--ix-ring-accent", c); else ring.style.removeProperty("--ix-ring-accent");
+      /* ...and, on the hub, that card's shape set */
+      if (Site.page === "hub") {
+        var av = h && h.classList.contains("avenue") ? h : null;
+        useSet(av && av.classList.contains("anyps") ? FACE : av && av.classList.contains("craft") ? WEAPONS : null);
+      }
     }
     function onMove(e) {
       if (e.pointerType === "touch") { hide(); return; }
@@ -135,9 +158,9 @@
       if (active || !doc.body) return;
       active = true;
       dot = Site.el("span", { class: "ix-ring-dot" });
-      shapeEl = Site.page === "anyps" ? Site.el("span", { class: "ix-ring-shape" }) : null;
-      ring = Site.el("div", { class: "ix-ring" + (shapeEl ? " ix-ring--shapes" : ""), "aria-hidden": "true" }, Site.el("span", { class: "ix-ring-c" }, shapeEl), dot);
-      shape = -1; roll();
+      shapeEl = Site.el("span", { class: "ix-ring-shape" });
+      ring = Site.el("div", { class: "ix-ring", "aria-hidden": "true" }, Site.el("span", { class: "ix-ring-c" }, shapeEl), dot);
+      set = null; useSet(PAGE_SET);
       doc.body.appendChild(ring);
       topLayer(ring);
       wiring.forEach(function (w) { w[0].addEventListener(w[1], w[2], passive); });
@@ -149,7 +172,7 @@
       raf = 0;
       wiring.forEach(function (w) { w[0].removeEventListener(w[1], w[2], passive); });
       if (ring) ring.remove();
-      ring = null; dot = null; shapeEl = null;
+      ring = null; dot = null; shapeEl = null; set = null;
       root.classList.remove("ix-nocursor");
     }
     function sync() {
