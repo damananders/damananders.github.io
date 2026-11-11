@@ -158,8 +158,8 @@ function addBox(q, data) {
     el("button", { class: "btn gm-btn", type: "button", text: "Add this game", onclick: async () => {
       const s = slug(q); if (!s) { note.textContent = "That name needs some letters or numbers."; return; }
       const id = sel.value + ":" + s + "-m" + Math.random().toString(36).slice(2, 6);
-      const { error } = await sb.from("games").insert({ id, console: sel.value, title: q.slice(0, 120), approved: false, added_by: user.id });
-      note.textContent = error ? "That didn't work: " + error.message : "Added. It shows for everyone once it's been approved.";
+      const { error } = await sb.from("games").insert({ id, console: sel.value, title: q.slice(0, 120), added_by: user.id });
+      note.textContent = error ? "That didn't work: " + error.message : "Added — it's in the list now. Search for it to rate it.";
     } }), note);
 }
 
