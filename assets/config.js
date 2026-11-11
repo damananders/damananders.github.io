@@ -6,7 +6,7 @@ window.SITE = {
   discord: "https://discord.gg/U35dt6Qb2A",
 
   anyps: {
-    version: "1.05",
+    version: "1.05.1",
     date: "2026-11-11",
     downloadUrl: "https://drive.google.com/file/d/1Iz70eZ_8fQJ56GWuUZlDVe711DCgwCAV/view?usp=sharing",
     // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
