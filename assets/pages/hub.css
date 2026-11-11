@@ -143,3 +143,14 @@
 .hb-code__msg{min-height:1.3em;margin:0;font-size:.9rem;color:var(--sx-err)}
 :root:not([data-motion="reduce"]) .hb-code--no input{animation:hb-shake .3s}
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ---- "Rate the games" strip under the avenues (links to /games/) ---- */
+.hb-rate{display:flex;align-items:center;gap:16px;margin-top:18px;padding:16px 22px;text-decoration:none;color:var(--sx-text);background:rgba(15,18,22,.82);backdrop-filter:blur(8px);border:1px solid var(--sx-line);border-radius:16px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-2px);border-color:var(--anyps);box-shadow:0 16px 40px -24px var(--anyps);outline:none}
+.hb-rate svg{flex:none;width:30px;height:30px;color:var(--anyps)}
+.hb-rate__text{display:grid;gap:2px;min-width:0;flex:1}
+.hb-rate__text strong{font:600 1.1rem var(--sx-display)}
+.hb-rate__text span{color:var(--sx-muted);font-size:.95rem}
+.hb-rate__cta{flex:none;font:600 1rem var(--sx-display);color:var(--anyps)}
+:root[data-theme="light"] .hb-rate{background:var(--sx-surface)}
+@media (max-width:520px){.hb-rate__cta{display:none}}
