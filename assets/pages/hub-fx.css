@@ -1,5 +1,6 @@
 /* pages/hub-fx.css: visual effects on the hub page (prefix hx-). See assets/README.md.
  * Typing headline, parallax photo layers, card tilt + glare, accent glow, ambient motes, day and night.
+ * hx-hidden (tab hidden) and hx-rest (no input for a minute, or window in the background) pause the looping animations.
  * Everything here is switched on by a class that assets/pages/hub-fx.js puts on <html> (hx-layers, hx-tilt,
  * hx-glow ...), so with the script missing the page looks exactly as it did. The only fixed colours are the
  * ones painted on the photo itself (night tint, lamp light); surfaces and text use the tokens.
@@ -37,7 +38,7 @@
 .hx-caret--blink{animation:hx-blink 1.06s step-end infinite}
 @keyframes hx-blink{50%{opacity:0}}
 :root[data-motion="reduce"] .hx-caret{display:none}
-:root.hx-hidden .hx-caret--blink{animation-play-state:paused}
+:root.hx-hidden .hx-caret--blink,:root.hx-rest .hx-caret--blink{animation-play-state:paused}
 
 /* =========================================================================================
    2. Scene: fixed layers behind the content (photo, tint, wash, lamp, motes). A child of <html>, below <body>.
@@ -77,7 +78,7 @@
 @keyframes hx-sweep{from{transform:perspective(900px) rotateY(0deg)}to{transform:perspective(900px) rotateY(360deg)}}
 :root[data-motion="reduce"] .hx-lamp-glow,:root[data-motion="reduce"] .hx-lamp-core{animation:none}
 :root[data-motion="reduce"] .hx-beam{display:none}
-:root.hx-hidden .hx-lamp > *{animation-play-state:paused}
+:root.hx-hidden .hx-lamp > *,:root.hx-rest .hx-lamp > *{animation-play-state:paused}
 
 /* =========================================================================================
    3. Card tilt + glare. Driven by --hx-rx / --hx-ry / --hx-l (lift 0..1) that the script eases every frame.
@@ -103,7 +104,7 @@
 :root.hx-glow .avenue:hover::after,:root.hx-glow .avenue:focus-visible::after{animation:none;opacity:var(--hx-glow-on)}
 @keyframes hx-breathe{0%,100%{opacity:var(--hx-glow-lo)}50%{opacity:var(--hx-glow-hi)}}
 :root.hx-glow[data-motion="reduce"] .avenue::after{animation:none}
-:root.hx-glow.hx-hidden .avenue::after{animation-play-state:paused}
+:root.hx-glow.hx-hidden .avenue::after,:root.hx-glow.hx-rest .avenue::after{animation-play-state:paused}
 
 /* =========================================================================================
    5. Ambient motes canvas (inside the scene, above the wash, below the content)

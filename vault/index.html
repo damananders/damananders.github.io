@@ -26,8 +26,19 @@
 <link rel="stylesheet" href="/assets/social-live.css" />
 <link rel="stylesheet" href="/assets/pages/vault.css" />
 <!-- /site:head -->
-<!-- Vault arrival animation: holds a plain cover until assets/pages/vault.js draws the door (once per session, never with reduced motion). The cover is CSS only and fades by itself. -->
-<script>(function(){try{var r=document.documentElement;if(!r.hasAttribute("data-motion")&&sessionStorage.getItem("vt.door")!=="1")r.classList.add("vt-pre")}catch(e){}})();</script>
+<!-- Vault: decided before first paint, so nothing flashes (see assets/pages/vault.js and vault.css).
+     site-config.js is loaded here without defer because the passphrase setting is needed before the page paints.
+     vt-pre    plain cover until vault.js draws the door (once per session, never with reduced motion).
+     vt-locked hides the catalogue when a passphrase is set and this browser hasn't unlocked it.
+     Both classes only exist when scripts run, and both are dropped as soon as the page has finished loading
+     its scripts if vault.js did not take over (failed to load, or broke), so the page is never left covered. -->
+<script src="/assets/site-config.js"></script>
+<script>(function(){var r=document.documentElement,c=r.classList;
+try{if(!r.hasAttribute("data-motion")&&sessionStorage.getItem("vt.door")!=="1")c.add("vt-pre")}catch(e){}
+try{var v=(window.SITE_EXTRA||{}).vault||{},h=typeof v.passphraseSha256==="string"?v.passphraseSha256.trim().toLowerCase():"";
+if(/^[0-9a-f]{64}$/.test(h)&&window.crypto&&crypto.subtle&&crypto.subtle.digest&&window.TextEncoder){var u=null;try{u=JSON.parse(localStorage.getItem("site.vault.unlock"))}catch(e){}if(u!==h)c.add("vt-locked")}}catch(e){}
+document.addEventListener("DOMContentLoaded",function(){c.remove("vt-pre");var f=document.getElementById("vt-gate");if(!f||f.hidden)c.remove("vt-locked")});
+})();</script>
 </head>
 <body class="games photo" style="--bg:url('/assets/vault-bg.webp')">
 <div class="wrap">

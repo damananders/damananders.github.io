@@ -286,12 +286,26 @@
       if (host) ripple(host, e.clientX, e.clientY);
     }, { passive: true });
 
-    /* Capture phase, so the sound request is made even if a handler stops the click from bubbling. */
+    /* Counts every UI sound that is asked for, whoever asks (this file loads before audio.js, so the player it
+       registers is wrapped here; sounds requested through Site.sfx are counted as well, in case it ever is not). */
+    var asked = 0;
+    function counted(fn) { return function (name) { if (name !== "hover") asked++; return fn.apply(this, arguments); }; }
+    try {
+      var register = Site.registerSfx, direct = Site.sfx;
+      if (typeof register === "function") Site.registerSfx = function (fn) { return register.call(Site, typeof fn === "function" ? counted(fn) : fn); };
+      if (typeof direct === "function") Site.sfx = counted(direct);
+    } catch (e) {}
+
+    /* Capture phase, so the sound request is made even if a handler stops the click from bubbling.
+       The plain "tap" is only the fallback: it waits until the click's own handlers have run and stays quiet
+       when one of them asked for a sound of its own (a switch, the theme button, a panel opening). */
     doc.addEventListener("click", function (e) {
       var hit = closest(e, CLICKABLE);
       if (!usable(hit)) return;
       if (e.detail === 0) { var host = closest(e, RIPPLE); if (host) ripple(host); }   /* keyboard or controller: ripple from the middle */
-      Site.sfx(internalLink(hit) ? "nav" : "tap");
+      if (internalLink(hit)) { Site.sfx("nav"); return; }   /* the page is about to go, so this one cannot wait */
+      var before = asked;
+      setTimeout(function () { if (asked === before) Site.sfx("tap"); }, 0);
     }, true);
 
     var lastHover = 0;
@@ -456,6 +470,12 @@
   Site.ready(function () {
     if (!enabled("controller")) return;
     var FOCUSABLE = 'a[href],button,input,select,textarea,summary,[tabindex],[contenteditable="true"]';
+    /* Widgets that keep one member in the Tab order and move between the others with the arrow keys
+       (tabs, the video chapter dots): the D-pad may land on every member, not only on the one with tabindex 0. */
+    var ROVING = '[role="tablist"],[role="toolbar"],[role="group"],[role="radiogroup"],[role="menu"],[role="listbox"]';
+    var ROVER = 'button,a[href],[role="tab"],[role="radio"],[role="option"],[role="menuitem"]';
+    /* Looked at first, innermost first, before anything outside them. */
+    var GROUPS = '[role="dialog"],[role="menu"],[role="listbox"],[role="radiogroup"],[role="tablist"],[role="toolbar"]';
     var TOLD = "ix:pad-told";
     var marked = null, told = false;
 
@@ -473,8 +493,12 @@
       return false;
     }
     /* The on-page box of something the D-pad may land on, or null (hidden, disabled, or parked off the page). */
+    function roving(el) {
+      return el.getAttribute("tabindex") === "-1" && el.matches(ROVER) && !!(el.parentElement && el.parentElement.closest(ROVING));
+    }
     function box(el) {
-      if (el.disabled || el.tabIndex < 0 || el.type === "hidden" || el.getAttribute("aria-disabled") === "true") return null;
+      if (el.disabled || el.type === "hidden" || el.getAttribute("aria-disabled") === "true") return null;
+      if (el.tabIndex < 0 && !roving(el)) return null;
       if (el.closest('[inert],[aria-hidden="true"]')) return null;
       if (el.checkVisibility && !el.checkVisibility({ visibilityProperty: true, checkVisibilityCSS: true })) return null;
       var cs = getComputedStyle(el);
@@ -495,15 +519,44 @@
       if (!a || a === doc.body || a === root || !scope.contains(a) || !box(a)) return null;
       return a;
     }
-    /* Where to start when nothing is focused: the first hub card, else the first thing in the main content. */
+    function headerH() { return parseFloat(getComputedStyle(root).getPropertyValue("--sx-header-h")) || 0; }
+    /* Does this element ride along with the screen instead of the page? "fixed" (the back-to-top button),
+       "sticky" (the header, once the page has scrolled and it is stuck to the top), or "". */
+    function pinned(el) {
+      for (var p = el; p && p !== doc.body && p !== root; p = p.parentElement) {
+        var pos = getComputedStyle(p).position;
+        if (pos === "fixed") return "fixed";
+        if (pos === "sticky" && window.pageYOffset > 4) return "sticky";
+      }
+      return "";
+    }
+    function offScreen(r) { return r.bottom < 0 || r.top > window.innerHeight || r.right < 0 || r.left > window.innerWidth; }
+    /* The thing closest to the middle of what the visitor is looking at (below the header), or null. */
+    function nearest(scope, list) {
+      var top = scope === doc ? headerH() : 0, w = window.innerWidth, h = window.innerHeight;
+      var mx = w / 2, my = (top + h) / 2, best = null, bestD = Infinity;
+      for (var i = 0; i < list.length; i++) {
+        var r = list[i].r, cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2;
+        if (cy < top || cy > h || cx < 0 || cx > w) continue;
+        if (r.top < top - 1 && r.bottom > h + 1) continue;             /* a box taller than the screen is not "near" anything */
+        if (scope === doc && pinned(list[i].el)) continue;
+        var d = Math.abs(cy - my) + Math.abs(cx - mx) * 0.5;
+        if (d < bestD) { bestD = d; best = list[i].el; }
+      }
+      return best;
+    }
+    /* Where to start when nothing is focused: the first hub card, else the first thing in the main content.
+       If that is not on screen (the visitor has scrolled), whatever is nearest the middle of the screen. */
     function first(scope, list) {
       if (!list.length) return null;
       if (scope !== doc) return list[0].el;
-      var i, main = doc.querySelector('main,[role="main"]');
-      for (i = 0; i < list.length; i++) if (list[i].el.classList.contains("avenue")) return list[i].el;
-      if (main) for (i = 0; i < list.length; i++) if (main.contains(list[i].el)) return list[i].el;
-      for (i = 0; i < list.length; i++) if (!list[i].el.closest("nav")) return list[i].el;
-      return list[0].el;
+      var i, pick = null, main = doc.querySelector('main,[role="main"]');
+      for (i = 0; i < list.length && !pick; i++) if (list[i].el.classList.contains("avenue")) pick = list[i];
+      if (main) for (i = 0; i < list.length && !pick; i++) if (main.contains(list[i].el)) pick = list[i];
+      for (i = 0; i < list.length && !pick; i++) if (!list[i].el.closest("nav")) pick = list[i];
+      if (!pick) pick = list[0];
+      if (pick.r.bottom > headerH() && pick.r.top < window.innerHeight) return pick.el;
+      return nearest(scope, list) || pick.el;
     }
 
     function unmark() { if (marked) { marked.classList.remove("ix-pad-focus"); marked = null; } }
@@ -522,7 +575,7 @@
     function gap(a1, a2, b1, b2) { return b1 >= a2 ? b1 - a2 : a1 >= b2 ? a1 - b2 : 0; }
     /* Lower is better; Infinity means "not in that direction". Distance along the pressed direction,
        plus a penalty for being off to the side (stronger for left/right, because pages flow downwards). */
-    function score(dir, a, b) {
+    function score(dir, a, b, rows) {
       var ax = (a.left + a.right) / 2, ay = (a.top + a.bottom) / 2, along, aside, weight;
       if (dir === "right") { if (b.left < ax || b.right <= a.right) return Infinity; along = b.left - a.right; }
       else if (dir === "left") { if (b.right > ax || b.left >= a.left) return Infinity; along = a.left - b.right; }
@@ -531,13 +584,27 @@
       if (dir === "left" || dir === "right") { aside = gap(a.top, a.bottom, b.top, b.bottom); weight = 3; }
       else { aside = gap(a.left, a.right, b.left, b.right); weight = 1.5; }
       if (along < 0) along = 0;
+      /* in a panel of rows, up / down goes to the next row, however far to the side its control sits */
+      if (rows) return along * 4 + aside * 0.25 + Math.abs((b.left + b.right) / 2 - ax) * 0.02;
       if (aside > 2 * along + 32) return Infinity;
       return along + aside * weight + (Math.abs((b.left + b.right) / 2 - ax) + Math.abs((b.top + b.bottom) / 2 - ay)) * 0.02;
     }
-    /* When the focused element has been scrolled out of view, start from the edge of the screen instead. */
+    /* One box drawn inside the other (the "show passwords" button sits inside its field): edges cannot say which
+       way it lies, so the centres do. */
+    function within(outer, inner) {
+      return inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1;
+    }
+    function nestedScore(dir, a, b) {
+      var dx = (b.left + b.right) / 2 - (a.left + a.right) / 2, dy = (b.top + b.bottom) / 2 - (a.top + a.bottom) / 2;
+      var ok = dir === "right" ? dx > 2 && dx >= Math.abs(dy) : dir === "left" ? -dx > 2 && -dx >= Math.abs(dy)
+        : dir === "down" ? dy > 2 && dy > Math.abs(dx) : -dy > 2 && -dy > Math.abs(dx);
+      return ok ? (Math.abs(dx) + Math.abs(dy)) * 0.02 : Infinity;
+    }
+    /* When the focused element has been scrolled out of view and nothing on screen can take over,
+       start from the edge of the screen instead. */
     function edge(dir) {
       var w = window.innerWidth, h = window.innerHeight;
-      var top = parseFloat(getComputedStyle(root).getPropertyValue("--sx-header-h")) || 0;
+      var top = headerH();
       if (dir === "down") return { left: 0, right: w, top: top, bottom: top };
       if (dir === "up") return { left: 0, right: w, top: h, bottom: h };
       if (dir === "right") return { left: 0, right: 0, top: top, bottom: h };
@@ -602,26 +669,58 @@
         return;
       }
       a = cur.getBoundingClientRect();
-      if (a.bottom < 0 || a.top > window.innerHeight || a.right < 0 || a.left > window.innerWidth) a = edge(dir);
-      /* Inside a floating panel (the settings panel, a menu) look there first, so the D-pad does not wander off to
-         something that merely sits closer on the page behind it; with nothing left that way, it may leave. */
-      var group = cur.closest('[role="dialog"],[role="menu"],[role="listbox"],[role="radiogroup"]');
-      var pick = function (within) {
+      if (offScreen(a)) {
+        /* The visitor scrolled away from it (LB / RB, the mouse wheel): carry on from what they are looking at,
+           not from where the focus was left. */
+        var near = nearest(scope, list);
+        if (near && near !== cur) { focus(near); Site.sfx("hover"); return; }
+        a = edge(dir);
+      }
+      var vertical = dir === "up" || dir === "down", field = /^(INPUT|TEXTAREA|SELECT)$/;
+      /* From the page, things that ride along with the screen (the stuck header, the back-to-top button) are not
+         "above" or "beside" anything: they would catch every other press. See below for how they are reached. */
+      var free = scope === doc && !pinned(cur);
+      var pick = function (group, rows, riders) {
         list.forEach(function (c) {
-          if (c.el === cur || (within && !within.contains(c.el))) return;
-          var s = score(dir, a, c.r);
+          if (c.el === cur || (group && !group.contains(c.el))) return;
+          if (free && !group && !riders && pinned(c.el)) return;
+          var s = within(a, c.r) || (field.test(c.el.tagName) && within(c.r, a)) ? nestedScore(dir, a, c.r) : score(dir, a, c.r, rows);
           if (s < bestScore) { bestScore = s; best = c.el; }
         });
       };
-      if (group && group !== scope) pick(group);
-      if (!best) pick(null);
+      /* Inside a widget or a floating panel (tabs, a menu, the settings panel) look there first, so the D-pad does
+         not wander off to something that merely sits closer on the page behind it. With nothing left that way it
+         may leave a widget, but not a panel: that stays put until B closes it. */
+      var held = false;
+      for (var g = cur.parentElement && cur.parentElement.closest(GROUPS); g && g !== scope && !best && !held; g = g.parentElement && g.parentElement.closest(GROUPS)) {
+        var panel = g.getAttribute("role") === "dialog";
+        pick(g, panel && vertical, false);
+        if (panel) held = true;
+      }
+      if (!best && !held) pick(null, false, false);
+      if (!best && !held && free) {
+        /* the header once the page is back at the top (it is not stuck there, so the pass above finds it);
+           the floating buttons from the very end of the page */
+        if (dir === "down" && window.pageYOffset >= limit(window) - 4) {
+          pick(null, false, true);
+          if (!best) list.forEach(function (c) {   /* nothing lower: the floating button nearest by */
+            if (c.el === cur || pinned(c.el) !== "fixed") return;
+            var d = Math.abs((c.r.left + c.r.right - a.left - a.right) / 2) + Math.abs((c.r.top + c.r.bottom - a.top - a.bottom) / 2);
+            if (d < bestScore) { bestScore = d; best = c.el; }
+          });
+        }
+      }
       if (best) { focus(best); Site.sfx("hover"); }
-      else if (dir === "up" || dir === "down") scrollBy(dir === "up" ? -1 : 1, 0.35);   /* nothing that way: read on */
+      else if (vertical && !held) scrollBy(dir === "up" ? -1 : 1, 0.35);   /* nothing that way: read on */
     }
 
     function activate() {
       var scope = topDialog() || doc, cur = current(scope);
       if (!cur) { focus(first(scope, candidates(scope))); return; }
+      if (offScreen(cur.getBoundingClientRect())) {   /* never press something the visitor cannot see */
+        var near = nearest(scope, candidates(scope));
+        if (near) { focus(near); return; }
+      }
       cur.classList.add("ix-press");
       setTimeout(function () { cur.classList.remove("ix-press"); }, 160);
       if (cur.tagName === "SELECT" && cur.showPicker) { try { cur.showPicker(); return; } catch (e) {} }

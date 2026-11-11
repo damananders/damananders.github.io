@@ -127,9 +127,6 @@
         <span class="ac-chipwrap" role="status" aria-live="polite"><span class="sx-chip is-wait ac-chip" id="ac-signup-chip"><i class="sx-dot" aria-hidden="true"></i><span id="ac-signup-chip-t">Checking</span></span></span>
       </div>
       <p class="sub">Your username and password are what you type in the game's login screen. One account per email.</p>
-      <div class="ac-offnote" id="ac-offnote" hidden>
-        <b>Sign-ups are off right now.</b> The service runs on the server PC, which is not answering. You can still try, or check <a class="ac-discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener">Discord</a>.
-      </div>
       <form id="signup" novalidate>
         <label for="email">Email</label>
         <input id="email" name="email" type="email" autocomplete="email" maxlength="100" required />
@@ -155,6 +152,10 @@
         <button id="go" type="submit">Create account</button>
         <div id="msg" class="msg" role="status" aria-live="polite"></div>
       </form>
+      <!-- stays below the form: it appears after the page has loaded, so nothing above it may move -->
+      <div class="ac-offnote" id="ac-offnote" hidden>
+        <b>Sign-ups are offline right now.</b> The service runs on the server PC, which is not answering. You can still try, or check <a class="ac-discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener">Discord</a>.
+      </div>
     </section>
   </div>
 

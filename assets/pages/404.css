@@ -13,7 +13,10 @@
   --nf-ray-a:.34;                /* beam strength at the lamp */
   --nf-reach:max(70vw,70vh);
 }
-:root[data-theme="light"]{--nf-ray:176,98,0;--nf-ray-a:.26}
+/* Daylight: a beam cannot read as light against a pale sky (any colour dark enough to show looks like a smudge
+   behind the heading), so the light theme keeps only a pale warm glow on the lamp itself. */
+:root[data-theme="light"]{--nf-ray:255,200,104}
+:root[data-theme="light"] .nf-beam{display:none}
 
 /* ---- the sky layer: behind the page content, never clickable, never scrollable ---- */
 .nf-sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict}
@@ -28,7 +31,7 @@
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%)}
 .nf-glow{position:absolute;left:-70px;top:-70px;width:140px;height:140px;border-radius:50%;opacity:.75;
   background:radial-gradient(circle,rgba(var(--nf-ray),.95) 0,rgba(var(--nf-ray),.5) 9%,rgba(var(--nf-ray),.16) 34%,rgba(var(--nf-ray),0) 68%)}
-:root[data-theme="light"] .nf-glow{opacity:.55}
+:root[data-theme="light"] .nf-glow{opacity:.8}
 
 /* The lamp turns: seen from the shore the beam swings out to one side, shortens as it points at you, then swings out the other way. */
 :root:not([data-motion="reduce"]) .nf-beam{animation:nf-sweep 11s ease-in-out infinite alternate}

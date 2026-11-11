@@ -1,5 +1,6 @@
 /* pages/vault.js: Personal Vault upgrades (see assets/README.md).
- *   1. Optional passphrase gate   Site.config.vault.passphraseSha256 (cosmetic: Drive sharing is the real lock)
+ *   1. Optional passphrase gate   Site.config.vault.passphraseSha256 (cosmetic: Drive sharing is the real lock).
+ *                                 vault/index.html hides the catalogue before first paint; this file builds the form.
  *   2. Unlock animation           once per browser session, never under reduced motion, any key / click skips it
  *   3. Per-item details           assets/data/vault-meta.json merged into the cards by exact title
  *   4. Owner tools                "Show the Vault card on my hub" switch, and Lock when the gate is in use
@@ -7,8 +8,9 @@
  */
 (function () {
   "use strict";
-  if (!window.Site) return;
-  var Site = window.Site, el = Site.el, root = document.documentElement;
+  var root = document.documentElement;
+  if (!window.Site) { root.classList.remove("vt-pre", "vt-locked"); return; } /* core missing: no door, no gate, plain page */
+  var Site = window.Site, el = Site.el;
   var cfg = Site.config || {}, feats = cfg.features || {};
   function enabled(k) { return feats[k] !== false; }
   var SEEN = "vt.door", UNLOCK = "vault.unlock";
@@ -61,8 +63,12 @@
     var v = cfg.vault || {};
     var hash = typeof v.passphraseSha256 === "string" ? v.passphraseSha256.trim().toLowerCase() : "";
     var cat = document.getElementById("catalogue");
-    if (!/^[0-9a-f]{64}$/.test(hash) || !cat || !cat.parentNode) return;                 /* blank or malformed: no gate */
-    if (!(window.crypto && crypto.subtle && crypto.subtle.digest && window.TextEncoder)) return; /* can't check a phrase here: no gate */
+    /* The inline script in vault/index.html makes the same checks before first paint and sets :root.vt-locked,
+       so the catalogue never shows before the form. From here on this module owns that class. */
+    if (!/^[0-9a-f]{64}$/.test(hash) || !cat || !cat.parentNode ||                        /* blank or malformed: no gate */
+        !(window.crypto && crypto.subtle && crypto.subtle.digest && window.TextEncoder)) { /* can't check a phrase here: no gate */
+      root.classList.remove("vt-locked"); return;
+    }
     gate.on = true;
 
     var input = el("input", { class: "vt-gate__input", id: "vt-pass", type: "password", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-describedby": "vt-gate-msg" });

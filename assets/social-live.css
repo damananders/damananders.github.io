@@ -49,6 +49,9 @@
    change the header height), and labels may be hidden, so badges ride the button's corner and take no room ---- */
 @media (max-width:1180px){
   .sl-badge{position:absolute;top:-7px;right:-5px;height:18px;padding:0 6px;font-size:.64rem;box-shadow:0 0 0 2px var(--ink,var(--sx-surface))}
+  /* The scrolled header is a compact bar with little room above the buttons: a smaller badge that overhangs
+     less, so it and its ring stay inside the bar instead of being cut off by the top of the window. */
+  :root.ch-scrolled .sl-badge{top:-3px;height:16px;padding:0 5px;font-size:.6rem}
 }
 /* While the page is scrolled on a narrow screen the header (assets/chrome.css) shrinks the buttons to icons
    (:root.ch-scrolled, max-width 760px). The badges then sit centred on the top edge so neighbours don't touch.

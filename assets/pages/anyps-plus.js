@@ -5,6 +5,7 @@
  *   systems      interactive system strip at the top of "What's in the box"
  *   search       search box inside the complete feature list dialog
  *   newdot       "New" dot on the Changelog button until the changelog has been opened for this version
+ *   arrows       keeps the page's Left / Right screenshot shortcut away from controls that use those keys
  *   video        chapter dots, progress line and play / pause on the preview video
  *   glyphs       PlayStation / Xbox switch on "Controls at a glance"
  *   checksum     SHA-256 line under each download (only when a hash is configured)
@@ -128,7 +129,7 @@
       if (f) facts.appendChild(fact("Emulator", [el("b", { text: f.emu }), f.ver ? el("span", { "class": "ap-sys__ver", text: f.ver }) : null]));
       facts.appendChild(fact("Game formats", rich(s.formats).concat([el("span", { "class": "ap-sys__where" }, "Games go in ", el("code", { text: "AnyPS\\Games\\" + s.folder }), ".")])));
       facts.appendChild(fact("Console file", s.file
-        ? rich(s.file).concat([el("span", { "class": "ap-sys__where" }, "Drop it into ", el("code", { text: "AnyPS\\System\\<console>" }), ".")])
+        ? rich(s.file).concat([el("span", { "class": "ap-sys__where" }, "Drop it into this console's folder in ", el("code", { text: "AnyPS\\System" }), ".")])
         : [doc.createTextNode("No console file needed.")]));
       panel.appendChild(el("h3", { "class": "ap-sys__name", text: (f && f.name) || s.tab }));
       panel.appendChild(facts);
@@ -141,9 +142,36 @@
       e.preventDefault(); e.stopPropagation();   /* the page has its own document-level arrow keys for the screenshots */
       select(to, true); Site.sfx("tap");
     });
+    /* a mouse resting on a tab shows that system (after a short pause, so sweeping across the strip does not flicker) */
+    var hoverT = 0;
+    tabs.forEach(function (t, i) {
+      t.addEventListener("pointerenter", function (e) {
+        if (e.pointerType !== "mouse") return;
+        clearTimeout(hoverT); hoverT = setTimeout(function () { if (i !== cur) select(i, false); }, 80);
+      });
+      t.addEventListener("pointerleave", function () { clearTimeout(hoverT); });
+    });
     select(0, false);
     if (cards && cards.parentNode === sec) sec.insertBefore(box, cards); else sec.appendChild(box);
   }, "anyps:systems");
+
+  /* =====================================================================================================
+   * arrows: the page moves its screenshot carousel on Left / Right from a document-level listener, whatever
+   * has focus. This body-level listener runs first and keeps those keys to the control that is using them:
+   * text fields, sliders, grouped controls and everything this file adds. Focus on the page itself or inside
+   * the gallery, and the dialogs (the lightbox has its own arrow keys), are left alone.
+   * ===================================================================================================== */
+  Site.ready(function () {
+    if (!doc.body) return;
+    var OWN = 'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="slider"], [role="group"], [role="radiogroup"], [role="tablist"], [role="toolbar"], ' +
+      '[role="dialog"], [role="menu"], [role="listbox"], .ap-sys, .ap-vc, .ap-gl, .ap-sha, .ap-wt, .ap-share';
+    doc.body.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      var t = e.target;
+      if (!t || t.nodeType !== 1 || t === doc.body || t.closest("#gallery, dialog")) return;
+      if (t.closest(OWN)) e.stopPropagation();
+    });
+  }, "anyps:arrows");
 
   /* =====================================================================================================
    * search: filter the complete feature list as you type. Works on whatever headings, lists, paragraphs and
@@ -321,7 +349,11 @@
           onfocus: function () { peek = i; text(); }, onblur: function () { peek = -1; text(); } });
       });
       var track = el("div", { "class": "ap-vc__track", role: "toolbar", "aria-label": "Video chapters" }, el("span", { "class": "ap-vc__line", "aria-hidden": "true" }, fill), dots);
-      var main = el("div", { "class": "ap-vc__main" + (labelled ? "" : " ap-vc__main--plain") }, labelled ? label : null, track);
+      /* narrow screens: the dots would be a few pixels wide each, so CSS swaps them for these two buttons */
+      var prevBtn = el("button", { "class": "ap-vc__nav ap-vc__prev", type: "button", onclick: function () { jump((cur - 1 + n) % n); } }, icon("prev"));
+      var nextBtn = el("button", { "class": "ap-vc__nav ap-vc__next", type: "button", onclick: function () { jump((cur + 1) % n); } }, icon("next"));
+      function name(i) { return labelled ? chapters[i].label + " (" + fmtTime(chapters[i].t) + ")" : fmtTime(chapters[i].t); }
+      var main = el("div", { "class": "ap-vc__main" + (labelled ? "" : " ap-vc__main--plain") }, labelled ? label : null, prevBtn, nextBtn, track);
       function text() {
         if (!labelled) return;
         var i = peek >= 0 ? peek : cur; if (i < 0) i = 0;
@@ -333,9 +365,11 @@
         var t = vid.currentTime || 0, i = at(t);
         var end = i + 1 < n ? chapters[i + 1].t : dur, span = Math.max(0.001, end - chapters[i].t);
         var p = (i + Math.min(1, Math.max(0, (t - chapters[i].t) / span))) / n;
-        fill.style.width = (p * 100).toFixed(2) + "%";
+        fill.style.setProperty("--ap-p", p.toFixed(4));
         if (i !== cur) {
           cur = i;
+          prevBtn.setAttribute("aria-label", "Previous chapter: " + name((i - 1 + n) % n));
+          nextBtn.setAttribute("aria-label", "Next chapter: " + name((i + 1) % n));
           dots.forEach(function (d, k) { if (k === i) d.setAttribute("aria-current", "true"); else d.removeAttribute("aria-current"); d.classList.toggle("is-done", k <= i); });
           text();
         }
@@ -477,7 +511,8 @@
     function cmp(a, b) { for (var i = 0; i < Math.max(a.length, b.length); i++) { var x = a[i] || 0, y = b[i] || 0; if (x !== y) return x < y ? -1 : 1; } return 0; }
     function https(u) { return typeof u === "string" && /^https:\/\//i.test(u); }
     function is32(name) { return /(win|x|_|-|\s)32|32[-_ ]?bit|ia32|x86(?![-_]?64)/i.test(name); }
-    function mirror(href) { return el("a", { "class": "ap-mirror", href: href, target: "_blank", rel: "noopener", text: "Mirror" }); }
+    /* the old link is a mirror only when it is the same version; next to a newer release it is named as the previous one */
+    function mirror(href, same, v) { return el("a", { "class": "ap-mirror", href: href, target: "_blank", rel: "noopener", text: same ? "Mirror" : "Previous version V" + v.text }); }
     Site.live.releases().then(function (rel) {
       Site.ready(function () {
         if (!rel) return;
@@ -492,7 +527,7 @@
           dl.href = a64.url; dl.removeAttribute("aria-disabled");
           dl.textContent = "Download AnyPS V" + got.text;
           meta.textContent = [rel.published ? "Posted " + Site.fmtDate(rel.published) : "", Site.fmtBytes(a64.size), "Hosted on GitHub"].filter(Boolean).join(" · ");
-          if (https(old)) { meta.appendChild(doc.createTextNode(" · ")); meta.appendChild(mirror(old)); }
+          if (https(old)) { meta.appendChild(doc.createTextNode(" · ")); meta.appendChild(mirror(old, cmp(got.n, have.n) === 0, have)); }
           if (counter) meta.appendChild(counter);
           if (shaLines[0] && shaLines[0].parentNode === meta.parentNode) shaLines[0].hidden = true;
         }
@@ -502,7 +537,8 @@
           l32.href = a32.url; d32.hidden = false;
           if (m32) {
             m32.textContent = "(" + ["V" + got.text, Site.fmtBytes(a32.size)].filter(Boolean).join(", ") + ")";
-            if (https(old32)) { m32.appendChild(doc.createTextNode(" · ")); m32.appendChild(mirror(old32)); }
+            var have32 = ver(A.version32) || have;
+            if (https(old32)) { m32.appendChild(doc.createTextNode(" · ")); m32.appendChild(mirror(old32, cmp(got.n, have32.n) === 0, have32)); }
           }
           shaLines.forEach(function (s) { if (d32.contains(s)) s.hidden = true; });
         }
@@ -608,7 +644,7 @@
         if (!cols.length) return;
         var sec = el("section", { "class": "sec ap-rm", "aria-label": "Roadmap" },
           el("h2", { text: "Roadmap" }),
-          el("p", { "class": "lead ap-lead", text: "What just landed, what is being built, and what is not going to happen." }),
+          el("p", { "class": "lead ap-lead", text: "What just landed, what is being built, and what is out of reach for now." }),
           el("div", { "class": "ap-rm__grid" }, cols),
           typeof d.note === "string" && d.note ? el("p", { "class": "ap-rm__note", text: d.note }) : null);
         before.parentNode.insertBefore(sec, before);

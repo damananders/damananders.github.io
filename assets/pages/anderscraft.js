@@ -29,7 +29,7 @@
     var chip = $("#ac-signup-chip"), label = $("#ac-signup-chip-t"), note = $("#ac-offnote"), msg = $("#msg");
     if (!chip || !label) return;
     if (!enabled("acSignupStatus")) { chip.hidden = true; return; }
-    var TEXT = { wait: "Checking", up: "Sign-ups open", down: "Sign-up server offline" };
+    var TEXT = { wait: "Checking", up: "Sign-ups open", down: "Sign-ups offline" };
     var state = "wait", timer = 0, busy = false, RECHECK = 61000;   /* just past the core's 60 s cache, so every recheck is a real one */
 
     function show(next) {
@@ -54,7 +54,7 @@
       new MutationObserver(function () {
         if (msg.classList.contains("ok")) { show("up"); schedule(); }
         else if (msg.classList.contains("err")) {
-          /* its "offline" message means the request itself failed, so the service is off right now */
+          /* its "offline" message means the request itself failed, so sign-ups are offline right now */
           if (/offline/i.test(msg.textContent || "")) { show("down"); schedule(); }
           else check();
         }
@@ -263,7 +263,7 @@
     }
     function checkPw() {
       if (!pw) return;
-      var v = pw.value, n = v.length, level = 0;
+      var v = pw.value, n = v.length, level = 0, tone = "";
       if (!n) sayPw("", null);
       else if (/\s/.test(v)) { level = 1; sayPw("No spaces", "err", "Passwords can't have spaces"); }
       else if (/[^\x21-\x7E]/.test(v)) { level = 1; sayPw("Plain characters only", "err", "Use plain letters, numbers and symbols only"); }
@@ -271,11 +271,18 @@
       else if (n > 16) { level = 1; sayPw("Too long", "err", "Too long, 16 characters is the limit"); }
       else {
         var kinds = (/[a-z]/.test(v) ? 1 : 0) + (/[A-Z]/.test(v) ? 1 : 0) + (/[0-9]/.test(v) ? 1 : 0) + (/[^A-Za-z0-9]/.test(v) ? 1 : 0);
-        if ((n >= 12 && kinds >= 3) || (n >= 10 && kinds === 4)) { level = 4; sayPw("Strong", "ok", "Password strength: strong"); }
-        else if ((n >= 8 && kinds >= 2) || kinds >= 3) { level = 3; sayPw("Good", "ok", "Password strength: good"); }
+        var seen = {}, unique = 0, i;
+        for (i = 0; i < n; i++) if (!seen[v.charAt(i)]) { seen[v.charAt(i)] = true; unique++; }
+        /* Weak: valid, but short, mostly one repeated character, or a single kind of character (123456, password, aaaaaa). */
+        if (n < 8 || unique < 5 || (kinds === 1 && n < 12)) { level = 1; tone = "warn"; sayPw("Weak", "warn", "Password strength: weak. It will work, but a longer, more varied one is safer"); }
+        else if ((n >= 12 && kinds >= 3) || (n >= 10 && kinds === 4)) { level = 4; sayPw("Strong", "ok", "Password strength: strong"); }
+        else if ((n >= 12 && kinds >= 2) || kinds >= 3) { level = 3; sayPw("Good", "ok", "Password strength: good"); }
         else { level = 2; sayPw("Fine", "warn", "Password strength: fine"); }
       }
-      if (meter) meter.setAttribute("data-ac-level", String(level));
+      if (meter) {
+        meter.setAttribute("data-ac-level", String(level));
+        if (tone) meter.setAttribute("data-ac-tone", tone); else meter.removeAttribute("data-ac-tone");   /* one amber bar for weak, one red bar for not allowed */
+      }
     }
     function checkMatch() {
       if (!pw || !pw2) return;

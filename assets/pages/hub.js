@@ -1,5 +1,5 @@
 /* pages/hub.js: the hub page's own content upgrades (prefix hb-). See assets/README.md.
- * Vault card visibility, live status chips, AnyPS "New" badge, keyboard navigation between the cards,
+ * The owner-only Vault card, live status chips, AnyPS "New" badge, keyboard navigation between the cards,
  * the latest-update ticker, the "Now" card and the lazy AnyPS preview video.
  * Each part runs inside Site.ready so one failure cannot stop the others; the page works without this file.
  */
@@ -15,18 +15,35 @@
   /* Only same-site paths and https links are ever turned into hrefs. */
   function safeUrl(u) { return (typeof u === "string" && (/^\/(?!\/)/.test(u) || /^https:\/\//i.test(u))) ? u : ""; }
   function isVisible(n) { return !!(n && n.getClientRects().length); }
-  /* Is the Personal Vault card shown to this visitor? */
-  function vaultShown() { return !(cfg.vault && cfg.vault.hideOnHub === true) || Site.owner; }
+  /* Is the Personal Vault card shown to this visitor? Fails closed: unless site-config.js loaded and says
+     hideOnHub:false, only the owner's browser gets the card and anything that mentions the vault. */
+  var vaultPublic = !!(cfg.vault && cfg.vault.hideOnHub === false);
+  function vaultShown() { return vaultPublic || Site.owner; }
 
   /* ====================================================================================================
-   * Item 39: the Vault card. CSS hides it unless <html data-owner>; this only handles hideOnHub:false
-   * and the owner-only wording of the hero lead (the public copy never mentions the vault).
+   * Item 39: the Vault card. It is not in the page's HTML at all: it is built here, and only for the owner
+   * (or for everyone when vault.hideOnHub is false). hub.css already keeps the third column free under
+   * <html data-owner>, which is set before first paint, so adding the card moves nothing.
+   * The hero lead gets its owner wording the same way (hub.css paints it early, this makes it real text).
    * ==================================================================================================== */
+  var LEAD_WITH_VAULT = "A WoW server to join, a launcher to download, and my personal vault. Pick one to learn more.";   /* same text as in hub.css */
   Site.ready(function () {
-    if (!(cfg.vault && cfg.vault.hideOnHub === true)) root.classList.add("hb-vault-on");
     if (!vaultShown()) return;
+    var main = doc.querySelector(".avenues");
+    if (main && !main.querySelector(".avenue.games")) {
+      main.appendChild(el("a", { class: "avenue games", href: "vault/" },
+        el("div", { class: "art" },
+          el("span", { class: "hb-chips", id: "hb-chips-vault" }),
+          Site.svg('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M12 17v-1.5M15.5 12H17M7 12h1.5M7 20v1M17 20v1"/>')),
+        el("div", { class: "body" },
+          el("div", { class: "eyebrow", text: "Private \u00b7 owner only" }),
+          el("h2", { text: "Personal Vault" }),
+          el("p", { text: "Off-site backups of my own recompiled and preserved builds. Files are private." }),
+          el("span", { class: "cta", text: "Open the vault \u2192" }))));
+      root.classList.add("hb-vault-on");
+    }
     var lead = byId("hb-lead");
-    if (lead) lead.textContent = "A WoW server to join, a launcher to download, and my personal vault. Pick one to learn more.";
+    if (lead) { lead.textContent = LEAD_WITH_VAULT; lead.classList.add("hb-lead--set"); }
   }, "hub vault card");
 
   /* ====================================================================================================

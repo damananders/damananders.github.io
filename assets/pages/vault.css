@@ -7,8 +7,9 @@
 
 /* ---- Unlock animation ----
    :root.vt-pre is set by a tiny inline script in vault/index.html so the page doesn't flash before the door
-   is drawn. It is a plain cover that fades itself out after 2.5s even if the script never arrives. */
-:root.vt-pre::before{content:"";position:fixed;inset:0;z-index:2147482000;background:var(--ink);pointer-events:none;animation:vt-cover-out .3s linear 2.5s forwards}
+   is drawn. That script also removes it once the page's scripts have finished loading (or failed to), and as a
+   last resort the cover fades itself out after 1s, so a slow or broken load never leaves a dark screen. */
+:root.vt-pre::before{content:"";position:fixed;inset:0;z-index:2147482000;background:var(--ink);pointer-events:none;animation:vt-cover-out .3s linear 1s forwards}
 :root[data-motion="reduce"].vt-pre::before{display:none}
 @keyframes vt-cover-out{to{opacity:0;visibility:hidden}}
 
@@ -46,7 +47,9 @@
 .vt-chip__k{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:.66rem}
 .game .vt-note{margin:2px 0 0;padding-left:10px;border-left:2px solid var(--accent,var(--sx-accent));color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
 
-/* ---- Passphrase gate ---- */
+/* ---- Passphrase gate ----
+   :root.vt-locked is set before first paint by the inline script in vault/index.html (so it only exists when
+   scripts run) and kept or removed by vault.js. */
 :root.vt-locked #catalogue,:root.vt-locked #empty,:root.vt-locked .vt-tools{display:none}
 .vt-gate{display:grid;gap:10px;max-width:440px;margin:22px 0 0;padding:22px;border-radius:18px;background:var(--sx-glass);border:1px solid var(--line-2);backdrop-filter:blur(8px)}
 .vt-gate__head{display:flex;align-items:center;gap:12px}

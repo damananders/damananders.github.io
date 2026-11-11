@@ -3,11 +3,10 @@
  * Colours come from the tokens only, so every piece follows the dark and light themes.
  */
 
-/* ---- Personal Vault card: only the owner sees it (data-owner is set before first paint by the inline head script).
-        hub.js adds hb-vault-on to <html> when vault.hideOnHub is false, which shows it to everyone. ---- */
-.avenues .avenue.games{display:none}
-:root[data-owner] .avenues .avenue.games,
-:root.hb-vault-on .avenues .avenue.games{display:flex}
+/* ---- Personal Vault card: not in the page's HTML. hub.js builds it for the owner only (or for everyone when
+        vault.hideOnHub is false, which adds hb-vault-on to <html>). data-owner is set before first paint by the
+        inline head script, so the third column is already free when the card arrives and nothing jumps. ---- */
+.avenue.games .art{background-image:url("/assets/vault-bg.webp");background-position:center 60%}
 @media (min-width:901px){
   .avenues{grid-template-columns:repeat(2,minmax(0,1fr))}
   .avenues .avenue .art{height:190px}
@@ -16,6 +15,10 @@
   :root[data-owner] .avenues .avenue .art,
   :root.hb-vault-on .avenues .avenue .art{height:150px}
 }
+/* Hero lead, owner wording: painted from here before the scripts run so the longer sentence never pushes the page
+   down later; hub.js then swaps in the same sentence as real text (hb-lead--set). Keep both copies identical. */
+:root[data-owner] .hb-lead__pub{display:none}
+:root[data-owner] #hb-lead:not(.hb-lead--set)::after{content:"A WoW server to join, a launcher to download, and my personal vault. Pick one to learn more."}
 .avenues .avenue{scroll-margin-top:calc(var(--sx-header-h,0px) + 76px);scroll-margin-bottom:24px}
 
 /* ---- Card entrance. Uses the separate "translate" property and fill-mode backwards, so nothing is left on the

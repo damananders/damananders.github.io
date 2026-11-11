@@ -2,7 +2,9 @@
  * 1 typing headline, 2 parallax photo, 3 card tilt + glare, 4 accent glow, 5 ambient motes, 8 day and night.
  * Each one has a switch in site-config.js (features.*) and a quiet, static fallback for reduced motion.
  * All frame-by-frame work shares ONE requestAnimationFrame loop that sleeps when nothing is changing
- * and stops while the tab is hidden.
+ * and stops while the tab is hidden. Everything ambient (motes, glow, lamp, caret, retyping) also comes to
+ * rest after a minute without input or when the window loses focus, and picks up again on the next input.
+ * Test switch: ?sx=idle:5 rests after 5 seconds instead of 60.
  */
 (function () {
   "use strict";
@@ -35,10 +37,41 @@
   doc.addEventListener("visibilitychange", function () {
     root.classList.toggle("hx-hidden", doc.hidden);          /* pauses the CSS animations (glow, lamp, caret) */
     if (doc.hidden) return;
+    input();                                                 /* coming back to the tab counts as input */
     wake();
     visSubs.forEach(function (fn) { try { fn(); } catch (e) {} });
   });
   if (doc.hidden) root.classList.add("hx-hidden");
+
+  /* ---------- rest: nobody has touched the page for a while, or the window is in the background ---------- */
+  var IDLE_MS = 60000, resting = false, lastInput = 0, idleTimer = 0;
+  (function () { var s = parseFloat(Site.debug("idle")); if (isFinite(s) && s > 0) IDLE_MS = s * 1000; })();
+  function now() { return window.performance && performance.now ? performance.now() : Date.now(); }
+  function setRest(on) {
+    if (on === resting) return;
+    resting = on;
+    root.classList.toggle("hx-rest", on);                    /* pauses the CSS animations, like hx-hidden */
+    if (on) return;
+    wake();
+    visSubs.forEach(function (fn) { try { fn(); } catch (e) {} });
+  }
+  function checkIdle() {
+    idleTimer = 0;
+    if (doc.hidden) return;                                  /* nothing runs while hidden; re-armed on return */
+    var left = IDLE_MS - (now() - lastInput);
+    if (left > 0) idleTimer = setTimeout(checkIdle, left + 20); else setRest(true);
+  }
+  function input() {
+    lastInput = now();
+    if (resting) setRest(false);
+    if (!idleTimer) idleTimer = setTimeout(checkIdle, IDLE_MS + 20);
+  }
+  ["pointermove", "pointerdown", "keydown", "wheel", "touchstart", "scroll", "focus"].forEach(function (type) {
+    window.addEventListener(type, input, { passive: true, capture: true });
+  });
+  window.addEventListener("blur", function () { setRest(true); });
+  try { if (Site.gamepad && Site.gamepad.on) Site.gamepad.on(input); } catch (e) {}
+  input();
 
   /* ---------- the scene: one fixed box behind the page for the photo layers and the motes ---------- */
   var IMG_W = 1920, IMG_H = 1012;          /* assets/hub-bg.* */
@@ -130,6 +163,7 @@
       timer = 0;
       if (Site.reducedMotion) return;
       if (doc.hidden) { waiting = true; return; }   /* picked up again by onVisible */
+      if (resting && mode === "hold") { waiting = true; return; }   /* at rest the finished line simply stays */
       var line = LINES[li];
       if (mode === "type") {
         blink(false);
@@ -297,13 +331,17 @@
   }, "hub card tilt");
 
   /* =====================================================================================
-   * ITEM 5: ambient motes (one canvas, about 30 frames a second, soft dots in the three avenue colours)
+   * ITEM 5: ambient motes (one canvas, about 20 frames a second, soft dots in the three avenue colours)
+   * Kept cheap: the canvas is one canvas pixel per CSS pixel whatever the screen density (the dots are soft
+   * blurs), only the boxes the dots were drawn in are cleared, the frame loop is woken by a timer for each
+   * mote frame instead of spinning at the screen rate, and nothing is drawn while the page is at rest.
    * ===================================================================================== */
   Site.ready(function () {
     if (!feature("particles")) return;
     var probe = doc.createElement("canvas");
     var ctx0 = probe.getContext && probe.getContext("2d"); if (!ctx0) return;
-    var canvas = null, ctx = null, motes = [], sprites = [], dpr = 1, acc = 0, alphaK = 1, running = false;
+    var canvas = null, ctx = null, motes = [], sprites = [], alphaK = 1, running = false;
+    var FRAME = 50, last = 0, tick = 0;
     var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     var lowPower = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || !!(conn && conn.saveData);
 
@@ -338,7 +376,8 @@
         r: big ? 12 + Math.random() * 12 : 3.5 + Math.random() * 4.5,
         a: big ? 0.09 + Math.random() * 0.07 : 0.22 + Math.random() * 0.2,
         vx: (Math.random() - 0.5) * 9, vy: -(3 + Math.random() * 9),
-        ph: Math.random() * 6.283, sp: 0.4 + Math.random() * 0.9, c: (Math.random() * 3) | 0
+        ph: Math.random() * 6.283, sp: 0.4 + Math.random() * 0.9, c: (Math.random() * 3) | 0,
+        bw: 0, bx: 0, by: 0, bs: 0                             /* the box it was last drawn in (bw 0: not drawn) */
       };
     }
     /* Text that sits straight on the photo (hero, hint line, footer): motes fade to a fifth of their strength
@@ -363,29 +402,41 @@
     function fit() {
       if (!canvas) return;
       zonesDirty = true;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.round(sceneW * dpr)); canvas.height = Math.max(1, Math.round(sceneH * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var w = Math.max(1, Math.round(sceneW)), h = Math.max(1, Math.round(sceneH));
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }   /* (this also wipes it) */
+      else ctx.clearRect(0, 0, w, h);
       var n = count();
       while (motes.length < n) motes.push(spawn(true));
       motes.length = n;
-      motes.forEach(function (m) { if (m.x > sceneW) m.x = Math.random() * sceneW; if (m.y > sceneH + 20) m.y = Math.random() * sceneH; });
+      motes.forEach(function (m) { m.bw = 0; if (m.x > sceneW) m.x = Math.random() * sceneW; if (m.y > sceneH + 20) m.y = Math.random() * sceneH; });
+      last = 0;                                                /* draw on the very next frame */
     }
+    function nextFrame() { if (!tick) tick = setTimeout(function () { tick = 0; wake(); }, FRAME - 10); }
     function task(t, dt) {
-      if (!running) return false;
-      acc += dt; if (acc < 32) return true;                    /* about 30fps */
-      var step = Math.min(acc, 100) / 1000; acc = 0;
+      if (!running || resting) return false;                   /* at rest the dots stay where they are */
+      var gap = last ? t - last : FRAME;
+      if (gap < FRAME - 4) {                                   /* not due yet: only another effect is using this frame */
+        if (!tick) return true;                                /* (no timer pending, e.g. right after a resize) */
+        return false;
+      }
+      last = t;
+      var step = Math.min(gap, 100) / 1000, i, m;
       if (zonesDirty) readZones();
-      ctx.clearRect(0, 0, sceneW, sceneH);
-      for (var i = 0; i < motes.length; i++) {
-        var m = motes[i];
+      for (i = 0; i < motes.length; i++) { m = motes[i]; if (m.bw) { ctx.clearRect(m.bx, m.by, m.bs, m.bs); m.bw = 0; } }
+      for (i = 0; i < motes.length; i++) {
+        m = motes[i];
         m.ph += m.sp * step; m.x += (m.vx + Math.sin(m.ph) * 4) * step; m.y += m.vy * step;
         if (m.y < -24 || m.x < -24 || m.x > sceneW + 24) motes[i] = m = spawn(false);      /* drifted off: come back in from the bottom */
-        ctx.globalAlpha = m.a * alphaK * quiet(m) * (0.8 + 0.2 * Math.sin(m.ph * 1.7));
+        if (m.y - m.r > sceneH || m.y + m.r < 0 || m.x + m.r < 0 || m.x - m.r > sceneW) continue;   /* outside the picture */
+        var a = m.a * alphaK * quiet(m) * (0.8 + 0.2 * Math.sin(m.ph * 1.7));
+        if (a < 0.004) continue;
+        ctx.globalAlpha = a;
         ctx.drawImage(sprites[m.c], m.x - m.r, m.y - m.r, m.r * 2, m.r * 2);
+        m.bx = Math.floor(m.x - m.r) - 1; m.by = Math.floor(m.y - m.r) - 1; m.bs = Math.ceil(m.r * 2) + 3; m.bw = 1;
       }
       ctx.globalAlpha = 1;
-      return true;
+      nextFrame();                                             /* the loop sleeps until the next mote frame is due */
+      return false;
     }
     function start() {
       if (running) return;
@@ -401,9 +452,9 @@
         addTask(task);
       }
       makeSprites(); fit();
-      canvas.hidden = false; running = true; acc = 0; wake();
+      canvas.hidden = false; running = true; last = 0; wake();
     }
-    function stop() { running = false; if (canvas) { ctx.clearRect(0, 0, sceneW, sceneH); canvas.hidden = true; } }
+    function stop() { running = false; if (canvas) { ctx.clearRect(0, 0, canvas.width, canvas.height); motes.forEach(function (m) { m.bw = 0; }); canvas.hidden = true; } }
     function sync() { if (Site.reducedMotion) stop(); else start(); }
     Site.on("pref:motion", sync);
     sync();

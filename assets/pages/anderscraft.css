@@ -42,7 +42,7 @@
 .ac-chipwrap{display:inline-flex;min-height:28px;align-items:center}
 :root:not(.ac-js) .ac-chip{visibility:hidden}          /* space is reserved; shown once the script is running */
 .ac-chip[hidden]{display:none}
-.ac-offnote{margin:0 0 6px;padding:10px 14px;border-radius:12px;font-size:1rem;line-height:1.45;color:var(--text);
+.ac-offnote{margin:14px 0 0;padding:10px 14px;border-radius:12px;font-size:1rem;line-height:1.45;color:var(--text);
   background:var(--surface-2);border:1px solid var(--line-2);border-left:4px solid var(--sx-warn)}
 .ac-offnote[hidden]{display:none}
 .ac-offnote b{font-weight:600}
@@ -66,6 +66,7 @@
 .ac-meter-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;flex:1 1 auto;min-width:0}
 .ac-meter-bars i{display:block;height:6px;border-radius:999px;background:var(--line-2);transition:background-color .2s}
 .ac-meter[data-ac-level="1"] .ac-meter-bars i:nth-child(-n+1){background:var(--red)}
+.ac-meter[data-ac-level="1"][data-ac-tone="warn"] .ac-meter-bars i:nth-child(-n+1){background:var(--sx-warn)}
 .ac-meter[data-ac-level="2"] .ac-meter-bars i:nth-child(-n+2){background:var(--sx-warn)}
 .ac-meter[data-ac-level="3"] .ac-meter-bars i:nth-child(-n+3){background:var(--green)}
 .ac-meter[data-ac-level="4"] .ac-meter-bars i{background:var(--green)}
@@ -200,4 +201,4 @@
 /* ---------- keep the whole sign-up card inside a laptop screen, offline note included ---------- */
 #ac-signup .sub{margin-bottom:10px}
 #ac-signup form > label{margin-top:11px}
-@media (min-width:861px){ .ac-offnote{font-size:.95rem;padding:8px 13px} }
+@media (min-width:861px){ .ac-offnote{font-size:.95rem;padding:8px 13px;margin-top:8px} }

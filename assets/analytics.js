@@ -34,6 +34,14 @@
       var v = String((is32 ? (a.version32 || a.version) : a.version) || "").replace(/[^\w.-]/g, "");
       return v || "unknown";
     }
+    /* The version the visitor was actually offered: the page (and pages/anyps-plus.js, when a newer GitHub release
+       takes over the buttons) writes it as "V1.06" on the main button and at the start of the 32-bit note. */
+    function shown(t, is32) {
+      var src = is32 ? document.getElementById("dl32meta") : t, text = "";
+      if (src) text = is32 ? ((src.firstChild && src.firstChild.nodeType === 3 && src.firstChild.nodeValue) || "") : (src.textContent || "");
+      var m = /(?:^|[\s(])V(\d+(?:\.\d+)*)(?![\w.])/.exec(text);
+      return m ? m[1] : version(is32);
+    }
     function count(e) {
       var t = e.target && e.target.closest ? e.target.closest("#dl, #dl32link") : null;
       if (!t || t.getAttribute("aria-disabled") === "true") return;
@@ -42,7 +50,7 @@
       if (!gc || typeof gc.count !== "function") return;
       var is32 = t.id === "dl32link";
       try {
-        gc.count({ path: "anyps-download-" + (is32 ? "32bit-" : "") + version(is32), title: "AnyPS download" + (is32 ? " (32-bit)" : ""), event: true });
+        gc.count({ path: "anyps-download-" + (is32 ? "32bit-" : "") + shown(t, is32), title: "AnyPS download" + (is32 ? " (32-bit)" : ""), event: true });
       } catch (err) {}
     }
     document.addEventListener("click", count, true);

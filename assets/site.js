@@ -120,6 +120,8 @@
     if (!host) { host = el("div", { id: "sx-toasts", class: "sx-toasts", role: "status", "aria-live": "polite" }); document.body.appendChild(host); }
     var t = el("div", { class: "sx-toast sx-toast--" + (o.type || "info") }, msg);
     host.appendChild(t);
+    /* top layer, so toasts stay above open dialogs */
+    try { if (host.showPopover) { host.setAttribute("popover", "manual"); if (host.matches(":popover-open")) host.hidePopover(); host.showPopover(); } } catch (e) {}
     requestAnimationFrame(function () { requestAnimationFrame(function () { t.classList.add("is-in"); }); });
     setTimeout(function () { t.classList.remove("is-in"); setTimeout(function () { t.remove(); }, 320); }, o.ms || 2600);
     sfx(o.type === "err" || o.type === "warn" ? "error" : "toast");
@@ -160,7 +162,7 @@
   }
   function news() {
     return data("news").then(function (d) {
-      var items = (d && d.items) || [];
+      var items = (d && Array.isArray(d.items)) ? d.items : [];
       return items.filter(function (n) { return n && n.title; }).sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); });
     });
   }

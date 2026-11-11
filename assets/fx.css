@@ -84,7 +84,7 @@ body.photo{background-image:var(--sx-photo-overlay),var(--bg)}
 .sx-iconbtn svg{width:20px;height:20px}
 
 /* ---- Toasts ---- */
-.sx-toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:2147483000;display:grid;gap:8px;justify-items:center;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.sx-toasts{position:fixed;inset:auto auto 22px 50%;margin:0;padding:0;border:0;background:transparent;overflow:visible;color:inherit;left:50%;bottom:22px;transform:translateX(-50%);z-index:2147483000;display:grid;gap:8px;justify-items:center;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
 .sx-toast{font:600 .95rem/1.35 var(--sx-body);color:var(--sx-text);background:var(--sx-surface);border:1px solid var(--sx-line-2);border-left:4px solid var(--sx-info);border-radius:12px;padding:11px 16px;
   box-shadow:var(--sx-shadow);opacity:0;transform:translateY(10px) scale(.98);transition:opacity .25s,transform .25s var(--sx-ease);max-width:100%;text-shadow:none}
 .sx-toast.is-in{opacity:1;transform:none}

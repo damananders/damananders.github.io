@@ -113,7 +113,15 @@
       var y = scrollY(), s = scrolled ? y > 8 : y > 24;
       if (s === scrolled) return;
       scrolled = s; toggledAt = Date.now();
+      /* Swap sizes and hand the lost height back (--ch-comp) in this one task, with scroll anchoring off while the
+         two layouts happen. Otherwise the browser sees a shorter nav for one layout and "corrects" the scroll
+         position by that much: the page jumped 50-150px on phones, where the header changes size at once. */
+      var anchor = root.style.getPropertyValue("overflow-anchor");
+      root.style.setProperty("overflow-anchor", "none");
       root.classList.toggle("ch-scrolled", s);
+      apply(contentH());
+      void nav.offsetHeight;
+      if (anchor) root.style.setProperty("overflow-anchor", anchor); else root.style.removeProperty("overflow-anchor");
       clearTimeout(settleTimer); settleTimer = setTimeout(function () { apply(contentH()); }, 460);
     }
 
@@ -152,6 +160,8 @@
     if (!target.id) target.id = "ch-content";
     if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
     target.setAttribute("data-ch-skip-target", "");
+    /* Pages without a <main> get their main landmark here, so screen readers have one to jump to. */
+    if (!document.querySelector("main,[role='main']") && !target.hasAttribute("role")) target.setAttribute("role", "main");
     var link = el("a", { class: "ch-skip", href: "#" + target.id, text: "Skip to content" });
     link.addEventListener("click", function (e) {
       e.preventDefault();                       /* no hash in the address bar: AnyPS uses the hash for its own dialog */
@@ -315,11 +325,25 @@
     gear.addEventListener("click", toggle);
     closeBtn.addEventListener("click", function () { setOpen(false, "back"); });
     document.addEventListener("keydown", function (e) { if (open && e.key === "Escape") { e.preventDefault(); setOpen(false, "back"); } });
+    /* A press outside the panel only dismisses it: the click that ends that same press is swallowed, so it cannot
+       also follow a link or flip a button underneath. Any later press or key forgets it again. */
+    var swallow = false;
     document.addEventListener("pointerdown", function (e) {
+      swallow = false;
       if (!open) return; var t = e.target;
       if (t && t.nodeType === 1 && (panel.contains(t) || gear.contains(t))) return;
       setOpen(false, "auto");
+      swallow = !e.button;
     }, true);
+    window.addEventListener("pointercancel", function () { swallow = false; }, true);   /* the press became a scroll */
+    window.addEventListener("keydown", function () { swallow = false; }, true);
+    window.addEventListener("click", function (e) {
+      if (!swallow) return; swallow = false;
+      if (e.detail === 0) return;                                                         /* keyboard activation */
+      e.preventDefault(); e.stopImmediatePropagation();
+    }, true);
+    /* Keys that move a slider or a scroll position stay inside the panel (pages have their own arrow-key shortcuts). */
+    panel.addEventListener("keydown", function (e) { if (/^(Arrow|Home$|End$|Page)/.test(e.key)) e.stopPropagation(); });
     /* Tabbing (or steering with a controller) out of the panel closes it; focus stays where the visitor put it. */
     panel.addEventListener("focusout", function (e) {
       if (!open || drawing) return; var to = e.relatedTarget;
@@ -345,9 +369,30 @@
     var shown = false, raf = 0, host = null;
     var btn = el("button", { type: "button", class: "ch-top", "aria-label": "Back to top" }, svg(ICON.up));
 
+    /* True while a link, button or field sits under the button, so it never covers something people need to press
+       (a form's submit button, a "show password" eye, a drop-down). Cards and full-width rows do not count: there
+       is plenty of them left to press beside the button. */
+    var CONTROL = "a[href],button,input,select,textarea,summary,label,[role='button']";
+    function inTheWay() {
+      if (!document.elementsFromPoint || document.activeElement === btn) return false;
+      var cs = getComputedStyle(btn), w = btn.offsetWidth, h = btn.offsetHeight;
+      var x0 = root.clientWidth - (parseFloat(cs.right) || 0) - w, y0 = window.innerHeight - (parseFloat(cs.bottom) || 0) - h;
+      var pts = [[.5, .5], [.12, .15], [.12, .85], [.5, .08], [.5, .92]];
+      for (var i = 0; i < pts.length; i++) {
+        var stack = document.elementsFromPoint(x0 + w * pts[i][0], y0 + h * pts[i][1]);
+        for (var j = 0; j < stack.length; j++) {
+          var n = stack[j]; if (n === btn || btn.contains(n)) continue;
+          var c = n.closest ? n.closest(CONTROL) : null;
+          if (c) { var r = c.getBoundingClientRect(); if (r.height <= 96 && (r.width < root.clientWidth * .75 || c.closest("form"))) return true; }
+          break;                                                   /* only what is directly underneath counts */
+        }
+      }
+      return false;
+    }
+
     function update() {
       raf = 0;
-      var y = scrollY(), on = y > 600;
+      var y = scrollY(), on = y > 600 && !inTheWay();
       if (on !== shown) { shown = on; btn.classList.toggle("is-on", on); }
       if (on) btn.style.setProperty("--ch-p", Math.min(1, y / Math.max(1, root.scrollHeight - window.innerHeight)).toFixed(3));
     }
@@ -376,6 +421,8 @@
     document.body.appendChild(btn);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", function () { onScroll(); lift(); });
+    document.addEventListener("click", onScroll);                   /* a drop-down may have opened under the button */
+    document.addEventListener("focusin", onScroll);
     document.addEventListener("visibilitychange", function () { if (!document.hidden) onScroll(); });
     if ("MutationObserver" in window) { new MutationObserver(watchToasts).observe(document.body, { childList: true }); watchToasts(); }
     update();

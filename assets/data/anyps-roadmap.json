@@ -1,5 +1,5 @@
 {
-  "_about": "The roadmap section on /anyps/. Four columns, each a list of items: title (required) and note (optional). Keep it honest: no dates, no percentages, no promises.",
+  "_about": "The roadmap section on /anyps/. Up to four columns, each a list of items: title (required) and note (optional). Keep it honest: no dates, no percentages, no promises. The last column mirrors the \"Not yet\" list at the end of the page's complete feature list; keep the two in step.",
   "note": "Plans can change. Nothing here is a promise or a date.",
   "columns": [
     {
@@ -24,7 +24,6 @@
       "title": "On the list",
       "items": [
         { "title": "A PS5 lane", "note": "The last system, started only once PS1 to PS4 are fully solid." },
-        { "title": "PS4 save states", "note": "shadPS4 has no save states today." },
         { "title": "A radial quick menu" },
         { "title": "More cover-art sources" },
         { "title": "CRT shaders" },
@@ -34,14 +33,13 @@
       ]
     },
     {
-      "id": "no",
-      "title": "Not planned",
-      "lead": "Not feasible today.",
+      "id": "notyet",
+      "title": "Not yet",
+      "lead": "Out of reach with today's emulators.",
       "items": [
         { "title": "An audio equaliser, HDR, macros and turbo, colour-blind filters", "note": "They need hooks none of the emulators offer." },
-        { "title": "An in-overlay web browser" },
-        { "title": "PS1 / PS2 netplay", "note": "PS1, PS2 and PS4 have no usable built-in online." },
-        { "title": "Save states and RetroAchievements on the Vita", "note": "Vita3K and RetroAchievements limits." }
+        { "title": "Save states on PS Vita and PS4", "note": "Vita3K and shadPS4 have no save states." },
+        { "title": "RetroAchievements on PS Vita", "note": "RetroAchievements has no Vita sets." }
       ]
     }
   ]
