@@ -14,6 +14,10 @@ window.SITE = {
     // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
     exeUrl: "https://damananders.github.io/anyps/AnyPS.exe",
     sizeLabel: "240 MB",    // e.g. "903 MB"
+    // 32-bit Windows edition (PSP only). Leave download32Url "" to hide the link on the page.
+    download32Url: "https://drive.google.com/file/d/1hd1W0whJiq3s7Fypmg4lrHr6IsltnCFs/view?usp=sharing",
+    version32: "1.05.1",
+    size32Label: "17 MB",
     // Older releases, newest first. Add the outgoing build here when you publish a new one.
     oldBuilds: [
       { version: "1.05", date: "2026-11-11", url: "https://drive.google.com/file/d/1Iz70eZ_8fQJ56GWuUZlDVe711DCgwCAV/view?usp=sharing" },

@@ -139,6 +139,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
       <p class="lead" style="font-size:1rem">Free. Unzip anywhere and run <code>AnyPS.exe</code>.</p>
       <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
       <div id="dlmeta" class="meta"></div>
+      <div id="dl32" class="meta" hidden style="margin-top:.6rem">On a 32-bit PC? <a id="dl32link" href="#" target="_blank" rel="noopener">Download the 32-bit edition</a> <span id="dl32meta"></span><br><small>PSP only: the PS1, PS2, PS3, PS Vita and PS4 emulators exist only as 64-bit programs. Needs Microsoft&rsquo;s 32-bit .NET Desktop Runtime 10; updates come from this page.</small></div>
       <div class="dlrow">
         <button class="linkbtn" id="openChangelog" type="button">Changelog</button>
         <details class="oldbuilds" id="oldBuilds" hidden>
@@ -858,6 +859,11 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
     dl.href = a.downloadUrl; dl.removeAttribute("aria-disabled");
     dl.textContent = "Download AnyPS" + (a.version ? " V" + a.version : "");
     document.getElementById("dlmeta").textContent = [a.date ? "Posted " + fmtDate(a.date) : "", a.sizeLabel, "Hosted on Google Drive"].filter(Boolean).join(" · ");
+  }
+  if (a.download32Url) {
+    document.getElementById("dl32link").href = a.download32Url;
+    document.getElementById("dl32meta").textContent = "(" + ["V" + (a.version32 || a.version), a.size32Label].filter(Boolean).join(", ") + ")";
+    document.getElementById("dl32").hidden = false;
   }
   const old = a.oldBuilds || [];
   if (old.length) {
