@@ -172,15 +172,15 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   </div>
 
   <section class="sec" aria-label="Recent updates">
-    <h2>Latest: AnyPS V1.05.1</h2>
+    <h2>Latest: AnyPS V2.0</h2>
     <p class="lead" style="font-size:1rem">What landed in the newest build. <button class="linkbtn" id="openChangelog2" type="button" style="margin-top:0">Full changelog &rarr;</button></p>
     <div class="updrow">
-      <span class="chip"><b>Snappy in-game overlay</b> &mdash; no more missed presses</span>
-      <span class="chip"><b>Memory tools fixed on PS3</b>, with saved values &amp; stay-on mods</span>
-      <span class="chip"><b>One-press updates</b> &mdash; keeps all your games, saves &amp; sign-ins</span>
-      <span class="chip"><b>Redesigned start-up screen</b></span>
-      <span class="chip"><b>PlayStation face-button</b> console separators</span>
-      <span class="chip"><b>Cleaner PS Vita launches</b></span>
+      <span class="chip"><b>Skylanders portal</b> in the overlay &mdash; no plastic needed</span>
+      <span class="chip"><b>Figure editor &amp; creator</b>, with names and portraits</span>
+      <span class="chip"><b>Per-game volume</b> on every console</span>
+      <span class="chip"><b>Online failsafe</b> for PS3 games with dead servers</span>
+      <span class="chip"><b>Snappy overlay</b> &amp; memory tools with saved mods</span>
+      <span class="chip"><b>One-press updates</b> that keep everything</span>
     </div>
   </section>
 
@@ -236,7 +236,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
-    <div class="dhead"><h2 id="featTitle">AnyPS V1.05.1: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="featTitle">AnyPS V2.0: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
 <p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across six systems (PS1, PS2, PSP, PS Vita, PS3, PS4), each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
 <h3>1. The app itself</h3>
@@ -516,6 +516,19 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <ul>
 <li>Phone remote page on your LAN; webhook on launch/exit; pre-launch / post-exit scripts; <code>AnyPS.exe --play "name"</code>; System check; log cleaner; Behind-the-curtain toggles for every automatic behaviour.</li>
 </ul>
+<h3>39. Skylanders portal &amp; figures <span class="newtag">New in V2.0</span></h3>
+<ul>
+<li><b>Portal of Power in the overlay</b> for PS3 Skylanders games: place, take off, clear, &ldquo;put my last team back&rdquo;; up to eight figures; the emulator's own portal window never shows. A real portal still works when plugged in.</li>
+<li><b>Figure collection</b> kept by AnyPS; each figure saves its own level, gold and upgrades like the real toy. Add character packs (.zip of .sky) from the Games folder without overwriting figures you have.</li>
+<li><b>Catalogue</b> of the six games: names, elements and portraits for characters, items, traps, vehicles and creation crystals, plus 245 hats.</li>
+<li><b>Create a figure</b> from the catalogue; <b>figure editor</b> for level, gold, hat, nickname and upgrade path, with the original kept and restorable.</li>
+<li><b>Skylanders figures</b> screen in AnyPS Settings for managing the collection with no game running.</li>
+</ul>
+<h3>40. Per-game volume &amp; online failsafe <span class="newtag">New in V2.0</span></h3>
+<ul>
+<li><b>Volume</b> row in the in-game overlay on every console, muted to 100% in 5% steps, remembered per game; other programs and Windows' volume are untouched.</li>
+<li><b>Online failsafe</b>: a PS3 game that crashes in its online code gets online switched off for that game only, with a plain-language card and one-press restart. Skylanders games start offline.</li>
+</ul>
 <h3>Controls at a glance</h3>
 <div class="tbl"><table><thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead><tbody><tr><td>Move</td><td>D-pad / left stick</td><td>Arrows / WASD</td></tr><tr><td>Choose</td><td>✕ / A</td><td>Enter</td></tr><tr><td>Back</td><td>○ / B</td><td>Esc</td></tr><tr><td>Game options</td><td>△ / Y</td><td>Tab</td></tr><tr><td>Sort / Continue</td><td>□ / X</td><td>F</td></tr><tr><td>Home menu (in game)</td><td>PS / Guide, or hold Share/View</td><td>Ctrl+Shift+Q</td></tr><tr><td>Quit game</td><td>hold Share/View + Options/Start</td><td>—</td></tr><tr><td>Close AnyPS</td><td>—</td><td>Alt+F4 (or ○/Esc on picker)</td></tr></tbody></table></div>
 <h3>Not yet</h3>
@@ -528,8 +541,44 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   </dialog>
 
   <dialog class="features" id="changelog" aria-labelledby="clTitle">
-    <div class="dhead"><h2 id="clTitle">What's new in V1.05</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="clTitle">What's new in V2.0</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
+<p>Everything new, changed and fixed since V1.05.1.</p>
+<h3>New Features</h3>
+<h4>Skylanders: the Portal of Power, inside AnyPS</h4>
+<ul>
+<li><b>A portal in the overlay.</b> In any PS3 Skylanders game, open the overlay and pick <b>Skylanders portal</b>: place a figure, take it off, clear the portal, or put your last team back in one press. No plastic needed, and the emulator's own windows never appear. Swap figures any time, even mid-level.</li>
+<li><b>Your figures keep their progress.</b> Each figure is its own file, and the game saves its level, gold and upgrades into it exactly like the real toy.</li>
+<li><b>A real Portal of Power still works</b> if you plug one in; this is for playing without it.</li>
+<li><b>Character packs</b>: drop a pack (.zip of .sky figures) in your Games folder and add it from the portal menu. Figures you already have are never overwritten.</li>
+<li><b>Names and portraits</b> for every character, item, trap and vehicle across the six games, shown as you browse and for whatever is on the portal.</li>
+<li><b>Create a figure</b>: any character in the catalogue, made brand new, no pack needed.</li>
+<li><b>Figure editor</b>: level, gold, hat (245 to choose from, with pictures), nickname and upgrade path. The untouched figure is kept beside the edited one, and &ldquo;Put the original figure back&rdquo; undoes everything.</li>
+<li><b>Skylanders figures</b> in AnyPS Settings: manage, create and edit your collection without starting a game.</li>
+</ul>
+<h4>Volume for each game</h4>
+<ul>
+<li><b>Volume in the overlay</b>, on every console: left and right to change it, from muted to 100%. It is remembered per game, so a loud game stays turned down, and nothing else on your PC is affected.</li>
+</ul>
+<h4>Online failsafe</h4>
+<ul>
+<li>Some PS3 games crash while trying to reach servers that were shut down years ago. When a game stops that way, AnyPS now switches online off for <b>that game only</b>, tells you in plain words, and offers to start it again. Skylanders games start offline from the first launch.</li>
+</ul>
+<h3>Improvements &amp; Changes</h3>
+<ul>
+<li>Menu rows that open something now show their current value beside the arrow (gold, hat, how many figures are in a folder).</li>
+<li>Pictures can appear beside a menu item's description.</li>
+<li>An install that updates itself from an older version fetches the Skylanders names and pictures the first time you ask for them.</li>
+<li>A 32-bit Windows edition is available for older PCs (PSP only).</li>
+</ul>
+<h3>Notes</h3>
+<ul>
+<li>The Skylanders features are for the PS3 games (through RPCS3). The PS4 versions and Disney Infinity are not covered yet.</li>
+<li>The portal and figure tools are new: tell us on Discord if a figure isn't accepted by a game.</li>
+<li>Figure catalogue and artwork references come from the open-source SkylanderTools project (MIT licence, credited in the download).</li>
+<li>PlayStation&nbsp;5 support is still &ldquo;coming soon&rdquo;. No games, BIOS, firmware or sign-ins are included in the release.</li>
+</ul>
+<details><summary><b>Earlier: what was new in V1.05 and V1.05.1</b></summary>
 <h3>V1.05.1 update</h3>
 <ul>
 <li><b>The in-game overlay answers straight away.</b> While a game was running, the controller was only being read a few times a second, so button presses went missing and the menu felt stuck. It is read 60 times a second again.</li>
@@ -563,6 +612,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <li>PlayStation&nbsp;5 support is still &ldquo;coming soon&rdquo;.</li>
 <li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the release.</li>
 </ul>
+</details>
 <details><summary><b>Earlier: what was new in V1.04</b></summary>
 <p>Everything new, changed and fixed since V1.03.</p>
 <h3>New Features</h3>
@@ -869,6 +919,8 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
     const dl = document.getElementById("dl");
     dl.href = a.downloadUrl; dl.removeAttribute("aria-disabled");
     dl.textContent = "Download AnyPS" + (a.version ? " V" + a.version : "");
+    dl.insertAdjacentHTML("afterbegin", '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="vertical-align:-4px;margin-right:.55em"><path d="M2 3h9.5v9.5H2zM12.5 3H22v9.5h-9.5zM2 13.5h9.5V23H2zM12.5 13.5H22V23h-9.5z" transform="scale(.92) translate(1 0)"/></svg>');
+    dl.setAttribute("aria-label", dl.textContent + " for Windows");
     document.getElementById("dlmeta").textContent = [a.date ? "Posted " + fmtDate(a.date) : "", a.sizeLabel, "Hosted on Google Drive"].filter(Boolean).join(" · ");
   }
   if (a.download32Url) {
