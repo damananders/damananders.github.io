@@ -8,7 +8,7 @@ window.SITE = {
   anyps: {
     version: "1.05.1",
     date: "2026-11-11",
-    downloadUrl: "https://drive.google.com/file/d/1Iz70eZ_8fQJ56GWuUZlDVe711DCgwCAV/view?usp=sharing",
+    downloadUrl: "https://drive.google.com/file/d/1MMoMYCjYH7DGZf5JfJ5rlremEIPUDxdA/view?usp=sharing",
     // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
     // compares "version" above with the installed one, and swaps itself. Any Google Drive share link works.
     // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
@@ -16,6 +16,7 @@ window.SITE = {
     sizeLabel: "240 MB",    // e.g. "903 MB"
     // Older releases, newest first. Add the outgoing build here when you publish a new one.
     oldBuilds: [
+      { version: "1.05", date: "2026-11-11", url: "https://drive.google.com/file/d/1Iz70eZ_8fQJ56GWuUZlDVe711DCgwCAV/view?usp=sharing" },
       { version: "1.04", date: "2026-11-10", url: "https://drive.google.com/file/d/1oeCnn8dW4SxLYS06BmRO3eHZlAhLptHq/view?usp=sharing" },
       { version: "1.03", date: "2026-11-09", url: "https://drive.google.com/file/d/1itBtMN1IkazBL4QoQWw6OjtXVeEyff9n/view?usp=sharing" },
       { version: "1.02", date: "2026-11-08", url: "https://drive.google.com/file/d/122nRFK2tS5vmbod39q3jqMwcT89RAVm_/view?usp=drive_link" },
