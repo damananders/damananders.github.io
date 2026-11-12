@@ -812,13 +812,19 @@
     if (Site.gamepad.connected()) hello();
   }, "controller");
 
-  /* ---- playful layer (trophies, secret codes, boot intro): loaded here so every page gets it without editing its HTML ---- */
+  /* ---- add-on layers, loaded here so every page gets them without editing its HTML ----
+     play     trophies, secret codes, boot intro      (features.play)
+     seasons  seasonal effects                         (features.seasons) */
   Site.ready(function () {
     var f = (Site.config && Site.config.features) || {};
-    if (f.play === false || window.__plLoaded || doc.querySelector('script[src*="/assets/play.js"]')) { doc.documentElement.classList.remove("pl-preboot"); return; }
-    var css = doc.createElement("link"); css.rel = "stylesheet"; css.href = "/assets/play.css?v=1"; doc.head.appendChild(css);
-    var js = doc.createElement("script"); js.src = "/assets/play.js?v=1"; js.async = true;
-    js.onerror = function () { doc.documentElement.classList.remove("pl-preboot"); };
-    doc.head.appendChild(js);
-  }, "play loader");
+    function load(name, v, flag, onFail) {
+      if (f[flag] === false || doc.querySelector('script[src*="/assets/' + name + '.js"]')) { if (onFail) onFail(); return; }
+      var css = doc.createElement("link"); css.rel = "stylesheet"; css.href = "/assets/" + name + ".css?v=" + v; doc.head.appendChild(css);
+      var js = doc.createElement("script"); js.src = "/assets/" + name + ".js?v=" + v; js.async = true;
+      if (onFail) js.onerror = onFail;
+      doc.head.appendChild(js);
+    }
+    load("play", 2, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("seasons", 1, "seasons");
+  }, "add-on loader");
 })();

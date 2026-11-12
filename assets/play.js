@@ -101,7 +101,6 @@
     if (seen.hub && seen.anderscraft && seen.anyps && seen.games && seen.resume) setTimeout(function () { award("explorer"); }, 2600);
     if (Site.page === "404") setTimeout(function () { award("lost"); }, 1200);
     if (Site.page === "vault" || Site.page === "locker") setTimeout(function () { award("key"); }, 1200);
-    Site.on("pref:theme", function () { award("theme"); });
     Site.on("pref:soundscape", function (v) { if (v === true || (v && v.detail === true)) award("dj"); });
     Site.on("konami", function () { award("konami"); });
     Site.on("dialog:open", function (d) {
@@ -110,7 +109,8 @@
     });
     doc.addEventListener("click", function (e) {
       var t = e.target; if (!t || !t.closest) return;
-      if (t.closest(".ch-gear")) award("settings");
+      if (t.closest(".ch-theme")) award("theme");
+      else if (t.closest(".ch-gear")) award("settings");
       else if (t.closest(".ch-share")) award("share");
       else if (t.closest(".rz-card__head")) award("card");
     });
