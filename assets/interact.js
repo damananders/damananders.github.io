@@ -485,6 +485,7 @@
     function party() {
       if (running) return;
       running = true;
+      Site.emit("konami");
       Site.toast("Cheat activated. Enjoy the confetti.", { type: "ok", ms: 4200 });
       Site.sfx("success");
       if (Site.reducedMotion) { setTimeout(function () { running = false; }, 2000); return; }   /* toast only */
@@ -810,4 +811,14 @@
     Site.on("gamepad:connected", hello);
     if (Site.gamepad.connected()) hello();
   }, "controller");
+
+  /* ---- playful layer (trophies, secret codes, boot intro): loaded here so every page gets it without editing its HTML ---- */
+  Site.ready(function () {
+    var f = (Site.config && Site.config.features) || {};
+    if (f.play === false || window.__plLoaded || doc.querySelector('script[src*="/assets/play.js"]')) { doc.documentElement.classList.remove("pl-preboot"); return; }
+    var css = doc.createElement("link"); css.rel = "stylesheet"; css.href = "/assets/play.css?v=1"; doc.head.appendChild(css);
+    var js = doc.createElement("script"); js.src = "/assets/play.js?v=1"; js.async = true;
+    js.onerror = function () { doc.documentElement.classList.remove("pl-preboot"); };
+    doc.head.appendChild(js);
+  }, "play loader");
 })();

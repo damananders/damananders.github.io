@@ -263,6 +263,7 @@
       clearTimeout(closeTimer); clearTimeout(driftTimer); clearTimeout(checkTimer);
       if (parts) { parts.stop(); parts = null; }
       if (master) { try { master.disconnect(); } catch (e) {} master = null; }
+      ana = null;
       if (ctx) { var c = ctx; ctx = null; c.onstatechange = null; try { c.close(); } catch (e) {} }
       fade = { from: 0, to: 0, t0: 0, t1: 0 };
     }
@@ -275,6 +276,7 @@
           ctx = new AC({ latencyHint: "playback" });
           master = ctx.createGain(); master.gain.value = 0;
           var lim = limiter(ctx); master.connect(lim); lim.connect(ctx.destination);
+          try { ana = ctx.createAnalyser(); ana.fftSize = 256; ana.smoothingTimeConstant = 0.86; master.connect(ana); anaBuf = new Uint8Array(ana.fftSize); } catch (e2) { ana = null; }
           parts = build(ctx, master);
           ctx.onstatechange = paint;
         } catch (e) { console.error("[site] soundscape", e); teardown(); return; }
@@ -298,6 +300,22 @@
       }, FADE * 1000 + 120);
     }
 
+    /* Sound-reactive accent (idea #49): while the soundscape plays, its loudness drives --sx-pulse (0..1) on
+       <html>, which hub.css turns into a soft swell of the accent glow. Skipped when motion is reduced. */
+    var ana = null, anaBuf = null, pulseRaf = 0, pulseV = 0;
+    function pulse() {
+      pulseRaf = 0;
+      var rootEl = document.documentElement;
+      if (!ana || !ctx || ctx.state !== "running" || !want() || document.hidden || Site.reducedMotion) { rootEl.style.removeProperty("--sx-pulse"); rootEl.removeAttribute("data-au-pulse"); return; }
+      ana.getByteTimeDomainData(anaBuf);
+      var sum = 0; for (var i = 0; i < anaBuf.length; i++) { var d = (anaBuf[i] - 128) / 128; sum += d * d; }
+      var rms = Math.sqrt(sum / anaBuf.length), v = Math.max(0, Math.min(1, rms * 9));
+      pulseV += (v - pulseV) * 0.12;
+      rootEl.style.setProperty("--sx-pulse", pulseV.toFixed(3)); rootEl.setAttribute("data-au-pulse", "");
+      pulseRaf = requestAnimationFrame(pulse);
+    }
+    function pulseKick() { if (!pulseRaf) pulseRaf = requestAnimationFrame(pulse); }
+
     function sync() {
       if (want() && !document.hidden) start();
       else stop(want());
@@ -315,6 +333,7 @@
       }
       if (live && s !== state && announced && s !== "armed") live.textContent = s === "on" ? "Soundscape playing" : "Soundscape off";
       state = s;
+      pulseKick();
     }
 
     var tools = Site.tools();
