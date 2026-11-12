@@ -154,3 +154,12 @@
 .hb-rate__cta{flex:none;font:600 1rem var(--sx-display);color:var(--anyps)}
 :root[data-theme="light"] .hb-rate{background:var(--sx-surface)}
 @media (max-width:520px){.hb-rate__cta{display:none}}
+
+/* ---- "Want to work with me?" footer link (opens the contact gate) ---- */
+.hb-hire-row{margin:26px 0 2px;text-align:center}
+.hb-hire{display:inline-flex;align-items:center;gap:10px;font:600 1rem var(--sx-display);color:var(--sx-text);text-decoration:none;
+  padding:11px 20px;border:1px solid var(--sx-line-2);border-radius:999px;background:var(--sx-glass);backdrop-filter:blur(8px);
+  transition:transform .18s,border-color .18s,color .18s,box-shadow .18s}
+.hb-hire:hover,.hb-hire:focus-visible{transform:translateY(-2px);color:var(--sx-accent);border-color:var(--sx-accent);box-shadow:0 16px 40px -24px var(--sx-accent);outline:none}
+.hb-hire__dot{width:9px;height:9px;border-radius:50%;background:var(--sx-ok);box-shadow:0 0 0 0 var(--sx-ok)}
+:root:not([data-motion="reduce"]) .hb-hire__dot{animation:sx-ping 2.4s infinite}

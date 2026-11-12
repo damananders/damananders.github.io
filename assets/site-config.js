@@ -57,6 +57,18 @@ window.SITE_EXTRA = {
     ],
   },
 
+  /* ---- Resume / "work with me" ----
+     The footer link on the landing page opens a "Send Your Contact Info?" box, then takes visitors to /resume/.
+     contactEndpoint: where the optional name/email/phone are sent. A Formspree form works out of the box
+       (https://formspree.io/f/XXXX). Blank = the box still works but nothing is sent (visitors just head in).
+     linkedin / github: shown as links on the resume. pdfUrl: a downloadable copy of the resume; blank = hidden. */
+  resume: {
+    contactEndpoint: "https://formspree.io/f/xdavyjdd",
+    linkedin: "https://www.linkedin.com/in/anders-keal-130265216",
+    github: "https://github.com/damananders",
+    pdfUrl: "",
+  },
+
   /* ---- Analytics (privacy friendly, no cookies). Your GoatCounter site code, e.g. "damananders". Blank = off. ---- */
   analytics: { goatcounter: "" },
 
