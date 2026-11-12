@@ -36,7 +36,9 @@
     moon: '<path d="M20.2 13.6A8.4 8.4 0 1 1 10.4 3.8a7 7 0 0 0 9.8 9.8Z"/>',
     gear: '<path d="M9.8 5L10.1 2.6L13.9 2.6L14.2 5L15.4 5.5L17.3 4L20 6.7L18.5 8.6L19 9.8L21.4 10.1L21.4 13.9L19 14.2L18.5 15.4L20 17.3L17.3 20L15.4 18.5L14.2 19L13.9 21.4L10.1 21.4L9.8 19L8.6 18.5L6.7 20L4 17.3L5.5 15.4L5 14.2L2.6 13.9L2.6 10.1L5 9.8L5.5 8.6L4 6.7L6.7 4L8.6 5.5Z"/><circle cx="12" cy="12" r="3"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
-    up: '<path d="M12 19V5.5M5.5 12 12 5.5l6.5 6.5"/>'
+    up: '<path d="M12 19V5.5M5.5 12 12 5.5l6.5 6.5"/>',
+    share: '<circle cx="6" cy="12" r="2.4"/><circle cx="17.5" cy="5.5" r="2.4"/><circle cx="17.5" cy="18.5" r="2.4"/><path d="M8.2 10.9 15.3 6.6M8.2 13.1l7.1 4.3"/>',
+    star: '<path d="M12 3.5l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.8l6-.8z"/>'
   };
 
   /* Change the theme with a short cross-fade where the browser supports view transitions; instantly otherwise. */
@@ -427,4 +429,67 @@
     if ("MutationObserver" in window) { new MutationObserver(watchToasts).observe(document.body, { childList: true }); watchToasts(); }
     update();
   }, "chrome:top");
+
+  /* ====================================================================================================
+   * Scroll progress bar (idea #6) — a thin accent line at the very top that fills as you scroll.
+   * ==================================================================================================== */
+  Site.ready(function () {
+    if (!feat("scrollProgress") || !document.body) return;
+    var bar = el("div", { class: "ch-progress", "aria-hidden": "true" }, el("i"));
+    document.body.appendChild(bar);
+    var fill = bar.firstChild, raf = 0;
+    function paint() {
+      raf = 0;
+      var d = document.documentElement, max = (d.scrollHeight - window.innerHeight);
+      var p = max > 0 ? Math.min(1, Math.max(0, scrollY() / max)) : 0;
+      fill.style.transform = "scaleX(" + p.toFixed(4) + ")";
+      bar.classList.toggle("ch-progress--on", max > 40);
+    }
+    function onScroll() { if (!raf) raf = requestAnimationFrame(paint); }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    paint();
+  }, "chrome:progress");
+
+  /* ====================================================================================================
+   * Share button (idea #70) — a tool-rail icon that uses the native share sheet, or copies the link.
+   * ==================================================================================================== */
+  Site.ready(function () {
+    if (!feat("shareButton")) return;
+    var tools = Site.tools(); if (!tools) return;
+    var btn = el("button", { type: "button", class: "sx-iconbtn ch-share", style: { order: "5" }, "aria-label": "Share this page", title: "Share this page" }, svg(ICON.share));
+    btn.addEventListener("click", function () {
+      sfx("nav");
+      var url = location.href, title = document.title || "Anders";
+      if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+      if (Site.copy) Site.copy(url, "Link copied to clipboard");
+    });
+    tools.appendChild(btn);
+  }, "chrome:share");
+
+  /* ====================================================================================================
+   * Footer stamp (ideas #79 + #75) — "Last updated <date>" from the repo's latest commit, plus a
+   * quiet "Star on GitHub" link. Degrades to just the star link if the commit date can't be fetched.
+   * ==================================================================================================== */
+  Site.ready(function () {
+    if (!feat("lastUpdated")) return;
+    var foot = document.querySelector("footer"); if (!foot) return;
+    var repo = "damananders/damananders.github.io";
+    var stamp = el("p", { class: "ch-stamp" });
+    var star = el("a", { class: "ch-stamp__star", href: "https://github.com/" + repo, target: "_blank", rel: "noopener" }, svg(ICON.star, { width: 14, height: 14 }), "Star on GitHub");
+    foot.appendChild(stamp);
+    function render(dateStr) {
+      stamp.textContent = "";
+      if (dateStr) stamp.appendChild(el("span", { class: "ch-stamp__when", text: "Last updated " + dateStr }));
+      if (dateStr) stamp.appendChild(document.createTextNode("  ·  "));
+      stamp.appendChild(star);
+    }
+    render("");
+    if (Site.fetchJSON) Site.fetchJSON("https://api.github.com/repos/" + repo + "/commits?per_page=1", { ttl: 3600, timeout: 6000 }).then(function (j) {
+      try {
+        var iso = j && j[0] && j[0].commit && (j[0].commit.author || j[0].commit.committer || {}).date;
+        if (iso) render(Site.fmtDate ? Site.fmtDate(iso.slice(0, 10)) : iso.slice(0, 10));
+      } catch (e) {}
+    }).catch(function () {});
+  }, "chrome:stamp");
 })();
