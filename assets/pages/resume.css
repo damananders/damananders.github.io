@@ -1,0 +1,83 @@
+/* resume.css — the interactive résumé at /resume/ (prefix rz-). Core tokens come from fx.css. */
+
+.rz-hero{padding:14px 0 10px;max-width:760px}
+.rz-role{font:600 1.05rem var(--sx-display);color:var(--sx-accent);margin:10px 0 0;letter-spacing:.01em}
+.rz-pitch{color:var(--sx-muted);font-size:1.08rem;line-height:1.6;margin:14px 0 0;max-width:640px}
+.rz-chips{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 0}
+.rz-cta{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 0}
+
+.rz-btn{display:inline-flex;align-items:center;gap:8px;font:600 1rem var(--sx-display);text-decoration:none;cursor:pointer;
+  color:var(--sx-text);background:var(--sx-glass);border:1px solid var(--sx-line-2);border-radius:12px;padding:12px 20px;
+  transition:transform .15s,border-color .15s,color .15s,background .15s}
+.rz-btn:hover{transform:translateY(-2px);border-color:var(--sx-accent);color:var(--sx-accent)}
+.rz-btn--primary{background:var(--sx-accent);color:var(--sx-on-accent);border-color:transparent}
+.rz-btn--primary:hover{color:var(--sx-on-accent);background:color-mix(in srgb,var(--sx-accent) 88%,#fff)}
+
+/* ---- sections ---- */
+.rz-sec{margin:52px 0 0}
+.rz-h{font:700 1.5rem var(--sx-display);margin:0 0 20px;display:inline-flex;align-items:center;gap:12px}
+.rz-h::after{content:"";height:1px;width:46px;background:linear-gradient(90deg,var(--sx-accent),transparent)}
+.rz-lead{color:var(--sx-muted);font-size:1.04rem;line-height:1.6;margin:-6px 0 22px;max-width:640px}
+
+/* ---- impact stats ---- */
+.rz-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.rz-stat{background:var(--sx-glass);border:1px solid var(--sx-line);border-radius:16px;padding:20px 18px;backdrop-filter:blur(8px)}
+.rz-stat strong{display:block;font:700 2.3rem/1 var(--sx-display);color:var(--sx-accent);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.rz-stat span{display:block;margin-top:7px;color:var(--sx-muted);font-size:.92rem;line-height:1.35}
+
+/* ---- experience timeline ---- */
+.rz-timeline{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.rz-job{display:grid;grid-template-columns:170px minmax(0,1fr);gap:20px;background:var(--sx-glass);border:1px solid var(--sx-line);border-radius:16px;padding:22px 24px;backdrop-filter:blur(8px)}
+.rz-job__when{font:500 .82rem var(--sx-mono);letter-spacing:.04em;color:var(--sx-accent);padding-top:4px}
+.rz-job__body h3{font:700 1.2rem var(--sx-display);margin:0}
+.rz-job__org{color:var(--sx-muted);font-size:.95rem;margin:4px 0 12px}
+.rz-job__body ul{margin:0;padding-left:18px;display:grid;gap:7px}
+.rz-job__body li{color:var(--sx-text);line-height:1.5}
+.rz-job__body li::marker{color:var(--sx-accent)}
+@media (max-width:620px){.rz-job{grid-template-columns:1fr;gap:6px}.rz-job__when{padding-top:0}}
+
+/* ---- project cards ---- */
+.rz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.rz-card{background:var(--sx-glass);border:1px solid var(--sx-line);border-radius:16px;overflow:hidden;backdrop-filter:blur(8px);transition:border-color .18s,box-shadow .18s;align-self:start}
+.rz-card.is-open,.rz-card:hover{border-color:color-mix(in srgb,var(--sx-accent) 55%,transparent)}
+.rz-card.is-open{box-shadow:0 20px 50px -30px var(--sx-accent)}
+.rz-card__head{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;width:100%;padding:18px 20px;cursor:pointer}
+.rz-card__head:focus-visible{outline:2px solid var(--sx-accent);outline-offset:-3px;border-radius:14px}
+.rz-card__tag{grid-column:1/-1;font:600 .68rem/1 var(--sx-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--sx-accent))}
+.rz-card__title{font:700 1.12rem var(--sx-display);color:var(--sx-text);line-height:1.25}
+.rz-card__chev{width:11px;height:11px;border-right:2px solid var(--sx-muted);border-bottom:2px solid var(--sx-muted);transform:rotate(45deg);transition:transform .2s;margin-right:4px}
+.rz-card.is-open .rz-card__chev{transform:rotate(-135deg)}
+.rz-card__body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--sx-ease)}
+.rz-card.is-open .rz-card__body{grid-template-rows:1fr}
+:root[data-motion="reduce"] .rz-card__body{transition:none}
+.rz-card__inner{overflow:hidden;min-height:0}
+.rz-card__body p{margin:0 20px;color:var(--sx-muted);line-height:1.6}
+.rz-card__inner>p:first-child{padding-top:2px}
+.rz-card__skills{margin-top:12px !important;font:500 .84rem var(--sx-mono) !important;color:var(--sx-text) !important;opacity:.78}
+.rz-card__link{display:inline-block;margin:14px 20px 20px;font:600 .95rem var(--sx-display);color:var(--sx-accent);text-decoration:none}
+.rz-card__link:hover{text-decoration:underline}
+
+/* ---- skills ---- */
+.rz-skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.rz-skillset{background:var(--sx-glass);border:1px solid var(--sx-line);border-radius:16px;padding:20px;backdrop-filter:blur(8px)}
+.rz-skillset h3{font:700 1.02rem var(--sx-display);margin:0 0 12px;color:var(--sx-accent)}
+.rz-skillset ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.rz-skillset li{position:relative;padding-left:20px;color:var(--sx-text);line-height:1.45;font-size:.96rem}
+.rz-skillset li::before{content:"";position:absolute;left:2px;top:.52em;width:7px;height:7px;border-radius:2px;background:var(--sx-accent);transform:rotate(45deg)}
+
+/* ---- credentials ---- */
+.rz-cred{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.rz-cred__col{background:var(--sx-glass);border:1px solid var(--sx-line);border-radius:16px;padding:20px;backdrop-filter:blur(8px)}
+.rz-cred__col h3{font:700 1.02rem var(--sx-display);margin:0 0 12px;color:var(--sx-accent)}
+.rz-cred__line{margin:0;line-height:1.5}
+.rz-cred__sub{margin:8px 0 0;color:var(--sx-muted);font-size:.9rem;line-height:1.5}
+.rz-pill-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.rz-pill{font:500 .9rem var(--sx-body);color:var(--sx-text);background:var(--sx-surface-2);border:1px solid var(--sx-line-2);border-radius:999px;padding:7px 13px}
+
+/* ---- contact ---- */
+.rz-contact{margin:56px 0 0;text-align:center;background:var(--sx-glass);border:1px solid var(--sx-line-2);border-radius:22px;padding:40px 28px;backdrop-filter:blur(10px)}
+.rz-contact h2{font:700 1.7rem var(--sx-display);margin:0}
+.rz-contact p{color:var(--sx-muted);font-size:1.05rem;margin:12px auto 0;max-width:440px;line-height:1.55}
+.rz-contact__cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:24px 0 0}
+
+@media (max-width:560px){.rz-hero h1{font-size:2.3rem}.rz-stat strong{font-size:2rem}}

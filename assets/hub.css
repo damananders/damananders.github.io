@@ -110,3 +110,25 @@ dialog.features td{color:var(--muted)}
 .oldbuilds li a:hover{background:var(--panel-2);color:var(--accent)}
 dialog.features h4{margin:16px 0 4px;font-family:var(--display);color:var(--text)}
 .newtag{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;margin-left:6px;padding:2px 7px;border-radius:999px;border:1px solid var(--accent);color:var(--accent)}
+
+/* ==== Contact gate dialog (assets/hire.js; used on the hub footer link and the resume page) ==== */
+.hg-modal{max-width:440px}
+.hg-form{display:block}
+.hg-sub{margin:0 0 16px;color:var(--sx-muted);font-size:.96rem;line-height:1.5}
+.hg-fields{display:grid;gap:12px}
+.hg-field{display:grid;gap:6px}
+.hg-field__label{font:600 .74rem/1 var(--sx-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sx-muted)}
+.hg-input{font:500 1rem var(--sx-body);color:var(--sx-text);background:var(--sx-surface-2);border:1px solid var(--sx-line-2);border-radius:11px;padding:11px 13px;width:100%;box-sizing:border-box;transition:border-color .15s}
+.hg-input:focus-visible{outline:none;border-color:var(--sx-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--sx-accent) 22%,transparent)}
+.hg-honey{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.hg-actions{display:flex;gap:12px;margin-top:20px}
+.hg-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 1rem var(--sx-display);letter-spacing:.01em;
+  border-radius:12px;padding:13px 14px;cursor:pointer;border:1px solid transparent;transition:transform .15s,background .15s,border-color .15s,opacity .15s}
+.hg-btn:hover{transform:translateY(-1px)}
+.hg-btn:disabled{opacity:.6;cursor:wait;transform:none}
+.hg-btn--skip{background:var(--sx-surface-2);color:var(--sx-text);border-color:var(--sx-line-2)}
+.hg-btn--skip:hover{border-color:var(--sx-muted)}
+.hg-btn--send{background:var(--sx-info);color:#fff}
+.hg-btn--send:hover{background:color-mix(in srgb,var(--sx-info) 86%,#fff)}
+.hg-btn__i{flex:none}
+@media (max-width:420px){.hg-actions{flex-direction:column-reverse}}
