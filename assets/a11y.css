@@ -1,0 +1,44 @@
+/* a11y.css — styles for assets/a11y.js. Prefix ax-. */
+
+/* text size: the site is sized in rem, so the root size scales everything */
+html[data-text="large"]{font-size:112.5%}
+html[data-text="larger"]{font-size:125%}
+
+/* dyslexia-friendly font (downloaded only when a rule that uses it applies) */
+@font-face{font-family:"OpenDyslexic";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/opendyslexic-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"OpenDyslexic";font-style:normal;font-weight:700;font-display:swap;src:url("/assets/fonts/opendyslexic-latin-700-normal.woff2") format("woff2")}
+html[data-font="dyslexic"][data-font]{--display:"OpenDyslexic",system-ui,sans-serif;--body:"OpenDyslexic",system-ui,sans-serif;
+  --sx-display:"OpenDyslexic",system-ui,sans-serif;--sx-body:"OpenDyslexic",system-ui,sans-serif}
+html[data-font="dyslexic"] body,html[data-font="dyslexic"] :is(h1,h2,h3,h4,p,li,a,button,input,textarea,select,label,summary,span,strong,b){font-family:"OpenDyslexic",system-ui,sans-serif!important;letter-spacing:-.02em!important;word-spacing:-.18em}
+html[data-font="dyslexic"] :is(code,kbd,pre,time){font-family:ui-monospace,monospace!important}
+html[data-font="dyslexic"] body{line-height:1.75}
+html[data-font="dyslexic"] h1{font-size:clamp(1.8rem,4.6vw,2.8rem);line-height:1.3}
+
+/* high contrast */
+html[data-contrast="more"]{--muted:#dfe4ea;--sx-muted:#dfe4ea;--text:#fff;--sx-text:#fff;--line:rgba(255,255,255,.34);--line-2:rgba(255,255,255,.6);
+  --sx-line:rgba(255,255,255,.34);--sx-line-2:rgba(255,255,255,.6);--sx-glass:rgba(6,8,10,.96);
+  --sx-photo-overlay:linear-gradient(180deg,rgba(4,5,7,.93),rgba(4,5,7,.90) 40%,rgba(4,5,7,.97))}
+html[data-contrast="more"][data-theme="light"]{--muted:#22282f;--sx-muted:#22282f;--text:#000;--sx-text:#000;--line:rgba(0,0,0,.4);--line-2:rgba(0,0,0,.7);
+  --sx-line:rgba(0,0,0,.4);--sx-line-2:rgba(0,0,0,.7);--sx-glass:rgba(255,255,255,.97);
+  --sx-photo-overlay:linear-gradient(180deg,rgba(255,255,255,.93),rgba(255,255,255,.90) 40%,rgba(255,255,255,.97))}
+html[data-contrast="more"] body.photo{background-image:var(--sx-photo-overlay),var(--bg)}
+html[data-contrast="more"] :is(.avenue,.panel,.game,.feat li,.rz-card,.rz-stat,.pg-tile,.pg-log__row){background:var(--sx-glass)!important;backdrop-filter:none!important;border-color:var(--sx-line-2)!important}
+html[data-contrast="more"] :is(p,li) a:not(.btn):not(.social):not(.rz-btn){text-decoration:underline;text-underline-offset:3px}
+html[data-contrast="more"] :is(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline-width:3px!important;outline-offset:3px}
+html[data-contrast="more"] .sn-layer,html[data-contrast="more"] .ix-ring{opacity:.5}
+html[data-contrast="more"] *{text-shadow:none!important}
+@media (prefers-contrast:more){:root{--muted:#dfe4ea;--sx-muted:#dfe4ea}:root[data-theme="light"]{--muted:#22282f;--sx-muted:#22282f}}
+
+/* lite mode: no photo, no video, no moving backdrop */
+html[data-lite] body,html[data-lite] body.photo{background-image:none!important}
+html[data-lite] :is(.hx-scene,.nf-sky,.sn-layer,.hx-particles){display:none!important}
+html[data-lite] video{display:none}
+html[data-lite] video[poster]{display:block}
+@media (prefers-reduced-data:reduce){body,body.photo{background-image:none!important}.hx-scene,.sn-layer{display:none!important}}
+
+/* keyboard map */
+.ax-keys{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ax-key{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:14px;align-items:center}
+.ax-key kbd{justify-self:start;font:500 .8rem var(--sx-mono,monospace);padding:5px 9px;border-radius:7px;border:1px solid var(--sx-line-2);background:var(--sx-surface-2,#151a20);white-space:nowrap}
+.ax-key span{color:var(--sx-muted)}
+.gm-card:focus-visible{outline:2px solid var(--sx-accent);outline-offset:3px}
