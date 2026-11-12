@@ -85,3 +85,38 @@
 .rz-role{min-height:1.5em}
 .rz-caret{display:inline-block;width:2px;height:1em;margin-left:3px;vertical-align:-.12em;background:currentColor;animation:rz-blink 1s steps(1) infinite}
 @keyframes rz-blink{50%{opacity:0}}
+
+/* ---- skill filter ---- */
+.rz-filter__chips{display:flex;flex-wrap:wrap;gap:8px}
+.rz-fchip{all:unset;box-sizing:border-box;cursor:pointer;font:500 .84rem var(--sx-mono);padding:8px 14px;border-radius:999px;border:1px solid var(--sx-line-2);
+  color:var(--sx-muted);background:var(--sx-glass);transition:color .15s,border-color .15s,background .15s}
+.rz-fchip:hover{color:var(--sx-text);border-color:var(--sx-accent)}
+.rz-fchip:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
+.rz-fchip[aria-pressed="true"]{background:var(--sx-accent);border-color:transparent;color:var(--sx-on-accent)}
+.rz-filter__out{margin:12px 0 0;min-height:1.5em;font-size:.9rem;color:var(--sx-muted)}
+[data-skills]{transition:opacity .25s,box-shadow .25s,filter .25s}
+[data-skills].is-dim{opacity:.32;filter:saturate(.4)}
+[data-skills].is-hit{box-shadow:0 0 0 2px var(--sx-accent),0 18px 44px -22px var(--sx-accent);border-radius:14px}
+.rz-job.is-hit{padding:10px 12px;margin-left:-12px}
+
+/* ---- reviews & booking ---- */
+.rz-edge__box{max-width:680px;padding:22px 24px;border-radius:16px;background:var(--sx-glass);border:1px solid var(--sx-line-2);backdrop-filter:blur(8px)}
+.rz-edge__box p{margin:0 0 14px;color:var(--sx-muted)}
+.rz-edge__big{font:600 1.1rem var(--sx-display);color:var(--sx-text)!important}
+.rz-edge__big strong{font-size:2rem;color:var(--sx-accent);margin-right:6px}
+
+/* ---- recruiter mode: plain, tight, single column ---- */
+html.rz-plain body{background-image:none!important;background:var(--ink,#0b0d10)}
+html.rz-plain .wrap{max-width:820px}
+html.rz-plain .sn-layer,html.rz-plain .rz-chips,html.rz-plain .rz-filter,html.rz-plain .rz-card__chev,html.rz-plain .rz-lead,html.rz-plain .rz-caret{display:none!important}
+html.rz-plain .rz-hero{padding:24px 0 8px}
+html.rz-plain h1{font-size:2.4rem}
+html.rz-plain .rz-sec{margin-top:26px}
+html.rz-plain .rz-grid,html.rz-plain .rz-skills,html.rz-plain .rz-cred{display:block}
+html.rz-plain .rz-card,html.rz-plain .rz-skillset,html.rz-plain .rz-cred__col,html.rz-plain .rz-stat,html.rz-plain .rz-edge__box,html.rz-plain .rz-contact{background:none;border:0;box-shadow:none;backdrop-filter:none;padding:0;margin:0 0 14px;border-radius:0}
+html.rz-plain .rz-card__head{padding:0;cursor:default;pointer-events:none}
+html.rz-plain .rz-card__body{grid-template-rows:1fr}
+html.rz-plain .rz-card__inner{padding:4px 0 0}
+html.rz-plain .rz-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 18px}
+html.rz-plain .rz-stat strong{font-size:1.3rem}
+html.rz-plain [data-reveal]{opacity:1!important;transform:none!important;transition:none!important}
