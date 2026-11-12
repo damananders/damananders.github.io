@@ -275,7 +275,7 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-row--range > .ch-row__val{padding-right:3px}
 
 /* choice: a segmented row of buttons, aria-pressed marks the current one */
-.ch-seg{grid-column:1/-1;display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
+.ch-seg{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:12px;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
 .ch-seg__btn{all:unset;box-sizing:border-box;flex:1 1 auto;display:grid;place-items:center;min-height:36px;padding:4px 10px;border-radius:9px;cursor:pointer;
   font:600 .86rem/1.15 var(--sx-body);text-align:center;color:var(--sx-muted);transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent}
 .ch-panel .ch-seg__btn:hover{color:var(--sx-text);background:none;transform:none}

@@ -47,18 +47,40 @@
   function pref(name) { return store.get(name, PREFS[name]); }
   function reduced() { var m = pref("motion"); return m === "off" || (m !== "on" && mqReduce.matches); }
   function themeNow() { var t = pref("theme"); if (t === "auto") t = mqLight.matches ? "light" : "dark"; return t === "light" ? "light" : "dark"; }
+  /* "Follow the sun": light between an estimated local sunrise and sunset, dark otherwise. No location is asked for;
+     day length comes from the date and an assumed latitude (site-config sun.latitude, default 40). The result is
+     stored as a plain "light"/"dark" theme so each page's first-paint script needs no change. */
+  function sunTheme() {
+    var d = new Date(), n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5), rad = Math.PI / 180;
+    var lat = parseFloat(cfg.sun && cfg.sun.latitude); if (!isFinite(lat)) lat = 40;
+    var decl = -23.44 * Math.cos(2 * Math.PI * (n + 10) / 365), x = -Math.tan(lat * rad) * Math.tan(decl * rad);
+    var half = Math.acos(Math.max(-1, Math.min(1, x))) / rad / 15;                     /* half the day length, in hours */
+    var jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset(), jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
+    var noon = 12 + (d.getTimezoneOffset() < Math.max(jan, jul) ? 1 : 0);              /* an hour later on summer time */
+    var h = d.getHours() + d.getMinutes() / 60;
+    if (dbg.hour != null && isFinite(parseFloat(dbg.hour))) h = parseFloat(dbg.hour);
+    return h >= noon - half && h < noon + half ? "light" : "dark";
+  }
+  function sunTick() {
+    if (store.get("themeSun", false) !== true) return;
+    var t = sunTheme();
+    if (store.get("theme", "dark") !== t) { store.set("theme", t); applyTheme(); emit("pref:theme", t); }
+  }
   function applyTheme() {
     var t = themeNow(); root.setAttribute("data-theme", t);
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", t === "light" ? "#f3f1ec" : "#07090b");
   }
   function applyMotion() { if (reduced()) root.setAttribute("data-motion", "reduce"); else root.removeAttribute("data-motion"); }
   function setPref(name, value) {
+    if (name === "theme") { var sun = value === "sun"; store.set("themeSun", sun); if (sun) value = sunTheme(); }
     store.set(name, value);
     if (name === "theme") applyTheme();
     if (name === "motion") applyMotion();
     emit("pref:" + name, value); emit("pref", { name: name, value: value });
   }
-  applyTheme(); applyMotion();
+  sunTick(); applyTheme(); applyMotion();
+  setInterval(sunTick, 5 * 60 * 1000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) sunTick(); });
   function mqListen(mq, fn) { if (mq.addEventListener) mq.addEventListener("change", fn); else if (mq.addListener) mq.addListener(fn); }
   mqListen(mqReduce, function () { applyMotion(); emit("pref:motion", pref("motion")); });
   mqListen(mqLight, function () { if (pref("theme") === "auto") { applyTheme(); emit("pref:theme", "auto"); } });

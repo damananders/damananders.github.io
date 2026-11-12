@@ -199,7 +199,9 @@
 
     Site.settings.register({
       id: "theme", label: "Theme", type: "choice", pref: "theme", order: 10,
-      choices: [{ value: "dark", label: "Dark" }, { value: "light", label: "Light" }, { value: "auto", label: "Match device" }],
+      choices: [{ value: "dark", label: "Dark" }, { value: "light", label: "Light" }, { value: "auto", label: "Match device" }, { value: "sun", label: "Follow the sun" }],
+      hint: function () { return Site.store.get("themeSun", false) === true ? "Light from sunrise to sunset where you are, dark at night." : ""; },
+      get: function () { return Site.store.get("themeSun", false) === true ? "sun" : Site.pref("theme"); },
       set: function (v) { switchTheme(function () { Site.setPref("theme", v); }); }
     });
     /* Stored as motion "off" (reduced) or "auto" (follow the device). When the device itself asks for less motion
