@@ -64,7 +64,7 @@ window.SITE_EXTRA = {
      linkedin / github: shown as links on the resume. pdfUrl: a downloadable copy of the resume; blank = hidden. */
   resume: {
     contactEndpoint: "https://formspree.io/f/xdavyjdd",
-    linkedin: "https://www.linkedin.com/in/anders-keal-130265216",
+    linkedin: "",   // removed from the page at the owner's request
     github: "https://github.com/damananders",
     pdfUrl: "",
   },
