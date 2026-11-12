@@ -824,7 +824,7 @@
       if (onFail) js.onerror = onFail;
       doc.head.appendChild(js);
     }
-    load("play", 2, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 3, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
     load("seasons", 1, "seasons");
   }, "add-on loader");
 })();

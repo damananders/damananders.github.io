@@ -1,6 +1,10 @@
 {
-  "_help": "Site-wide news. Newest first is not required (the site sorts by date). tag is one of: site, anyps, anderscraft, vault. url is optional and may be a path on this site. Leave date as \"\" for an undated note.",
+  "_help": "Site-wide news. Newest first is not required (the site sorts by date). tag is one of: site, anyps, anderscraft, games, vault. url is optional and may be a path on this site. Leave date as \"\" for an undated note.",
   "items": [
+    { "date": "2026-11-12", "tag": "site", "title": "Seasons, trophies and secrets", "body": "The site now dresses for the season, hands out trophies for exploring, and reacts to a few words if you just type them.", "url": "/" },
+    { "date": "2026-11-12", "tag": "site", "title": "New pages: What's new, Uses and Stream", "body": "A full changelog, a page about the tools behind the projects, and a stream page that shows the player only while a broadcast is live.", "url": "/changelog/" },
+    { "date": "2026-11-12", "tag": "site", "title": "An interactive résumé", "body": "Work history, projects and skills in one place, reached from the bottom of the hub.", "url": "/resume/" },
+    { "date": "2026-11-12", "tag": "games", "title": "Rate-O-Pedia Forums opened", "body": "Search thousands of PlayStation games and rate them from 0 to 5. Discord members can vote and review.", "url": "/games/" },
     { "date": "2026-11-11", "tag": "site", "title": "The hub got a big refresh", "body": "Live status chips, a theme switch, controller navigation, a news ticker and a lot of polish across every page.", "url": "/" },
     { "date": "2026-11-11", "tag": "anyps", "title": "AnyPS V1.05.1 is out", "body": "A snappier in-game overlay, PS3 memory tools fixed, and a saved-values list with stay-on mods.", "url": "/anyps/" },
     { "date": "2026-11-11", "tag": "anyps", "title": "AnyPS now has a 32-bit Windows edition", "body": "A small PSP-only build for older 32-bit PCs.", "url": "/anyps/" },

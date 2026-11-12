@@ -134,7 +134,7 @@
    * Items 10 and 58: latest-update ticker and the "All updates" dialog.
    * ==================================================================================================== */
   var VAULT_WORDS = /personal vault|my vault|the vault/i;   /* not "save vault", which is an AnyPS feature */
-  var TAGS = { site: "Site", anyps: "AnyPS", anderscraft: "AndersCraft", vault: "Vault" };
+  var TAGS = { site: "Site", anyps: "AnyPS", anderscraft: "AndersCraft", games: "Ratings", vault: "Vault" };
   function pill(tag) {
     var key = TAGS[tag] ? tag : "site";
     return el("span", { class: "hb-pill hb-pill--" + key }, el("i", { "aria-hidden": "true" }), TAGS[key]);

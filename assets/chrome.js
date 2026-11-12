@@ -479,6 +479,13 @@
     var repo = "damananders/damananders.github.io";
     var stamp = el("p", { class: "ch-stamp" });
     var star = el("a", { class: "ch-stamp__star", href: "https://github.com/" + repo, target: "_blank", rel: "noopener" }, svg(ICON.star, { width: 14, height: 14 }), "Star on GitHub");
+    var here = Site.page, links = el("p", { class: "ch-links" });
+    [["changelog", "/changelog/", "What's new"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
+      if (l[0] === here || (l[0] === "dash" && !Site.owner)) return;
+      if (links.firstChild) links.appendChild(document.createTextNode("  ·  "));
+      links.appendChild(el("a", { href: l[1], text: l[2] }));
+    });
+    if (links.firstChild && feat("footerLinks")) foot.appendChild(links);
     foot.appendChild(stamp);
     function render(dateStr) {
       stamp.textContent = "";

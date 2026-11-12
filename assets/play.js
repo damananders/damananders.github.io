@@ -36,6 +36,7 @@
     { id: "australia", name: "Down Under",        desc: "Turned the whole site upside down.", secret: true },
     { id: "codes",     name: "Codebreaker",       desc: "Discovered three different secret words.", secret: true },
     { id: "combo",     name: "Button Masher",     desc: "Pulled off the controller combo.", secret: true },
+    { id: "sailor",    name: "Old Salt",          desc: "Scored 300 or more in the game on the lost page.", secret: true },
     { id: "all",       name: "Completionist",     desc: "Earned every other trophy." }
   ];
   var CUP = '<path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.2a2.6 2.6 0 0 0 2.9 3.6M16 5.5h2.8a2.6 2.6 0 0 1-2.9 3.6M12 13v3.5M8.5 20h7M9.5 20c0-2 1-3.5 2.5-3.5s2.5 1.5 2.5 3.5"/>';

@@ -71,3 +71,15 @@
   .nf-actions .btn{flex:1 1 auto}
   .nf-actions .btn:first-child{flex-basis:100%}
 }
+
+/* ---- the little game (pages/404-game.js) ---- */
+.nf-game{margin-top:34px;max-width:580px;padding:14px;border-radius:16px;background:var(--sx-glass);border:1px solid var(--line-2);backdrop-filter:blur(8px)}
+.nf-game__head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 2px 10px}
+.nf-game__head h2{font:600 1.05rem var(--display);margin:0}
+.nf-game__nums{font:500 .82rem var(--mono);color:var(--muted)}
+.nf-game__score{color:var(--text)}
+.nf-game__frame{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.nf-game__cv{display:block;width:100%;height:auto;touch-action:none;outline:0}
+.nf-game__over{position:absolute;inset:0;display:grid;place-items:center;background:rgba(4,8,14,.5);transition:opacity .25s}
+.nf-game.is-on .nf-game__over{opacity:0;pointer-events:none}
+.nf-game__msg{margin:10px 2px 0;font-size:.9rem;color:var(--muted);min-height:1.5em}
