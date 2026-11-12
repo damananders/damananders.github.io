@@ -74,3 +74,26 @@
 .gm-toggle__i{font-weight:700;font-size:1.02em;line-height:1}
 .gm-toggle__i--x{color:#84b2ff}
 .gm-toggle__i--o{color:#f47882}
+
+/* Top voters: member profiles and badges (badge glyphs = the four face buttons in their PlayStation colours) */
+.gm-voters{display:grid;gap:8px;margin-top:22px}
+.gm-vlist{display:grid;gap:8px}
+.gm-voters:not(.gm-voters--all) .gm-vcard--more{display:none}
+.gm-vcard{border:1px solid var(--sx-line,rgba(255,255,255,.1));border-radius:14px;background:var(--sx-surface,rgba(255,255,255,.03))}
+.gm-vcard>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap}
+.gm-vcard>summary::-webkit-details-marker{display:none}
+.gm-vcard>summary:focus-visible{outline:2px solid var(--sx-accent,#3d8bff);outline-offset:2px;border-radius:12px}
+.gm-vrank{font:700 .8rem var(--sx-mono,"DM Mono",monospace);color:var(--sx-muted,#a8abb3);min-width:2.2em}
+.gm-vav{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;background:var(--sx-surface-2,rgba(255,255,255,.06))}
+.gm-vav--txt{display:grid;place-items:center;font:700 .95rem var(--sx-display,"Space Grotesk",sans-serif);color:var(--sx-text,#e8e8ea)}
+.gm-vname{font:600 1rem var(--sx-display,"Space Grotesk",sans-serif);color:var(--sx-text,#e8e8ea)}
+.gm-vcount{font-size:.85rem;color:var(--sx-muted,#a8abb3)}
+.gm-vbadges{margin-left:auto;display:flex;gap:4px}
+.gm-vb{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;border:1px solid currentColor;font-weight:700;font-size:.82rem;line-height:1}
+.gm-vb--tri{color:#8ce2ac}.gm-vb--cir{color:#f47882}.gm-vb--crs{color:#84b2ff}.gm-vb--sqr{color:#ec8ac8}
+.gm-vprofile{padding:0 16px 14px 16px;display:grid;gap:10px}
+.gm-vprofile dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;font-size:.88rem}
+.gm-vprofile dt{color:var(--sx-muted,#a8abb3)}.gm-vprofile dd{margin:0;color:var(--sx-text,#e8e8ea)}
+.gm-vblist{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.88rem;color:var(--sx-muted,#a8abb3)}
+.gm-vblist li{display:flex;align-items:center;gap:8px}.gm-vblist b{color:var(--sx-text,#e8e8ea)}
+.gm-vmore{justify-self:start;font-size:.9rem;margin:0}

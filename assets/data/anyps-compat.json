@@ -1,0 +1,23 @@
+{
+  "_about": "The compatibility table on /anyps/ (assets/pages/anyps-plus.js, feature apCompat). systems = one row per console with its emulator's overall state. games = titles actually played through AnyPS; add a row whenever you try one. status is one of: great (plays start to finish, no fuss), playable (plays, with a minor hitch or a setting), issues (starts, but something big is wrong), nogo (doesn't run yet). note and fix are optional, plain text. Keep it honest: only list what has really been tested.",
+  "tested": "Statuses for individual games come from playing them through AnyPS on a desktop with a recent 12-core CPU, an RTX-class graphics card and 32 GB of RAM. The per-system rows summarise each emulator project's own public results.",
+  "systems": [
+    { "system": "PS1", "emu": "DuckStation", "status": "great", "note": "Close to the whole library runs, at higher resolutions than the original.", "list": "https://www.duckstation.org/" },
+    { "system": "PS2", "emu": "PCSX2", "status": "great", "note": "The large majority of games are playable start to finish.", "list": "https://pcsx2.net/compat" },
+    { "system": "PSP", "emu": "PPSSPP", "status": "great", "note": "Near-complete; most games run at several times native resolution.", "list": "https://report.ppsspp.org/games" },
+    { "system": "Vita", "emu": "Vita3K", "status": "issues", "note": "Varies a lot by game: some play well, many don't get past the start yet.", "list": "https://vita3k.org/compatibility" },
+    { "system": "PS3", "emu": "RPCS3", "status": "playable", "note": "Thousands of titles are playable; heavier games want a strong CPU.", "list": "https://rpcs3.net/compatibility" },
+    { "system": "PS4", "emu": "shadPS4", "status": "issues", "note": "Early days: a handful of games run, most don't get far yet. Game support is the limit, not your PC.", "list": "https://shadps4.net/" },
+    { "system": "PS5", "emu": "—", "status": "nogo", "note": "Not supported yet." }
+  ],
+  "games": [
+    { "title": "Crash Team Racing", "system": "PS1", "status": "great" },
+    { "title": "Bully", "system": "PS2", "status": "great" },
+    { "title": "Skylanders: Spyro's Adventure", "system": "PS3", "status": "great", "note": "The Portal of Power is built into the AnyPS overlay; no plastic portal needed." },
+    { "title": "Skylanders: Giants", "system": "PS3", "status": "great", "note": "Starts offline automatically: its online servers are gone and reaching for them crashed the game." },
+    { "title": "Skate 3", "system": "PS3", "status": "playable" },
+    { "title": "Folklore", "system": "PS3", "status": "playable", "note": "Use the default settings; the motion-control moments work from the right stick." },
+    { "title": "inFAMOUS Second Son", "system": "PS4", "status": "issues", "note": "The game runs, but most of the world doesn't draw yet (a current shadPS4 limit)." },
+    { "title": "The Order: 1886", "system": "PS4", "status": "nogo", "note": "Crashes during the opening scene: shadPS4 is missing a graphics feature it needs." }
+  ]
+}

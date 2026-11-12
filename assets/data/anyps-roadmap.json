@@ -6,30 +6,59 @@
       "id": "shipped",
       "title": "Just shipped",
       "items": [
-        { "title": "AnyPS V1.05.1", "note": "A snappy in-game overlay, Memory tools fixed on PS3, My saved values and mods that stay on." },
-        { "title": "32-bit Windows edition", "note": "PSP only: the other emulators exist only as 64-bit programs." },
-        { "title": "One-press updates", "note": "V1.05: AnyPS downloads just the new program and restarts. Games, saves and sign-ins stay put." }
+        {
+          "title": "AnyPS V2.0",
+          "note": "The Skylanders Portal of Power in the overlay, a figure editor and creator, volume for each game, and an online failsafe for PS3 games whose servers are gone."
+        },
+        {
+          "title": "A compatibility table on this site",
+          "note": "Where each system stands, and the games played through AnyPS: see “Will my games run?” above."
+        },
+        {
+          "title": "32-bit Windows edition",
+          "note": "PSP only: the other emulators exist only as 64-bit programs."
+        },
+        {
+          "title": "One-press updates",
+          "note": "V1.05: AnyPS downloads just the new program and restarts. Games, saves and sign-ins stay put."
+        }
       ]
     },
     {
       "id": "progress",
       "title": "In progress",
       "items": [
-        { "title": "Native Linux version" },
-        { "title": "Native macOS version" }
+        {
+          "title": "Native Linux version"
+        },
+        {
+          "title": "Native macOS version"
+        }
       ]
     },
     {
       "id": "list",
       "title": "On the list",
       "items": [
-        { "title": "A PS5 lane", "note": "The last system, started only once PS1 to PS4 are fully solid." },
-        { "title": "A radial quick menu" },
-        { "title": "More cover-art sources" },
-        { "title": "CRT shaders" },
-        { "title": "An FPS cap" },
-        { "title": "A built-in PS2 cheat database" },
-        { "title": "A verified-games compatibility table on this site" }
+        {
+          "title": "A PS5 lane",
+          "note": "The last system, started only once PS1 to PS4 are fully solid."
+        },
+        {
+          "title": "A radial quick menu"
+        },
+        {
+          "title": "More cover-art sources"
+        },
+        {
+          "title": "CRT shaders"
+        },
+        {
+          "title": "An FPS cap"
+        },
+        {
+          "title": "A built-in PS2 cheat database"
+        }
       ]
     },
     {
@@ -37,9 +66,18 @@
       "title": "Not yet",
       "lead": "Out of reach with today's emulators.",
       "items": [
-        { "title": "An audio equaliser, HDR, macros and turbo, colour-blind filters", "note": "They need hooks none of the emulators offer." },
-        { "title": "Save states on PS Vita and PS4", "note": "Vita3K and shadPS4 have no save states." },
-        { "title": "RetroAchievements on PS Vita", "note": "RetroAchievements has no Vita sets." }
+        {
+          "title": "An audio equaliser, HDR, macros and turbo, colour-blind filters",
+          "note": "They need hooks none of the emulators offer."
+        },
+        {
+          "title": "Save states on PS Vita and PS4",
+          "note": "Vita3K and shadPS4 have no save states."
+        },
+        {
+          "title": "RetroAchievements on PS Vita",
+          "note": "RetroAchievements has no Vita sets."
+        }
       ]
     }
   ]

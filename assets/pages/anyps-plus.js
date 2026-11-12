@@ -14,9 +14,13 @@
  *   roadmap      roadmap section from assets/data/anyps-roadmap.json
  *   share        "Share AnyPS" row
  *   credits      "Credits & licences" dialog
+ *   compat       "Will my games run?" table from assets/data/anyps-compat.json
+ *   releasenotes every release as an on-page accordion, newest first (cloned from the Changelog dialog)
+ *   willrun      "Will it run?" quick check inside "What your PC needs"
  *
  * Each one can be switched off in site-config.js with features.ap<Name>: false (apSystems, apFeatureSearch,
- * apChangelogDot, apChapters, apGlyphs, apChecksum, apReleases, apWalkthrough, apRoadmap, apShare, apCredits).
+ * apChangelogDot, apChapters, apGlyphs, apChecksum, apReleases, apWalkthrough, apRoadmap, apShare, apCredits,
+ * apCompat, apReleaseNotes, apWillRun).
  * Everything new is prefixed ap-.
  */
 (function () {
@@ -753,4 +757,148 @@
       if (n >= 5) { n = 0; clearTimeout(timer); open(); }
     });
   }, "anyps:hidden door");
+
+  /* Console chip shared by the compatibility table and the "will it run?" check (colours match Rate-O-Pedia). */
+  function sysChip(s) { return el("span", { "class": "ap-cp__sys", "data-c": String(s), text: String(s) }); }
+
+  /* =====================================================================================================
+   * compat: "Will my games run?" — each system's overall state (linked to that emulator's own full list) and
+   * the games actually played through AnyPS, from assets/data/anyps-compat.json, filterable by system.
+   * ===================================================================================================== */
+  Site.ready(function () {
+    if (!enabled("apCompat")) return;
+    var after = findSec(/what is in the box|what.s in the box/i); if (!after || !after.parentNode) return;
+    Site.data("anyps-compat").then(function (d) {
+      Site.ready(function () {
+        if (!d || !Array.isArray(d.systems)) return;
+        var ST = { great: "Plays great", playable: "Playable", issues: "Has issues", nogo: "Doesn't run yet" };
+        function chip(s) { s = ST[s] ? s : "issues"; return el("span", { "class": "ap-cp__st ap-cp__st--" + s, text: ST[s] }); }
+        function th(t) { return el("th", { scope: "col", text: t }); }
+        var sysRows = d.systems.filter(function (s) { return s && s.system; }).map(function (s) {
+          var link = typeof s.list === "string" && /^https:\/\//.test(s.list) ? el("a", { "class": "ap-cp__list", href: s.list, target: "_blank", rel: "noopener", text: "Full list ↗" }) : null;
+          return el("tr", null, el("th", { scope: "row" }, sysChip(s.system)), el("td", { text: s.emu || "" }), el("td", null, chip(s.status)), el("td", { "class": "ap-cp__note" }, s.note || "", link ? " " : null, link));
+        });
+        var games = (Array.isArray(d.games) ? d.games : []).filter(function (g) { return g && typeof g.title === "string" && g.title && g.system; });
+        var systems = []; games.forEach(function (g) { if (systems.indexOf(g.system) < 0) systems.push(g.system); });
+        var filter = "", tbody = el("tbody"), tabs = el("div", { "class": "ap-cp__tabs", role: "group", "aria-label": "Show games for" });
+        function paint() {
+          var rows = games.filter(function (g) { return !filter || g.system === filter; }).map(function (g) {
+            return el("tr", null, el("th", { scope: "row", text: g.title }), el("td", null, sysChip(g.system)), el("td", null, chip(g.status)), el("td", { "class": "ap-cp__note", text: g.note || "" }));
+          });
+          tbody.replaceChildren.apply(tbody, rows);
+          tabs.replaceChildren.apply(tabs, [""].concat(systems).map(function (s) {
+            return el("button", { type: "button", "class": "ap-cp__tab" + (s === filter ? " is-on" : ""), "aria-pressed": String(s === filter), "data-c": s || "all", text: s || "All",
+              onclick: function () { filter = s; paint(); Site.sfx("tap"); } });
+          }));
+        }
+        paint();
+        var sec = el("section", { "class": "sec ap-cp", "aria-label": "Compatibility" },
+          el("h2", { text: "Will my games run?" }),
+          el("p", { "class": "lead ap-lead", text: "Where each system stands today, and the games that have been played through AnyPS." }),
+          el("div", { "class": "ap-cp__wrap" }, el("table", { "class": "ap-cp__t" },
+            el("thead", null, el("tr", null, th("System"), th("Emulator"), th("Today"), th("Notes"))), el("tbody", null, sysRows))),
+          games.length ? el("h3", { "class": "ap-cp__h", text: "Played through AnyPS" }) : null,
+          games.length > 1 && systems.length > 1 ? tabs : null,
+          games.length ? el("div", { "class": "ap-cp__wrap" }, el("table", { "class": "ap-cp__t" },
+            el("thead", null, el("tr", null, th("Game"), th("System"), th("Status"), th("Notes"))), tbody)) : null,
+          typeof d.tested === "string" && d.tested ? el("p", { "class": "ap-cp__fine", text: d.tested }) : null);
+        after.parentNode.insertBefore(sec, after.nextSibling);
+        Site.reveal(sec);
+      }, "anyps:compat:render");
+    });
+  }, "anyps:compat");
+
+  /* =====================================================================================================
+   * releasenotes: every release as an accordion on the page, newest first. Cloned from the Changelog dialog,
+   * so there is one source of truth; dates come from config.js (current version + oldBuilds).
+   * ===================================================================================================== */
+  Site.ready(function () {
+    if (!enabled("apReleaseNotes")) return;
+    var dlg = doc.getElementById("changelog"), body = dlg && $(".dbody", dlg), after = findSec(/recent updates/i);
+    if (!body || !after || !after.parentNode) return;
+    var dates = {};
+    if (A.version) dates[String(A.version)] = A.date;
+    (Array.isArray(A.oldBuilds) ? A.oldBuilds : []).forEach(function (b) { if (b && b.version) dates[String(b.version)] = b.date; });
+    function fmt(s) { if (!s) return ""; var t = new Date(s + "T12:00:00"); return isNaN(t) ? "" : t.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
+    function clean(n) { var c = n.cloneNode(true); if (c.removeAttribute) c.removeAttribute("id"); if (c.querySelectorAll) $$("[id]", c).forEach(function (x) { x.removeAttribute("id"); }); return c; }
+    function item(label, nodes, open) {
+      var m = /V?(\d+(?:\.\d+)+)/i.exec(label), dt = fmt(m && dates[m[1]]);
+      var det = el("details", { "class": "ap-rn__item" },
+        el("summary", null, el("b", { text: label }), dt ? el("span", { "class": "ap-rn__date", text: dt }) : null),
+        el("div", { "class": "ap-rn__body" }, nodes.map(clean)));
+      if (open) det.open = true;
+      return det;
+    }
+    var kids = Array.prototype.slice.call(body.children), cut = kids.length;
+    for (var i = 0; i < kids.length; i++) if (kids[i].tagName === "DETAILS") { cut = i; break; }
+    var t = $("#clTitle", dlg), title = ((t && t.textContent) || "").replace(/^\s*what.s new in\s*/i, "").trim() || ("V" + (A.version || ""));
+    var items = [item(title, kids.slice(0, cut), true)];
+    kids.slice(cut).forEach(function (d) {
+      if (d.tagName !== "DETAILS") return;
+      var s = $("summary", d), label = ((s && s.textContent) || "").replace(/^\s*earlier:\s*what was new in\s*/i, "").trim() || "Earlier";
+      items.push(item(label, Array.prototype.slice.call(d.children).filter(function (c) { return c.tagName !== "SUMMARY"; }), false));
+    });
+    if (!kids.length) return;
+    var allBtn = el("button", { type: "button", "class": "linkbtn ap-rn__all", text: "Expand all",
+      onclick: function () { var open = items.some(function (d) { return !d.open; }); items.forEach(function (d) { d.open = open; }); allBtn.textContent = open ? "Collapse all" : "Expand all"; Site.sfx("tap"); } });
+    var sec = el("section", { "class": "sec ap-rn", "aria-label": "Release notes" },
+      el("h2", { text: "Release notes" }),
+      el("p", { "class": "lead ap-lead" }, "Every AnyPS release, newest first. ", allBtn),
+      el("div", { "class": "ap-rn__list" }, items));
+    after.parentNode.insertBefore(sec, after.nextSibling);
+    Site.reveal(sec);
+  }, "anyps:release notes");
+
+  /* =====================================================================================================
+   * willrun: a quick "will it run?" check inside "What your PC needs" — pick a processor, graphics and memory,
+   * get a rough verdict per system. The choice is remembered on this device. AnyPS's own PC check is exact.
+   * ===================================================================================================== */
+  Site.ready(function () {
+    if (!enabled("apWillRun")) return;
+    var sec = findSec(/system requirements|what your pc needs/i); if (!sec) return;
+    var CPU = [["c1", "4 threads or fewer (older dual / quad-core)"], ["c2", "8 threads, no AVX2 (roughly pre-2015)"], ["c3", "8–12 threads with AVX2 (2015 or newer)"], ["c4", "16+ threads, recent (Ryzen 5000 / Intel 12th gen or newer)"]];
+    var GPU = [["g0", "Older integrated graphics"], ["g1", "Recent integrated (Radeon 680M / 780M, Intel Arc)"], ["g2", "Mid-range card (GTX 1060 / RX 580 class)"], ["g3", "Strong card (RTX 3060 / RX 6700 or better)"]];
+    var RAM = [["4", "4 GB"], ["8", "8 GB"], ["16", "16 GB"], ["32", "32 GB or more"]];
+    var V = { great: "Runs great", ok: "Should run", rough: "Rough going", no: "Not enough" };
+    var KEY = "site.ap-willrun", pick = { cpu: "c3", gpu: "g2", ram: "16" };
+    try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv && sv.cpu && sv.gpu && sv.ram) pick = sv; } catch (e) {}
+    var res = el("ul", { "class": "ap-wr__res", "aria-live": "polite" });
+    function verdicts() {
+      var c = +String(pick.cpu).slice(1), g = +String(pick.gpu).slice(1), r = +pick.ram, ps3, ps4;
+      var weakPsp = c === 1 && g === 0;
+      if (c === 1 || r < 8 || g === 0) ps3 = ["no", "RPCS3 needs more processor, memory or graphics than this."];
+      else if (c === 2) ps3 = ["rough", "Without AVX2, most PS3 games run slowly."];
+      else if (r < 16 || g === 1) ps3 = ["rough", "Lighter games only; 16 GB and a graphics card make a big difference."];
+      else if (c === 3) ps3 = ["ok", "Plenty of games run well; the heaviest may dip."];
+      else ps3 = ["great", "Ready for the demanding ones."];
+      if (c >= 4 && r >= 16 && g >= 2) ps4 = ["ok", "Your PC is ready; the limit is which games shadPS4 supports yet."];
+      else if (c >= 3 && r >= 16 && g >= 2) ps4 = ["rough", "Might run the few supported games, with slowdowns."];
+      else ps4 = ["no", "shadPS4 wants a strong 8-core CPU, 16 GB and a graphics card."];
+      return [
+        ["PS1", "great", "Runs on almost anything."],
+        ["PSP", weakPsp ? "ok" : "great", weakPsp ? "Fine at native resolution; upscaling may stutter." : "Upscaled, with headroom to spare."],
+        ["PS2", c === 1 || g === 0 || r < 8 ? "ok" : "great", c === 1 ? "Most games run; keep the resolution near native." : g === 0 ? "Fine at native resolution; a better GPU unlocks upscaling." : r < 8 ? "Close other programs while you play." : "Comfortable, upscaled."],
+        ["Vita", c >= 2 && g >= 1 && r >= 8 ? "ok" : "rough", c >= 2 && g >= 1 && r >= 8 ? "Your PC is fine; whether a game runs depends on Vita3K." : "Vita3K wants more graphics or memory than this."],
+        ["PS3"].concat(ps3),
+        ["PS4"].concat(ps4)
+      ];
+    }
+    function paint() {
+      res.replaceChildren.apply(res, verdicts().map(function (v) {
+        return el("li", { "class": "ap-wr__row ap-wr__row--" + v[1] }, sysChip(v[0]), el("b", { text: V[v[1]] }), el("span", { "class": "ap-wr__why", text: v[2] }));
+      }));
+    }
+    function field(id, label, opts, k) {
+      var s = el("select", { id: id, "class": "ap-wr__sel",
+        onchange: function () { pick[k] = s.value; try { localStorage.setItem(KEY, JSON.stringify(pick)); } catch (e) {} paint(); } },
+        opts.map(function (o) { var op = el("option", { value: o[0], text: o[1] }); if (o[0] === String(pick[k])) op.selected = true; return op; }));
+      return el("label", { "class": "ap-wr__f", "for": id }, el("span", { text: label }), s);
+    }
+    sec.appendChild(el("div", { "class": "ap-wr" },
+      el("h3", { text: "Will it run? A quick check" }),
+      el("div", { "class": "ap-wr__form" }, field("ap-wr-cpu", "Processor", CPU, "cpu"), field("ap-wr-gpu", "Graphics", GPU, "gpu"), field("ap-wr-ram", "Memory", RAM, "ram")),
+      res,
+      el("p", { "class": "ap-wr__fine", text: "A rough guide, not a promise. Inside AnyPS, Settings › Your PC and what it can run measures your actual hardware." })));
+    paint();
+  }, "anyps:will it run");
 })();

@@ -140,6 +140,7 @@ async function rate(g, stars) {
   if (res.error) { say("That vote didn't save: " + res.error.message, true); return; }
   if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
   load();
+  voters();
 }
 
 /* ---------------- reviews ---------------- */
@@ -178,7 +179,106 @@ function addBox(q, data) {
     } }), note);
 }
 
+/* ---------------- voters: profiles and badges ----------------
+ * Counts come from the public voter_stats view (setup file 09_voter_stats.sql: display names and totals only,
+ * never account ids). Until that view exists the section falls back to reviewers, from the public reviews.
+ * Badge glyphs are the four face buttons, in their PlayStation colours. */
+const BADGES = {
+  topVoter:  { g: "△", c: "tri", name: "Top Voter",    why: "more votes than anyone else" },
+  topCritic: { g: "○", c: "cir", name: "Top Critic",   why: "more reviews than anyone else" },
+  founder:   { g: "✕", c: "crs", name: "First In",     why: "cast the very first vote" },
+  early:     { g: "✕", c: "crs", name: "Early Bird",   why: "one of the first ten voters" },
+  founderR:  { g: "✕", c: "crs", name: "First In",     why: "wrote the very first review" },
+  earlyR:    { g: "✕", c: "crs", name: "Early Bird",   why: "one of the first ten reviewers" },
+  c100:      { g: "□", c: "sqr", name: "Centurion",    why: "100 or more votes" },
+  c50:       { g: "□", c: "sqr", name: "Half-Century", why: "50 or more votes" },
+  c10:       { g: "□", c: "sqr", name: "Regular",      why: "10 or more votes" },
+  writer:    { g: "○", c: "cir", name: "Wordsmith",    why: "5 or more reviews" },
+  generous:  { g: "△", c: "tri", name: "Big Heart",    why: "handed out 10 or more perfect 5/5 scores" },
+  tough:     { g: "△", c: "tri", name: "Tough Crowd",  why: "gave 3 or more 0/5 scores" },
+};
+function badgesFor(v, ctx) {
+  const b = [];
+  if (ctx.full && v.votes > 0 && v.votes === ctx.maxVotes) b.push("topVoter");
+  if (v.reviews > 0 && v.reviews === ctx.maxReviews) b.push("topCritic");
+  if (v.first && v.first === ctx.firstAt) b.push(ctx.full ? "founder" : "founderR"); else if (ctx.early.has(v.name)) b.push(ctx.full ? "early" : "earlyR");
+  if (ctx.full) { if (v.votes >= 100) b.push("c100"); else if (v.votes >= 50) b.push("c50"); else if (v.votes >= 10) b.push("c10"); }
+  if (v.reviews >= 5) b.push("writer");
+  if (v.fives >= 10) b.push("generous");
+  if (v.zeros >= 3) b.push("tough");
+  return b;
+}
+const vb = (k, title) => el("span", { class: "gm-vb gm-vb--" + BADGES[k].c, title: title ? BADGES[k].name + " — " + BADGES[k].why : null, "aria-label": title ? BADGES[k].name : null, "aria-hidden": title ? null : "true", text: BADGES[k].g });
+let votersBusy = false;
+async function voters() {
+  const box = $("gm-voters"); if (!box || votersBusy) return;
+  votersBusy = true;
+  try {
+    let rows = [], full = true;
+    const r = await sb.from("voter_stats").select("name,avatar,votes,reviews,fives,zeros,first_vote,last_vote").order("votes", { ascending: false }).limit(200);
+    if (!r.error && Array.isArray(r.data)) rows = r.data.map((x) => ({ name: x.name, avatar: x.avatar, votes: +x.votes || 0, reviews: +x.reviews || 0, fives: +x.fives || 0, zeros: +x.zeros || 0, first: x.first_vote, last: x.last_vote }));
+    else {
+      full = false;
+      const pr = await sb.from("public_reviews").select("name,avatar,created_at").limit(5000);
+      if (pr.error || !Array.isArray(pr.data)) { box.hidden = true; return; }
+      const m = new Map();
+      for (const x of pr.data) {
+        if (!x.name) continue;
+        const v = m.get(x.name) || { name: x.name, avatar: x.avatar, votes: 0, reviews: 0, fives: 0, zeros: 0, first: x.created_at, last: x.created_at };
+        v.reviews++; if (x.created_at < v.first) v.first = x.created_at; if (x.created_at > v.last) v.last = x.created_at;
+        m.set(x.name, v);
+      }
+      rows = [...m.values()].sort((a, b) => b.reviews - a.reviews || String(a.first).localeCompare(String(b.first)));
+    }
+    rows = rows.filter((v) => v.name);
+    if (!rows.length) { box.hidden = true; return; }
+    const byFirst = rows.filter((v) => v.first).sort((a, b) => String(a.first).localeCompare(String(b.first)));
+    const ctx = { full, maxVotes: Math.max(0, ...rows.map((v) => v.votes)), maxReviews: Math.max(0, ...rows.map((v) => v.reviews)), firstAt: byFirst.length ? byFirst[0].first : null, early: new Set(byFirst.slice(0, 10).map((v) => v.name)) };
+    const fmt = (s) => { const d = s ? new Date(s) : null; return d && !isNaN(d) ? d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—"; };
+    const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+    const SHOW = 12, list = el("div", { class: "gm-vlist" });
+    rows.forEach((v, i) => {
+      const bs = badgesFor(v, ctx);
+      const av = typeof v.avatar === "string" && /^https:\/\/cdn\.discordapp\.com\//.test(v.avatar)
+        ? el("img", { class: "gm-vav", src: v.avatar, alt: "", loading: "lazy", width: "36", height: "36", referrerpolicy: "no-referrer",
+            onerror: (e) => { e.target.replaceWith(el("span", { class: "gm-vav gm-vav--txt", "aria-hidden": "true", text: v.name.trim().charAt(0).toUpperCase() })); } })
+        : el("span", { class: "gm-vav gm-vav--txt", "aria-hidden": "true", text: v.name.trim().charAt(0).toUpperCase() });
+      const counts = full ? plural(v.votes, "vote") + (v.reviews ? " · " + plural(v.reviews, "review") : "") : plural(v.reviews, "review");
+      const stats = [];
+      const stat = (k, val) => stats.push(el("dt", { text: k }), el("dd", { text: String(val) }));
+      if (full) stat("Votes", v.votes);
+      stat("Reviews", v.reviews);
+      if (full) { stat("Perfect 5/5s", v.fives); stat("0/5s", v.zeros); }
+      stat(full ? "First vote" : "First review", fmt(v.first));
+      stat(full ? "Latest vote" : "Latest review", fmt(v.last));
+      list.append(el("details", { class: "gm-vcard" + (i >= SHOW ? " gm-vcard--more" : "") },
+        el("summary", null,
+          el("span", { class: "gm-vrank", text: "#" + (i + 1) }), av,
+          el("span", { class: "gm-vname", text: v.name }),
+          el("span", { class: "gm-vcount", text: counts }),
+          el("span", { class: "gm-vbadges" }, ...bs.map((k) => vb(k, true)))),
+        el("div", { class: "gm-vprofile" },
+          el("dl", null, ...stats),
+          bs.length
+            ? el("ul", { class: "gm-vblist" }, ...bs.map((k) => el("li", null, vb(k, false), el("b", { text: BADGES[k].name }), " — " + BADGES[k].why)))
+            : el("p", { class: "gm-note", text: "No badges yet. Keep rating." }))));
+    });
+    const more = rows.length > SHOW ? el("button", { class: "linkbtn gm-vmore", type: "button", text: "Show all " + rows.length, onclick: () => { box.classList.add("gm-voters--all"); more.remove(); } }) : null;
+    box.classList.remove("gm-voters--all");
+    box.replaceChildren(
+      el("h2", { class: "gm-head", text: "Top voters" }),
+      el("p", { class: "gm-note", text: full ? "The Discord members who rate the most, and the badges they've earned. Open one to see their profile." : "The members who've written reviews, and the badges they've earned. Open one to see their profile." }),
+      list);
+    if (more) box.append(more);
+    box.hidden = false;
+  } catch (e) { /* the voters board is extra; never let it break the page */ }
+  finally { votersBusy = false; }
+}
+
 /* ---------------- start ---------------- */
+// Deep link from the hub's "Top rated" cards: /games/?q=Title opens the list already searched.
+try { const q0 = new URLSearchParams(location.search).get("q"); if (q0) $("gm-q").value = q0.slice(0, 80); } catch (e) {}
 tabs();
 $("gm-q").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(load, 250); });
 sb.auth.onAuthStateChange((_event, session) => { setTimeout(() => onSession(session), 0); });
+voters();
