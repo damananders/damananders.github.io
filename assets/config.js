@@ -8,7 +8,7 @@ window.SITE = {
   anyps: {
     version: "2.0",
     date: "2026-11-11",
-    downloadUrl: "https://drive.google.com/file/d/1PW4WrK0mMU3Bo3lC8SO7fo6B4C4ENW6u/view?usp=sharing",
+    downloadUrl: "https://drive.google.com/file/d/1JcBEIKLtnoAW7tRovEz8OTBYl_R0Xk8Y/view?usp=sharing",
     // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
     // compares "version" above with the installed one, and swaps itself. Any Google Drive share link works.
     // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
