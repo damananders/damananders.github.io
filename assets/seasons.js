@@ -134,7 +134,7 @@
   function start() {
     stop();
     season = chosen();
-    if (!season || !doc.body) return;
+    if (!season || !doc.body || root.hasAttribute("data-lite")) return;
     root.setAttribute("data-season", season);
     layer = el("div", { class: "sn-layer sn-" + season, "aria-hidden": "true" }, el("div", { class: "sn-tint" }));
     if (season === "spring") { layer.appendChild(sprig(false)); layer.appendChild(sprig(true)); }

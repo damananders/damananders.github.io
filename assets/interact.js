@@ -814,7 +814,8 @@
 
   /* ---- add-on layers, loaded here so every page gets them without editing its HTML ----
      play     trophies, secret codes, boot intro      (features.play)
-     seasons  seasonal effects                         (features.seasons) */
+     seasons  seasonal effects                         (features.seasons)
+     a11y     text size, contrast, reading font, lite mode, keyboard map   (features.a11y) */
   Site.ready(function () {
     var f = (Site.config && Site.config.features) || {};
     function load(name, v, flag, onFail) {
@@ -824,7 +825,12 @@
       if (onFail) js.onerror = onFail;
       doc.head.appendChild(js);
     }
+    try {   /* lite mode is decided here so the layers below can respect it from their first frame */
+      var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
+      if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
+    } catch (e) {}
     load("play", 3, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("a11y", 1, "a11y");
     load("seasons", 1, "seasons");
   }, "add-on loader");
 })();
