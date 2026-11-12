@@ -385,3 +385,15 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
   :root.ch-on .wrap > nav{position:relative}
   .wrap > nav::before,.sx-tools,.ch-panel,.ch-top,.ch-skip{display:none}
 }
+
+/* ---- Scroll progress bar (idea #6) ---- */
+.ch-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:calc(var(--sx-z-header, 100) + 5);pointer-events:none;opacity:0;transition:opacity .25s}
+.ch-progress--on{opacity:1}
+.ch-progress>i{display:block;height:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--sx-accent),color-mix(in srgb,var(--sx-accent) 55%,#fff));box-shadow:0 0 8px color-mix(in srgb,var(--sx-accent) 60%,transparent)}
+:root[data-motion="reduce"] .ch-progress>i{transition:none}
+
+/* ---- Footer stamp + star link (ideas #79, #75) ---- */
+.ch-stamp{margin:14px 0 0;font:500 .8rem var(--sx-mono);color:var(--sx-muted);display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px 4px}
+.ch-stamp__star{display:inline-flex;align-items:center;gap:6px;color:var(--sx-muted);text-decoration:none;transition:color .15s}
+.ch-stamp__star:hover{color:var(--sx-accent)}
+.ch-stamp__star svg{fill:none;stroke:currentColor;stroke-width:1.8}

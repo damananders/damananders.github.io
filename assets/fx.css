@@ -6,8 +6,8 @@
   --sx-ok:#36d39a; --sx-warn:#ffc857; --sx-err:#ff6b5e; --sx-info:#3d8bff;
   --sx-surface:#0f1216; --sx-surface-2:#151a20; --sx-glass:rgba(15,18,22,.82);
   --sx-line:rgba(255,255,255,.10); --sx-line-2:rgba(255,255,255,.18);
-  --sx-text:#eef0f3; --sx-muted:#9aa3ad; --sx-on-accent:#06090c;
-  --sx-accent:#ffc46b;
+  --sx-text:#eef0f3; --sx-muted:#9aa3ad; --sx-on-accent:#fff;
+  --sx-accent:#cd4257;   /* maroon (brightened just enough to stay readable on the dark surface) */
   --sx-display:"Space Grotesk",system-ui,sans-serif; --sx-body:"Inter",system-ui,sans-serif; --sx-mono:"DM Mono",ui-monospace,monospace;
   --sx-shadow:0 24px 60px -28px rgba(0,0,0,.9);
   --sx-radius:14px; --sx-ease:cubic-bezier(.2,.7,.2,1);
@@ -20,8 +20,8 @@
 }
 :root[data-page="anderscraft"]{--sx-accent:#ff7a1f;--sx-text:#ece3d0;--sx-muted:#b3a88f;--sx-line:rgba(255,150,70,.18);--sx-line-2:rgba(255,150,70,.34);--sx-on-accent:#1a0d03;
   --sx-display:"Cinzel",Georgia,serif; --sx-body:"EB Garamond",Georgia,serif}
-:root[data-page="anyps"]{--sx-accent:#3d8bff}
-:root[data-page="vault"]{--sx-accent:#36d39a}
+:root[data-page="anyps"]{--sx-accent:#3d8bff;--sx-on-accent:#06121f}
+:root[data-page="vault"]{--sx-accent:#36d39a;--sx-on-accent:#06120d}
 
 /* ---- Light theme: base tokens only. assets/chrome.css finishes the job (photo overlays, dialogs, page-specific bits). ---- */
 :root[data-theme="light"]{
@@ -32,7 +32,7 @@
   --sx-surface:#ffffff; --sx-surface-2:#f1eee8; --sx-glass:rgba(255,255,255,.88);
   --sx-line:rgba(12,18,28,.12); --sx-line-2:rgba(12,18,28,.24);
   --sx-text:#12161b; --sx-muted:#56616d; --sx-on-accent:#ffffff;
-  --sx-accent:#b86a00;
+  --sx-accent:#8e2c3b;   /* maroon (light) */
   --sx-shadow:0 24px 60px -30px rgba(20,30,50,.45);
   --sx-photo-overlay:linear-gradient(180deg,rgba(243,241,236,.88),rgba(243,241,236,.74) 40%,rgba(243,241,236,.96));
 }
