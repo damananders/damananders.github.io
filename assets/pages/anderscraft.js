@@ -332,4 +332,51 @@
       }, "ac-news-render");
     });
   }, "ac-news");
+
+  /* ---------- 60-second walkthrough: an animated run through the four steps (hidden under reduced motion) ---------- */
+  Site.ready(function () {
+    var box = $("#ac-tour"), stage = $("#ac-tour-stage"), cap = $("#ac-tour-cap"), fill = $("#ac-tour-fill"), clock = $("#ac-tour-clock"), play = $("#ac-tour-play");
+    if (!box || !stage || !enabled("craftTour") || Site.reducedMotion) return;
+    var realm = ""; try { realm = (settings && settings.realmlist) || ""; } catch (e) {}
+    realm = realm || "set realmlist (ask in Discord)";
+    function typed(text, mask) { return el("span", { class: "ac-tour-type", "data-text": mask ? text.replace(/./g, "•") : text }); }
+    function field(label, node) { return el("div", { class: "ac-tour-field" }, el("small", { text: label }), el("div", { class: "ac-tour-input" }, node)); }
+    var SCENES = [
+      { t: 15, cap: "1. Make your account: an email, a username and a password.", build: function () {
+          return el("div", { class: "ac-tour-form" }, field("Email", typed("you@example.com")), field("Username", typed("Thrallfan")), field("Password", typed("hunter22", true)), el("span", { class: "ac-tour-btn", text: "Create account" })); } },
+      { t: 15, cap: "2. Grab the AndersCraft client. It is handed out in Discord.", build: function () {
+          return el("div", { class: "ac-tour-chat" }, el("p", { class: "ac-tour-msg", text: "Hi! Could I get the client?" }), el("p", { class: "ac-tour-msg ac-tour-msg--them", text: "Welcome! Here you go, unzip it anywhere." }), el("span", { class: "ac-tour-file", text: "AndersCraft client" })); } },
+      { t: 15, cap: "3. Point the game at the server by setting the realmlist.", build: function () {
+          return el("div", { class: "ac-tour-file2" }, el("small", { text: "Data\\enUS\\realmlist.wtf" }), el("code", {}, typed(realm))); } },
+      { t: 15, cap: "4. Start AndersCraft.exe, log in, and you are in.", build: function () {
+          return el("div", { class: "ac-tour-login" }, field("Account", typed("Thrallfan")), field("Password", typed("hunter22", true)), el("span", { class: "ac-tour-btn ac-tour-btn--go", text: "Enter World" })); } }
+    ];
+    var total = 60, SPEED = 5, at = 0, cur = -1, on = true, seen = false, last = 0, timers = [];   /* 60 "seconds" play in 12 real ones */
+    function typeAll(node) {
+      $all(".ac-tour-type", node).forEach(function (n, k) {
+        var text = n.getAttribute("data-text"), i = 0;
+        timers.push(setTimeout(function step() { if (i <= text.length) { n.textContent = text.slice(0, i++); timers.push(setTimeout(step, 38)); } }, 250 + k * 650));
+      });
+    }
+    function show(i) {
+      cur = i; timers.forEach(clearTimeout); timers = [];
+      stage.textContent = ""; var node = SCENES[i].build(); node.classList.add("ac-tour-scene"); stage.appendChild(node);
+      cap.textContent = SCENES[i].cap; typeAll(node);
+    }
+    function tick(now) {
+      requestAnimationFrame(tick);
+      var dt = Math.min(0.1, (now - last) / 1000 || 0); last = now;
+      if (!on || !seen || document.hidden) return;
+      at += dt * SPEED; if (at >= total + 6) at = 0;
+      var shownAt = Math.min(at, total), acc = 0, idx = SCENES.length - 1;
+      for (var i = 0; i < SCENES.length; i++) { acc += SCENES[i].t; if (shownAt < acc) { idx = i; break; } }
+      if (idx !== cur) show(idx);
+      fill.style.width = (100 * shownAt / total).toFixed(1) + "%";
+      var sec = Math.floor(shownAt); clock.textContent = "0:" + (sec < 10 ? "0" : "") + (sec >= 60 ? "60" : sec); if (sec >= 60) clock.textContent = "1:00";
+    }
+    play.addEventListener("click", function () { on = !on; play.textContent = on ? "Pause" : "Play"; play.setAttribute("aria-pressed", String(on)); Site.sfx("toggle"); });
+    box.hidden = false; show(0);
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { seen = es[0].isIntersecting; }, { threshold: 0.3 }).observe(box); else seen = true;
+    requestAnimationFrame(tick);
+  }, "ac-tour");
 })();

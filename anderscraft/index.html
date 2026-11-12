@@ -87,7 +87,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/anderscraft.css" />
+<link rel="stylesheet" href="/assets/pages/anderscraft.css?v=2" />
 <!-- /site:head -->
 </head>
 <body>
@@ -118,6 +118,7 @@
         <a href="#ac-realms">Realms</a>
         <a href="#ac-custom">What's custom</a>
         <a href="#ac-play">How to play</a>
+        <a href="#ac-rules">Rules</a>
         <a href="#ac-faq">FAQ</a>
       </div>
     </section>
@@ -228,6 +229,13 @@
       <div class="eyebrow">Four steps</div>
       <h2 class="ac-h" id="ac-play-h">How to play</h2>
     </div>
+    <div class="ac-tour" id="ac-tour" hidden>
+      <div class="ac-tour-top"><b>From zero to Azeroth in about 60 seconds</b><span class="ac-tour-clock" id="ac-tour-clock" aria-hidden="true">0:00</span>
+        <button type="button" class="ac-btn" id="ac-tour-play" aria-pressed="true">Pause</button></div>
+      <div class="ac-tour-bar" aria-hidden="true"><i id="ac-tour-fill"></i></div>
+      <div class="ac-tour-stage" id="ac-tour-stage" aria-hidden="true"></div>
+      <p class="ac-tour-cap" id="ac-tour-cap" role="status" aria-live="off"></p>
+    </div>
     <div class="ac-wiz" id="ac-wiz">
       <ol class="ac-steps">
         <li class="ac-step" data-ac-step="account">
@@ -257,6 +265,7 @@
       <h2 class="ac-h" id="ac-latest-h">Latest</h2>
     </div>
     <ul class="ac-news" id="ac-news"></ul>
+    <p class="ac-more"><a href="/changelog/#anderscraft">All AndersCraft updates &rarr;</a></p>
   </section>
 
   <section class="ac-sec" id="ac-board" aria-labelledby="ac-board-h" data-reveal hidden>
@@ -265,6 +274,24 @@
       <h2 class="ac-h" id="ac-board-h">Leaderboard</h2>
     </div>
     <div class="ac-board" id="ac-board-box"></div>
+  </section>
+
+  <section class="ac-sec" id="ac-rules" aria-labelledby="ac-rules-h" data-reveal>
+    <div class="ac-head">
+      <div class="eyebrow">Good to know</div>
+      <h2 class="ac-h" id="ac-rules-h">Rates, realms and rules</h2>
+      <p class="ac-lede">Open any of these for the details.</p>
+    </div>
+    <div class="ac-faq">
+      <details class="ac-q"><summary>Rates and levelling</summary>
+        <div class="ac-a"><ul><li>Rates are around 2x on the main realm.</li><li>The level cap is 125, with combat tuned for the levels past 80.</li><li>Old-world flying is on, and from level 85 you can fly anywhere.</li></ul></div></details>
+      <details class="ac-q"><summary>The two realms</summary>
+        <div class="ac-a"><ul><li><b>Main realm:</b> player bots keep the world busy and can fill out your group, and dungeons scale to your group size.</li><li><b>Andersian Hardcore:</b> one life and no bots.</li></ul></div></details>
+      <details class="ac-q"><summary>Custom content</summary>
+        <div class="ac-a"><ul><li>Every race can be every class, Goblins and Worgen included.</li><li>Any gear once you buy the proficiency, with transmog to keep the look you like.</li><li>Account-wide mounts, a bigger bank, cross-faction battlegrounds and Mythic+ dungeons.</li><li>An auction house kept stocked by a bot.</li></ul></div></details>
+      <details class="ac-q"><summary>House rules</summary>
+        <div class="ac-a"><ul><li>Be decent to the other players. It is a small server and everyone knows everyone.</li><li>No cheats, hacks or third-party tools that play for you.</li><li>Found a bug that gives an unfair edge? Report it in Discord instead of farming it.</li><li>On Andersian Hardcore, one life means one life.</li><li>Nothing here is for sale. This is a fan-run, non-commercial server.</li></ul></div></details>
+    </div>
   </section>
 
   <section class="ac-sec" id="ac-faq" aria-labelledby="ac-faq-h" data-reveal>
@@ -333,11 +360,11 @@
 <script defer src="/assets/site-config.js"></script>
 <script defer src="/assets/site.js"></script>
 <script defer src="/assets/chrome.js"></script>
-<script defer src="/assets/interact.js"></script>
+<script defer src="/assets/interact.js?v=5"></script>
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/anderscraft.js"></script>
+<script defer src="/assets/pages/anderscraft.js?v=2"></script>
 <!-- /site:scripts -->
 </body>
 </html>
