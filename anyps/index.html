@@ -312,13 +312,14 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <li><b>Automatic save backup</b> on a schedule (daily or weekly), exporting saves and screenshots.</li>
 <li><b>Save-state manager:</b> every save state on disk per console, with dates, and delete.</li>
 </ul>
-<h3>8. Trophies &amp; achievements</h3>
+<h3>8. Trophies</h3>
 <ul>
-<li><b>PS3 trophies</b> read from RPCS3 (TROPCONF / TROPUSR): per-set lists, grades, locked/hidden, earned counts.</li>
-<li><b>PS4 trophies</b> read from shadPS4 (TROP.XML). <b>Vita trophies</b> read from Vita3K (TROP.SFM / TROPUSR.DAT).</li>
-<li><b>RetroAchievements</b> for PS1/PS2/PSP — labelled "Trophies" for consistency — with in-app sign-in (you type the password; only the token is stored).</li>
-<li><b>RetroAchievements for PS3</b> too: PS3 games without a Sony trophy set show their RetroAchievements set, with a friendly two-step Web API key card.</li>
-<li><b>Unlock toasts</b> while playing, and a <b>Recent trophies &amp; achievements</b> page.</li>
+<li><b>PS3 trophies</b> read live from RPCS3 (TROPCONF / TROPUSR): per-set lists with the real badge art, grades, locked / hidden, earned counts and a completion percentage.</li>
+<li><b>PS4 trophies</b> from shadPS4 (TROP.XML). <b>Vita trophies</b> from Vita3K (TROP.SFM / TROPUSR.DAT).</li>
+<li><b>Earned-first lists:</b> trophies you've unlocked sit at the top, newest first, split from the locked ones by a PlayStation face-button divider — unlocked bright with a grade-coloured ✓, locked dimmed.</li>
+<li><b>Rich unlock pop-ups:</b> the real badge, the trophy's title, its grade (Bronze / Silver / Gold / Platinum) and the game — read straight from the trophy file as it's written, so it's exact.</li>
+<li><b>Progress on the game list:</b> PS3 and PS4 games show their trophy progress (earned / total and %) under the title; highlight a game and press <b>L1 + △</b> to open its live trophy list. Sort any list by <b>Trophy Completion</b>.</li>
+<li><b>RetroAchievements</b> for PS1/PS2/PSP — shown as Trophies — with in-app sign-in (you type the password; only the token is stored), point values and rarity. PS3 games without a Sony trophy set show their RetroAchievements set, with a friendly two-step Web API key card.</li>
 <li>Hardcore mode supported where the emulator offers it.</li>
 </ul>
 <h3>9. Settings — native and full</h3>
@@ -397,7 +398,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <li>A “Who's playing?” sign-in screen, reached from a smiley Profile badge in the top bar of the console picker (press Up, or click it).</li>
 <li>“Create New User Profile” tile; Triangle opens “Modify User Profile” (rename / picture / passcode); Square deletes with a confirmation.</li>
 <li>Each profile keeps its OWN play time, favorites, game names, trophies, AND save games (save data is redirected per profile, so switching players swaps saves and nothing is shared by accident). The first profile you make inherits your existing saves — they are moved in, never deleted.</li>
-<li>Unified “Trophies &amp; achievements” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
+<li>Unified “Trophies” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
 <li><b>Profile stats</b> page: total play time, games played, most played, favorite console, launches.</li>
 <li><b>Guest profile</b> (temporary, wiped on sign-out or close), <b>avatar from any image file</b>, and <b>export / import a whole profile</b> as one .zip to move it to another PC.</li>
 </ul>
@@ -521,10 +522,13 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <h3>39. Skylanders portal &amp; figures <span class="newtag">New in V2.0</span></h3>
 <ul>
 <li><b>Portal of Power in the overlay</b> for PS3 Skylanders games: place, take off, clear, &ldquo;put my last team back&rdquo;; up to eight figures; the emulator's own portal window never shows. A real portal still works when plugged in.</li>
+<li><b>Sorted collection</b> — a <b>★ Favorites</b> section (up to 50) on top, then one folder per game, each split by type (Skylanders, Magic Items, Traps, Vehicles, Creation Crystals). Each figure shows its element, level and time on the portal.</li>
+<li><b>Figure sorting</b> within every category: Alphabetical, Element, Character (limited versions grouped under their base), Playtime, or Most recently summoned — and it's remembered.</li>
+<li><b>Squad Commander:</b> save a per-game loadout of up to five figures as <b>My Squad</b> and drop them on the portal all at once.</li>
+<li><b>Nicknames</b> you give a figure show throughout the portal menus.</li>
 <li><b>Figure collection</b> kept by AnyPS; each figure saves its own level, gold and upgrades like the real toy. Add character packs (.zip of .sky) from the Games folder without overwriting figures you have.</li>
 <li><b>Catalogue</b> of the six games: names, elements and portraits for characters, items, traps, vehicles and creation crystals, plus 245 hats.</li>
-<li><b>Create a figure</b> from the catalogue; <b>figure editor</b> for level, gold, hat, nickname and upgrade path, with the original kept and restorable.</li>
-<li><b>Skylanders figures</b> screen in AnyPS Settings for managing the collection with no game running.</li>
+<li><b>Create a figure</b> from the catalogue; <b>figure editor</b> for level, gold, hat, nickname and upgrade path, reachable straight from the portal, with the original kept and restorable.</li>
 </ul>
 <h3>40. Per-game volume &amp; online failsafe <span class="newtag">New in V2.0</span></h3>
 <ul>
@@ -797,7 +801,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <li>A “Who's playing?” sign-in screen, reached from a smiley Profile badge in the top bar of the console picker (press Up, or click it).</li>
 <li>“Create New User Profile” tile; Triangle opens “Modify User Profile” (rename / picture / passcode); Square deletes with a confirmation.</li>
 <li>Each profile keeps its OWN play time, favorites, game names, trophies, AND save games (save data is redirected per profile, so switching players swaps saves and nothing is shared by accident). The first profile you make inherits your existing saves — they are moved in, never deleted.</li>
-<li>Unified “Trophies &amp; achievements” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
+<li>Unified “Trophies” page per profile, pooling PlayStation 3, PlayStation 4 and RetroAchievements totals in one place.</li>
 </ul>
 <h4>Collections</h4>
 <ul>
