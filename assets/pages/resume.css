@@ -81,3 +81,7 @@
 .rz-contact__cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:24px 0 0}
 
 @media (max-width:560px){.rz-hero h1{font-size:2.3rem}.rz-stat strong{font-size:2rem}}
+
+.rz-role{min-height:1.5em}
+.rz-caret{display:inline-block;width:2px;height:1em;margin-left:3px;vertical-align:-.12em;background:currentColor;animation:rz-blink 1s steps(1) infinite}
+@keyframes rz-blink{50%{opacity:0}}

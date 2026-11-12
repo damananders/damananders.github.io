@@ -163,3 +163,7 @@
 .hb-hire:hover,.hb-hire:focus-visible{transform:translateY(-2px);color:var(--sx-accent);border-color:var(--sx-accent);box-shadow:0 16px 40px -24px var(--sx-accent);outline:none}
 .hb-hire__dot{width:9px;height:9px;border-radius:50%;background:var(--sx-ok);box-shadow:0 0 0 0 var(--sx-ok)}
 :root:not([data-motion="reduce"]) .hb-hire__dot{animation:sx-ping 2.4s infinite}
+
+/* ---- Sound-reactive accent (idea #49): assets/audio.js sets --sx-pulse (0..1) while the soundscape plays ---- */
+:root[data-au-pulse] .avenues .avenue{box-shadow:0 0 calc(18px + 46px * var(--sx-pulse,0)) calc(-14px + 6px * var(--sx-pulse,0)) var(--accent,var(--sx-accent))}
+:root[data-au-pulse] .au-btn{box-shadow:0 0 calc(4px + 16px * var(--sx-pulse,0)) color-mix(in srgb,var(--sx-accent) 70%,transparent)}

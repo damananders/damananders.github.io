@@ -30,6 +30,8 @@
 <style>@view-transition{navigation:auto}</style>
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<script>(function(){try{var r=document.documentElement;if(!sessionStorage.getItem("pl.boot")&&!r.hasAttribute("data-motion")){r.classList.add("pl-preboot");setTimeout(function(){r.classList.remove("pl-preboot")},3000)}}catch(e){}})();</script>
+<style>html.pl-preboot body{visibility:hidden}</style>
 <link rel="stylesheet" href="/assets/fx.css" />
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
@@ -120,7 +122,7 @@
 <script defer src="/assets/site-config.js"></script>
 <script defer src="/assets/site.js"></script>
 <script defer src="/assets/chrome.js"></script>
-<script defer src="/assets/interact.js?v=2"></script>
+<script defer src="/assets/interact.js?v=3"></script>
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>

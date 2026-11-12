@@ -57,4 +57,28 @@
       if (s && s.members) dc.lastChild.textContent = Site.fmtNum(s.members) + " in Discord";
     }).catch(function () {});
   }, "resume chips");
+
+  /* ---- typewriter role line: types, holds, erases, next. Static under reduced motion. ---- */
+  Site.ready(function () {
+    var role = document.querySelector(".rz-role");
+    if (!role || Site.reducedMotion || (Site.config.features || {}).typing === false) return;
+    var full = role.textContent, lines = [full, "Builds private game servers for fun", "Takes software apart to see how it works",
+      "Fortnite island creator (UEFN + Verse)", "Streams it all on Twitch", "90+ five-star customer reviews"];
+    role.setAttribute("aria-label", full);
+    var txt = Site.el("span", { "aria-hidden": "true", text: full }), caret = Site.el("span", { class: "rz-caret", "aria-hidden": "true" });
+    role.textContent = ""; role.appendChild(txt); role.appendChild(caret);
+    var li = 0, pos = full.length, dir = -1;
+    function tick() {
+      if (document.hidden) { setTimeout(tick, 800); return; }
+      var cur = lines[li];
+      if (dir < 0) {
+        if (pos > 0) { pos--; txt.textContent = cur.slice(0, pos); setTimeout(tick, 22); }
+        else { li = (li + 1) % lines.length; dir = 1; setTimeout(tick, 260); }
+      } else {
+        if (pos < cur.length) { pos++; txt.textContent = cur.slice(0, pos); setTimeout(tick, 42); }
+        else { dir = -1; setTimeout(tick, li === 0 ? 5200 : 2600); }
+      }
+    }
+    setTimeout(tick, 4200);
+  }, "resume typewriter");
 })();
