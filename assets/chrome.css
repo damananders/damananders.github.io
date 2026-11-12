@@ -397,3 +397,8 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-stamp__star{display:inline-flex;align-items:center;gap:6px;color:var(--sx-muted);text-decoration:none;transition:color .15s}
 .ch-stamp__star:hover{color:var(--sx-accent)}
 .ch-stamp__star svg{fill:none;stroke:currentColor;stroke-width:1.8}
+
+.ch-links{margin:14px 0 0;font:500 .8rem var(--sx-mono);color:var(--sx-muted)}
+.ch-links a{color:var(--sx-muted);text-decoration:none;transition:color .15s}
+.ch-links a:hover{color:var(--sx-accent)}
+.ch-links + .ch-stamp{margin-top:6px}
