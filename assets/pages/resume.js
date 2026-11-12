@@ -5,7 +5,6 @@
 
   /* ---- config-driven links ---- */
   Site.ready(function () {
-    if (cfg.linkedin) { var a = document.querySelectorAll('a[href*="linkedin.com/in/anders"]'); for (var i = 0; i < a.length; i++) a[i].href = cfg.linkedin; }
     var pdf = document.getElementById("rz-pdf");
     if (pdf && cfg.pdfUrl) { pdf.href = cfg.pdfUrl; pdf.hidden = false; pdf.setAttribute("download", ""); }
   }, "resume links");
