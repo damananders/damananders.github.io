@@ -81,4 +81,49 @@
     }
     setTimeout(tick, 4200);
   }, "resume typewriter");
+
+  /* ---- skill filter: pick a skill, matching roles / projects / skill groups light up, the rest dim ---- */
+  Site.ready(function () {
+    var bar = document.getElementById("rz-filter"), out = document.getElementById("rz-filter-out"); if (!bar) return;
+    var items = Array.prototype.slice.call(document.querySelectorAll("[data-skills]")), now = "";
+    function apply(skill, label) {
+      now = skill; var jobs = 0, projects = 0;
+      items.forEach(function (n) {
+        var hit = !!skill && (" " + n.getAttribute("data-skills") + " ").indexOf(" " + skill + " ") >= 0;
+        n.classList.toggle("is-hit", hit); n.classList.toggle("is-dim", !!skill && !hit);
+        if (hit && n.classList.contains("rz-job")) jobs++;
+        if (n.classList.contains("rz-card")) {
+          if (hit) projects++;
+          var head = n.querySelector(".rz-card__head");
+          if (skill && head) { n.classList.toggle("is-open", hit); head.setAttribute("aria-expanded", hit ? "true" : "false"); }
+        }
+      });
+      Array.prototype.forEach.call(bar.children, function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-skill") === skill)); });
+      if (out) out.textContent = skill ? label + ": " + jobs + (jobs === 1 ? " role" : " roles") + " and " + projects + (projects === 1 ? " project" : " projects") + ". Tap it again to clear." : "";
+    }
+    bar.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest(".rz-fchip"); if (!b) return;
+      var k = b.getAttribute("data-skill");
+      apply(k === now ? "" : k, b.textContent); if (Site.sfx) Site.sfx("toggle");
+    });
+  }, "resume skill filter");
+
+  /* ---- recruiter mode: a plain, tight, one-column version with everything expanded. Remembered; ?recruiter turns it on. ---- */
+  Site.ready(function () {
+    var btn = document.getElementById("rz-plain"); if (!btn) return;
+    var root = document.documentElement;
+    function set(on, quiet) {
+      root.classList.toggle("rz-plain", on);
+      btn.setAttribute("aria-pressed", String(on)); btn.textContent = on ? "Back to the full version" : "Recruiter mode";
+      Array.prototype.forEach.call(document.querySelectorAll(".rz-card"), function (c) {
+        var h = c.querySelector(".rz-card__head"); c.classList.toggle("is-open", on); if (h) h.setAttribute("aria-expanded", String(on));
+      });
+      if (on) Array.prototype.forEach.call(document.querySelectorAll("[data-reveal]"), function (n) { n.classList.add("is-in"); });
+      if (!quiet) { Site.store.set("recruiter", on); if (Site.sfx) Site.sfx("toggle"); window.scrollTo(0, 0); }
+    }
+    var q = /[?&]recruiter(=([^&#]*))?/.exec(location.search), start = Site.store.get("recruiter", false) === true;
+    if (q) start = !/^(0|off|false|no)$/i.test(q[2] || "");
+    if (start) set(true, true);
+    btn.addEventListener("click", function () { set(!root.classList.contains("rz-plain")); });
+  }, "resume recruiter mode");
 })();

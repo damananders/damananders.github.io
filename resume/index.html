@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/resume.css?v=2" />
+<link rel="stylesheet" href="/assets/pages/resume.css?v=3" />
 <!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -55,6 +55,7 @@
     <div class="rz-cta" data-reveal data-reveal-delay="300">
       <button class="rz-btn rz-btn--primary" type="button" data-hire>Work with me</button>
       <a class="rz-btn rz-btn--pdf" id="rz-pdf" href="#" hidden>Download PDF &darr;</a>
+      <button class="rz-btn" type="button" id="rz-plain" aria-pressed="false">Recruiter mode</button>
     </div>
   </header>
 
@@ -72,11 +73,33 @@
     </div>
   </section>
 
+  <!-- ================= Skill filter ================= -->
+  <section class="rz-sec rz-filter" aria-labelledby="rz-filter-h" data-reveal>
+    <h2 class="rz-h" id="rz-filter-h">Find a skill</h2>
+    <p class="rz-lead">Pick one and every role and project where I used it lights up.</p>
+    <div class="rz-filter__chips" id="rz-filter" role="group" aria-label="Filter by skill">
+      <button type="button" class="rz-fchip" data-skill="leadership" aria-pressed="false">Leadership</button>
+      <button type="button" class="rz-fchip" data-skill="training" aria-pressed="false">Training</button>
+      <button type="button" class="rz-fchip" data-skill="compliance" aria-pressed="false">Compliance</button>
+      <button type="button" class="rz-fchip" data-skill="troubleshooting" aria-pressed="false">Troubleshooting</button>
+      <button type="button" class="rz-fchip" data-skill="networking" aria-pressed="false">Networking</button>
+      <button type="button" class="rz-fchip" data-skill="servers" aria-pressed="false">Servers</button>
+      <button type="button" class="rz-fchip" data-skill="sql" aria-pressed="false">SQL</button>
+      <button type="button" class="rz-fchip" data-skill="cpp" aria-pressed="false">C++</button>
+      <button type="button" class="rz-fchip" data-skill="csharp" aria-pressed="false">C# / .NET</button>
+      <button type="button" class="rz-fchip" data-skill="re" aria-pressed="false">Reverse engineering</button>
+      <button type="button" class="rz-fchip" data-skill="gamedev" aria-pressed="false">Game dev</button>
+      <button type="button" class="rz-fchip" data-skill="web" aria-pressed="false">Web</button>
+      <button type="button" class="rz-fchip" data-skill="git" aria-pressed="false">Git</button>
+    </div>
+    <p class="rz-filter__out" id="rz-filter-out" role="status" aria-live="polite"></p>
+  </section>
+
   <!-- ================= Experience ================= -->
   <section class="rz-sec" aria-labelledby="rz-exp-h">
     <h2 class="rz-h" id="rz-exp-h" data-reveal>Experience</h2>
     <ol class="rz-timeline">
-      <li class="rz-job" data-reveal>
+      <li class="rz-job" data-reveal data-skills="compliance training leadership troubleshooting">
         <div class="rz-job__when">Jun 2023 — Present</div>
         <div class="rz-job__body">
           <h3>Sales Floor Manager / Compliance Lead</h3>
@@ -90,7 +113,7 @@
           </ul>
         </div>
       </li>
-      <li class="rz-job" data-reveal>
+      <li class="rz-job" data-reveal data-skills="training compliance leadership troubleshooting">
         <div class="rz-job__when">May 2019 — Jun 2023</div>
         <div class="rz-job__body">
           <h3>Lead NRO / National Training Specialist</h3>
@@ -113,7 +136,7 @@
 
     <div class="rz-grid">
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="sql cpp networking servers troubleshooting">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:var(--craft,#ff7a1f)">Private server</span>
           <span class="rz-card__title">AndersCraft — self-hosted WoW server</span>
@@ -126,7 +149,7 @@
         </div></div>
       </article>
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="sql cpp git servers">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:#7aa2ff">Private server</span>
           <span class="rz-card__title">Custom Final Fantasy XI server</span>
@@ -138,7 +161,7 @@
         </div></div>
       </article>
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="csharp">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:var(--anyps,#3d8bff)">Desktop app</span>
           <span class="rz-card__title">AnyPS — one PlayStation launcher</span>
@@ -151,7 +174,7 @@
         </div></div>
       </article>
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="re cpp servers">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:#c98bff">Reverse engineering</span>
           <span class="rz-card__title">Henrea &amp; Ramses — a preservation lab</span>
@@ -163,7 +186,7 @@
         </div></div>
       </article>
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="gamedev">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:#ff5ea0">Game dev</span>
           <span class="rz-card__title">Pier Pressure &amp; Fortnite (UEFN)</span>
@@ -175,7 +198,7 @@
         </div></div>
       </article>
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="training">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:#9146ff">Streaming</span>
           <span class="rz-card__title">Building in public on Twitch</span>
@@ -188,7 +211,7 @@
         </div></div>
       </article>
 
-      <article class="rz-card" data-reveal>
+      <article class="rz-card" data-reveal data-skills="web git">
         <button class="rz-card__head" type="button" aria-expanded="false">
           <span class="rz-card__tag" style="--c:var(--sx-accent)">Web</span>
           <span class="rz-card__title">This site</span>
@@ -208,7 +231,7 @@
   <section class="rz-sec" aria-labelledby="rz-skills-h">
     <h2 class="rz-h" id="rz-skills-h" data-reveal>Skills &amp; tools</h2>
     <div class="rz-skills">
-      <div class="rz-skillset" data-reveal>
+      <div class="rz-skillset" data-reveal data-skills="troubleshooting">
         <h3>IT &amp; support</h3>
         <ul>
           <li>Tier 1/2 troubleshooting</li>
@@ -218,7 +241,7 @@
           <li>Help-desk ticketing (Jira, Zendesk)</li>
         </ul>
       </div>
-      <div class="rz-skillset" data-reveal data-reveal-delay="80">
+      <div class="rz-skillset" data-reveal data-reveal-delay="80" data-skills="networking servers">
         <h3>Networking &amp; systems</h3>
         <ul>
           <li>TCP/IP, DNS, DHCP, VPNs</li>
@@ -227,7 +250,7 @@
           <li>Private &amp; game-server hosting</li>
         </ul>
       </div>
-      <div class="rz-skillset" data-reveal data-reveal-delay="160">
+      <div class="rz-skillset" data-reveal data-reveal-delay="160" data-skills="sql git re">
         <h3>Dev &amp; tooling</h3>
         <ul>
           <li>SQL database management &amp; query writing</li>
@@ -237,7 +260,7 @@
           <li>Agile / DevOps familiarity</li>
         </ul>
       </div>
-      <div class="rz-skillset" data-reveal data-reveal-delay="240">
+      <div class="rz-skillset" data-reveal data-reveal-delay="240" data-skills="compliance training leadership">
         <h3>Compliance &amp; people</h3>
         <ul>
           <li>METRC, POS &amp; inventory systems</li>
@@ -262,7 +285,7 @@
       </div>
       <div class="rz-cred__col" data-reveal data-reveal-delay="80">
         <h3>Education</h3>
-        <p class="rz-cred__line"><strong>Certificate in Computer Foundations &amp; Networking</strong><br />New Horizons Learning Centers · St. Louis · 2022</p>
+        <p class="rz-cred__line"><strong>Certificate in Computer Foundations &amp; Networking</strong><br />New Horizons Learning Centers · 2022</p>
         <p class="rz-cred__sub">Windows OS Support · Network Fundamentals · Help-Desk Systems · Security Essentials</p>
       </div>
       <div class="rz-cred__col" data-reveal data-reveal-delay="160">
@@ -273,6 +296,16 @@
           <li class="rz-pill">Spanish — Conversational</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= Reviews & booking ================= -->
+  <section class="rz-sec rz-edge" aria-labelledby="rz-edge-h" data-reveal>
+    <h2 class="rz-h" id="rz-edge-h">Reviews &amp; booking</h2>
+    <div class="rz-edge__box">
+      <p class="rz-edge__big"><strong>90+</strong> five-star reviews</p>
+      <p>Hey! Check out my profile on Edge. Book an appointment and share my profile with anybody who you think would be interested. I earn a bonus for everybody who books through my Edge profile!</p>
+      <a class="rz-btn rz-btn--primary" href="https://profile.ouredge.com/l/67115298a91d4fc887e174bb/e/671ac45a2581aa75598f6b0d" target="_blank" rel="noopener">Open my Edge profile &nearr;</a>
     </div>
   </section>
 
@@ -300,7 +333,7 @@
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
 <script defer src="/assets/hire.js"></script>
-<script defer src="/assets/pages/resume.js?v=2"></script>
+<script defer src="/assets/pages/resume.js?v=3"></script>
 <!-- /site:scripts -->
 </body>
 </html>
