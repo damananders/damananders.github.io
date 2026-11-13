@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/locker.css" />
+<link rel="stylesheet" href="/assets/pages/locker.css?v=2" />
 <!-- /site:head -->
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -38,13 +38,14 @@
     </div>
   </nav>
 
-  <header class="hero" style="padding-bottom:8px">
-    <div class="eyebrow">Private &middot; owner only</div>
-    <h1>PS Locker</h1>
-    <p class="lead">My own system files and game backups, kept off-site so I can get them back from anywhere. These links are private and access requests aren't granted.</p>
+  <header class="hero lk-hero" style="padding-bottom:8px">
+    <a class="lk-back" id="lk-back" href="./" hidden>All lockers</a>
+    <div class="eyebrow" id="lk-eyebrow">Private &middot; owner only</div>
+    <h1 id="lk-title">PS Locker</h1>
+    <p class="lead" id="lk-lead">My own system files and game backups, kept off-site so I can get them back from anywhere. These links are private and access requests aren't granted.</p>
   </header>
 
-  <main id="main"><section id="lk-list" class="catalogue" aria-label="Private links"></section></main>
+  <main id="main"><section id="lk-list" class="lk-view" aria-label="Locker"></section></main>
 
   <footer>
     <p>Personal backups only; not for distribution. All names and trademarks belong to their respective owners.</p>
@@ -58,7 +59,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/locker.js"></script>
+<script defer src="/assets/pages/locker.js?v=2"></script>
 <!-- /site:scripts -->
 </body>
 </html>
