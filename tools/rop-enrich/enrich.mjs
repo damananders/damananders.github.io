@@ -166,7 +166,7 @@ async function wikidata() {
   const items = new Map();   // qid -> { names:Set, cons:Set, article }
   for (const [con, pq] of Object.entries(PLATFORM_Q)) {
     const rows = await sparql(`SELECT ?item ?name ?article WHERE {
-      ?item wdt:P400 wd:${pq} ; wdt:P31 wd:Q7889 .
+      ?item wdt:P400 wd:${pq} .
       { ?item rdfs:label ?name FILTER(LANG(?name) IN ("en","ja")) } UNION { ?item skos:altLabel ?name FILTER(LANG(?name) = "en") }
       OPTIONAL { ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . } }`);
     for (const b of rows) {
@@ -216,7 +216,7 @@ async function byLabel(labels) {
     let rows = [];
     try {
       rows = await sparql(`SELECT ?item ?lab ?article (GROUP_CONCAT(DISTINCT ?p; separator="|") AS ?plats) WHERE { VALUES ?lab { ${batch.map(lit).join(" ")} }
-        ?item rdfs:label ?lab ; wdt:P31 wd:Q7889 .
+        ?item rdfs:label ?lab ; wdt:P31/wdt:P279* wd:Q7889 .
         OPTIONAL { ?item wdt:P400 ?p }
         OPTIONAL { ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . } } GROUP BY ?item ?lab ?article`);
     } catch (e) { log("label batch failed", i, e.message.slice(0, 120)); }
@@ -269,7 +269,9 @@ for (const it of items.values()) for (const nm of it.names) {
   for (const con of it.cons) { add(idx, con + "|" + norm(nm), it); add(idxL, con + "|" + loose(nm), it); }
   add(any, norm(nm), it);
 }
-const pick = (arr) => arr.slice().sort((a, b) => (b.article ? 1 : 0) - (a.article ? 1 : 0) || (b.plats ? b.plats.size : 0) - (a.plats ? a.plats.size : 0))[0];
+const ERA = { PS1: [1994, 2006], PS2: [2000, 2014], PSP: [2004, 2016], PS3: [2006, 2020], Vita: [2011, 2020], PS4: [2013, 2026], PS5: [2020, 2030] };
+const fitsEra = (it, con) => !it.year || (it.year >= ERA[con][0] - 1 && it.year <= ERA[con][1]);
+const pick = (arr, con) => arr.slice().sort((a, b) => (fitsEra(b, con) ? 1 : 0) - (fitsEra(a, con) ? 1 : 0) || (b.article ? 1 : 0) - (a.article ? 1 : 0) || (b.plats ? b.plats.size : 0) - (a.plats ? a.plats.size : 0))[0];
 const how = {};
 const matched = new Map();
 for (const g of games) {
@@ -280,8 +282,8 @@ for (const g of games) {
   let arr = null, via = "";
   for (const n of names) { if ((arr = idx.get(g.console + "|" + norm(n)))) { via = "exact"; break; } }
   if (!arr) for (const n of names) { if ((arr = idxL.get(g.console + "|" + loose(n)))) { via = "loose"; break; } }
-  if (!arr) for (const n of names) { const a = any.get(norm(n)); if (a && a.length === 1 && norm(n).length >= 6) { arr = a; via = "other-platform"; break; } }
-  if (arr) { matched.set(g.id, pick(arr)); how[via] = (how[via] || 0) + 1; }
+  if (!arr) for (const n of names) { const a = any.get(norm(n)); if (a && a.length === 1 && norm(n).length >= 6 && a[0].year && fitsEra(a[0], g.console)) { arr = a; via = "other-platform"; break; } }
+  if (arr) { matched.set(g.id, pick(arr, g.console)); how[via] = (how[via] || 0) + 1; }
 }
 // second pass: exact Wikidata labels for what's still unmatched
 {
@@ -295,15 +297,15 @@ for (const g of games) {
   log("label lookups", want.size);
   const hits = await byLabel([...want.keys()]);
   const fresh = new Set();
+  for (const cands of hits.values()) for (const c of cands) if (!items.has(c.q)) { items.set(c.q, { q: c.q, names: new Set(), cons: new Set(), article: c.article }); fresh.add(c.q); }
+  await facts(items, [...fresh]);
   for (const [lab, cands] of hits) for (const g of want.get(lab) || []) {
     if (matched.has(g.id)) continue;
-    const c = cands.find((x) => x.platQ.includes(PLATFORM_Q[g.console])) || (cands.length === 1 ? cands[0] : cands.find((x) => x.article));
-    if (!c) continue;
-    let it = items.get(c.q);
-    if (!it) { it = { q: c.q, names: new Set([lab]), cons: new Set(), article: c.article }; items.set(c.q, it); fresh.add(c.q); }
+    const ok = cands.map((c) => Object.assign(items.get(c.q), { _p: c.platQ.includes(PLATFORM_Q[g.console]) })).filter((it) => it._p || (it.year && fitsEra(it, g.console)));
+    const it = ok.find((x) => x._p) || (ok.length === 1 ? ok[0] : null);
+    if (!it) continue;
     matched.set(g.id, it); how.label = (how.label || 0) + 1;
   }
-  await facts(items, [...fresh]);
 }
 log("match routes", JSON.stringify(how));
 log("matched to Wikidata", matched.size, "of", games.length);
