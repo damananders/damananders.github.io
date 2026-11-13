@@ -74,7 +74,7 @@ window.SITE_EXTRA = {
     youtube: "https://www.youtube.com/@DaManAnders",
     tiktok: "",
     x: "",
-    instagram: "",
+    instagram: "https://www.instagram.com/damananders/",
     bluesky: "",
   },
 

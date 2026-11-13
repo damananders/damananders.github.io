@@ -470,6 +470,37 @@
   }, "chrome:share");
 
   /* ====================================================================================================
+   * Navigation menu — a list button at the left end of the header on every page, with the main pages.
+   * The private pages are deliberately not listed. features.navMenu = false removes it.
+   * ==================================================================================================== */
+  var PAGES = [
+    ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
+    ["games", "/games/", "Rate-O-Pedia Forums"], ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
+    ["resume", "/resume/", "R\u00e9sum\u00e9"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's new"]
+  ];
+  Site.ready(function () {
+    if (!feat("navMenu") || !nav) return;
+    var here = Site.page, open = false;
+    var btn = el("button", { type: "button", class: "sx-iconbtn ch-menu", "aria-label": "Site menu", "aria-haspopup": "true", "aria-expanded": "false", "aria-controls": "ch-menu-list", title: "Site menu" },
+      svg('<path d="M4 6h16M4 12h16M4 18h16"/>'));
+    var list = el("ul", { class: "ch-menu__list", id: "ch-menu-list", hidden: true });
+    PAGES.forEach(function (p) {
+      list.appendChild(el("li", {}, el("a", { href: p[1], class: "ch-menu__link", "aria-current": p[0] === here ? "page" : null, text: p[2] })));
+    });
+    var box = el("div", { class: "ch-menu__box" }, btn, list);
+    nav.insertBefore(box, nav.firstChild);
+    function set(on) {
+      open = on; list.hidden = !on; btn.setAttribute("aria-expanded", String(on));
+      document.documentElement.classList.toggle("ch-open", on || !!document.querySelector(".ch-panel:not([hidden])"));
+      if (on) { var first = list.querySelector("a"); if (first) first.focus(); }
+    }
+    btn.addEventListener("click", function () { set(!open); sfx(open ? "open" : "close"); });
+    document.addEventListener("click", function (e) { if (open && !box.contains(e.target)) set(false); });
+    document.addEventListener("keydown", function (e) { if (open && e.key === "Escape") { set(false); btn.focus(); } });
+    Site.on("ui:escape", function () { if (open) set(false); });
+  }, "chrome:menu");
+
+  /* ====================================================================================================
    * Footer stamp (ideas #79 + #75) — "Last updated <date>" from the repo's latest commit, plus a
    * quiet "Star on GitHub" link. Degrades to just the star link if the commit date can't be fetched.
    * ==================================================================================================== */
@@ -480,7 +511,7 @@
     var stamp = el("p", { class: "ch-stamp" });
     var star = el("a", { class: "ch-stamp__star", href: "https://github.com/" + repo, target: "_blank", rel: "noopener" }, svg(ICON.star, { width: 14, height: 14 }), "Star on GitHub");
     var here = Site.page, links = el("p", { class: "ch-links" });
-    [["changelog", "/changelog/", "What's new"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
+    [["links", "/links/", "Links I Like"], ["changelog", "/changelog/", "What's new"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
       if (l[0] === here || (l[0] === "dash" && !Site.owner)) return;
       if (links.firstChild) links.appendChild(document.createTextNode("  ·  "));
       links.appendChild(el("a", { href: l[1], text: l[2] }));

@@ -1,0 +1,15 @@
+{
+  "_help": "The 'Links I Like' page. One entry per site. id: short, lowercase, letters/numbers/dashes, never change it once people have voted (clicks and votes are stored under it). founded: free text, e.g. \"2008\" or \"April 10, 2008\". rank: your personal ranking, 1 = favourite. color: the site's main colour as a hex code; the card is tinted with it. image: optional picture (a path on this site such as /assets/links/github.webp, or an https address). video: optional short clip (mp4/webm path); it plays muted on hover. Leave image and video blank and the card draws a coloured tile with the site's first letter.",
+  "items": [
+    { "id": "github", "title": "GitHub", "url": "https://github.com/", "founded": "2008", "rank": 1, "color": "#8b5cf6", "image": "", "video": "",
+      "blurb": "Where every project on this site lives, from the launcher to the page you are reading." },
+    { "id": "retroachievements", "title": "RetroAchievements", "url": "https://retroachievements.org/", "founded": "2012", "rank": 2, "color": "#cc9900", "image": "", "video": "",
+      "blurb": "Achievements for classic games. AnyPS shows these as trophies while you play." },
+    { "id": "rpcs3", "title": "RPCS3", "url": "https://rpcs3.net/", "founded": "2011", "rank": 3, "color": "#2d7dd2", "image": "", "video": "",
+      "blurb": "The open-source PlayStation 3 emulator, and one of the engines AnyPS drives." },
+    { "id": "azerothcore", "title": "AzerothCore", "url": "https://www.azerothcore.org/", "founded": "2016", "rank": 4, "color": "#e0762b", "image": "", "video": "",
+      "blurb": "The open-source server project that AndersCraft is built on." },
+    { "id": "ghidra", "title": "Ghidra", "url": "https://ghidra-sre.org/", "founded": "2019", "rank": 5, "color": "#d0342c", "image": "", "video": "",
+      "blurb": "The reverse-engineering suite I use to see how software works." }
+  ]
+}

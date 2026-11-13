@@ -9,6 +9,7 @@ const CARDS = [
   { file: "changelog", kicker: "Changelog", title: "What's new", sub: "Every update across the hub, AnyPS, AndersCraft and the game ratings.", accent: "#cd4257" },
   { file: "uses", kicker: "Uses", title: "What I build with", sub: "The machine, the tools and the stack behind the projects.", accent: "#cd4257" },
   { file: "stream", kicker: "Stream", title: "Live from the workbench", sub: "Coding, reverse engineering, servers and game dev, live.", accent: "#9146ff" },
+  { file: "links", kicker: "Links I like", title: "Sites I actually use", sub: "Places on the internet worth your click, ranked by me and by you.", accent: "#cd4257" },
   { file: "games", kicker: "Rate-O-Pedia Forums", title: "Rate the classics", sub: "Search thousands of PlayStation games and rate them 0 to 5.", accent: "#36d39a" }
 ];
 const b64 = f => fs.readFileSync(path.join(root, f)).toString("base64");

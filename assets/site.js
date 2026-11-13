@@ -337,6 +337,15 @@
     if (t.matches && t.matches("dialog.sx-modal")) { var r = t.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDialog(t); }
   });
 
+  /* What the hidden code box says when a code does nothing. One line is rare on purpose. */
+  var MISSES = ["What did you even type?", "Umm.. I'm not entirely sure that is legal.", "Unfivetunately not.", "No joy.",
+    "That's not a boulder... Its a rock! (also not right)", "Access denied.", "lol no."], lastMiss = -1;
+  function codeMiss() {
+    if (Math.random() < 0.04) return 'Try "moon"';
+    var i; do { i = Math.floor(Math.random() * MISSES.length); } while (i === lastMiss && MISSES.length > 1);
+    lastMiss = i; return MISSES[i];
+  }
+
   window.Site = {
     version: 1,
     page: page, config: cfg, legacy: window.SITE || null,
@@ -345,6 +354,7 @@
     get owner() { return store.get("owner", false) === true; },
     theme: { get: themeNow, set: function (t) { setPref("theme", t); }, toggle: function () { setPref("theme", themeNow() === "light" ? "dark" : "light"); } },
     on: on, emit: emit, debug: debug,
+    codeMiss: codeMiss,
     el: el, svg: svg, ready: ready, idle: idle,
     toast: toast, copy: copy, sfx: sfx, registerSfx: function (fn) { sfxImpl = fn; },
     data: data, fetchJSON: fetchJSON, news: news, live: live,
