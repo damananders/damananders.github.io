@@ -1,0 +1,31 @@
+# Builds the Rate-O-Pedia game info cards (assets/data/gameinfo/*.json) from Wikidata, Wikipedia and the
+# emulator compatibility lists. Run by hand from the Actions tab (or `gh workflow run rop-enrich.yml`).
+# The result is uploaded as an artifact; it is reviewed and committed separately.
+name: Rate-O-Pedia game info
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build info cards
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUT: out/gameinfo
+        run: node tools/rop-enrich/enrich.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gameinfo
+          path: out/gameinfo
+          retention-days: 7
