@@ -76,7 +76,7 @@ export function takeReturn() {
 }
 
 /* me = { user, profile, member, banned, ready } ; ready = the round-11 SQL (11_rateopedia_profiles_forums_station.sql) has been run (profiles have handles) */
-export const me = { user: null, profile: null, member: false, banned: false, ready: false, admin: false, staff: false };
+export const me = { user: null, profile: null, member: false, banned: false, ready: false, admin: false, staff: false, verify: null };
 let staffSent = false, trophiesSent = -1;
 // The site's trophies live in this browser; copy the count to the profile so others can see it (best effort).
 function syncTrophies() {
@@ -86,13 +86,51 @@ function syncTrophies() {
   trophiesSent = n;
   sb.rpc("set_my_trophies", { p_count: n }).then(() => {}, () => {});
 }
+/* Server-membership check. Discord rate-limits it hard, so: one check at a time, at most once every 20 minutes per
+ * sign-in (unless forced by "check again"), and a short retry when Discord didn't give a clear answer. */
+const VERIFY_KEY = "rop.verified";
+let verifying = null;
+const tokenTag = (t) => { let h = 0x811c9dc5; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
+function verify(token, force) {
+  const tag = tokenTag(token);
+  if (!force) { try { const v = JSON.parse(localStorage.getItem(VERIFY_KEY) || "null"); if (v && v.t === tag && Date.now() - v.at < 20 * 60e3) return Promise.resolve(null); } catch (e) {} }
+  if (verifying) return verifying;
+  verifying = (async () => {
+    let out = null;
+    for (let i = 0; i < 3; i++) {
+      if (i) await pause(1200 * i);
+      try { const { data, error } = await sb.functions.invoke("verify-member", { body: { provider_token: token } }); out = error ? { error: String(error.message || error) } : (data || {}); }
+      catch (e) { out = { error: String(e) }; }
+      if (out.reason === "token_expired") break;
+      if (!out.error && !out.unchanged && out.member) break;           // a clear yes
+      if (!out.error && !out.unchanged && out.member === false && i >= 1) break;   // a no, confirmed twice
+    }
+    me.verify = out;
+    if (out && !out.error && !out.unchanged) { try { localStorage.setItem(VERIFY_KEY, JSON.stringify({ t: tag, at: Date.now() })); } catch (e) {} }
+    return out;
+  })().finally(() => { verifying = null; });
+  return verifying;
+}
+/* "I've joined, check again": re-ask with the current Discord sign-in; only send people through Discord again if it expired */
+export async function recheck(btn) {
+  if (btn) { btn.disabled = true; btn.textContent = "Checking…"; }
+  const { data } = await sb.auth.getSession();
+  const session = data && data.session;
+  if (!session || !session.provider_token) { signIn(); return; }
+  const out = await verify(session.provider_token, true);
+  if (out && out.reason === "token_expired") { signIn(); return; }
+  await loadMe(session, true);
+  listeners.forEach((fn) => { try { fn(me); } catch (e) {} });
+  if (!me.member) toast(out && (out.error || out.unchanged) ? "Discord didn't answer just now. Try again in a few seconds." : "Still not showing as a member. Join the server, then check again.", "warn");
+  else toast("You're in! Rating and posting are unlocked.", "ok");
+}
+const listeners = [];
 const FULL = "is_member,name,avatar,handle,display_name,custom_avatar,motto,motto_color,fav_games,banned,created_at";
-export async function loadMe(session) {
+export async function loadMe(session, skipVerify) {
   me.user = session ? session.user : null; me.profile = null; me.member = false; me.banned = false; me.admin = false; me.staff = false;
   if (!me.user) return me;
-  if (session.provider_token) {   // right after the Discord redirect: ask the server to check server membership
-    try { await sb.functions.invoke("verify-member", { body: { provider_token: session.provider_token } }); } catch (e) {}
-  }
+  if (session.provider_token && !skipVerify) await verify(session.provider_token, false);   // ask the server to check server membership
   let r = await sb.from("profiles").select(FULL).eq("id", me.user.id).maybeSingle();
   me.ready = !r.error;
   if (r.error) r = await sb.from("profiles").select("is_member,name,avatar").eq("id", me.user.id).maybeSingle();
@@ -110,11 +148,15 @@ export const myName = () => (me.profile && (me.profile.display_name || me.profil
 export const myAvatar = () => me.profile ? (me.profile.custom_avatar || me.profile.avatar) : null;
 
 /* Calls fn(me) on load and on every sign-in / sign-out */
+let chain = Promise.resolve();
 export function onAuth(fn) {
   let seq = 0;
-  sb.auth.onAuthStateChange((_event, session) => {
+  listeners.push(fn);
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === "TOKEN_REFRESHED") return;          // same person, nothing new to check
     const n = ++seq;
-    setTimeout(async () => { await loadMe(session); if (n === seq) fn(me); }, 0);
+    // one load at a time, so two sign-in events can't race each other over `me`
+    chain = chain.then(() => new Promise((ok) => setTimeout(ok, 0))).then(() => loadMe(session)).then(() => { if (n === seq) fn(me); }, () => { if (n === seq) fn(me); });
   });
 }
 
@@ -145,7 +187,7 @@ export function authPill(box, opts) {
     el("ul", { class: "rop-me__stats" }, rLi, pLi, cLi));
   const btns = el("div", { class: "rop-me__btns" });
   if (!me.member && !me.banned) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
-    el("button", { class: "rop-me__btn", type: "button", onclick: signIn, text: "I've joined, check again" }));
+    el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
   if (handle) btns.append(el("a", { class: (me.member ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/station/", text: "Operation Station" }));
   btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));

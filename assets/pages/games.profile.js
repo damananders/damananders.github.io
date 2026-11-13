@@ -2,7 +2,7 @@
  * Anyone can view a profile. The owner of a profile can edit its username, picture, motto (+ colour) and 3 favourite
  * games. Saving goes through the database function update_my_profile, which checks every field again.
  */
-import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL } from "./games.common.js?v=6";
+import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL } from "./games.common.js?v=7";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
