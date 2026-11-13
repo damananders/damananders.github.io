@@ -54,7 +54,7 @@ function card(g) {
   const c = el("article", { class: "gm-card" },
     el("div", { class: "gm-card__top" },
       el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
-      el("h3", { class: "gm-title", text: g.title }),
+      el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
       el("span", { class: "gm-score", text: score }),
       el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" })),
     ratingRow(g), toggle, more);

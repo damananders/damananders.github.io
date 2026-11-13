@@ -38,7 +38,8 @@ async function render() {
       el("ul", { class: "pf-stats" },
         el("li", null, el("b", { text: String(p.votes) }), " votes"),
         el("li", null, el("b", { text: String(p.reviews) }), " reviews"),
-        el("li", null, el("b", { text: String(p.posts) }), " forum posts"))),
+        el("li", null, el("b", { text: String(p.posts) }), " forum posts"),
+        p.hearts != null ? el("li", null, el("b", { text: String(p.hearts) }), " hearted") : null)),
     el("div", { class: "pf-actions" },
       mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : null,
       el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") })));
@@ -47,7 +48,7 @@ async function render() {
   const favBox = el("section", { class: "pf-card" }, el("h2", { class: "gm-head", text: "Favourite games" }),
     favs.length
       ? el("ol", { class: "pf-favs" }, ...favs.map((g, i) => el("li", null,
-          el("a", { class: "pf-fav", href: "/games/?q=" + encodeURIComponent(g.title) },
+          el("a", { class: "pf-fav", href: "/games/game/?id=" + encodeURIComponent(g.id) },
             el("span", { class: "pf-fav__n", text: String(i + 1) }),
             el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
             el("span", { class: "pf-fav__t", text: g.title })))))
@@ -55,7 +56,16 @@ async function render() {
 
   const postsBox = el("section", { class: "pf-card" }, el("h2", { class: "gm-head", text: "Recent forum posts" }), el("p", { class: "gm-empty", text: "Loading…" }));
   const revBox = el("section", { class: "pf-card" }, el("h2", { class: "gm-head", text: "Recent reviews" }), el("p", { class: "gm-empty", text: "Loading…" }));
-  root.replaceChildren(head, favBox, el("div", { class: "pf-cols" }, postsBox, revBox));
+  const heartBox = el("section", { class: "pf-card" }, el("h2", { class: "gm-head", text: "♥ Hearted games" }), el("p", { class: "gm-empty", text: "Loading…" }));
+  root.replaceChildren(head, favBox, heartBox, el("div", { class: "pf-cols" }, postsBox, revBox));
+  sb.from("member_hearts").select("game_id,title,console,created_at").eq("handle", p.handle).order("created_at", { ascending: false }).limit(300).then(({ data, error }) => {
+    heartBox.lastChild.remove();
+    if (error) { heartBox.remove(); return; }
+    if (!data || !data.length) return heartBox.append(el("p", { class: "gm-note", text: mine ? "Tap the heart on any game's info card to bank it here." : "No hearted games yet." }));
+    heartBox.firstChild.textContent = "♥ Hearted games (" + data.length + ")";
+    heartBox.append(el("div", { class: "pf-bank" }, ...data.map((g) => el("a", { class: "pf-bank__g", href: "/games/game/?id=" + encodeURIComponent(g.game_id) },
+      el("span", { class: "gm-console", "data-c": g.console, text: g.console }), el("span", { class: "pf-fav__t", text: g.title })))));
+  });
   if (mine && params.has("edit")) editor(p);
 
   sb.from("forum_feed").select("id,title,category,created_at,comments,reaction_total").eq("handle", p.handle).order("created_at", { ascending: false }).limit(6).then(({ data }) => {
@@ -73,7 +83,7 @@ async function render() {
     revBox.append(el("ul", { class: "pf-list" }, ...data.map((r) => {
       const gm = titles.get(r.game_id);
       return el("li", null,
-        el("a", { href: "/games/?q=" + encodeURIComponent(gm ? gm.title : ""), text: gm ? gm.title : "A game" }),
+        el("a", { href: "/games/game/?id=" + encodeURIComponent(r.game_id), text: gm ? gm.title : "A game" }),
         r.stars != null ? el("span", { class: "gm-note", text: " · " + r.stars + " / 5" }) : null,
         el("p", { class: "pf-snip", text: r.body.length > 160 ? r.body.slice(0, 157) + "…" : r.body }));
     })));

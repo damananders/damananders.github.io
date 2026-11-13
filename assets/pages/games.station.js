@@ -6,7 +6,7 @@
 import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast } from "./games.common.js?v=1";
 
 const root = $("op-root");
-const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["games", "Added games"]];
+const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"]];
 let tab = TABS.some(([k]) => k === location.hash.slice(1)) ? location.hash.slice(1) : "reports";
 const people = new Map();   // user_id -> profile row (admin can read every profile)
 
@@ -73,7 +73,7 @@ function shell() {
 }
 function open() {
   const body = $("op-body"); body.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
-  ({ reports, posts, comments, reviews, members, games })[tab](body).catch((e) => body.replaceChildren(el("p", { class: "gm-bad", text: "Couldn't load: " + (e.message || e) })));
+  ({ reports, posts, comments, reviews, members, media, games })[tab](body).catch((e) => body.replaceChildren(el("p", { class: "gm-bad", text: "Couldn't load: " + (e.message || e) })));
 }
 const refresh = () => { counts(); open(); };
 function row(...kids) { return el("article", { class: "op-row" }, ...kids); }
@@ -82,19 +82,23 @@ function row(...kids) { return el("article", { class: "op-row" }, ...kids); }
 async function reports(body) {
   const { data, error } = await sb.from("forum_reports").select("*").order("resolved").order("created_at", { ascending: false }).limit(100);
   if (error) throw error;
+  const mIds = data.filter((r) => r.media_id).map((r) => r.media_id);
+  const M = mIds.length ? await sb.from("game_media").select("id,game_id,path,caption,user_id,hidden").in("id", mIds) : { data: [] };
+  const meds = new Map((M.data || []).map((x) => [x.id, x]));
   const pIds = data.filter((r) => r.post_id).map((r) => r.post_id), cIds = data.filter((r) => r.comment_id).map((r) => r.comment_id), rIds = data.filter((r) => r.review_id).map((r) => r.review_id);
   const [P, C, R] = await Promise.all([
     pIds.length ? sb.from("forum_posts").select("id,title,body,user_id,hidden").in("id", pIds) : { data: [] },
     cIds.length ? sb.from("forum_comments").select("id,post_id,body,user_id,hidden").in("id", cIds) : { data: [] },
     rIds.length ? sb.from("reviews").select("id,game_id,body,user_id,hidden").in("id", rIds) : { data: [] }]);
   const posts = new Map((P.data || []).map((x) => [x.id, x])), coms = new Map((C.data || []).map((x) => [x.id, x])), revs = new Map((R.data || []).map((x) => [x.id, x]));
-  await loadPeople([...data.map((r) => r.user_id), ...[...posts.values(), ...coms.values(), ...revs.values()].map((x) => x.user_id)]);
+  await loadPeople([...data.map((r) => r.user_id), ...[...posts.values(), ...coms.values(), ...revs.values(), ...meds.values()].map((x) => x.user_id)]);
   body.replaceChildren();
   if (!data.length) return body.append(el("p", { class: "gm-empty", text: "No reports. All quiet." }));
   for (const r of data) {
     let kind, t, link, hideFn, delKind, id;
     if (r.post_id) { kind = "Post"; t = posts.get(r.post_id); id = r.post_id; link = "/games/forum/?p=" + id; hideFn = (h) => act("mod_post", { p_id: id, p_hidden: h }, h ? "Post hidden" : "Post shown", refresh); delKind = "post"; }
     else if (r.comment_id) { kind = "Comment"; t = coms.get(r.comment_id); id = r.comment_id; link = t ? "/games/forum/?p=" + t.post_id + "#c" + id : null; hideFn = (h) => act("mod_comment", { p_id: id, p_hidden: h }, h ? "Comment hidden" : "Comment shown", refresh); delKind = "comment"; }
+    else if (r.media_id) { kind = "Upload"; t = meds.get(r.media_id); id = r.media_id; if (t) t.body = (t.caption ? t.caption + " · " : "") + t.path; link = t ? "/games/game/?id=" + encodeURIComponent(t.game_id) : null; hideFn = (h) => act("mod_media", { p_id: id, p_hidden: h }, h ? "Upload hidden" : "Upload shown", refresh); delKind = "media"; }
     else { kind = "Review"; t = revs.get(r.review_id); id = r.review_id; link = t ? "/games/?q=" : null; hideFn = (h) => act("mod_review", { p_id: id, p_hidden: h }, h ? "Review hidden" : "Review shown", refresh); delKind = "review"; }
     body.append(row(
       el("div", { class: "op-meta" }, el("span", { class: "op-pill", text: kind }), pill(r.resolved, "resolved"), pill(t && t.hidden, "hidden", true),
@@ -194,6 +198,25 @@ async function members(body) {
     if (!data.length) list.append(el("p", { class: "gm-empty", text: "Nobody matches." }));
   }
   await go();
+}
+
+/* ---------------- member screenshots and clips ---------------- */
+const MEDIA_BASE = "https://zjhlhkruqzfendvbglsb.supabase.co/storage/v1/object/public/game-media/";
+async function media(body) {
+  const { data, error } = await sb.from("game_media").select("id,game_id,kind,path,caption,created_at,hidden,user_id").order("created_at", { ascending: false }).limit(120);
+  if (error) throw error;
+  await loadPeople(data.map((m) => m.user_id));
+  const grid = el("div", { class: "op-media" });
+  grid.append(...data.map((m) => el("figure", { class: "op-mtile" + (m.hidden ? " is-hidden" : "") },
+    m.kind === "video" ? el("video", { src: MEDIA_BASE + m.path, controls: true, preload: "metadata" }) : el("img", { src: MEDIA_BASE + m.path, alt: m.caption || "", loading: "lazy" }),
+    el("figcaption", null,
+      el("div", { class: "op-meta" }, pill(m.hidden, "hidden", true), who(m.user_id), el("a", { class: "gm-note", href: "/games/game/?id=" + encodeURIComponent(m.game_id), target: "_blank", rel: "noopener", text: m.game_id })),
+      m.caption ? el("p", { class: "op-snip", text: m.caption }) : null,
+      el("div", { class: "op-acts" },
+        btn(m.hidden ? "Unhide" : "Hide", () => act("mod_media", { p_id: m.id, p_hidden: !m.hidden }, m.hidden ? "Visible again" : "Hidden", refresh)),
+        btn("Delete", async () => { if (!sure("Delete this upload and its file?")) return; await sb.storage.from("game-media").remove([m.path]); act("mod_delete", { p_kind: "media", p_id: String(m.id) }, "Deleted", refresh); }, true))))));
+  body.replaceChildren(el("p", { class: "gm-note", text: "Newest uploads first. Deleting also frees the storage space." }), grid);
+  if (!data.length) body.append(el("p", { class: "gm-empty", text: "No uploads yet." }));
 }
 
 /* ---------------- member-added games ---------------- */
