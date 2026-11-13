@@ -4,12 +4,12 @@
  */
 (function () {
   "use strict";
-  if (!window.Site || window.Site.page !== "404") return;
+  if (!window.Site || (window.Site.page !== "404" && window.Site.page !== "arcade")) return;
   var Site = window.Site, el = Site.el, doc = document;
   if (((Site.config && Site.config.features) || {}).game404 === false) return;
 
   Site.ready(function () {
-    var hero = doc.querySelector(".nf-hero"); if (!hero) return;
+    var hero = doc.querySelector(".nf-arcade") || doc.querySelector(".nf-hero"); if (!hero) return;
     var W = 560, H = 300;
     var cv = el("canvas", { class: "nf-game__cv", width: String(W), height: String(H), role: "img", "aria-label": "Row home, a small boat game" });
     var scoreEl = el("span", { class: "nf-game__score", text: "0" }), bestEl = el("span", { class: "nf-game__best" });
