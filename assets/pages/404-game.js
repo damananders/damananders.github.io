@@ -15,7 +15,7 @@
     var scoreEl = el("span", { class: "nf-game__score", text: "0" }), bestEl = el("span", { class: "nf-game__best" });
     var btn = el("button", { type: "button", class: "btn nf-game__go", style: { "--accent": "#eef0f3" }, text: "Play" });
     var msg = el("p", { class: "nf-game__msg", "aria-live": "polite", text: "Steer with the arrow keys, A and D, or by dragging. Dodge the rocks, grab the lights." });
-    var box = el("section", { class: "nf-game", "data-reveal": "" },
+    var box = el("section", { id: "nf-game-boat", class: "nf-game", "data-reveal": "" },
       el("div", { class: "nf-game__head" }, el("h2", { text: "While you're lost: row home" }), el("div", { class: "nf-game__nums" }, "Score ", scoreEl, bestEl)),
       el("div", { class: "nf-game__frame" }, cv, el("div", { class: "nf-game__over" }, btn)), msg);
     hero.appendChild(box); if (Site.reveal) Site.reveal(box);
