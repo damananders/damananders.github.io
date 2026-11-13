@@ -142,6 +142,7 @@
     }
     /* the Rate-O-Pedia pages tell us when the signed-in member really is an Admin */
     Site.on("rop:admin", function (v) { if (v === true || (v && v.detail === true)) award("special"); });
+    if (window.ROP_ADMIN === true) setTimeout(function () { award("special"); }, 2000);   /* confirmed before this file loaded */
     if (Site.page === "404") setTimeout(function () { award("lost"); }, 1200);
     if (Site.page === "vault" || Site.page === "locker") setTimeout(function () { award("key"); }, 1200);
     Site.on("pref:soundscape", function (v) { if (v === true || (v && v.detail === true)) award("dj"); });
