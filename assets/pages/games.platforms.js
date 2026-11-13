@@ -3,6 +3,7 @@
  * the prefix of each game id ("SNES:chrono-trigger"), so ids must never change once games use them.
  *   wp  = English Wikipedia article of the platform (the catalog builder looks its Wikidata item up from this)
  *   wpx = more Wikipedia articles whose games also count for this platform
+ *   qx  = Wikidata items to use as well (where the article lookup misses)
  *   lr  = libretro-database system names (complete cartridge / disc lists for older systems)
  */
 export const FAMILIES = [
@@ -34,7 +35,7 @@ export const PLATFORMS = [
   { id: "XSX", name: "Xbox Series X|S", fam: "xbox", wp: "Xbox Series X and Series S", year: 2020 },
   // Nintendo
   { id: "NES", name: "NES / Famicom", fam: "nin", wp: "Nintendo Entertainment System", lr: ["Nintendo - Nintendo Entertainment System"], year: 1983 },
-  { id: "FDS", name: "Famicom Disk System", fam: "nin", wp: "Family Computer Disk System", lr: ["Nintendo - Family Computer Disk System"], year: 1986 },
+  { id: "FDS", name: "Famicom Disk System", fam: "nin", wp: "Family Computer Disk System", qx: ["Q135321"], lr: ["Nintendo - Family Computer Disk System"], year: 1986 },
   { id: "SNES", name: "Super Nintendo", fam: "nin", wp: "Super Nintendo Entertainment System", lr: ["Nintendo - Super Nintendo Entertainment System"], year: 1990 },
   { id: "N64", name: "Nintendo 64", fam: "nin", wp: "Nintendo 64", lr: ["Nintendo - Nintendo 64"], year: 1996 },
   { id: "GC", name: "GameCube", fam: "nin", wp: "GameCube", lr: ["Nintendo - GameCube"], year: 2001 },
@@ -62,7 +63,7 @@ export const PLATFORMS = [
   // PC & Mac
   { id: "PC", name: "PC (Windows)", fam: "pc", wp: "Microsoft Windows", year: 1985 },
   { id: "DOS", name: "MS-DOS", fam: "pc", wp: "MS-DOS", wpx: ["IBM PC compatible"], lr: ["DOS"], year: 1981 },
-  { id: "Mac", name: "Mac", fam: "pc", wp: "macOS", wpx: ["Classic Mac OS", "Mac (computer)"], year: 1984 },
+  { id: "Mac", name: "Mac", fam: "pc", wp: "macOS", wpx: ["Classic Mac OS", "Mac (computer)"], qx: ["Q14116", "Q43627", "Q13522376", "Q75687"], year: 1984 },
   { id: "Linux", name: "Linux", fam: "pc", wp: "Linux", year: 1991 },
   // Atari
   { id: "2600", name: "Atari 2600", fam: "atari", wp: "Atari 2600", lr: ["Atari - 2600"], year: 1977 },
@@ -81,13 +82,13 @@ export const PLATFORMS = [
   { id: "PCE", name: "TurboGrafx-16", fam: "retro", wp: "TurboGrafx-16", lr: ["NEC - PC Engine - TurboGrafx 16", "NEC - PC Engine SuperGrafx"], year: 1987 },
   { id: "PCECD", name: "TurboGrafx-CD", fam: "retro", wp: "TurboGrafx-CD", lr: ["NEC - PC Engine CD - TurboGrafx-CD"], year: 1988 },
   { id: "PCFX", name: "PC-FX", fam: "retro", wp: "PC-FX", lr: ["NEC - PC-FX"], year: 1994 },
-  { id: "NeoGeo", name: "Neo Geo", fam: "retro", wp: "Neo Geo (system)", lr: ["SNK - Neo Geo"], year: 1990 },
+  { id: "NeoGeo", name: "Neo Geo", fam: "retro", wp: "Neo Geo (system)", qx: ["Q1054350", "Q64428080", "Q3338058"], lr: ["SNK - Neo Geo"], year: 1990 },
   { id: "NGCD", name: "Neo Geo CD", fam: "retro", wp: "Neo Geo CD", lr: ["SNK - Neo Geo CD"], year: 1994 },
   { id: "NGP", name: "Neo Geo Pocket", fam: "retro", wp: "Neo Geo Pocket Color", wpx: ["Neo Geo Pocket"], lr: ["SNK - Neo Geo Pocket", "SNK - Neo Geo Pocket Color"], year: 1998 },
   { id: "WS", name: "WonderSwan", fam: "retro", wp: "WonderSwan", wpx: ["WonderSwan Color"], lr: ["Bandai - WonderSwan", "Bandai - WonderSwan Color"], year: 1999 },
-  { id: "3DO", name: "3DO", fam: "retro", wp: "3DO Interactive Multiplayer", lr: ["The 3DO Company - 3DO"], year: 1993 },
+  { id: "3DO", name: "3DO", fam: "retro", wp: "3DO Interactive Multiplayer", qx: ["Q229429"], lr: ["The 3DO Company - 3DO"], year: 1993 },
   { id: "CDi", name: "CD-i", fam: "retro", wp: "CD-i", lr: ["Philips - CD-i"], year: 1991 },
-  { id: "NGage", name: "N-Gage", fam: "retro", wp: "N-Gage (device)", year: 2003 },
+  { id: "NGage", name: "N-Gage", fam: "retro", wp: "N-Gage (device)", qx: ["Q336434"], year: 2003 },
   { id: "Arcadia", name: "Arcadia 2001", fam: "retro", wp: "Arcadia 2001", lr: ["Emerson - Arcadia 2001"], year: 1982 },
   { id: "SV", name: "Watara Supervision", fam: "retro", wp: "Watara Supervision", lr: ["Watara - Supervision"], year: 1992 },
   { id: "GCom", name: "Game.com", fam: "retro", wp: "Game.com", lr: ["Tiger - Game.com"], year: 1997 },
@@ -102,7 +103,7 @@ export const PLATFORMS = [
   { id: "PC98", name: "PC-98", fam: "comp", wp: "PC-9800 series", lr: ["NEC - PC-98"], year: 1982 },
   { id: "Apple2", name: "Apple II", fam: "comp", wp: "Apple II", year: 1977 },
   // mobile
-  { id: "iOS", name: "iPhone / iPad", fam: "mobile", wp: "iOS", year: 2008 },
+  { id: "iOS", name: "iPhone / iPad", fam: "mobile", wp: "iOS", qx: ["Q48493"], year: 2008 },
   { id: "Android", name: "Android", fam: "mobile", wp: "Android (operating system)", year: 2008 },
   // arcade
   { id: "Arcade", name: "Arcade", fam: "arcade", wp: "Arcade video game", year: 1971 },

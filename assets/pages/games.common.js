@@ -7,7 +7,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 export const SB_URL = "https://zjhlhkruqzfendvbglsb.supabase.co";
 const SB_KEY = "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk";
 export const INVITE = "https://discord.gg/U35dt6Qb2A";
-import { PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformName, familyOf } from "./games.platforms.js?v=1";
+import { PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformName, familyOf } from "./games.platforms.js?v=2";
 export { PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformName, familyOf };
 export const CONSOLES = PLATFORMS.map((p) => p.id);
 export const sb = createClient(SB_URL, SB_KEY);
