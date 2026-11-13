@@ -9,6 +9,9 @@ on:
       only:
         description: Only these platform ids, comma separated (empty = all)
         default: ""
+      probe:
+        description: Only look up these Wikidata labels (comma separated) and stop
+        default: ""
 
 permissions:
   contents: write
@@ -26,6 +29,7 @@ jobs:
         env:
           OUT: out
           ONLY: ${{ inputs.only }}
+          PROBE: ${{ inputs.probe }}
         run: node tools/rop-catalog/catalog.mjs
       - name: Push the result to rop-catalog-data
         if: always()

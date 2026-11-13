@@ -294,7 +294,8 @@ if (process.env.PROBE) {
   }
   process.exit(0);
 }
-const games = await loadGames();
+// PlayStation only: other platforms' cards come from tools/rop-catalog and are kept as they are
+const games = (await loadGames()).filter((g) => PLATFORM_Q[g.console]);
 log("games", games.length);
 const { by: compat, meta1, enName } = await compatSources();
 const items = await wikidata();
@@ -356,6 +357,8 @@ const ext = await extracts(arts);
 log("descriptions", ext.size, "of", arts.length);
 
 const shards = {};
+const INFO_IN = process.env.INFO_IN || "assets/data/gameinfo";
+if (fs.existsSync(INFO_IN)) for (const f of fs.readdirSync(INFO_IN)) if (/^[0-9a-f]{2}\.json$/.test(f)) shards[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(INFO_IN, f), "utf8"));
 const stats = { built: new Date().toISOString(), games: games.length, wikidata: 0, description: 0, compat: 0, byConsole: {} };
 for (const g of games) {
   const it = matched.get(g.id), k = norm(g.title);

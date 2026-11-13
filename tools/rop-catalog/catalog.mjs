@@ -25,6 +25,7 @@ const UA = "RateOPediaCatalogBot/1.0 (https://damananders.github.io/games/; non-
 const SB_URL = "https://zjhlhkruqzfendvbglsb.supabase.co";
 const SB_KEY = "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk";
 const SKIP_PLATFORMS = new Set(["PS1", "PS2", "PSP", "PS3"]);
+const JUNK = /(?:[\s:(-]+)(?:demo|playtest|soundtrack|original soundtrack|ost|artbook|art book|dedicated server|benchmark|sdk|level editor|public test|test server)\)?$/i;
 const MUST = [["PC", "World of Warcraft"], ["Mac", "World of Warcraft"]];   // checked at the end of the run
 
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
@@ -87,6 +88,7 @@ async function platformQids() {
     }
     await sleep(500);
   }
+  for (const p of PLATFORMS) for (const q of p.qx || []) { const a = map.get(p.id) || []; if (!a.includes(q)) a.push(q); map.set(p.id, a); }
   for (const p of PLATFORMS) for (const q of map.get(p.id) || []) name.set(q, p.name);
   return { map, name };
 }
@@ -209,6 +211,16 @@ async function dbGames() {
 }
 
 /* ---------------- main ---------------- */
+if (process.env.PROBE) {   // which Wikidata items carry these labels, and how many games list each as a platform
+  for (const lab of process.env.PROBE.split(",").map((x) => x.trim()).filter(Boolean)) {
+    try {
+      const rows = await sparql(`SELECT ?item ?d (COUNT(?g) AS ?n) WHERE { ?item rdfs:label ${JSON.stringify(lab)}@en . OPTIONAL { ?item schema:description ?d FILTER(LANG(?d)="en") }
+        OPTIONAL { ?g wdt:P400 ?item } } GROUP BY ?item ?d ORDER BY DESC(?n) LIMIT 6`, 2);
+      log("PROBE", lab, rows.map((b) => qid(b.item.value) + " [" + b.n.value + "] " + (b.d ? b.d.value : "")).join(" | "));
+    } catch (e) { log("PROBE", lab, "failed", e.message.slice(0, 80)); }
+  }
+  process.exit(0);
+}
 const t0 = Date.now();
 const existing = await dbGames();
 log("database games", existing.length);
@@ -245,7 +257,7 @@ for (const p of plats) {
     try { list = await platformItems(pq, classes); } catch (e) { log("!! Wikidata", p.id, e.message.slice(0, 120)); }
     for (const it of list) {
       const name = it.article ? artTitle(it.article) : it.label;
-      if (!name) continue;
+      if (!name || JUNK.test(name)) continue;
       const k = norm(name), kl = it.label ? norm(it.label) : k;
       const shared = wd.get(it.q) || Object.assign(it, { name });
       wd.set(it.q, shared);
