@@ -108,6 +108,54 @@ async function load() {
   list.replaceChildren(...data.map((g, i) => card(g, ranked ? i + 1 : 0)));
   if (!data.length) list.append(el("p", { class: "gm-empty", text: q.length >= 2 ? "No game by that name in the list yet." : "No ratings here yet. Search for a game and be the first." }));
   addBox(q, data);
+  browse(q);
+}
+
+/* ---------------- browse A-Z and a random pick (for the chosen family / platform, or everything) ---------------- */
+let browseKey = "", browseLetter = "", browseFrom = 0;
+function browse(q) {
+  const box = $("gm-browse"); if (!box) return;
+  if (q.length >= 2) { box.replaceChildren(); browseKey = ""; return; }
+  const key = famFilter + "|" + consoleFilter;
+  if (key === browseKey && box.childElementCount) return;
+  browseKey = key; browseLetter = ""; browseFrom = 0;
+  const letters = el("div", { class: "gm-az", role: "group", "aria-label": "First letter" });
+  const list = el("ol", { class: "gm-blist" });
+  const more = el("button", { class: "btn gm-btn gm-bmore", type: "button", hidden: true, text: "Show more", onclick: () => page(false) });
+  const note = el("p", { class: "gm-note", role: "status" });
+  for (const L of ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]) letters.append(el("button", { class: "gm-az__b", type: "button", text: L, "aria-pressed": "false",
+    onclick: (e) => { letters.querySelectorAll(".gm-az__b").forEach((b) => b.setAttribute("aria-pressed", String(b === e.currentTarget))); browseLetter = L; browseFrom = 0; page(true); } }));
+  box.replaceChildren(
+    el("div", { class: "gm-browse__head" }, el("h2", { class: "gm-head", text: "Browse " + (filterName() === "All-time" ? "every game" : filterName()) }),
+      el("button", { class: "btn gm-btn gm-random", type: "button", onclick: random }, el("span", { "aria-hidden": "true", text: "🎲 " }), "Random game")),
+    letters, list, more, note);
+  async function page(fresh) {
+    const ids = filterIds();
+    let req = sb.from("game_scores").select("id,console,title,votes,average");
+    if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
+    req = browseLetter === "#" ? req.filter("title", "match", "^[^A-Za-z]") : req.ilike("title", browseLetter + "%");
+    const { data, error } = await req.order("title").range(browseFrom, browseFrom + 59);
+    if (error) { note.textContent = "Couldn't load that list: " + error.message; return; }
+    if (fresh) list.replaceChildren();
+    for (const g of data || []) list.append(el("li", { class: "gm-brow" }, consoleChip(g.console),
+      el("a", { class: "gm-brow__t", href: "/games/game/?id=" + encodeURIComponent(g.id), text: g.title }),
+      el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" })));
+    browseFrom += (data || []).length;
+    more.hidden = (data || []).length < 60;
+    note.textContent = fresh && !(data || []).length ? "No games starting with " + browseLetter + " here." : "";
+  }
+  async function random() {
+    const ids = filterIds();
+    let c = sb.from("game_scores").select("id", { count: "exact", head: true });
+    if (ids) c = ids.length === 1 ? c.eq("console", ids[0]) : c.in("console", ids);
+    const { count } = await c;
+    if (!count) { note.textContent = "No games here yet."; return; }
+    let r = sb.from("game_scores").select("id");
+    if (ids) r = ids.length === 1 ? r.eq("console", ids[0]) : r.in("console", ids);
+    const off = Math.floor(Math.random() * count);
+    const { data } = await r.order("id").range(off, off);
+    if (data && data[0]) location.href = "/games/game/?id=" + encodeURIComponent(data[0].id);
+  }
 }
 async function rate(g, stars) {
   say("");
