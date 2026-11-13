@@ -11,7 +11,26 @@
 (function () {
   "use strict";
   if (!window.Site || window.Site.page !== "control") return;
-  var Site = window.Site, el = Site.el, doc = document, SB = Site.sb, base = Site.configBase || {};
+  var Site = window.Site, el = Site.el, doc = document, base = Site.configBase || {};
+  var SB = Site.sb || { url: "https://zjhlhkruqzfendvbglsb.supabase.co", key: "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk" };
+  /* A browser can pair this file with an older cached site.js for one visit. Never depend on it for sign-in:
+     if the shared session helper is missing, use the same thing here. */
+  if (!Site.admin) Site.admin = (function () {
+    var K = "site.admin", A = {
+      get: function () { try { var a = JSON.parse(sessionStorage.getItem(K)); return a && a.token ? a : null; } catch (e) { return null; } },
+      set: function (a) { try { sessionStorage.setItem(K, JSON.stringify({ token: a.token, twofa: !!a.twofa, expires: a.expires })); } catch (e) {} },
+      clear: function () { try { sessionStorage.removeItem(K); } catch (e) {} },
+      check: function () { var a = A.get(); if (!a) return Promise.resolve({ ok: false }); return rpc("site_admin_whoami", { p_token: a.token }).then(function (r) { if (r && r.error === "offline") return null; if (!r || !r.ok) A.clear(); return r; }); },
+      signOut: function () { var a = A.get(); A.clear(); return a ? rpc("site_admin_logout", { p_token: a.token }) : Promise.resolve(null); }
+    };
+    return A;
+  })();
+  if (!Site.remote) Site.remote = function () {
+    return fetch(SB.url + "/rest/v1/site_settings?select=key,value", { headers: { apikey: SB.key, Authorization: "Bearer " + SB.key }, cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw r.status; return r.json(); })
+      .then(function (rows) { var out = { config: null, links: null }; (rows || []).forEach(function (x) { if (x.key === "config") out.config = x.value; if (x.key === "links") out.links = x.value; }); return out; })
+      .catch(function () { return { config: null, links: null }; });
+  };
   var HEAD = { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" };
   var token = "", sess = null, ov = {}, links = [], stats = {}, statsOn = false, dirty = { config: false, links: false };
   function $(id) { return doc.getElementById(id); }
@@ -81,9 +100,11 @@
           if (second) { code.value = ""; if (r && (r.error === "wrong" || r.error === "locked" || r.error === "unset")) { held = ""; step(1); } else code.focus(); } else input.select();
           return;
         }
-        held = ""; input.value = ""; code.value = ""; msg.textContent = "";
-        Site.admin.set({ token: r.token, twofa: !!r.twofa, expires: r.expires });
-        enter({ twofa: !!r.twofa, expires: r.expires, linked: !!r.twofa }, true);
+        held = ""; input.value = ""; code.value = ""; msg.textContent = "Signed in. Opening the panel…";
+        try {
+          Site.admin.set({ token: r.token, twofa: !!r.twofa, expires: r.expires });
+          enter({ twofa: !!r.twofa, expires: r.expires, linked: !!r.twofa }, true, r.token);
+        } catch (err) { console.error("[control]", err); msg.textContent = "Signed in, but the panel could not open (" + (err && err.message) + "). Reload the page with Ctrl+Shift+R and try again."; }
       });
     });
     var back = $("cp-code-back"); if (back) back.addEventListener("click", function () { held = ""; code.value = ""; msg.textContent = ""; step(1); });
@@ -95,8 +116,8 @@
     } else step(1);
   }, "control");
 
-  function enter(info, fresh) {
-    var a = Site.admin.get(); token = (a && a.token) || ""; sess = info;
+  function enter(info, fresh, tok) {
+    var a = Site.admin.get(); token = tok || (a && a.token) || ""; sess = info;
     Promise.all([Site.remote(true), Site.data("links"), loadStats()]).then(function (got) {
       var rem = got[0] || {}, file = got[1];
       ov = isObj(rem.config) ? JSON.parse(JSON.stringify(rem.config)) : {};
@@ -107,7 +128,7 @@
       $("cp-login").hidden = true; $("cp-lead").textContent = "Changes go live when you press Save. Visitors see them within about five minutes.";
       build(); if (fresh) { Site.sfx("success"); Site.toast("Signed in as site admin.", { type: "ok" }); }
       if (!sess.linked) show("security");
-    });
+    }).catch(function (err) { console.error("[control]", err); var m = $("cp-login-msg"); if (m) m.textContent = "Signed in, but the panel could not open (" + (err && err.message) + "). Reload the page with Ctrl+Shift+R and try again."; });
   }
 
   function loadStats() {
