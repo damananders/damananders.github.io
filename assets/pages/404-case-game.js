@@ -63,22 +63,35 @@
     else hero.appendChild(pick);
 
     /* ---- enlarge + center the active game into a focused overlay ---- */
-    var dim = el("div", { class: "nf-big-dim", hidden: "" });
+    var dim = el("div", { class: "nf-big-dim" });
     var bigClose = el("button", { type: "button", class: "nf-big-close", "aria-label": "Shrink the game", hidden: "" }, "⤡ Shrink");
     var host = doc.body || hero; host.appendChild(dim); host.appendChild(bigClose);
-    var big = false;
+    var big = false, bigEl = null, bigHome = null;
     function setBig(on) {
-      big = !!on;
-      var active = box.hidden ? boat : box;
-      [boat, box].forEach(function (g) { if (g) g.classList.toggle("is-big", big && g === active); });
-      dim.hidden = !big; bigClose.hidden = !big;
+      if (on && !bigEl) {
+        var active = box.hidden ? boat : box; if (!active || !active.parentNode) return;
+        /* lift the active game to <body> so position:fixed centers on the viewport,
+           not on a transformed ancestor (the hero/wrap carry transforms) */
+        bigEl = active;
+        bigHome = doc.createComment("nf-big-home");
+        active.parentNode.insertBefore(bigHome, active);
+        dim.appendChild(active);   /* dim is a flex box, so it centers the game regardless of ancestor transforms */
+        active.classList.add("is-big");
+        big = true;
+      } else if (!on && bigEl) {
+        bigEl.classList.remove("is-big");
+        if (bigHome && bigHome.parentNode) { bigHome.parentNode.insertBefore(bigEl, bigHome); bigHome.parentNode.removeChild(bigHome); }
+        bigEl = null; bigHome = null; big = false;
+      }
+      dim.classList.toggle("is-open", big); bigClose.hidden = !big;
+      doc.documentElement.classList.toggle("nf-big-open", big);   /* keep the page scroll locked while enlarged */
       bBig.setAttribute("aria-pressed", big ? "true" : "false");
       bBig.classList.toggle("is-active", big);
       bBig.textContent = big ? "⤡ Shrink" : "⤢ Enlarge";
     }
     bBig.addEventListener("click", function () { setBig(!big); });
     bigClose.addEventListener("click", function () { setBig(false); });
-    dim.addEventListener("click", function () { setBig(false); });
+    dim.addEventListener("click", function (e) { if (e.target === dim) setBig(false); });
     doc.addEventListener("keydown", function (e) { if (big && e.key === "Escape") { setBig(false); e.preventDefault(); } });
 
     /* ---- case-game shell (reuses .nf-game styling) ---- */
