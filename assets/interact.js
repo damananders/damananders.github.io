@@ -829,7 +829,7 @@
       var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
       if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
     } catch (e) {}
-    load("play", 8, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 9, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
     /* service worker: instant repeat visits and basic offline. features.serviceWorker = false unregisters it. */
     try {
       if ("serviceWorker" in navigator && /^https:$/.test(location.protocol)) {

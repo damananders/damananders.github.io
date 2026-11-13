@@ -44,6 +44,7 @@
     { id: "shortcuts", name: "Shortcut Artist", desc: "Opened the keyboard shortcut map." },
     { id: "room", name: "Window Shopper", desc: "Looked through the trophy list." },
     { id: "regular", name: "Regular", desc: "Came back on three different days." },
+    { id: "streak", name: "On a Roll", desc: "Came back three days in a row.", secret: true },
     { id: "miss5", name: "Unfivetunately", desc: "Typed five wrong codes into the hidden door.", secret: true },
     { id: "nightowl", name: "Night Owl", desc: "Visited between midnight and four in the morning.", secret: true },
     { id: "all", name: "Completionist", desc: "Earned every other trophy." },

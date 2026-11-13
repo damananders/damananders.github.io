@@ -55,6 +55,7 @@
     { id: "shortcuts", name: "Shortcut Artist",   desc: "Opened the keyboard shortcut map." },
     { id: "room",      name: "Window Shopper",    desc: "Looked through the trophy list." },
     { id: "regular",   name: "Regular",           desc: "Came back on three different days." },
+    { id: "streak",    name: "On a Roll",         desc: "Came back three days in a row.", secret: true },
     { id: "miss5",     name: "Unfivetunately",    desc: "Typed five wrong codes into the hidden door.", secret: true },
     { id: "nightowl",  name: "Night Owl",         desc: "Visited between midnight and four in the morning.", secret: true },
     { id: "all",       name: "Completionist",     desc: "Earned every other trophy." },
@@ -82,12 +83,59 @@
     requestAnimationFrame(function () { pop.classList.add("is-in"); });
     setTimeout(function () { pop.classList.remove("is-in"); setTimeout(function () { pop.remove(); showing = false; nextPop(); }, 420); }, 4200);
   }
+  /* a gold shower for the big one (Completionist). Self-contained; motion-gated. */
+  function celebrate() {
+    if (Site.reducedMotion || !doc.body) return;
+    var cv = el("canvas", { class: "pl-plat", "aria-hidden": "true" }), ctx = null;
+    try { ctx = cv.getContext("2d"); } catch (e) {}
+    if (!ctx) return;
+    doc.body.appendChild(cv);
+    try { if (cv.showPopover) { cv.setAttribute("popover", "manual"); cv.showPopover(); } } catch (e) {}
+    var GOLD = ["#ffd86b", "#ffbf3f", "#fff2c2", "#e9a93a", "#ffffff"];
+    var dpr = Math.min(2, window.devicePixelRatio || 1), W = 0, H = 0, parts = [], raf = 0, last = 0, elapsed = 0, TOTAL = 5000, FADE = 900, done = false;
+    function size() { W = window.innerWidth; H = window.innerHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    function burst() {
+      var n = Math.max(40, Math.min(120, Math.round(W / 10)));
+      for (var i = 0; i < n; i++) {
+        var side = i % 2 ? 1 : -1;
+        parts.push({ x: side < 0 ? -8 : W + 8, y: H * (0.78 + Math.random() * 0.14),
+          vx: -side * (260 + Math.random() * 720), vy: -(520 + Math.random() * 640),
+          w: 6 + Math.random() * 7, h: 9 + Math.random() * 9, r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 10,
+          c: GOLD[(Math.random() * GOLD.length) | 0], round: Math.random() < 0.3 });
+      }
+    }
+    function frame(t) {
+      raf = 0; if (done || doc.hidden) return;
+      var dt = last ? Math.min(40, t - last) : 16.7; last = t; elapsed += dt;
+      if (elapsed >= TOTAL) { stop(); return; }
+      var s = dt / 1000, damp = Math.exp(-1.6 * s);
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.vx *= damp; p.vy = p.vy * damp + 640 * s; p.r += p.vr * s; p.x += p.vx * s; p.y += p.vy * s;
+        if (p.y > H + 40) { parts.splice(i, 1); continue; }
+        var c = Math.cos(p.r) * dpr, sn = Math.sin(p.r) * dpr;
+        ctx.setTransform(c, sn, -sn, c, p.x * dpr, p.y * dpr); ctx.fillStyle = p.c;
+        if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w * 0.5, 0, 6.2832); ctx.fill(); }
+        else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      }
+      if (elapsed > TOTAL - FADE) cv.style.opacity = String(Math.max(0, (TOTAL - elapsed) / FADE));
+      if (!parts.length && elapsed > 1400) { stop(); return; }
+      raf = requestAnimationFrame(frame);
+    }
+    function resume() { if (!done && !doc.hidden && !raf) { last = 0; raf = requestAnimationFrame(frame); } }
+    function stop() { if (done) return; done = true; if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", size); doc.removeEventListener("visibilitychange", resume); cv.remove(); }
+    size(); burst(); setTimeout(burst, 360);
+    window.addEventListener("resize", size); doc.addEventListener("visibilitychange", resume); resume();
+  }
+
   function award(id) {
     if (!feat("trophies") || got[id]) return false;
     var t = null; TROPHIES.forEach(function (x) { if (x.id === id) t = x; });
     if (!t) return false;
     got[id] = Date.now(); Site.store.set("trophies", got); paintCup();
     queue.push(t); setTimeout(nextPop, 350);
+    if (id === "all") setTimeout(celebrate, 500);
     if (id !== "all" && !t.special && !got.all && count() === CORE.length - 1) setTimeout(function () { award("all"); }, 600);
     return true;
   }
@@ -104,6 +152,7 @@
     var body = el("div", {},
       el("p", { class: "pl-list__sum", text: count() + " of " + CORE.length + " earned. They're saved in this browser only." }),
       list,
+      el("a", { class: "pl-list__cab", href: "/trophies/", text: "View the full trophy cabinet →" }),
       el("p", { class: "pl-list__hint", text: "Psst: some words do things if you just type them. One of them is a country where everything is upside down." }));
     var d = Site.modal({ id: "pl-trophies", title: "Trophies", className: "pl-modal", body: body });
     d.addEventListener("close", function () { d.remove(); });
@@ -129,8 +178,17 @@
     if (/^\/games\/forum\//.test(location.pathname)) setTimeout(function () { award("forum"); }, 1500);
     try {
       var now = new Date(), day = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(), days = Site.store.get("days", []) || [];
-      if (days.indexOf(day) < 0) { days.push(day); Site.store.set("days", days.slice(-5)); }
+      if (days.indexOf(day) < 0) { days.push(day); days = days.slice(-6); Site.store.set("days", days); }
       if (days.length >= 3) setTimeout(function () { award("regular"); }, 3400);
+      /* three days in a row: the longest run of consecutive calendar days among the ones on record */
+      var nums = days.map(function (sd) { var p = sd.split("-"); return Math.round(new Date(+p[0], +p[1] - 1, +p[2]).getTime() / 86400000); })
+        .filter(function (n) { return !isNaN(n); }).sort(function (x, y) { return x - y; });
+      var runMax = nums.length ? 1 : 0, runNow = 1;
+      for (var di = 1; di < nums.length; di++) {
+        if (nums[di] === nums[di - 1] + 1) runNow++; else if (nums[di] !== nums[di - 1]) runNow = 1;
+        if (runNow > runMax) runMax = runNow;
+      }
+      if (runMax >= 3) setTimeout(function () { award("streak"); }, 3600);
       if (now.getHours() < 4) setTimeout(function () { award("nightowl"); }, 4200);
     } catch (e) {}
     /* skins: only a choice the visitor makes counts, not the calendar */
@@ -281,6 +339,33 @@
       size(); raf = requestAnimationFrame(frame);
       requestAnimationFrame(function () { cv.classList.add("is-in"); });
       timed("matrix", 9000, function () { cv.classList.remove("is-in"); setTimeout(function () { cancelAnimationFrame(raf); cv.remove(); }, 600); });
+    },
+    snow: function () {
+      var cv = el("canvas", { class: "pl-snow", "aria-hidden": "true" }), ctx = cv.getContext("2d"), raf = 0, flakes = [], last = 0;
+      doc.body.appendChild(cv);
+      function size() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+      function seed() { flakes = []; var n = Math.min(260, Math.round(cv.width / 9)); for (var i = 0; i < n; i++) flakes.push({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: 1 + Math.random() * 2.6, s: 16 + Math.random() * 40, d: Math.random() * 6.28, sw: 8 + Math.random() * 24 }); }
+      function onr() { size(); seed(); }
+      function frame(t) {
+        raf = requestAnimationFrame(frame);
+        var dt = last ? Math.min(40, t - last) : 16.7; last = t; var s = dt / 1000;
+        ctx.clearRect(0, 0, cv.width, cv.height); ctx.fillStyle = "#ffffff";
+        for (var i = 0; i < flakes.length; i++) {
+          var f = flakes[i]; f.d += s; f.y += f.s * s; f.x += Math.sin(f.d) * f.sw * s;
+          if (f.y > cv.height + 4) { f.y = -4; f.x = Math.random() * cv.width; }
+          ctx.globalAlpha = 0.45 + 0.4 * (0.5 + 0.5 * Math.sin(f.d)); ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.2832); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+      size(); seed(); window.addEventListener("resize", onr); raf = requestAnimationFrame(frame);
+      requestAnimationFrame(function () { cv.classList.add("is-in"); });
+      Site.toast("Let it snow. Type snow again or press Esc to clear it.", { type: "info", ms: 4200 });
+      timed("snow", 14000, function () { cv.classList.remove("is-in"); window.removeEventListener("resize", onr); setTimeout(function () { cancelAnimationFrame(raf); cv.remove(); }, 600); });
+    },
+    vaporwave: function () {
+      root.classList.add("pl-vapor");
+      Site.toast("ｖａｐｏｒｗａｖｅ", { type: "ok", ms: 3200 });
+      timed("vaporwave", 13000, function () { root.classList.remove("pl-vapor"); });
     }
   };
   var STILL_OK = { crt: 1 };                          /* effects that are fine with reduced motion */
