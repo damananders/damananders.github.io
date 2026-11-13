@@ -1,0 +1,66 @@
+/* Trophy Cabinet (/trophies/). Prefix tr-. Uses the hub tokens (--panel --line --text --muted).
+ * Tier accents: common silver, secret purple, platinum cyan, special gold. */
+:root{--tr-gold:#ffcf52;--tr-common:#9aa3ad;--tr-rare:#b98bff;--tr-plat:#46d6ff;--tr-special:#ffcf52}
+
+.tr-hero{position:relative}
+.tr-prog{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:22px}
+.tr-ring{position:relative;width:120px;height:120px;flex:none}
+.tr-ring-svg{width:120px;height:120px;transform:rotate(-90deg)}
+.tr-ring-bg{fill:none;stroke:var(--line-2)}
+.tr-ring-fg{fill:none;stroke:var(--tr-gold);stroke-linecap:round;transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 6px rgba(255,207,82,.5))}
+.tr-ring-c{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:0}
+.tr-ring-c b{font-family:var(--display);font-weight:700;font-size:1.3rem;line-height:1;color:var(--text)}
+.tr-ring-c span{font-family:var(--mono);font-size:.82rem;color:var(--tr-gold)}
+.tr-prog-txt{display:flex;flex-direction:column;gap:3px}
+.tr-prog-txt b{font-family:var(--display);font-weight:700;font-size:1.25rem;color:var(--text)}
+.tr-prog-txt span{color:var(--muted);font-size:.98rem}
+
+/* filters */
+.tr-filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px}
+.tr-tab{font:600 .9rem var(--display);color:var(--muted);background:var(--panel);border:1px solid var(--line-2);
+  border-radius:999px;padding:9px 18px;min-height:42px;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+.tr-tab:hover{color:var(--text)}
+.tr-tab.is-on{color:#06090c;background:var(--tr-gold);border-color:var(--tr-gold)}
+.tr-tab:focus-visible{outline:2px solid var(--tr-gold);outline-offset:3px}
+
+/* grid */
+.tr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:18px}
+.tr-card{position:relative;display:flex;gap:14px;align-items:flex-start;overflow:hidden;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;transition:transform .16s,border-color .16s,box-shadow .16s}
+.tr-card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--tr-c,var(--tr-common));opacity:.0;transition:opacity .16s}
+.tr-card.is-got::before{opacity:.9}
+.tr-card.is-got:hover{transform:translateY(-3px);border-color:var(--tr-c,var(--line-2));box-shadow:0 20px 44px -26px var(--tr-c,#000)}
+.tr-card.is-locked{opacity:.64}
+.tr-card.is-locked:hover{opacity:.82;border-color:var(--line-2)}
+.tr-common{--tr-c:var(--tr-common)} .tr-rare{--tr-c:var(--tr-rare)} .tr-platinum{--tr-c:var(--tr-plat)} .tr-special{--tr-c:var(--tr-special)}
+
+.tr-ico{flex:none;width:50px;height:50px;display:grid;place-items:center;border-radius:14px;
+  color:var(--tr-c,var(--tr-common));background:color-mix(in srgb,var(--tr-c,var(--tr-common)) 14%,transparent);border:1px solid color-mix(in srgb,var(--tr-c,var(--tr-common)) 34%,transparent)}
+.tr-card.is-locked .tr-ico{color:var(--muted);background:var(--panel-2);border-color:var(--line)}
+.tr-ico svg{width:26px;height:26px}
+.tr-card.is-got .tr-ico svg{filter:drop-shadow(0 0 8px color-mix(in srgb,var(--tr-c) 60%,transparent))}
+
+.tr-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.tr-name{font-family:var(--display);font-weight:700;font-size:1.08rem;margin:0;line-height:1.2;color:var(--text)}
+.tr-card.is-locked .tr-name{color:var(--muted)}
+.tr-desc{margin:0;color:var(--muted);font-size:.95rem;line-height:1.4}
+.tr-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.tr-tier{font:600 .66rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--tr-c,var(--tr-common));
+  border:1px solid color-mix(in srgb,var(--tr-c,var(--tr-common)) 40%,transparent);border-radius:999px;padding:2px 8px}
+.tr-date{font:500 .8rem var(--mono);color:var(--muted)}
+.tr-date--locked{opacity:.7}
+
+/* the special trophy sits apart, like a plaque */
+.tr-card.tr-special{background:linear-gradient(120deg,rgba(255,207,82,.1),var(--panel) 60%);grid-column:1/-1}
+.tr-card.tr-special.is-locked{opacity:.7}
+
+.tr-empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:26px;border:1px dashed var(--line-2);border-radius:14px}
+
+/* reduced motion */
+:root[data-motion="reduce"] .tr-card,:root[data-motion="reduce"] .tr-tab,:root[data-motion="reduce"] .tr-ring-fg{transition:none}
+:root[data-motion="reduce"] .tr-card.is-got:hover{transform:none}
+
+@media (max-width:560px){
+  .tr-grid{grid-template-columns:1fr}
+  .tr-prog{gap:16px}
+}
