@@ -505,29 +505,84 @@
     ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
     ["arcade", "/arcade/", "Arcade"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
   ];
+  /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from
+     the middle on a ring, each an ordinary link (click or Enter to visit). Animated, colour-accented, and
+     drivable by mouse, keyboard (Tab, or arrows to step around the ring) or a controller. The dim backdrop,
+     Esc, or the centre button close it. Reduced motion keeps it, just without the fly-out. */
+  var RAD_ACCENTS = ["#cd4257", "#3d8bff", "#ff7a1f", "#36d39a", "#c77dff", "#1ec5b3", "#f0c23a", "#ff6076", "#8c5aff", "#2fbf71"];
   Site.ready(function () {
     if (!feat("navMenu") || !nav) return;
-    var here = Site.page, open = false;
-    var btn = el("button", { type: "button", class: "sx-iconbtn ch-menu", "aria-label": "Site menu", "aria-haspopup": "true", "aria-expanded": "false", "aria-controls": "ch-menu-list", title: "Site menu" },
-      svg('<path d="M4 6h16M4 12h16M4 18h16"/>'));
-    var list = el("ul", { class: "ch-menu__list", id: "ch-menu-list", hidden: true });
+    var here = Site.page, open = false, closing = 0;
     var path = location.pathname.replace(/index\.html$/, "");
     var exact = PAGES.some(function (p) { return p[1] === path; });
-    PAGES.forEach(function (p) {
-      var cur = exact ? p[1] === path : p[0] === here;
-      list.appendChild(el("li", {}, el("a", { href: p[1], class: "ch-menu__link", "aria-current": cur ? "page" : null, text: p[2] })));
-    });
-    var box = el("div", { class: "ch-menu__box" }, btn, list);
+
+    var btn = el("button", { type: "button", class: "sx-iconbtn ch-menu", "aria-label": "Site menu", "aria-haspopup": "true", "aria-expanded": "false", "aria-controls": "ch-radial", title: "Site menu" },
+      svg('<circle cx="12" cy="12" r="2.1"/><circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/>', { fill: "currentColor", stroke: "none" }));
+    var box = el("div", { class: "ch-menu__box" }, btn);
     nav.insertBefore(box, nav.firstChild);
+
+    /* overlay lives on <body> so position:fixed centres on the viewport, not a transformed ancestor */
+    var wheel = el("div", { class: "ch-rad__wheel", role: "menu", "aria-label": "Site pages" });
+    var center = el("button", { type: "button", class: "ch-rad__center", "aria-label": "Close menu", title: "Close" },
+      svg('<path d="M6 6l12 12M18 6 6 18"/>'));
+    wheel.appendChild(center);
+    var N = PAGES.length, nodes = [];
+    PAGES.forEach(function (p, i) {
+      var cur = exact ? p[1] === path : p[0] === here;
+      var ang = i * (360 / N);
+      var a = el("a", { href: p[1], class: "ch-rad__node" + (cur ? " is-current" : ""), role: "menuitem",
+        "aria-current": cur ? "page" : null, style: { "--a": ang + "deg", "--d": (i * 34) + "ms", "--ac": RAD_ACCENTS[i % RAD_ACCENTS.length] } },
+        el("span", { class: "ch-rad__t", text: p[2] }));
+      wheel.appendChild(a); nodes.push(a);
+    });
+    var scrim = el("div", { class: "ch-rad__scrim" });
+    var overlay = el("div", { class: "ch-radial", id: "ch-radial", hidden: true }, scrim, wheel);
+    (document.body || document.documentElement).appendChild(overlay);
+
+    function focusables() { return [center].concat(nodes); }
     function set(on) {
-      open = on; list.hidden = !on; btn.setAttribute("aria-expanded", String(on));
-      document.documentElement.classList.toggle("ch-open", on || !!document.querySelector(".ch-panel:not([hidden])"));
-      if (on) { var first = list.querySelector("a"); if (first) first.focus(); }
+      if (on === open) return;
+      open = on; btn.setAttribute("aria-expanded", String(on));
+      document.documentElement.classList.toggle("ch-radial-open", on);
+      if (closing) { clearTimeout(closing); closing = 0; }
+      if (on) {
+        overlay.hidden = false;
+        /* next frame so the fly-out transition runs from the collapsed state */
+        requestAnimationFrame(function () { requestAnimationFrame(function () { overlay.classList.add("is-open"); }); });
+        var cur = wheel.querySelector(".is-current") || nodes[0];
+        setTimeout(function () { try { (cur || center).focus(); } catch (e) {} }, 40);
+      } else {
+        overlay.classList.remove("is-open");
+        var ms = Site.reducedMotion ? 0 : 320;
+        closing = setTimeout(function () { overlay.hidden = true; closing = 0; }, ms);
+      }
     }
     btn.addEventListener("click", function () { set(!open); sfx(open ? "open" : "close"); });
-    document.addEventListener("click", function (e) { if (open && !box.contains(e.target)) set(false); });
-    document.addEventListener("keydown", function (e) { if (open && e.key === "Escape") { set(false); btn.focus(); } });
-    Site.on("ui:escape", function () { if (open) set(false); });
+    center.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
+    scrim.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
+    Site.on("ui:escape", function () { if (open) { set(false); try { btn.focus(); } catch (e) {} } });
+
+    overlay.addEventListener("keydown", function (e) {
+      if (!open) return;
+      if (e.key === "Escape") { set(false); sfx("close"); try { btn.focus(); } catch (x) {} return; }
+      /* arrows / step keys move focus around the ring */
+      var step = 0;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") step = 1;
+      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") step = -1;
+      if (step && nodes.length) {
+        e.preventDefault();
+        var cur = nodes.indexOf(document.activeElement);
+        if (cur < 0) cur = step > 0 ? -1 : 0;
+        var next = (cur + step + nodes.length) % nodes.length;
+        try { nodes[next].focus(); sfx("hover"); } catch (x) {}
+        return;
+      }
+      if (e.key === "Tab") {   /* keep focus inside the wheel */
+        var f = focusables(), first = f[0], last = f[f.length - 1], act = document.activeElement;
+        if (e.shiftKey && act === first) { e.preventDefault(); try { last.focus(); } catch (x) {} }
+        else if (!e.shiftKey && act === last) { e.preventDefault(); try { first.focus(); } catch (x) {} }
+      }
+    });
   }, "chrome:menu");
 
   /* ====================================================================================================
