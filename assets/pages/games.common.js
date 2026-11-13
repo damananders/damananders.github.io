@@ -76,10 +76,11 @@ export function takeReturn() {
 }
 
 /* me = { user, profile, member, banned, ready } ; ready = the round-11 SQL (11_rateopedia_profiles_forums_station.sql) has been run (profiles have handles) */
-export const me = { user: null, profile: null, member: false, banned: false, ready: false, admin: false };
+export const me = { user: null, profile: null, member: false, banned: false, ready: false, admin: false, staff: false };
+let staffSent = false;
 const FULL = "is_member,name,avatar,handle,display_name,custom_avatar,motto,motto_color,fav_games,banned,created_at";
 export async function loadMe(session) {
-  me.user = session ? session.user : null; me.profile = null; me.member = false; me.banned = false; me.admin = false;
+  me.user = session ? session.user : null; me.profile = null; me.member = false; me.banned = false; me.admin = false; me.staff = false;
   if (!me.user) return me;
   if (session.provider_token) {   // right after the Discord redirect: ask the server to check server membership
     try { await sb.functions.invoke("verify-member", { body: { provider_token: session.provider_token } }); } catch (e) {}
@@ -91,6 +92,9 @@ export async function loadMe(session) {
   me.banned = !!(me.profile && me.profile.banned);
   me.member = !!(me.profile && me.profile.is_member) && !me.banned;
   if (me.ready) { try { const a = await sb.rpc("is_admin"); me.admin = a.data === true; } catch (e) {} }
+  // Admin bubble (set server-side from the Discord role); tells the site trophies about it once per page load
+  if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
+  if (me.staff && !staffSent) { staffSent = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
   return me;
 }
 export const myName = () => (me.profile && (me.profile.display_name || me.profile.name)) || (me.user && me.user.user_metadata && (me.user.user_metadata.full_name || me.user.user_metadata.name)) || "you";
