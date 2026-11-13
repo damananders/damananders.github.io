@@ -490,13 +490,13 @@
 
   /* ====================================================================================================
    * Navigation menu — a list button at the left end of the header on every page, with the main pages.
-   * The private pages are deliberately not listed. features.navMenu = false removes it.
+   * The private pages are deliberately not listed, and the résumé is left out at the owner's request (the footer's hire link leads there). features.navMenu = false removes it.
    * ==================================================================================================== */
   var PAGES = [
     ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
     ["games", "/games/", "Rate-O-Pedia"], ["forum", "/games/forum/", "Forums"],
     ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
-    ["resume", "/resume/", "R\u00e9sum\u00e9"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
+    ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
   ];
   Site.ready(function () {
     if (!feat("navMenu") || !nav) return;
