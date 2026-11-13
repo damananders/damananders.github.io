@@ -1,8 +1,9 @@
 /* pages/control.js — the owner's control panel (/control/). Prefix cp-.
  *
- * Nothing on this page is secret: the lock is on the server. Every save is a call to a Supabase function from
- * 12_control_panel.sql, and that function checks the password itself before it changes anything. The password is
- * held in a variable for as long as this tab stays open and is never written to storage.
+ * Nothing on this page is secret: the lock is on the server (12_control_panel.sql). Sign-in is the password, then the
+ * 6-digit code from the linked authenticator app; the server checks both and hands back a session key that lasts
+ * eight hours. Every save sends that key and the server checks it again. The key is kept in sessionStorage, so it
+ * ends when the tab closes; the password is never stored. Site.admin (chrome.js) draws the "site admin" badge.
  *
  *   site_settings "config"  values laid over assets/site-config.js (only the ones that differ from the file)
  *   site_settings "links"   the Links I Like list, in the owner's ranking order
@@ -12,7 +13,7 @@
   if (!window.Site || window.Site.page !== "control") return;
   var Site = window.Site, el = Site.el, doc = document, SB = Site.sb, base = Site.configBase || {};
   var HEAD = { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" };
-  var pass = "", ov = {}, links = [], stats = {}, statsOn = false, dirty = { config: false, links: false };
+  var token = "", sess = null, ov = {}, links = [], stats = {}, statsOn = false, dirty = { config: false, links: false };
   function $(id) { return doc.getElementById(id); }
 
   /* ---------- server ---------- */
@@ -23,8 +24,11 @@
   }
   var ERR = {
     wrong: "That password is not right.",
-    locked: "Too many wrong passwords. The panel is locked for up to 15 minutes.",
-    unset: "The panel is not set up yet. Run 12_control_panel.sql in the Supabase SQL Editor with your password on its last line.",
+    "bad-code": "That code is not right, or it was already used. Wait for the next one and try again.",
+    locked: "Too many wrong tries. Sign-in is locked for up to 15 minutes.",
+    unset: "The panel is not set up yet. Run the latest 12_control_panel.sql in the Supabase SQL Editor with your password on its last line.",
+    "signed-out": "Your sign-in has ended. Reload the page and sign in again.",
+    "already-linked": "An authenticator is already linked.",
     offline: "Could not reach the server. Check the connection and try again.",
     "too-big": "That is too much data to save in one go.",
     "too-short": "The new password needs 12 characters or more.",
@@ -54,32 +58,57 @@
   function okMedia(u) { return !u || /^(\/(?!\/)|https:\/\/)/.test(u); }
   window.addEventListener("beforeunload", function (e) { if (dirty.config || dirty.links) { e.preventDefault(); e.returnValue = ""; } });
 
-  /* ---------- sign in ---------- */
+  /* ---------- sign in: password, then the authenticator code ---------- */
   Site.ready(function () {
     var form = $("cp-form"), input = $("cp-pass"), msg = $("cp-login-msg"), go = $("cp-go");
+    var codeBox = $("cp-code-box"), code = $("cp-code"), passBox = $("cp-pass-box"), steps = $("cp-steps"), held = "";
     if (!form) return;
+    function step(n) {
+      passBox.hidden = n !== 1; codeBox.hidden = n !== 2; go.textContent = n === 2 ? "Verify code" : "Continue";
+      if (steps) Array.prototype.forEach.call(steps.children, function (li, k) { li.setAttribute("data-on", String(k < n)); if (k === n - 1) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current"); });
+      try { (n === 2 ? code : input).focus(); } catch (e) {}
+    }
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var p = input.value; if (!p) return;
+      var second = !codeBox.hidden, p = second ? held : input.value, c = second ? code.value.replace(/\D/g, "") : null;
+      if (!p || (second && c.length !== 6)) { if (second) msg.textContent = "Type the 6-digit code from your authenticator app."; return; }
       go.disabled = true; msg.textContent = "Checking…";
-      rpc("site_admin_login", { p_pass: p }).then(function (r) {
+      rpc("site_admin_login", { p_pass: p, p_code: c }).then(function (r) {
         go.disabled = false;
-        if (!r || !r.ok) { msg.textContent = why(r); input.select(); Site.sfx("error"); return; }
-        pass = p; input.value = ""; msg.textContent = "";
-        Promise.all([Site.remote(true), Site.data("links"), loadStats()]).then(function (got) {
-          var rem = got[0] || {}, file = got[1];
-          ov = isObj(rem.config) ? JSON.parse(JSON.stringify(rem.config)) : {};
-          var src = Array.isArray(rem.links) && rem.links.length ? rem.links : ((file && file.items) || []);
-          links = src.slice().sort(function (a, b) { return (+a.rank || 9999) - (+b.rank || 9999); }).map(function (x) {
-            return { id: String(x.id || ""), title: String(x.title || ""), url: String(x.url || ""), founded: String(x.founded || ""), color: /^#[0-9a-f]{6}$/i.test(x.color) ? x.color : "#cd4257", image: String(x.image || ""), video: String(x.video || ""), blurb: String(x.blurb || ""), _old: true };
-          });
-          $("cp-login").hidden = true; $("cp-lead").textContent = "Changes go live when you press Save. Visitors see them within about five minutes.";
-          build(); Site.sfx("success");
-        });
+        if (r && r.error === "need-code") { held = p; input.value = ""; msg.textContent = "Password accepted. Now the code from your authenticator app."; step(2); return; }
+        if (!r || !r.ok || !r.token) {
+          msg.textContent = why(r); Site.sfx("error");
+          if (second) { code.value = ""; if (r && (r.error === "wrong" || r.error === "locked" || r.error === "unset")) { held = ""; step(1); } else code.focus(); } else input.select();
+          return;
+        }
+        held = ""; input.value = ""; code.value = ""; msg.textContent = "";
+        Site.admin.set({ token: r.token, twofa: !!r.twofa, expires: r.expires });
+        enter({ twofa: !!r.twofa, expires: r.expires, linked: !!r.twofa }, true);
       });
     });
-    try { input.focus(); } catch (e) {}
+    var back = $("cp-code-back"); if (back) back.addEventListener("click", function () { held = ""; code.value = ""; msg.textContent = ""; step(1); });
+    /* still signed in from earlier in this tab? */
+    var had = Site.admin.get();
+    if (had && had.token) {
+      msg.textContent = "Checking your sign-in…"; go.disabled = true;
+      Site.admin.check().then(function (r) { go.disabled = false; msg.textContent = ""; if (r && r.ok) enter(r, false); else step(1); });
+    } else step(1);
   }, "control");
+
+  function enter(info, fresh) {
+    var a = Site.admin.get(); token = (a && a.token) || ""; sess = info;
+    Promise.all([Site.remote(true), Site.data("links"), loadStats()]).then(function (got) {
+      var rem = got[0] || {}, file = got[1];
+      ov = isObj(rem.config) ? JSON.parse(JSON.stringify(rem.config)) : {};
+      var src = Array.isArray(rem.links) && rem.links.length ? rem.links : ((file && file.items) || []);
+      links = src.slice().sort(function (a, b) { return (+a.rank || 9999) - (+b.rank || 9999); }).map(function (x) {
+        return { id: String(x.id || ""), title: String(x.title || ""), url: String(x.url || ""), founded: String(x.founded || ""), color: /^#[0-9a-f]{6}$/i.test(x.color) ? x.color : "#cd4257", image: String(x.image || ""), video: String(x.video || ""), blurb: String(x.blurb || ""), _old: true };
+      });
+      $("cp-login").hidden = true; $("cp-lead").textContent = "Changes go live when you press Save. Visitors see them within about five minutes.";
+      build(); if (fresh) { Site.sfx("success"); Site.toast("Signed in as site admin.", { type: "ok" }); }
+      if (!sess.linked) show("security");
+    });
+  }
 
   function loadStats() {
     return fetch(SB.url + "/rest/v1/link_stats?select=id,clicks,score", { headers: HEAD, cache: "no-store" })
@@ -89,7 +118,7 @@
   }
 
   /* ---------- the panel ---------- */
-  var TABS = [["links", "Links I Like"], ["switches", "Switches"], ["values", "Site values"], ["advanced", "Advanced"], ["security", "Password"]];
+  var TABS = [["links", "Links I Like"], ["switches", "Switches"], ["values", "Site values"], ["advanced", "Advanced"], ["security", "Sign-in"]];
   var saveBtn, saveMsg, panes = {};
   function paintSave() {
     if (!saveBtn) return;
@@ -110,8 +139,10 @@
     saveMsg = el("span", { class: "cp-msg", role: "status", "aria-live": "polite" });
     saveBtn.addEventListener("click", save);
     var out = el("button", { type: "button", class: "btn ghost", text: "Sign out" });
-    out.addEventListener("click", function () { dirty.config = dirty.links = false; pass = ""; location.reload(); });
+    out.addEventListener("click", function () { dirty.config = dirty.links = false; out.disabled = true; Site.admin.signOut().then(function () { location.reload(); }); });
+    app.appendChild(el("div", { class: "cp-live", id: "cp-live", role: "status" }));
     app.appendChild(el("div", { class: "cp-top" }, bar, el("div", { class: "cp-savebar" }, saveMsg, saveBtn, out)));
+    paintLive(); if (!liveTimer) liveTimer = setInterval(paintLive, 30000);
     TABS.forEach(function (t) { app.appendChild(panes[t[0]]); });
     app.appendChild(el("section", { class: "panel cp-jump" }, el("h2", { text: "Other owner pages" }),
       el("p", { class: "pg-actions" },
@@ -121,6 +152,19 @@
         el("a", { class: "btn ghost", href: "https://supabase.com/dashboard/project/zjhlhkruqzfendvbglsb", target: "_blank", rel: "noopener", text: "Supabase ↗" }),
         el("a", { class: "btn ghost", href: "https://github.com/damananders/damananders.github.io", target: "_blank", rel: "noopener", text: "GitHub ↗" }))));
     drawLinks(); drawSwitches(); drawValues(); drawAdvanced(); drawSecurity();
+  }
+  /* The "you are live" strip: green when password and authenticator were both checked, amber on password alone. */
+  var liveTimer = 0;
+  function paintLive() {
+    var box = $("cp-live"); if (!box || !sess) return;
+    var left = Math.max(0, new Date(sess.expires).getTime() - Date.now()), h = Math.floor(left / 36e5), m = Math.floor(left % 36e5 / 6e4);
+    if (!left) { Site.admin.clear(); location.reload(); return; }
+    box.textContent = ""; box.setAttribute("data-level", sess.twofa ? "full" : "pass");
+    box.appendChild(el("span", { class: "cp-live__dot", "aria-hidden": "true" }));
+    box.appendChild(el("span", { class: "cp-live__shield", "aria-hidden": "true" }, Site.svg('<path d="M12 3l7 3v5c0 4.6-3 8.3-7 10-4-1.700-7-5.400-7-10V6z"/><path d="M9 12l2.200 2.200L15.500 10"/>')));
+    box.appendChild(el("div", { class: "cp-live__text" },
+      el("strong", { text: "Live as Site Admin" }),
+      el("span", { text: (sess.twofa ? "Password and authenticator verified" : "Password only. Link an authenticator in the Sign-in tab") + " · session ends in " + (h ? h + " h " : "") + m + " min" })));
   }
   function show(id) {
     TABS.forEach(function (t) { panes[t[0]].hidden = t[0] !== id; $("cp-tab-" + t[0]).setAttribute("aria-selected", String(t[0] === id)); });
@@ -134,8 +178,8 @@
     if (bad) { saveMsg.textContent = bad; show("links"); Site.sfx("error"); return; }
     saveBtn.disabled = true; saveMsg.textContent = "Saving…";
     var jobs = [];
-    if (dirty.config) jobs.push(rpc("site_admin_save", { p_pass: pass, p_key: "config", p_value: ov }).then(function (r) { if (r && r.ok) dirty.config = false; return r; }));
-    if (dirty.links) jobs.push(rpc("site_admin_save", { p_pass: pass, p_key: "links", p_value: cleanLinks() }).then(function (r) { if (r && r.ok) { dirty.links = false; links.forEach(function (l) { l._old = true; }); } return r; }));
+    if (dirty.config) jobs.push(rpc("site_admin_save", { p_token: token, p_key: "config", p_value: ov }).then(function (r) { if (r && r.ok) dirty.config = false; return r; }));
+    if (dirty.links) jobs.push(rpc("site_admin_save", { p_token: token, p_key: "links", p_value: cleanLinks() }).then(function (r) { if (r && r.ok) { dirty.links = false; links.forEach(function (l) { l._old = true; }); } return r; }));
     Promise.all(jobs).then(function (rs) {
       var fail = rs.filter(function (r) { return !r || !r.ok; })[0];
       Site.store.set("remote", { t: Date.now(), config: dirty.config ? null : ov, links: dirty.links ? null : cleanLinks() });
@@ -226,7 +270,7 @@
     b.addEventListener("click", function () {
       b.disabled = true; msg.textContent = "Saving…";
       var nc = Math.max(0, parseInt(c.value, 10) || 0), ns = Math.max(0, parseInt(sc.value, 10) || 0);
-      rpc("site_admin_link_stats", { p_pass: pass, p_id: l.id, p_clicks: nc, p_score: ns, p_remove: false }).then(function (r) {
+      rpc("site_admin_link_stats", { p_token: token, p_id: l.id, p_clicks: nc, p_score: ns, p_remove: false }).then(function (r) {
         b.disabled = false;
         if (!r || !r.ok) { msg.textContent = why(r); return; }
         stats[l.id] = { clicks: nc, score: ns }; msg.textContent = "Done.";
@@ -321,24 +365,83 @@
     p.appendChild(el("label", { class: "cp-switch" }, own, el("span", { text: "Owner view in this browser (shows the Dashboard and the Vault card)" })));
   }
 
-  /* ---------- tab: password ---------- */
+  /* ---------- tab: sign-in (authenticator app + password) ---------- */
+  function field(label, inp) { return el("label", { class: "cp-field" }, el("span", { text: label }), inp); }
+  function codeInput() { return el("input", { type: "text", inputmode: "numeric", autocomplete: "one-time-code", maxlength: "7", pattern: "[0-9 ]*", placeholder: "123456", class: "cp-codein" }); }
   function drawSecurity() {
     var p = panes.security; p.textContent = "";
-    p.appendChild(el("h2", { text: "Password" }));
-    p.appendChild(el("p", { class: "cp-fine", text: "Anyone who has this password can change the site, so share it only with people you trust. Changing it here signs everybody else out of the panel." }));
-    var a = el("input", { type: "password", autocomplete: "new-password", maxlength: "200" }), b = el("input", { type: "password", autocomplete: "new-password", maxlength: "200" });
+    p.appendChild(el("h2", { text: "Authenticator app" }));
+    if (sess.linked) drawLinked(p); else drawLink(p);
+
+    p.appendChild(el("h2", { class: "cp-h2gap", text: "Password" }));
+    p.appendChild(el("p", { class: "cp-fine", text: "Changing the password signs every other browser out of the panel." }));
+    var cur = el("input", { type: "password", autocomplete: "current-password", maxlength: "200" }), a = el("input", { type: "password", autocomplete: "new-password", maxlength: "200" }), b = el("input", { type: "password", autocomplete: "new-password", maxlength: "200" });
     var msg = el("span", { class: "cp-msg", role: "status" }), go = el("button", { type: "button", class: "btn ghost", text: "Change password" });
     go.addEventListener("click", function () {
+      if (!cur.value) { msg.textContent = "Type your current password first."; return; }
       if (a.value.length < 12) { msg.textContent = ERR["too-short"]; return; }
-      if (a.value !== b.value) { msg.textContent = "The two boxes do not match."; return; }
+      if (a.value !== b.value) { msg.textContent = "The two new password boxes do not match."; return; }
       go.disabled = true; msg.textContent = "Saving…";
-      rpc("site_admin_set_password", { p_pass: pass, p_new: a.value }).then(function (r) {
+      rpc("site_admin_set_password", { p_token: token, p_pass: cur.value, p_new: a.value }).then(function (r) {
         go.disabled = false;
         if (!r || !r.ok) { msg.textContent = why(r); return; }
-        pass = a.value; a.value = b.value = ""; msg.textContent = "Password changed."; Site.sfx("success");
+        cur.value = a.value = b.value = ""; msg.textContent = "Password changed."; Site.sfx("success");
       });
     });
-    p.appendChild(el("div", { class: "cp-grid" }, el("label", { class: "cp-field" }, el("span", { text: "New password (12 or more characters)" }), a), el("label", { class: "cp-field" }, el("span", { text: "New password again" }), b)));
+    p.appendChild(el("div", { class: "cp-grid" }, field("Current password", cur), el("span", {}), field("New password (12 or more characters)", a), field("New password again", b)));
     p.appendChild(el("p", { class: "pg-actions" }, go, msg));
+  }
+  function drawLink(p) {
+    p.appendChild(el("p", { class: "cp-fine", text: "Add a second lock. Once an app is linked, signing in asks for your password and then the 6-digit code from the app. Works with Google Authenticator, Authy, Microsoft Authenticator, 1Password and similar apps." }));
+    var area = el("div", { class: "cp-2fa" }), msg = el("span", { class: "cp-msg", role: "status" });
+    var start = el("button", { type: "button", class: "btn", text: "Link an authenticator app" });
+    start.addEventListener("click", function () {
+      start.disabled = true; msg.textContent = "Getting a new key…";
+      rpc("site_admin_totp_begin", { p_token: token }).then(function (r) {
+        start.disabled = false;
+        if (!r || !r.ok || !r.secret) { msg.textContent = why(r); return; }
+        msg.textContent = ""; start.hidden = true;
+        var uri = "otpauth://totp/" + encodeURIComponent("Anders site:site admin") + "?secret=" + r.secret + "&issuer=" + encodeURIComponent("Anders site") + "&algorithm=SHA1&digits=6&period=30";
+        var qr = el("div", { class: "cp-qr", role: "img", "aria-label": "QR code to scan with your authenticator app" });
+        try { var q = window.qrcode(0, "M"); q.addData(uri); q.make(); qr.innerHTML = q.createSvgTag({ cellSize: 5, margin: 3, scalable: true }); } catch (e) { qr.textContent = "The QR picture could not be drawn. Type the key below into your app instead."; }
+        var code = codeInput(), ok = el("button", { type: "button", class: "btn", text: "Turn it on" }), m2 = el("span", { class: "cp-msg", role: "status" });
+        ok.addEventListener("click", function () {
+          var c = code.value.replace(/\D/g, ""); if (c.length !== 6) { m2.textContent = "Type the 6-digit code the app shows."; return; }
+          ok.disabled = true; m2.textContent = "Checking…";
+          rpc("site_admin_totp_confirm", { p_token: token, p_code: c }).then(function (r2) {
+            ok.disabled = false;
+            if (!r2 || !r2.ok) { m2.textContent = why(r2); code.value = ""; code.focus(); return; }
+            sess.linked = true; sess.twofa = true; var a = Site.admin.get(); if (a) { a.twofa = true; Site.admin.set(a); }
+            paintLive(); drawSecurity(); Site.sfx("success"); Site.toast("Authenticator linked. Sign-in now asks for a code.", { type: "ok", ms: 4200 });
+          });
+        });
+        area.appendChild(el("ol", { class: "cp-2fa__steps" },
+          el("li", {}, "Open your authenticator app and choose to add an account by scanning a QR code.", qr),
+          el("li", {}, "No camera? Add it by hand with this key (time based, 6 digits):", el("code", { class: "cp-key", text: r.secret.replace(/(.{4})/g, "$1 ").trim() })),
+          el("li", {}, "Type the 6-digit code the app shows now, to prove it works.", el("div", { class: "cp-2fa__go" }, code, ok, m2))));
+        area.appendChild(el("p", { class: "cp-fine", text: "This key is shown only now. Anyone who has it can make your codes, so do not screenshot or share it. If you lose the phone, the set-up file explains how to unlink the app from Supabase." }));
+        try { code.focus(); } catch (e) {}
+      });
+    });
+    p.appendChild(el("p", { class: "pg-actions" }, start, msg)); p.appendChild(area);
+  }
+  function drawLinked(p) {
+    p.appendChild(el("p", { class: "cp-ok" }, el("span", { class: "cp-live__dot", "aria-hidden": "true" }), "An authenticator app is linked. Signing in asks for your password, then its code."));
+    var pw = el("input", { type: "password", autocomplete: "current-password", maxlength: "200" }), code = codeInput();
+    var msg = el("span", { class: "cp-msg", role: "status" }), off = el("button", { type: "button", class: "cp-danger", text: "Unlink the authenticator" });
+    off.addEventListener("click", function () {
+      var c = code.value.replace(/\D/g, ""); if (!pw.value || c.length !== 6) { msg.textContent = "Unlinking needs your password and a fresh code from the app."; return; }
+      off.disabled = true; msg.textContent = "Checking…";
+      rpc("site_admin_totp_off", { p_token: token, p_pass: pw.value, p_code: c }).then(function (r) {
+        off.disabled = false;
+        if (!r || !r.ok) { msg.textContent = why(r); return; }
+        sess.linked = false; sess.twofa = false; var a = Site.admin.get(); if (a) { a.twofa = false; Site.admin.set(a); }
+        paintLive(); drawSecurity();
+      });
+    });
+    var d = el("details", { class: "cp-unlink" }, el("summary", { text: "Unlink or move to a new phone" }),
+      el("p", { class: "cp-fine", text: "To move to a new phone, unlink here and then link the new app. Unlinking needs your password and a current code." }),
+      el("div", { class: "cp-grid" }, field("Password", pw), field("Code from the app", code)), el("p", { class: "pg-actions" }, off, msg));
+    p.appendChild(d);
   }
 })();

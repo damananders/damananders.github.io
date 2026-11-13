@@ -425,3 +425,15 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-menu__link[aria-current="page"]{color:var(--accent,var(--sx-accent));box-shadow:inset 3px 0 0 var(--accent,var(--sx-accent))}
 :root[data-motion="reduce"] .ch-menu__list{animation:none}
 @media print{.ch-menu__box{display:none}}
+
+/* site admin badge (chrome:admin) */
+.ch-admin{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 10px;border-radius:999px;
+  border:1px solid #2fbf71;background:rgba(7,14,10,.92);color:#eafff3;font:600 .74rem/1 var(--display,system-ui);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.ch-admin i{width:8px;height:8px;border-radius:50%;background:#2fbf71;box-shadow:0 0 0 0 rgba(47,191,113,.7);animation:ch-admin-pulse 1.8s ease-out infinite}
+.ch-admin b{padding:3px 6px;border-radius:6px;background:#2fbf71;color:#04120a;font-weight:700}
+.ch-admin[data-level="pass"]{border-color:#e0a030;color:#fff6e3}
+.ch-admin[data-level="pass"] i,.ch-admin[data-level="pass"] b{background:#e0a030}
+.ch-admin:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@keyframes ch-admin-pulse{70%{box-shadow:0 0 0 9px rgba(47,191,113,0)}100%{box-shadow:0 0 0 0 rgba(47,191,113,0)}}
+[data-motion="reduce"] .ch-admin i{animation:none}
+@media print{.ch-admin{display:none}}
