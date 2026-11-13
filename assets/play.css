@@ -25,6 +25,9 @@
 .pl-item__txt{display:grid;font-size:.86rem;line-height:1.35}
 .pl-item__txt span{opacity:.75}
 .pl-list__sum{margin:0 0 12px;font-size:.9rem;opacity:.85}
+.pl-list__cab{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font:600 .86rem var(--sx-display,system-ui);
+  color:var(--accent,var(--sx-accent));text-decoration:none}
+.pl-list__cab:hover,.pl-list__cab:focus-visible{text-decoration:underline}
 .pl-list__hint{margin:14px 0 0;font-size:.8rem;opacity:.6;font-style:italic}
 
 /* ---- secret codes ---- */
@@ -45,6 +48,15 @@ html.pl-disco{animation:pl-disco 1.2s linear infinite}
 @keyframes pl-disco{to{filter:hue-rotate(360deg)}}
 .pl-matrix{position:fixed;inset:0;width:100%;height:100%;z-index:2147481000;pointer-events:none;background:#000;opacity:0;transition:opacity .6s}
 .pl-matrix.is-in{opacity:.86}
+.pl-snow{position:fixed;inset:0;width:100%;height:100%;z-index:2147481200;pointer-events:none;opacity:0;transition:opacity .6s}
+.pl-snow.is-in{opacity:1}
+.pl-plat{position:fixed;inset:0;width:100%;height:100%;z-index:2147482500;pointer-events:none}
+html.pl-vapor body{filter:saturate(1.35) contrast(1.04) hue-rotate(-12deg)}
+html.pl-vapor::after{content:"";position:fixed;inset:0;z-index:2147480500;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,113,206,.22),rgba(1,205,254,.16) 58%,rgba(185,103,255,.22)),
+    repeating-linear-gradient(to bottom,transparent 0 38px,rgba(1,205,254,.14) 38px 39px);
+  background-size:100% 100%,100% 39px;mix-blend-mode:screen;animation:pl-vapor 5s linear infinite}
+@keyframes pl-vapor{to{background-position:0 0,0 39px}}
 
 /* ---- boot intro ---- */
 html.pl-preboot body{visibility:hidden}
@@ -65,7 +77,7 @@ html.pl-preboot body{visibility:hidden}
 
 @media (prefers-reduced-motion:reduce){.pl-trophy{transition:opacity .2s}body{transition:none}}
 :root[data-motion="reduce"] body{transition:none}
-@media print{.pl-trophy,.pl-cup,.pl-boot,.pl-matrix{display:none!important}html.pl-crt::after{display:none}}
+@media print{.pl-trophy,.pl-cup,.pl-boot,.pl-matrix,.pl-snow,.pl-plat{display:none!important}html.pl-crt::after,html.pl-vapor::after{display:none}}
 
 /* the Super Duper Special trophy: its own colours, set apart below the rest */
 .pl-item--special{margin-top:10px;border-style:dashed}
