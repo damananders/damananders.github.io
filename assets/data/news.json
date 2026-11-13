@@ -1,6 +1,7 @@
 {
   "_help": "Site-wide news. Newest first is not required (the site sorts by date). tag is one of: site, anyps, anderscraft, games, vault. url is optional and may be a path on this site. Leave date as \"\" for an undated note.",
   "items": [
+    { "date": "2026-11-12", "tag": "site", "title": "Classic skin, new season sounds and 13 more trophies", "body": "Pick Classic in settings for the original lighthouse look with the ocean. Fall, winter, spring and summer each have their own soundscape now.", "url": "/changelog/" },
     { "date": "2026-11-12", "tag": "site", "title": "Links I Like, and a menu on every page", "body": "A page of sites I use, with a public ranking you can vote on, plus a menu button at the top left of every page.", "url": "/links/" },
     { "date": "2026-11-12", "tag": "site", "title": "Seasons, trophies and secrets", "body": "The site now dresses for the season, hands out trophies for exploring, and reacts to a few words if you just type them.", "url": "/" },
     { "date": "2026-11-12", "tag": "site", "title": "New pages: What's new, Uses and Stream", "body": "A full changelog, a page about the tools behind the projects, and a stream page that shows the player only while a broadcast is live.", "url": "/changelog/" },

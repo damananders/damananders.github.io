@@ -137,3 +137,7 @@ dialog.sx-modal::backdrop{background:rgba(3,5,8,.72);backdrop-filter:blur(4px)}
   main a[href^="https://"]:not(.btn):not(.rz-btn)::after,.rz-card__link[href^="https://"]::after{content:" (" attr(href) ")";font-size:.8em;word-break:break-all}
   @page{margin:16mm}
 }
+
+/* Classic skin (assets/seasons.js sets data-skin): the original gold accent on the pages that use the site default. */
+:root[data-skin="classic"]:not([data-page="anderscraft"]):not([data-page="anyps"]):not([data-page="vault"]){--sx-accent:#ffc46b;--sx-on-accent:#06090c}
+:root[data-theme="light"][data-skin="classic"]:not([data-page="anderscraft"]):not([data-page="anyps"]):not([data-page="vault"]){--sx-accent:#8a4f00;--sx-on-accent:#fff}

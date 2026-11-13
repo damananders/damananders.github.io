@@ -1,14 +1,15 @@
-/* seasons.js — seasonal dress for every page, loaded by assets/interact.js (prefix sn-).
+/* seasons.js — the site's skins, loaded by assets/interact.js on every page (prefix sn-).
  *
+ *   classic  the original look: no seasonal dress, gold accent, the lighthouse; its sound is the ocean
  *   fall     leaves blowing through on gusts of wind, warm amber light
- *   winter   falling snow, frosted screen edges, now and then a few soft bells
+ *   winter   falling snow, frosted screen edges
  *   spring   drifting petals, sprigs and flowers growing in the bottom corners, fresh green light
  *   summer   sandy ground glow, a hot sun, steam rising and grains of sand on the breeze
  *
- * The season follows the visitor's calendar (flipped for the southern hemisphere). Visitors can pick one or
- * switch it off in the settings panel. Wind and bells are only heard when the visitor has turned a sound
- * option on. features.seasons = false turns the whole thing off; seasons.force = "winter" pins one for everyone.
- * Try one with ?sx=season:winter
+ * "Auto" follows the visitor's calendar (flipped for the southern hemisphere). Visitors pick a skin in the
+ * settings panel. This file draws the look only; each skin's sound is the hub soundscape in assets/audio.js,
+ * which asks Site.skin() and listens for the "skin" event. features.seasons = false leaves the site on classic;
+ * seasons.force = "winter" pins one for everyone. Try one with ?sx=season:winter (or season:classic)
  */
 (function () {
   "use strict";
@@ -32,8 +33,9 @@
   }
   function chosen() {
     var d = Site.debug("season"); if (d && NAMES.indexOf(d) >= 0) return d;
+    if (d === "classic") return null;
     var p = Site.store.get("season", "auto");
-    if (p === "off") return null;
+    if (p === "off" || p === "classic") return null;        /* "off" is the old name for classic */
     if (NAMES.indexOf(p) >= 0) return p;
     if (cfg.force && NAMES.indexOf(cfg.force) >= 0) return cfg.force;
     return calendarSeason();
@@ -93,7 +95,7 @@
     var dt = Math.min(0.05, (t - last) / 1000 || 0); last = t;
     if (doc.hidden) return;
     /* wind: a slow sway plus, in fall, a gust every so often */
-    if (t > gustT) { gust = season === "fall" ? rnd(120, 260) : season === "winter" ? rnd(10, 40) : rnd(6, 24); gustT = t + rnd(5000, 11000); if (season === "fall") sound("gust"); }
+    if (t > gustT) { gust = season === "fall" ? rnd(120, 260) : season === "winter" ? rnd(10, 40) : rnd(6, 24); gustT = t + rnd(5000, 11000); }
     gust *= Math.pow(0.55, dt);
     wind = Math.sin(t / 3700) * 14 + gust;
     ctx.clearRect(0, 0, W, H);
@@ -129,11 +131,13 @@
   function stop() {
     cancelAnimationFrame(raf); raf = 0; parts = [];
     if (layer) { layer.remove(); layer = null; cv = null; ctx = null; }
-    root.removeAttribute("data-season"); quiet();
+    root.removeAttribute("data-season");
   }
   function start() {
     stop();
     season = chosen();
+    root.setAttribute("data-skin", season || "classic");
+    Site.emit("skin", season || "classic");
     if (!season || !doc.body || root.hasAttribute("data-lite")) return;
     root.setAttribute("data-season", season);
     layer = el("div", { class: "sn-layer sn-" + season, "aria-hidden": "true" }, el("div", { class: "sn-tint" }));
@@ -144,50 +148,15 @@
     if (Site.reducedMotion) return;                       /* tint and decorations only */
     cv = el("canvas", { class: "sn-canvas" }); ctx = cv.getContext("2d"); layer.appendChild(cv);
     gustT = performance.now() + rnd(1500, 4000); size(); last = performance.now(); raf = requestAnimationFrame(frame);
-    if (season === "winter") bellLoop();
   }
-
-  /* ---------- sound: only when the visitor has switched a sound option on ---------- */
-  var ac = null, bellTimer = 0;
-  function loud() { return Site.pref("sfx") === true || Site.pref("soundscape") === true; }
-  function audio() {
-    if (!loud()) return null;
-    try { if (!ac) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ac = new AC(); } if (ac.state === "suspended") ac.resume(); } catch (e) { return null; }
-    return ac.state === "running" ? ac : null;
-  }
-  function vol() { var v = parseFloat(Site.pref("volume")); return isFinite(v) ? v : 0.3; }
-  function sound(kind) {
-    var a = audio(); if (!a || doc.hidden) return;
-    var now = a.currentTime, out = a.createGain(); out.connect(a.destination);
-    if (kind === "gust") {
-      var len = 3.2, buf = a.createBuffer(1, a.sampleRate * len, a.sampleRate), d = buf.getChannelData(0), b = 0;
-      for (var i = 0; i < d.length; i++) { b = b * 0.97 + (Math.random() * 2 - 1) * 0.03; d[i] = b * 6; }
-      var src = a.createBufferSource(); src.buffer = buf;
-      var f = a.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 0.8; f.frequency.setValueAtTime(260, now); f.frequency.linearRampToValueAtTime(760, now + 1.2); f.frequency.linearRampToValueAtTime(300, now + len);
-      out.gain.setValueAtTime(0, now); out.gain.linearRampToValueAtTime(0.22 * vol(), now + 1.1); out.gain.linearRampToValueAtTime(0, now + len);
-      src.connect(f); f.connect(out); src.start(now); src.stop(now + len);
-    } else {                                              /* a few soft bells */
-      var notes = [1568, 1976, 2349, 1760, 2093], n = 3 + ((Math.random() * 3) | 0);
-      for (var k = 0; k < n; k++) {
-        var t0 = now + k * rnd(0.16, 0.3), fr = notes[(Math.random() * notes.length) | 0];
-        [1, 2.76].forEach(function (mult, j) {
-          var o = a.createOscillator(), g = a.createGain(); o.type = "sine"; o.frequency.value = fr * mult;
-          g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime((j ? 0.02 : 0.07) * vol(), t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + (j ? 0.5 : 1.3));
-          o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + 1.4);
-        });
-      }
-    }
-  }
-  function bellLoop() { clearTimeout(bellTimer); bellTimer = setTimeout(function () { if (season === "winter" && raf) { sound("bells"); bellLoop(); } }, rnd(14000, 30000)); }
-  function quiet() { clearTimeout(bellTimer); }
 
   /* ---------- wiring ---------- */
   Site.ready(function () {
     Site.settings.register({
-      id: "season", label: "Seasonal Effects", type: "choice", pref: "season", order: 25,
-      hint: "Leaves, snow, petals or summer heat. Auto follows your calendar.",
-      choices: [{ value: "auto", label: "Auto" }, { value: "off", label: "Off" }, { value: "fall", label: "Fall" }, { value: "winter", label: "Winter" }, { value: "spring", label: "Spring" }, { value: "summer", label: "Summer" }],
-      get: function () { return Site.store.get("season", "auto"); },
+      id: "season", label: "Site Skin", type: "choice", pref: "season", order: 25,
+      hint: "Classic is the original lighthouse look. The seasons add leaves, snow, petals or summer heat, each with its own sound. Auto follows your calendar.",
+      choices: [{ value: "auto", label: "Auto" }, { value: "classic", label: "Classic" }, { value: "fall", label: "Fall" }, { value: "winter", label: "Winter" }, { value: "spring", label: "Spring" }, { value: "summer", label: "Summer" }],
+      get: function () { var v = Site.store.get("season", "auto"); return v === "off" ? "classic" : v; },
       set: function (v) { Site.setPref("season", v); }
     });
     Site.on("pref:season", start);
@@ -196,4 +165,5 @@
     start();
   }, "seasons");
   Site.season = function () { return season; };
+  Site.skin = function () { return chosen() || "classic"; };
 })();
