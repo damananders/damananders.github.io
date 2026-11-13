@@ -179,8 +179,9 @@ async function wikidata() {
     log("Wikidata", con, rows.length, "rows; items so far", items.size);
     await sleep(1500);
   }
-  // facts for every item, 300 at a time
-  const qs = [...items.keys()];
+  return items;
+}
+async function facts(items, qs) {
   for (let i = 0; i < qs.length; i += 300) {
     const vals = qs.slice(i, i + 300).map((q) => "wd:" + q).join(" ");
     const rows = await sparql(`SELECT ?item ?label ?desc ?date ?platL ?pubL ?devL ?genreL WHERE { VALUES ?item { ${vals} }
@@ -205,7 +206,29 @@ async function wikidata() {
     if (i % 3000 === 0) log("facts", i, "/", qs.length);
     await sleep(700);
   }
-  return items;
+}
+// exact English-label lookup for games whose Wikidata entry doesn't list the PlayStation platform
+const lit = (t) => '"' + t.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"@en';
+async function byLabel(labels) {
+  const hits = new Map();   // label -> [item]
+  for (let i = 0; i < labels.length; i += 150) {
+    const batch = labels.slice(i, i + 150);
+    let rows = [];
+    try {
+      rows = await sparql(`SELECT ?item ?lab ?article (GROUP_CONCAT(DISTINCT ?p; separator="|") AS ?plats) WHERE { VALUES ?lab { ${batch.map(lit).join(" ")} }
+        ?item rdfs:label ?lab ; wdt:P31 wd:Q7889 .
+        OPTIONAL { ?item wdt:P400 ?p }
+        OPTIONAL { ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . } } GROUP BY ?item ?lab ?article`);
+    } catch (e) { log("label batch failed", i, e.message.slice(0, 120)); }
+    for (const b of rows) {
+      const arr = hits.get(b.lab.value) || [];
+      arr.push({ q: b.item.value.split("/").pop(), article: b.article ? decodeURIComponent(b.article.value.split("/wiki/").pop()).replace(/_/g, " ") : null,
+                 platQ: (b.plats ? b.plats.value : "").split("|").map((u) => u.split("/").pop()).filter(Boolean) });
+      hits.set(b.lab.value, arr);
+    }
+    await sleep(500);
+  }
+  return hits;
 }
 
 /* ---------------- 4. Wikipedia lead sections ---------------- */
@@ -237,6 +260,7 @@ const games = await loadGames();
 log("games", games.length);
 const { by: compat, meta1, enName } = await compatSources();
 const items = await wikidata();
+await facts(items, [...items.keys()]);
 
 // index Wikidata by console + normalised name, plus a console-free index of names that point at one item only
 const idx = new Map(), any = new Map(), idxL = new Map();
@@ -252,12 +276,34 @@ for (const g of games) {
   const names = [g.title];
   if (g.console === "PS2" && enName.has(norm(g.title))) names.push(enName.get(norm(g.title)));
   const aka = g.title.match(/\(aka ([^)]+)\)/i); if (aka) names.push(aka[1]);
-  for (const n of [...names]) { const [main] = splitTitle(n); if (main !== n) names.push(main); }
+  for (const n of [...names]) { const [main, sub] = splitTitle(n); if (main !== n && /\b(edition|collection|hd|remaster(ed)?|anniversary|pack|best|greatest hits|platinum|bundle|demo|trial|disc)\b/i.test(sub)) names.push(main); }
   let arr = null, via = "";
   for (const n of names) { if ((arr = idx.get(g.console + "|" + norm(n)))) { via = "exact"; break; } }
   if (!arr) for (const n of names) { if ((arr = idxL.get(g.console + "|" + loose(n)))) { via = "loose"; break; } }
   if (!arr) for (const n of names) { const a = any.get(norm(n)); if (a && a.length === 1 && norm(n).length >= 6) { arr = a; via = "other-platform"; break; } }
   if (arr) { matched.set(g.id, pick(arr)); how[via] = (how[via] || 0) + 1; }
+}
+// second pass: exact Wikidata labels for what's still unmatched
+{
+  const want = new Map();   // label -> [game]
+  const variants = (g) => { const v = new Set([g.title.replace(/\s+:\s+/g, ": ").replace(/\s+/g, " ").trim()]);
+    if (g.console === "PS2" && enName.has(norm(g.title))) v.add(enName.get(norm(g.title)).replace(/\s+:\s+/g, ": "));
+    const aka = g.title.match(/\(aka ([^)]+)\)/i); if (aka) v.add(aka[1].trim());
+    for (const x of [...v]) { v.add(x.replace(/\s*\[[^\]]*\]|\s*\((?!aka)[^)]*\)/g, "").trim()); }
+    return [...v].filter((x) => x.length >= 3); };
+  for (const g of games) if (!matched.has(g.id)) for (const l of variants(g)) { const a = want.get(l) || []; a.push(g); want.set(l, a); }
+  log("label lookups", want.size);
+  const hits = await byLabel([...want.keys()]);
+  const fresh = new Set();
+  for (const [lab, cands] of hits) for (const g of want.get(lab) || []) {
+    if (matched.has(g.id)) continue;
+    const c = cands.find((x) => x.platQ.includes(PLATFORM_Q[g.console])) || (cands.length === 1 ? cands[0] : cands.find((x) => x.article));
+    if (!c) continue;
+    let it = items.get(c.q);
+    if (!it) { it = { q: c.q, names: new Set([lab]), cons: new Set(), article: c.article }; items.set(c.q, it); fresh.add(c.q); }
+    matched.set(g.id, it); how.label = (how.label || 0) + 1;
+  }
+  await facts(items, [...fresh]);
 }
 log("match routes", JSON.stringify(how));
 log("matched to Wikidata", matched.size, "of", games.length);
