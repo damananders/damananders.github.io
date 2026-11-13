@@ -178,7 +178,7 @@
     function sync() {
       if (finePointer.matches && !registered) {
         registered = true;
-        Site.settings.register({ id: "cursor", label: "Cursor ring", hint: "Replaces your mouse pointer with a ring.", type: "toggle", pref: "cursor", order: 30 });
+        Site.settings.register({ id: "cursor", label: "Cursor Ring", hint: "Replaces your mouse pointer with a ring.", type: "toggle", pref: "cursor", order: 30 });
       }
       if (wanted()) enable(); else disable();
     }
@@ -829,7 +829,7 @@
       var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
       if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
     } catch (e) {}
-    load("play", 4, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 5, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
     /* service worker: instant repeat visits and basic offline. features.serviceWorker = false unregisters it. */
     try {
       if ("serviceWorker" in navigator && /^https:$/.test(location.protocol)) {
@@ -837,7 +837,7 @@
         else window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); });
       }
     } catch (e) {}
-    load("a11y", 1, "a11y");
-    load("seasons", 1, "seasons");
+    load("a11y", 2, "a11y");
+    load("seasons", 2, "seasons");
   }, "add-on loader");
 })();

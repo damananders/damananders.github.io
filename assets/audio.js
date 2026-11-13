@@ -142,7 +142,7 @@
     });
     window.addEventListener("pagehide", function () { if (ctx) { try { ctx.close(); } catch (e) {} ctx = null; out = null; voices = 0; } });
 
-    Site.settings.register({ id: "sfx", label: "UI sounds", type: "toggle", pref: "sfx", order: 40 });
+    Site.settings.register({ id: "sfx", label: "UI Sounds", type: "toggle", pref: "sfx", order: 40 });
   }, "audio:sfx");
 
   /* ================================================================================================
@@ -366,7 +366,7 @@
     });
 
     Site.settings.register({
-      id: "soundscape", label: "Hub soundscape", hint: "Waves and wind, generated in your browser",
+      id: "soundscape", label: "Hub Soundscape", hint: "Waves and wind, generated in your browser",
       type: "toggle", pref: "soundscape", pages: ["hub"], order: 50
     });
 

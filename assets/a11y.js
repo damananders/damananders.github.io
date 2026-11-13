@@ -47,14 +47,14 @@
 
   Site.ready(function () {
     /* settings rows */
-    Site.settings.register({ id: "textSize", label: "Text size", type: "choice", pref: "textSize", order: 12,
+    Site.settings.register({ id: "textSize", label: "Text Size", type: "choice", pref: "textSize", order: 12,
       choices: [{ value: "normal", label: "Normal" }, { value: "large", label: "Large" }, { value: "larger", label: "Larger" }],
       get: function () { return get("textSize", "normal"); }, set: function (v) { Site.setPref("textSize", v); } });
-    Site.settings.register({ id: "contrast", label: "High contrast", hint: "Stronger text, lines and focus rings.", type: "toggle", pref: "contrast", order: 13,
+    Site.settings.register({ id: "contrast", label: "High Contrast", hint: "Stronger text, lines and focus rings.", type: "toggle", pref: "contrast", order: 13,
       get: function () { return get("contrast", false) === true; }, set: function (v) { Site.setPref("contrast", !!v); } });
-    Site.settings.register({ id: "readFont", label: "Dyslexia-friendly font", hint: "Switches the site to OpenDyslexic.", type: "toggle", pref: "readFont", order: 14,
+    Site.settings.register({ id: "readFont", label: "Dyslexia-Friendly Font", hint: "Switches the site to OpenDyslexic.", type: "toggle", pref: "readFont", order: 14,
       get: function () { return get("readFont", false) === true; }, set: function (v) { Site.setPref("readFont", !!v); } });
-    Site.settings.register({ id: "lite", label: "Lite mode", type: "toggle", pref: "lite", order: 26,
+    Site.settings.register({ id: "lite", label: "Lite Mode", type: "toggle", pref: "lite", order: 26,
       hint: function () { return deviceLite() && get("lite", null) === null ? "On, because your device is saving data." : "No background photo, video or particles. Easier on slow or metered connections."; },
       get: liteOn, set: function (v) { Site.setPref("lite", !!v); } });
     ["textSize", "contrast", "readFont", "lite"].forEach(function (k) { Site.on("pref:" + k, apply); });

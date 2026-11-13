@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
 <link rel="stylesheet" href="/assets/pages/pages.css?v=1" />
-<link rel="stylesheet" href="/assets/pages/control.css?v=1" />
+<link rel="stylesheet" href="/assets/pages/control.css?v=2" />
 <!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -48,13 +48,25 @@
   <main id="cp-main">
     <section class="panel cp-login" id="cp-login">
       <h2>Sign in</h2>
+      <ol class="cp-steps" id="cp-steps" aria-label="Sign-in steps">
+        <li data-on="true"><b>1</b> Password</li>
+        <li data-on="false"><b>2</b> Authenticator Code</li>
+        <li data-on="false"><b>3</b> Live as Site Admin</li>
+      </ol>
       <form id="cp-form" autocomplete="off">
-        <label class="cp-field"><span>Password</span>
-          <input type="password" id="cp-pass" name="cp-pass" autocomplete="current-password" required maxlength="200" /></label>
+        <div id="cp-pass-box">
+          <label class="cp-field"><span>Owner password</span>
+            <input type="password" id="cp-pass" name="cp-pass" autocomplete="current-password" maxlength="200" /></label>
+        </div>
+        <div id="cp-code-box" hidden>
+          <label class="cp-field"><span>6-digit code from your authenticator app</span>
+            <input type="text" id="cp-code" name="cp-code" class="cp-codein" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]*" maxlength="7" placeholder="123456" /></label>
+          <p class="cp-fine"><button type="button" class="cp-linkbtn" id="cp-code-back">Start over with the password</button></p>
+        </div>
         <p class="cp-msg" id="cp-login-msg" role="status" aria-live="polite"></p>
-        <p class="pg-actions"><button class="btn" type="submit" id="cp-go">Sign in</button> <a class="btn ghost" href="/">Back to the hub</a></p>
+        <p class="pg-actions"><button class="btn" type="submit" id="cp-go">Continue</button> <a class="btn ghost" href="/">Back to the hub</a></p>
       </form>
-      <p class="cp-fine">The password is checked on the server every time something is saved. It is kept only in this tab's memory and is forgotten when the tab closes or reloads.</p>
+      <p class="cp-fine">The password and the code are both checked on the server. A sign-in lasts eight hours or until this tab is closed, whichever comes first.</p>
     </section>
     <div id="cp-app" hidden></div>
     <noscript><p class="pg-empty">The control panel needs JavaScript.</p></noscript>
@@ -68,11 +80,12 @@
 <script defer src="/assets/site-config.js"></script>
 <script defer src="/assets/site.js"></script>
 <script defer src="/assets/chrome.js"></script>
-<script defer src="/assets/interact.js?v=7"></script>
+<script defer src="/assets/interact.js?v=8"></script>
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/control.js?v=1"></script>
+<script defer src="/assets/vendor/qrcode.js"></script>
+<script defer src="/assets/pages/control.js?v=2"></script>
 <!-- /site:scripts -->
 </body>
 </html>

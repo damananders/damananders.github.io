@@ -59,6 +59,30 @@
     return remoteP;
   }
 
+  /* ---------- site admin session (set by /control/ after password + authenticator) ----------
+     Only a session key from the server is kept, in sessionStorage, so it ends with the tab. check() asks the server
+     whether the key is still good; pages show the admin badge only after the server says yes. */
+  var ADMIN_KEY = "site.admin";
+  var admin = {
+    get: function () { try { var a = JSON.parse(sessionStorage.getItem(ADMIN_KEY)); return a && a.token ? a : null; } catch (e) { return null; } },
+    set: function (a) { try { sessionStorage.setItem(ADMIN_KEY, JSON.stringify({ token: a.token, twofa: !!a.twofa, expires: a.expires })); } catch (e) {} emit("admin", admin.get()); },
+    clear: function () { try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {} emit("admin", null); },
+    call: function (name, body) {
+      return fetch(SB.url + "/rest/v1/rpc/" + name, { method: "POST", headers: { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" }, body: JSON.stringify(body) })
+        .then(function (r) { return r.ok ? r.json() : { ok: false, error: r.status === 404 ? "unset" : "http-" + r.status }; }).catch(function () { return null; });
+    },
+    /* resolves {ok:true, twofa, expires, linked}, {ok:false} when the session is over, or null when the server could not be reached */
+    check: function () {
+      var a = admin.get(); if (!a) return Promise.resolve({ ok: false });
+      return admin.call("site_admin_whoami", { p_token: a.token }).then(function (r) {
+        if (r && r.ok) { a.twofa = !!r.twofa; a.expires = r.expires; try { sessionStorage.setItem(ADMIN_KEY, JSON.stringify(a)); } catch (e) {} }
+        else if (r) admin.clear();
+        return r;
+      });
+    },
+    signOut: function () { var a = admin.get(); admin.clear(); return a ? admin.call("site_admin_logout", { p_token: a.token }) : Promise.resolve(null); }
+  };
+
   /* ---------- events ---------- */
   var bus = document.createElement("i");
   function on(evt, fn) { var h = function (e) { try { fn(e.detail); } catch (err) { console.error("[site] handler for " + evt, err); } }; bus.addEventListener(evt, h); return function () { bus.removeEventListener(evt, h); }; }
@@ -381,7 +405,7 @@
 
   window.Site = {
     version: 1,
-    page: page, config: cfg, configBase: cfgBase, remote: remote, sb: SB, legacy: window.SITE || null,
+    page: page, config: cfg, configBase: cfgBase, remote: remote, sb: SB, admin: admin, legacy: window.SITE || null,
     store: store, pref: pref, setPref: setPref, prefs: PREFS,
     get reducedMotion() { return reduced(); },
     get owner() { return store.get("owner", false) === true; },

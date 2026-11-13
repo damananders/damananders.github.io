@@ -234,7 +234,7 @@
 
   function run(word) {
     if (active[word]) { end(word); return; }
-    if (Site.reducedMotion && !STILL_OK[word]) { Site.toast("That one needs motion. Turn off 'Reduce motion' in settings to see it.", { type: "info", ms: 4200 }); return; }
+    if (Site.reducedMotion && !STILL_OK[word]) { Site.toast("That one needs motion. Turn off 'Reduce Motion' in settings to see it.", { type: "info", ms: 4200 }); return; }
     endAll();
     CODES[word]();
     found[word] = 1; Site.store.set("codes", found);

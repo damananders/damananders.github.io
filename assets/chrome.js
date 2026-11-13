@@ -199,7 +199,7 @@
 
     Site.settings.register({
       id: "theme", label: "Theme", type: "choice", pref: "theme", order: 10,
-      choices: [{ value: "dark", label: "Dark" }, { value: "light", label: "Light" }, { value: "auto", label: "Match device" }, { value: "sun", label: "Follow the sun" }],
+      choices: [{ value: "dark", label: "Dark" }, { value: "light", label: "Light" }, { value: "auto", label: "Match Device" }, { value: "sun", label: "Follow the Sun" }],
       hint: function () { return Site.store.get("themeSun", false) === true ? "Light from sunrise to sunset where you are, dark at night." : ""; },
       get: function () { return Site.store.get("themeSun", false) === true ? "sun" : Site.pref("theme"); },
       set: function (v) { switchTheme(function () { Site.setPref("theme", v); }); }
@@ -208,7 +208,7 @@
        the switch shows on and cannot be turned off here, because "auto" would reduce motion anyway. */
     function motionForcedByDevice() { return Site.reducedMotion && Site.pref("motion") !== "off"; }
     Site.settings.register({
-      id: "motion", label: "Reduce motion", type: "toggle", pref: "motion", order: 20,
+      id: "motion", label: "Reduce Motion", type: "toggle", pref: "motion", order: 20,
       hint: function () { return motionForcedByDevice() ? "On, because your device asks for less motion." : "Turns off animations and moving effects."; },
       get: function () { return Site.reducedMotion; },
       set: function (v) { Site.setPref("motion", v ? "off" : "auto"); },
@@ -470,6 +470,25 @@
   }, "chrome:share");
 
   /* ====================================================================================================
+   * Site admin badge — a small pill at the bottom of every page while an admin session from /control/ is live.
+   * It is drawn only after the server confirms the session. Green: password and authenticator. Amber: password only.
+   * ==================================================================================================== */
+  Site.ready(function () {
+    if (Site.page === "control" || !Site.admin || !Site.admin.get()) return;
+    var pill = null;
+    function draw(info) {
+      if (pill) { pill.remove(); pill = null; }
+      if (!info) return;
+      pill = el("a", { class: "ch-admin", href: "/control/", "data-level": info.twofa ? "full" : "pass", title: "Open the control panel",
+        "aria-label": "You are signed in as site admin" + (info.twofa ? ", verified with password and authenticator" : ", password only") + ". Open the control panel." },
+        el("i", { "aria-hidden": "true" }), el("span", { text: "Site Admin" }), el("b", { text: "Live" }));
+      document.body.appendChild(pill);
+    }
+    Site.admin.check().then(function (r) { if (r && r.ok) draw(r); });
+    Site.on("admin", function (a) { if (!a) draw(null); });
+  }, "chrome:admin");
+
+  /* ====================================================================================================
    * Navigation menu — a list button at the left end of the header on every page, with the main pages.
    * The private pages are deliberately not listed. features.navMenu = false removes it.
    * ==================================================================================================== */
@@ -477,7 +496,7 @@
     ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
     ["games", "/games/", "Rate-O-Pedia"], ["forum", "/games/forum/", "Forums"],
     ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
-    ["resume", "/resume/", "R\u00e9sum\u00e9"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's new"]
+    ["resume", "/resume/", "R\u00e9sum\u00e9"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
   ];
   Site.ready(function () {
     if (!feat("navMenu") || !nav) return;
@@ -515,7 +534,7 @@
     var stamp = el("p", { class: "ch-stamp" });
     var star = el("a", { class: "ch-stamp__star", href: "https://github.com/" + repo, target: "_blank", rel: "noopener" }, svg(ICON.star, { width: 14, height: 14 }), "Star on GitHub");
     var here = Site.page, links = el("p", { class: "ch-links" });
-    [["links", "/links/", "Links I Like"], ["changelog", "/changelog/", "What's new"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
+    [["links", "/links/", "Links I Like"], ["changelog", "/changelog/", "What's New"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
       if (l[0] === here || (l[0] === "dash" && !Site.owner)) return;
       if (links.firstChild) links.appendChild(document.createTextNode("  ·  "));
       links.appendChild(el("a", { href: l[1], text: l[2] }));

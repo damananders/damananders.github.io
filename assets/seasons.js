@@ -184,7 +184,7 @@
   /* ---------- wiring ---------- */
   Site.ready(function () {
     Site.settings.register({
-      id: "season", label: "Seasonal effects", type: "choice", pref: "season", order: 25,
+      id: "season", label: "Seasonal Effects", type: "choice", pref: "season", order: 25,
       hint: "Leaves, snow, petals or summer heat. Auto follows your calendar.",
       choices: [{ value: "auto", label: "Auto" }, { value: "off", label: "Off" }, { value: "fall", label: "Fall" }, { value: "winter", label: "Winter" }, { value: "spring", label: "Spring" }, { value: "summer", label: "Summer" }],
       get: function () { return Site.store.get("season", "auto"); },
