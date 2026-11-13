@@ -393,3 +393,28 @@ dialog.sx-modal.gi-lb:not([open]){display:none}
 .gm-card--gold .gm-title__a{background:linear-gradient(90deg,#fff1b8,#f7c948 45%,#ffe58a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .gm-card--silver .gm-title__a{color:#e6ebf1}.gm-card--bronze .gm-title__a{color:#e7a76a}
 .gm-card .gm-medal{width:34px;height:42px}
+
+/* ---------------- reviews: a proper face-button toggle and roomier review cards ---------------- */
+.gm-toggle{all:unset;cursor:pointer;justify-self:start;display:inline-flex;align-items:center;gap:9px;padding:6px 8px 6px 6px;border-radius:999px;border:1px solid var(--sx-line-2,rgba(255,255,255,.16));background:var(--sx-surface-2,rgba(255,255,255,.04));font:600 .9rem var(--sx-display,"Space Grotesk",sans-serif);color:var(--sx-text,#e8e8ea);transition:border-color .15s,background .15s,transform .15s}
+.gm-toggle:hover{transform:translateY(-1px);border-color:#84b2ff}
+.gm-toggle[aria-expanded="true"]:hover{border-color:#f47882}
+.gm-toggle:focus-visible{outline:2px solid var(--sx-accent,#cd4257);outline-offset:2px}
+.gm-toggle__i{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;font-size:.95rem;font-weight:800;line-height:1;background:radial-gradient(circle at 35% 30%,#3a3f4a,#15181e 70%);box-shadow:inset 0 -2px 3px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(255,255,255,.06)}
+.gm-toggle__i--x{color:#84b2ff;text-shadow:0 0 8px rgba(132,178,255,.6)}
+.gm-toggle__i--o{color:#f47882;text-shadow:0 0 8px rgba(244,120,130,.6)}
+.gm-toggle__n{min-width:1.6em;padding:1px 8px;border-radius:999px;text-align:center;font:700 .78rem var(--sx-mono,"DM Mono",monospace);background:var(--sx-accent,#cd4257);color:var(--sx-on-accent,#fff)}
+.gm-toggle__n.is-zero{background:var(--sx-line-2,rgba(255,255,255,.16));color:var(--sx-muted,#a8abb3)}
+.gm-more{gap:10px;padding:12px;border-radius:14px;background:color-mix(in srgb,var(--sx-surface-2,#151a20) 70%,transparent);border:1px solid var(--sx-line,rgba(255,255,255,.08))}
+.gm-review{--rv:var(--sx-accent,#cd4257);position:relative;display:grid;gap:8px;margin:0;padding:12px 14px 12px 16px;border:1px solid var(--sx-line,rgba(255,255,255,.08));border-left:4px solid var(--rv);border-radius:12px;background:var(--sx-surface,rgba(255,255,255,.03))}
+.gm-review--s0{--rv:#ff5d5d}.gm-review--s1{--rv:#ff8a4c}.gm-review--s2{--rv:#ffb547}.gm-review--s3{--rv:#f0d95c}.gm-review--s4{--rv:#9be36f}.gm-review--s5{--rv:#3ee08a}
+.gm-review__head{display:flex;align-items:center;gap:10px}
+.gm-review__who{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;min-width:0}
+.gm-review__when{font-size:.78rem;color:var(--sx-muted,#a8abb3)}
+.gm-review__mood{margin-left:auto;display:inline-flex;align-items:center;gap:4px;padding:2px 9px 2px 3px;border-radius:999px;border:1px solid currentColor;background:color-mix(in srgb,currentColor 12%,transparent)}
+.gm-review__mood svg,.gm-review__mood .rop-chip__svg{width:26px;height:26px;--chip-bg:transparent}
+.gm-review__mood b{font:700 .85rem var(--sx-mono,"DM Mono",monospace)}
+.gm-review__body{margin:0;font-size:.98rem;line-height:1.55;overflow-wrap:anywhere}
+.gm-review .gm-report{justify-self:end;margin:0}
+.gm-write{display:grid;gap:8px;padding-top:6px}
+.gm-write__h{margin:0;font:600 .78rem var(--sx-mono,"DM Mono",monospace);letter-spacing:.06em;text-transform:uppercase;color:var(--sx-muted,#a8abb3)}
+.gm-write .gm-btn{justify-self:start}

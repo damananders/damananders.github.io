@@ -39,11 +39,13 @@ function card(g, rank) {
   const score = g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated yet";
   const more = el("div", { class: "gm-more", hidden: true });
   const n = reviewCounts.get(g.id) || 0;
-  const toggle = el("button", { class: "linkbtn gm-toggle", type: "button", "aria-expanded": "false" });
+  const toggle = el("button", { class: "gm-toggle", type: "button", "aria-expanded": "false" });
   function sync(open) {
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    toggle.replaceChildren(document.createTextNode("Reviews (" + n + ") "),
-      el("span", { class: "gm-toggle__i gm-toggle__i--" + (open ? "o" : "x"), "aria-hidden": "true", text: open ? "○" : "✕" }));
+    toggle.replaceChildren(
+      el("span", { class: "gm-toggle__i gm-toggle__i--" + (open ? "o" : "x"), "aria-hidden": "true", text: open ? "○" : "✕" }),
+      el("span", { class: "gm-toggle__t", text: open ? "Hide reviews" : "Reviews" }),
+      el("span", { class: "gm-toggle__n" + (n ? "" : " is-zero"), text: String(n) }));
   }
   sync(false);
   toggle.addEventListener("click", () => { const open = more.hidden; more.hidden = !open; sync(open); if (open) reviews(g, more); });
@@ -107,20 +109,23 @@ async function reviews(g, box) {
   const { data } = await sb.from("public_reviews").select("*").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
   box.replaceChildren();
   for (const r of data || []) {
-    const foot = el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null, r.stars != null ? "  ·  " + r.stars + " / 5" : null);
-    if (member && r.id != null && me.ready) foot.append(el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: (e) => report({ review_id: r.id }, e.target) }));
-    box.append(el("blockquote", { class: "gm-review" }, el("p", { text: r.body }), foot));
+    const head = el("header", { class: "gm-review__head" }, avatar(r.avatar, r.name, 32), el("span", { class: "gm-review__who" }, nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null,
+      el("span", { class: "gm-review__when", text: new Date(r.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) })),
+      r.stars != null ? el("span", { class: "gm-review__mood rop-chip--" + r.stars, title: r.stars + " / 5 · " + CHIP_WORD[r.stars] }, chipSvg(r.stars), el("b", { text: String(r.stars) })) : null);
+    const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") }, head, el("p", { class: "gm-review__body", text: r.body }));
+    if (member && r.id != null && me.ready) art.append(el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: (e) => report({ review_id: r.id }, e.target) }));
+    box.append(art);
   }
   if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
   if (user && member) {
     const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game (optional)", "aria-label": "Your review of " + g.title });
     const note = el("p", { class: "gm-note", role: "status" });
-    box.append(ta, el("button", { class: "btn gm-btn", type: "button", text: "Send review", onclick: async () => {
+    box.append(el("div", { class: "gm-write" }, el("p", { class: "gm-write__h", text: "Your review" }), ta, el("button", { class: "btn gm-btn", type: "button", text: "Send review", onclick: async () => {
       const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
       const { error } = await sb.from("reviews").insert({ user_id: user.id, game_id: g.id, body });
       note.textContent = error ? (error.code === "23505" ? "You've already reviewed this game." : "That didn't send: " + error.message) : "Thanks! Your review is up.";
-      if (!error) ta.value = "";
-    } }), note);
+      if (!error) { ta.value = ""; reviews(g, box); }
+    } }), note));
   }
 }
 
