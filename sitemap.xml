@@ -4,6 +4,7 @@
   <url><loc>https://damananders.github.io/anyps/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://damananders.github.io/anderscraft/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://damananders.github.io/games/</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://damananders.github.io/games/forum/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://damananders.github.io/resume/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://damananders.github.io/changelog/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://damananders.github.io/uses/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
