@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip } from "./games.common.js?v=9";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions } from "./games.common.js?v=10";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -53,14 +53,15 @@ async function render() {
   const card = el("article", { class: "gi-card", "data-c": game.console },
     el("header", { class: "gi-head" },
       el("div", { class: "gi-headtext" },
-        el("div", { class: "gi-chips" }, consoleChip(game.console), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
+        el("div", { class: "gi-chips" }, platformLink(game.console), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
         el("h1", { class: "gi-title", text: title }),
         sub ? el("p", { class: "gi-sub", text: sub }) : null),
       el("div", { class: "gi-headbtns" }, heartBtn(),
+        el("a", { class: "linkbtn", href: compareUrl(id), text: "Compare" }),
         el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share("/games/game/?id=" + encodeURIComponent(id), title) }))),
     el("div", { class: "gi-grid" },
       el("div", { class: "gi-main" }, desc, facts),
-      el("aside", { class: "gi-side" }, scoreBox(), compatBox())),
+      el("aside", { class: "gi-side" }, scoreBox(), playBox(title), compatBox())),
     reviewBox(),
     mediaBox(),
     me.admin ? el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Correct this card (owner)", onclick: fixer }) : null);
@@ -90,6 +91,27 @@ async function rate(stars) {
   sfx("success"); render();
 }
 
+/* ---------------- your backlog, how many members have it listed, RetroAchievements ---------------- */
+function playBox(title) {
+  const count = el("p", { class: "gi-blcount" });
+  const drawCount = (c) => {
+    const parts = BACKLOG.map(([k, l, i]) => c && c[k] ? i + " " + c[k] + " " + l.toLowerCase() : null).filter(Boolean);
+    count.textContent = parts.length ? parts.join(" · ") : "Nobody has this on their backlog yet.";
+  };
+  let counts = null;
+  sb.from("game_backlog_counts").select("*").eq("game_id", id).maybeSingle().then(({ data, error }) => { if (error) { count.remove(); return; } counts = data || {}; drawCount(counts); }, () => {});
+  const picker = backlogPicker(id, (now, was) => {
+    if (!counts) return;
+    if (was) counts[was] = Math.max(0, (counts[was] || 0) - 1);
+    if (now) counts[now] = (counts[now] || 0) + 1;
+    drawCount(counts);
+  });
+  const links = el("div", { class: "gi-links" },
+    RA_PLATFORMS.has(game.console) ? el("a", { class: "gi-ra", href: raSearchUrl(title), target: "_blank", rel: "noopener", title: "Look this game up on RetroAchievements" }, el("span", { "aria-hidden": "true", text: "🏆" }), "RetroAchievements") : null,
+    el("a", { class: "linkbtn", href: "/games/platform/?p=" + encodeURIComponent(game.console), text: platformName(game.console) + " hub →" }));
+  return el("section", { class: "gi-box gi-bl" }, el("h2", { class: "gi-h", text: "Backlog" }), picker, count, links);
+}
+
 /* ---------------- emulator playability ---------------- */
 function compatBox() {
   const c = info.c, emu = (c && c.e) || EMU[game.console];
@@ -109,7 +131,7 @@ function compatBox() {
 /* ---------------- review snippet ---------------- */
 function reviewBox() {
   const box = el("section", { class: "gi-box gi-reviews" }, el("h2", { class: "gi-h", text: "From the reviews" }), el("p", { class: "gm-empty", text: "Loading…" }));
-  sb.from("public_reviews").select("*").eq("game_id", id).order("created_at", { ascending: false }).limit(20).then(({ data }) => {
+  sb.from("public_reviews").select("*").eq("game_id", id).order("created_at", { ascending: false }).limit(20).then(async ({ data }) => {
     box.lastChild.remove();
     const rows = data || [];
     if (!rows.length) { box.append(el("p", { class: "gm-note", text: "No reviews yet." }), el("a", { class: "linkbtn", href: "/games/?q=" + encodeURIComponent(game.title), text: "Write the first one →" })); return; }
@@ -117,7 +139,8 @@ function reviewBox() {
     const r = rows.slice().sort((a, b) => (b.stars ?? -1) - (a.stars ?? -1))[0];
     const body = r.body.length > 280 ? r.body.slice(0, 277).replace(/\s+\S*$/, "") + "…" : r.body;
     box.append(el("blockquote", { class: "gm-review gi-quote" }, el("p", { text: "“" + body + "”" }),
-      el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name), r.is_staff ? adminTag() : null, r.stars != null ? "  ·  " + r.stars + " / 5" : null)),
+      el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name), r.is_staff ? adminTag() : null, r.stars != null ? "  ·  " + r.stars + " / 5" : null),
+      reactBar(r, (await myReactions([r.id])).get(r.id))),
       el("a", { class: "linkbtn", href: "/games/?q=" + encodeURIComponent(game.title), text: "Read all " + plural(rows.length, "review") + " →" }));
   });
   return box;

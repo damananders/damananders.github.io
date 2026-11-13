@@ -268,3 +268,96 @@ export function chipRow(current, onPick, label) {
   }
   return row;
 }
+
+/* ---------------- links between pages ---------------- */
+export const gameUrl = (id) => "/games/game/?id=" + encodeURIComponent(id);
+export const platformUrl = (id) => "/games/platform/?p=" + encodeURIComponent(id);
+export const compareUrl = (a, b) => "/games/compare/?" + [a ? "a=" + encodeURIComponent(a) : "", b ? "b=" + encodeURIComponent(b) : ""].filter(Boolean).join("&");
+/* a platform badge that opens that platform's hub (only use where it isn't already inside another link) */
+export const platformLink = (id) => el("a", { class: "gm-console gm-console--link", "data-c": id, "data-f": familyOf(id), href: platformUrl(id), title: platformName(id) + " hub", text: id });
+
+/* ---------------- accent colours for profiles (keys the database accepts) ---------------- */
+export const ACCENTS = {
+  maroon: "#cd4257", white: "#e9edf2", gray: "#9aa6b4", red: "#ff5a5a", orange: "#ff8c3a", gold: "#f5c542", yellow: "#ffe45c",
+  green: "#46d37a", teal: "#2fd1c0", blue: "#4b9bff", purple: "#a374ff", pink: "#ff6fb5",
+};
+export const accentOf = (k) => ACCENTS[k] || ACCENTS.maroon;
+
+/* ---------------- RetroAchievements: platforms it has achievement sets for ---------------- */
+export const RA_PLATFORMS = new Set(["PS1", "PS2", "PSP", "NES", "FDS", "SNES", "N64", "GC", "GB", "GBC", "GBA", "DS", "VB", "PokeMini",
+  "SG1000", "SMS", "GEN", "SCD", "32X", "SAT", "DC", "GG", "2600", "7800", "Lynx", "Jaguar", "CV", "INTV", "Vectrex", "O2", "ChanF",
+  "PCE", "PCECD", "PCFX", "NeoGeo", "NGCD", "NGP", "WS", "3DO", "Arcadia", "SV", "MSX", "CPC", "Apple2", "Arcade", "DOS", "A8", "X68K"]);
+export const raSearchUrl = (title) => "https://retroachievements.org/searchresults.php?s=" + encodeURIComponent(title) + "&t=1";
+export const raUserUrl = (user) => "https://retroachievements.org/user/" + encodeURIComponent(user);
+
+/* ---------------- backlog: want to play / playing / beaten / dropped ---------------- */
+export const BACKLOG = [["want", "Want to play", "📌"], ["playing", "Playing", "🎮"], ["beaten", "Beaten", "🏁"], ["dropped", "Dropped", "💤"]];
+export const BACKLOG_LABEL = Object.fromEntries(BACKLOG.map(([k, l, i]) => [k, [l, i]]));
+/* a little picker for one game; hides itself until the database has backlogs */
+export function backlogPicker(gameId, onChange) {
+  const box = el("div", { class: "rop-bl", role: "group", "aria-label": "Your backlog" });
+  let cur = null;
+  const draw = () => box.replaceChildren(el("span", { class: "rop-bl__lab", text: "My backlog" }), ...BACKLOG.map(([k, label, icon]) =>
+    el("button", { class: "rop-bl__b rop-bl__b--" + k + (cur === k ? " is-on" : ""), type: "button", "aria-pressed": cur === k ? "true" : "false",
+      title: cur === k ? "Remove from your backlog" : "Mark as " + label.toLowerCase(), onclick: () => pick(cur === k ? null : k) },
+      el("span", { "aria-hidden": "true", text: icon + " " }), label)));
+  async function pick(k) {
+    if (!me.user) { signIn(); return; }
+    const was = cur; cur = k; draw();
+    const { error } = await sb.rpc("set_backlog", { p_game: gameId, p_status: k || "" });
+    if (error) { cur = was; draw(); toast("Couldn't save that: " + error.message, "err"); return; }
+    sfx(k ? "success" : "tap"); toast(k ? "Backlog: " + BACKLOG_LABEL[k][0] : "Removed from your backlog", "ok");
+    if (onChange) onChange(k, was);
+  }
+  if (!me.user) { draw(); return box; }
+  box.hidden = true;
+  sb.from("game_backlog").select("status").eq("game_id", gameId).maybeSingle().then(({ data, error }) => {
+    if (error) return;            // database update not run yet
+    cur = data ? data.status : null; box.hidden = false; draw();
+  }, () => {});
+  return box;
+}
+
+/* ---------------- review reactions: helpful / funny / agree ---------------- */
+export const REACTS = [["helpful", "Helpful", "👍"], ["funny", "Funny", "😂"], ["agree", "Agree", "🤝"]];
+/* which of these reviews you've reacted to: Map(review id -> Set(kind)) */
+export async function myReactions(ids) {
+  const out = new Map();
+  if (!me.user || !ids.length) return out;
+  try {
+    const { data } = await sb.from("review_reactions").select("review_id,kind").in("review_id", ids);
+    for (const x of data || []) { if (!out.has(x.review_id)) out.set(x.review_id, new Set()); out.get(x.review_id).add(x.kind); }
+  } catch (e) {}
+  return out;
+}
+/* r = a public_reviews row (has helpful/funny/agree once round 15 is in) */
+export function reactBar(r, mine) {
+  if (r.helpful == null) return null;
+  const set = mine || new Set();
+  const own = !!(me.profile && me.profile.handle && me.profile.handle === r.handle);
+  const can = me.member && me.ready && !own;
+  const bar = el("div", { class: "rop-rx", role: "group", "aria-label": "Reactions to this review" });
+  for (const [k, label, icon] of REACTS) {
+    let n = +r[k] || 0, on = set.has(k);
+    const b = el("button", { class: "rop-rx__b" + (on ? " is-on" : ""), type: "button", "aria-pressed": on ? "true" : "false", disabled: !can,
+      title: own ? "Your own review" : !me.user ? "Sign in to react" : !me.member ? "Join the Discord to react" : label });
+    const draw = () => { b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); b.replaceChildren(el("span", { "aria-hidden": "true", text: icon }), el("span", { class: "rop-rx__l", text: label }), el("b", { text: n ? String(n) : "" })); };
+    b.addEventListener("click", async () => {
+      on = !on; n += on ? 1 : -1; draw(); if (on) { b.classList.add("rop-rx__b--pop"); setTimeout(() => b.classList.remove("rop-rx__b--pop"), 450); }
+      const { data, error } = await sb.rpc("toggle_review_reaction", { p_review: r.id, p_kind: k });
+      if (error) { on = !on; n += on ? 1 : -1; draw(); toast(error.message, "err"); return; }
+      if (data !== on) { on = !!data; n = Math.max(0, n + (on ? 1 : -1)); draw(); }
+      if (on) set.add(k); else set.delete(k);
+      sfx(on ? "success" : "tap");
+    });
+    draw(); bar.append(b);
+  }
+  return bar;
+}
+
+/* ---------------- static game info (assets/data/gameinfo/<3-hex shard>.json) ---------------- */
+const fnv1a = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
+export const shardOf = (s) => (fnv1a(s) & 0xfff).toString(16).padStart(3, "0");
+export async function gameInfo(id) {
+  try { const r = await fetch("/assets/data/gameinfo/" + shardOf(id) + ".json"); if (!r.ok) return {}; const j = await r.json(); return j[id] || {}; } catch (e) { return {}; }
+}

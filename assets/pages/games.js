@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName } from "./games.common.js?v=9";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink } from "./games.common.js?v=10";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -42,6 +42,10 @@ function tabs() {
     }
     t.append(row2);
   }
+  t.append(el("p", { class: "gm-hubrow" }, consoleFilter
+    ? el("a", { class: "linkbtn gm-hublink", href: platformUrl(consoleFilter), text: "Open the " + platformName(consoleFilter) + " hub →" })
+    : el("a", { class: "linkbtn gm-hublink", href: "/games/platform/" + (famFilter ? "?f=" + famFilter : ""), text: famFilter ? "All " + FAMILY[famFilter].name + " hubs →" : "Platform hubs →" }),
+    el("a", { class: "linkbtn gm-hublink", href: compareUrl(), text: "Compare two games →" })));
 }
 const filterIds = () => consoleFilter ? [consoleFilter] : famFilter ? PLATFORMS.filter((p) => p.fam === famFilter).map((p) => p.id) : null;
 const filterName = () => consoleFilter ? platformName(consoleFilter) : famFilter ? FAMILY[famFilter].name : "All-time";
@@ -70,7 +74,7 @@ function card(g, rank) {
   const c = el("article", { class: "gm-card" + medalCls + (rank && rank <= 10 ? " gm-card--top10" : "") },
     el("div", { class: "gm-card__top" },
       rank && rank <= 3 ? medal(rank) : (rank ? el("span", { class: "gm-vrank", text: "#" + rank }) : null),
-      consoleChip(g.console),
+      platformLink(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
       rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia" }, el("span", { "aria-hidden": "true", text: "★ " }), "Must Play!") : null,
       mood, el("span", { class: "gm-score", text: score }),
@@ -173,11 +177,12 @@ async function reviews(g, box) {
   box.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
   const { data } = await sb.from("public_reviews").select("*").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
   box.replaceChildren();
+  const rx = await myReactions((data || []).map((r) => r.id));
   for (const r of data || []) {
     const head = el("header", { class: "gm-review__head" }, avatar(r.avatar, r.name, 32), el("span", { class: "gm-review__who" }, nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null,
       el("span", { class: "gm-review__when", text: new Date(r.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) })),
       r.stars != null ? el("span", { class: "gm-review__mood rop-chip--" + r.stars, title: r.stars + " / 5 · " + CHIP_WORD[r.stars] }, chipSvg(r.stars), el("b", { text: String(r.stars) })) : null);
-    const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") }, head, el("p", { class: "gm-review__body", text: r.body }));
+    const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") }, head, el("p", { class: "gm-review__body", text: r.body }), reactBar(r, rx.get(r.id)));
     if (member && r.id != null && me.ready) art.append(el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: (e) => report({ review_id: r.id }, e.target) }));
     box.append(art);
   }
@@ -386,10 +391,31 @@ async function voters() {
   finally { votersBusy = false; }
 }
 
+/* ---------------- this week: top rated, most reviewed, most active voters (rolling 7 days) ---------------- */
+async function week() {
+  const box = $("gm-week"); if (!box) return;
+  try {
+    const [a, b, c] = await Promise.all([
+      sb.from("week_top_rated").select("*").limit(5), sb.from("week_most_reviewed").select("*").limit(5), sb.from("week_top_voters").select("*").limit(5)]);
+    if (a.error || b.error) return;           // database update not run yet: leave the section out
+    const col = (title, rows, line, empty) => el("div", { class: "gm-week__col" }, el("h3", { text: title }),
+      rows.length ? el("ol", { class: "gm-week__list" }, ...rows.map(line)) : el("p", { class: "gm-note", text: empty }));
+    const gameLine = (tail) => (g) => el("li", null, consoleChip(g.console), el("a", { href: gameUrl(g.id), title: g.title, text: g.title }), el("span", { class: "gm-week__n", text: tail(g) }));
+    box.replaceChildren(el("h2", { class: "gm-head", text: "This week on Rate-O-Pedia" }), el("div", { class: "gm-week__cols" },
+      col("Top rated", a.data || [], gameLine((g) => Number(g.average).toFixed(1) + " · " + g.votes + "v"), "No votes this week yet. Be the first."),
+      col("Most reviewed", b.data || [], gameLine((g) => g.reviews + (g.reviews === 1 ? " review" : " reviews")), "No reviews this week yet."),
+      c.error ? null : col("Most active voters", c.data || [], (v) => el("li", null, avatar(v.avatar, v.name, 22), el("a", { href: profileUrl(v.handle), text: v.name }), el("span", { class: "gm-week__n", text: v.votes + " votes" })), "Nobody has voted this week yet.")));
+    box.hidden = false;
+  } catch (e) {}
+}
+
 /* ---------------- start ---------------- */
 // Deep link from the hub's "Top rated" cards: /games/?q=Title opens the list already searched.
 try { const q0 = new URLSearchParams(location.search).get("q"); if (q0) $("gm-q").value = q0.slice(0, 80); } catch (e) {}
+// Deep link from a platform hub: /games/?p=SNES opens with that platform picked
+try { const p0 = new URLSearchParams(location.search).get("p"); if (p0 && PLATFORM[p0]) { consoleFilter = p0; famFilter = PLATFORM[p0].fam; } } catch (e) {}
 tabs();
+week();
 $("gm-q").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(load, 250); });
 subnav($("rop-tabs"), "ratings");
 onAuth(onSession);
