@@ -143,7 +143,20 @@
     if (!original || !feature("typing")) { off(); return; }
 
     /* Keep the longest line the same as the one in hub-fx.css (it reserves the height before this runs). */
-    var LINES = [original, "Azeroth, with looser rules?", "One launcher, six PlayStations?"];
+    /* The first line is the real heading; the rest come round in a fresh random order each lap. site-config
+       hero.lines (an array of short questions) replaces the built-in set. Keep every line to about 31 characters. */
+    var EXTRA = ["Azeroth, with looser rules?", "One launcher, six PlayStations?", "Rate a game? Start an argument?", "Looking for the forums?",
+      "Sites worth your time?", "Catch a live stream?", "Hunting for trophies?", "Know any secret words?", "Fancy a different season?",
+      "What's new this week?", "Here to hire me?"];
+    var custom = Site.config && Site.config.hero && Site.config.hero.lines;
+    if (Array.isArray(custom) && custom.length) EXTRA = custom.filter(function (l) { return typeof l === "string" && l.trim(); }).map(function (l) { return l.trim().slice(0, 40); });
+    function shuffled(prev) {
+      var a = EXTRA.slice(), i, j, t;
+      for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+      if (a.length > 1 && a[0] === prev) { t = a[0]; a[0] = a[1]; a[1] = t; }
+      return a;
+    }
+    var LINES = [original].concat(shuffled(""));
     var textEl = null, caret = null, timer = 0, waiting = false;
     var li = 0, ci = 0, mode = "type";
 
@@ -174,7 +187,11 @@
         mode = "erase"; blink(false); later(30);
       } else {
         ci = Math.max(0, ci - 1); textEl.textContent = line.slice(0, ci);
-        if (ci === 0) { li = (li + 1) % LINES.length; mode = "type"; blink(true); later(420); }
+        if (ci === 0) {
+          li++;
+          if (li >= LINES.length) { LINES = [original].concat(shuffled(LINES[LINES.length - 1])); li = 0; }   /* new lap, new order */
+          mode = "type"; blink(true); later(420);
+        }
         else later(20);
       }
     }

@@ -327,6 +327,7 @@
 
   /* ---------- tab: site values ---------- */
   var VALUES = [
+    ["Hub headline", [["hero.lines", "Typing phrases, one per line (blank uses the built-in set; keep each to about 31 characters)", "lines"]]],
     ["Ko-fi goal", [["kofi.url", "Ko-fi page", "url"], ["kofi.goal.title", "Goal title", "text"], ["kofi.goal.current", "Raised so far this month", "number"], ["kofi.goal.target", "Monthly target", "number"]]],
     ["Channels (blank hides the badge)", [["channels.youtube", "YouTube", "url"], ["channels.instagram", "Instagram", "url"], ["channels.tiktok", "TikTok", "url"], ["channels.x", "X", "url"], ["channels.bluesky", "Bluesky", "url"]]],
     ["Twitch and Discord", [["twitch.channel", "Twitch channel name", "text"], ["twitch.live", "Live badge", "live"], ["discord.invite", "Discord invite code", "text"], ["discord.showCount", "Show member count", "bool"]]],
@@ -344,6 +345,16 @@
       g[1].forEach(function (f) {
         var path = f[0], kind = f[2], inp;
         if (kind === "bool") { inp = el("input", { type: "checkbox" }); inp.checked = val(path, true) !== false; inp.addEventListener("change", function () { put(path, inp.checked); }); grid.appendChild(el("label", { class: "cp-switch" }, inp, el("span", { text: f[1] }))); return; }
+        if (kind === "lines") {
+          inp = el("textarea", { rows: "7", maxlength: "1200", placeholder: "Azeroth, with looser rules?\nOne launcher, six PlayStations?" });
+          var cur0 = val(path, null); inp.value = Array.isArray(cur0) ? cur0.join("\n") : "";
+          inp.addEventListener("input", function () {
+            var arr = inp.value.split("\n").map(function (l) { return l.trim().slice(0, 40); }).filter(Boolean).slice(0, 30);
+            if (arr.length) set(ov, path, arr); else unset(ov, path);
+            mark("config");
+          });
+          grid.appendChild(el("label", { class: "cp-field cp-field--wide" }, el("span", { text: f[1] }), inp)); return;
+        }
         if (kind === "live" || kind === "counter") {
           var opts = kind === "live" ? [["auto", "Check automatically"], ["on", "Always show live"], ["off", "Never show live"]] : [["abacus", "On"], ["", "Off"]];
           inp = el("select", {}); opts.forEach(function (o) { inp.appendChild(el("option", { value: o[0], text: o[1] })); });
