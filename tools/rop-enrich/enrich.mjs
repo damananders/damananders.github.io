@@ -260,6 +260,16 @@ function tidy(x) {
 }
 
 /* ---------------- main ---------------- */
+if (process.env.PROBE) {
+  for (const q of [`SELECT ?x ?v WHERE { wd:Q2539517 wdt:P400 ?x . OPTIONAL { ?x rdfs:label ?v FILTER(LANG(?v)="en") } }`,
+                   `SELECT ?x ?v WHERE { wd:Q2539517 p:P400 ?st . ?st ps:P400 ?x ; wikibase:rank ?v }`,
+                   `SELECT ?item ?v WHERE { VALUES ?item { wd:Q2539517 wd:Q5098997 } ?item wdt:P400 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en") }`,
+                   `SELECT ?item ?v WHERE { VALUES ?item { wd:Q5098997 } ?item wdt:P577 ?v }`]) {
+    const r = await get("https://query.wikidata.org/sparql", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/sparql-results+json" }, body: "query=" + encodeURIComponent(q) });
+    log("PROBE", r.status, (await r.text()).replace(/\s+/g, " ").slice(0, 1500));
+  }
+  process.exit(0);
+}
 const games = await loadGames();
 log("games", games.length);
 const { by: compat, meta1, enName } = await compatSources();

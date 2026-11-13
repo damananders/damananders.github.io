@@ -5,6 +5,10 @@ name: Rate-O-Pedia game info
 
 on:
   workflow_dispatch:
+    inputs:
+      probe:
+        description: Run the Wikidata probe only
+        default: ""
 
 permissions:
   contents: write
@@ -23,8 +27,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUT: out/gameinfo
+          PROBE: ${{ inputs.probe }}
         run: node tools/rop-enrich/enrich.mjs
       - name: Push the result to rop-gameinfo-data
+        if: ${{ inputs.probe == '' }}
         run: |
           git config user.name "rop-enrich bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
