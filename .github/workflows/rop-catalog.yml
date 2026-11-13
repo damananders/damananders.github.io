@@ -1,0 +1,42 @@
+# Builds the Rate-O-Pedia game catalog for every platform (tools/rop-catalog) from libretro-database and
+# Wikidata / Wikipedia. Run by hand from the Actions tab. The result (catalog TSV files + info cards) is pushed to
+# the branch rop-catalog-data (replaced each run); it is reviewed and merged into main separately.
+name: Rate-O-Pedia catalog
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: Only these platform ids, comma separated (empty = all)
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build catalog
+        env:
+          OUT: out
+          ONLY: ${{ inputs.only }}
+        run: node tools/rop-catalog/catalog.mjs
+      - name: Push the result to rop-catalog-data
+        if: always()
+        run: |
+          test -f out/catalog/index.json || exit 0
+          git config user.name "rop-catalog bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan rop-catalog-data
+          git rm -rq --cached .
+          mkdir -p assets/data && rm -rf assets/data/catalog assets/data/gameinfo
+          mv out/catalog assets/data/catalog && mv out/gameinfo assets/data/gameinfo
+          git add assets/data/catalog assets/data/gameinfo
+          git commit -qm "Rate-O-Pedia catalog data ($(date -u +%F))"
+          git push -f origin rop-catalog-data
