@@ -43,7 +43,7 @@ async function render() {
   else fact("Platforms", game.console);
   fact("Publisher", info.pub);
   fact("Developer", info.dev);
-  fact("Genre", info.gn);
+  fact("Genre", Array.isArray(info.gn) ? info.gn.filter((x) => !/^video game (with|featuring|based on)|^LGBT/i.test(x)).map((x) => x.replace(/ video game$/i, "")) : info.gn);
   if (!facts.children.length) facts.append(el("dt", { text: "Details" }), el("dd", { class: "gm-note", text: "Not filled in yet." }));
 
   const desc = el("section", { class: "gi-desc" },
