@@ -73,6 +73,8 @@ window.SITE_EXTRA = {
          url      pack mode only: the one Drive link for the whole pack.
          games[]  pack mode: { name, year, region, genre, note, dlc:[{name}] }  (name is required)
          entries[] list mode: { name, url, size, year, region, genre, note, dlc:[{name, url, size}] }
+         added    optional date on any game/entry ("2026-11-13"): shows a NEW badge for ~3 weeks and a
+                  dot on the shelf card. The storefront also shows a whole-library tally (titles + size).
        DLC names are auto-cleaned on screen, so you can paste the raw package name (serial numbers and
        [BRACKETED] codes are stripped to a readable title). url:"" anywhere = shows "Link not added yet".
        Downloads shown on the cards are a private per-browser tally of your own opens — handy, not analytics. */

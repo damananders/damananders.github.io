@@ -37,6 +37,12 @@
   }
   function fmtInt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
+  /* an entry/game can carry an optional `added` date (any string Date can parse); within NEW_DAYS it's "new" */
+  var NEW_DAYS = 21;
+  function addedTime(it) { if (!it || !it.added) return 0; var t = Date.parse(it.added); return isNaN(t) ? 0 : t; }
+  function isNew(it) { var t = addedTime(it); return t > 0 && (Date.now() - t) < NEW_DAYS * 864e5; }
+  function catHasNew(cat) { return catItems(cat).some(isNew); }
+
   /* Turn a raw dump / package name into something readable: strip serials, [BRACKET] codes,
      DLCPACK numbers, long hex/number runs, underscores, stray separators. */
   function cleanName(raw) {
@@ -117,11 +123,22 @@
       (S.config.locker && S.config.locker.intro) || "My private backups.", false);
     root.textContent = "";
 
+    /* whole-library tally across every shelf */
+    var totalItems = cats.reduce(function (a, c) { return a + catItemCount(c); }, 0);
+    var totalBytes = cats.reduce(function (a, c) { return a + catSizeBytes(c); }, 0);
+    if (totalItems || totalBytes) {
+      root.appendChild(S.el("div", { class: "lk-lib" },
+        statChip("<path d='M4 7h16M4 12h16M4 17h10'/>", fmtInt(totalItems), totalItems === 1 ? "title" : "titles", "Across every shelf"),
+        totalBytes ? statChip("<path d='M5 4h14v16H5z'/><path d='M9 4v16'/>", fmtSize(totalBytes), "", "Total library size") : null,
+        statChip("<path d='M4 6h16v4H4zM4 14h16v4H4z'/>", fmtInt(cats.length), cats.length === 1 ? "shelf" : "shelves", "")));
+    }
+
     var grid = S.el("div", { class: "lk-grid" });
     cats.forEach(function (cat) {
       var n = catItemCount(cat), size = catSizeText(cat), dls = catDownloads(cat);
       var card = S.el("a", { class: "lk-cat", href: "?c=" + encodeURIComponent(cat.id) },
         S.el("span", { class: "lk-tag", text: "FREE" }),
+        catHasNew(cat) ? S.el("span", { class: "lk-new-dot", title: "New additions", "aria-label": "New additions" }) : null,
         S.el("span", { class: "lk-cat-ico" }, S.svg(ICONS[iconKey(cat)])),
         S.el("div", { class: "lk-cat-head" },
           S.el("h2", { class: "lk-cat-name", text: cat.name }),
@@ -188,11 +205,13 @@
     return wrap;
   }
 
+  function newPill(it) { return isNew(it) ? S.el("span", { class: "lk-new", text: "NEW" }) : null; }
+
   /* one game inside a pack (info only) */
   function gameCard(cat, g) {
     var id = dlId(cat.id, g.name), meta = metaLine(g);
     return S.el("article", { class: "lk-item", dataset: { fav: isFav(id) ? "1" : "0" } },
-      favBtn(id),
+      favBtn(id), newPill(g),
       S.el("h3", { class: "lk-item-name", text: cleanName(g.name) || g.name }),
       meta ? S.el("p", { class: "lk-item-meta", text: meta }) : null,
       g.note ? S.el("p", { class: "lk-item-note", text: g.note }) : null,
@@ -203,7 +222,7 @@
   function entryCard(cat, e) {
     var id = dlId(cat.id, e.name), meta = metaLine(e);
     return S.el("article", { class: "lk-item lk-item--dl", dataset: { fav: isFav(id) ? "1" : "0" } },
-      favBtn(id),
+      favBtn(id), newPill(e),
       S.el("h3", { class: "lk-item-name", text: cleanName(e.name) || e.name }),
       meta ? S.el("p", { class: "lk-item-meta", text: meta }) : null,
       e.note ? S.el("p", { class: "lk-item-note", text: e.note }) : null,

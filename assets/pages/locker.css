@@ -114,3 +114,18 @@
   .lk-sort{flex:1 1 auto}
   .lk-pack{padding:16px}
 }
+
+/* ---- whole-library tally on the storefront ---- */
+.lk-lib{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:18px;padding:14px 20px;border-radius:14px;
+  background:linear-gradient(120deg,rgba(61,139,255,.1),var(--panel) 60%);border:1px solid var(--line-2)}
+.lk-lib .lk-stat{font-size:1rem}
+.lk-lib .lk-stat b{font-size:1.15rem}
+
+/* ---- "new additions" marker on a category card ---- */
+.lk-new-dot{position:absolute;top:16px;left:16px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+:root:not([data-motion="reduce"]) .lk-new-dot{animation:lk-pulse 2.2s ease-in-out infinite}
+@keyframes lk-pulse{0%,100%{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 26%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--accent) 6%,transparent)}}
+
+/* ---- NEW pill on a recently-added item (flows above the title, chip-width) ---- */
+.lk-new{align-self:flex-start;font:700 .62rem var(--mono);letter-spacing:.12em;color:#06090c;
+  background:var(--accent);border-radius:999px;padding:3px 8px;line-height:1;margin-bottom:1px}
