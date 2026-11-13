@@ -165,13 +165,18 @@ async function sparql(q) {
 async function wikidata() {
   const items = new Map();   // qid -> { names:Set, cons:Set, article }
   for (const [con, pq] of Object.entries(PLATFORM_Q)) {
-    const rows = await sparql(`SELECT ?item ?article WHERE { ?item p:P400/ps:P400 wd:${pq} .
+    const rows = await sparql(`SELECT ?item ?name ?article WHERE { ?item p:P400/ps:P400 wd:${pq} .
+      OPTIONAL { { ?item rdfs:label ?name FILTER(LANG(?name) IN ("en","ja")) } UNION { ?item skos:altLabel ?name FILTER(LANG(?name) = "en") } }
       OPTIONAL { ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . } }`);
     for (const b of rows) {
       const q = b.item.value.split("/").pop();
       const it = items.get(q) || { q, names: new Set(), cons: new Set(), article: null };
       it.cons.add(con);
-      if (b.article) it.article = decodeURIComponent(b.article.value.split("/wiki/").pop()).replace(/_/g, " ");
+      if (b.name) it.names.add(b.name.value);
+      if (b.article) {
+        it.article = decodeURIComponent(b.article.value.split("/wiki/").pop()).replace(/_/g, " ");
+        it.names.add(it.article.replace(/\s*\((?:\d{4} )?(?:video )?game\)$/i, ""));   // the article title is a reliable English name
+      }
       items.set(q, it);
     }
     log("Wikidata", con, rows.length, "rows; items", items.size);
@@ -221,15 +226,6 @@ async function facts(items, qs) {
     }
     if (i % 2500 === 0) log("facts", i, "/", qs.length);
   }
-  // names (en + ja labels, en aliases) for the games themselves
-  const ents = await wbget(qs, "labels|aliases", "en|ja");
-  for (const [q, e] of Object.entries(ents)) {
-    const it = items.get(q); if (!it || !e.labels) continue;
-    for (const lang of ["en", "ja"]) if (e.labels[lang]) it.names.add(e.labels[lang].value);
-    for (const al of (e.aliases && e.aliases.en) || []) it.names.add(al.value);
-    if (e.labels.en) it.label = e.labels.en.value;
-  }
-  log("names for", Object.keys(ents).length, "of", qs.length);
   const labs = await wbget([...refs], "labels", "en");
   for (const [q, e] of Object.entries(labs)) labelCache.set(q, e.labels && e.labels.en ? e.labels.en.value : null);
   for (const q of qs) {
