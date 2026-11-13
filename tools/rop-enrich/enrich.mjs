@@ -182,29 +182,33 @@ async function wikidata() {
   return items;
 }
 async function facts(items, qs) {
-  for (let i = 0; i < qs.length; i += 300) {
-    const vals = qs.slice(i, i + 300).map((q) => "wd:" + q).join(" ");
-    const rows = await sparql(`SELECT ?item ?label ?desc ?date ?platL ?pubL ?devL ?genreL WHERE { VALUES ?item { ${vals} }
-      OPTIONAL { ?item rdfs:label ?label FILTER(LANG(?label)="en") }
-      OPTIONAL { ?item schema:description ?desc FILTER(LANG(?desc)="en") }
-      OPTIONAL { ?item wdt:P577 ?date }
-      OPTIONAL { ?item wdt:P400 ?plat . ?plat rdfs:label ?platL FILTER(LANG(?platL)="en") }
-      OPTIONAL { ?item wdt:P123 ?pub . ?pub rdfs:label ?pubL FILTER(LANG(?pubL)="en") }
-      OPTIONAL { ?item wdt:P178 ?dev . ?dev rdfs:label ?devL FILTER(LANG(?devL)="en") }
-      OPTIONAL { ?item wdt:P136 ?genre . ?genre rdfs:label ?genreL FILTER(LANG(?genreL)="en") } }`);
-    for (const b of rows) {
-      const it = items.get(b.item.value.split("/").pop()); if (!it) continue;
-      it.plats = it.plats || new Set(); it.pubs = it.pubs || new Set(); it.devs = it.devs || new Set(); it.genres = it.genres || new Set();
-      if (b.label) it.label = b.label.value;
-      if (b.desc) it.desc = b.desc.value;
-      if (b.date) { const y = +b.date.value.slice(0, 4); if (y > 1980 && (!it.year || y < it.year)) it.year = y; }
-      if (b.platL) it.plats.add(b.platL.value);
-      if (b.pubL) it.pubs.add(b.pubL.value);
-      if (b.devL) it.devs.add(b.devL.value);
-      if (b.genreL) it.genres.add(b.genreL.value);
+  // one small query per property, so no cross-product can blow past the query service's limits
+  const PROPS = [
+    ["label", `OPTIONAL { ?item rdfs:label ?v FILTER(LANG(?v)="en") }`],
+    ["desc", `OPTIONAL { ?item schema:description ?v FILTER(LANG(?v)="en") }`],
+    ["date", `?item wdt:P577 ?v .`],
+    ["plats", `?item wdt:P400 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`],
+    ["pubs", `?item wdt:P123 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`],
+    ["devs", `?item wdt:P178 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`],
+    ["genres", `?item wdt:P136 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`]];
+  for (let i = 0; i < qs.length; i += 250) {
+    const vals = qs.slice(i, i + 250).map((q) => "wd:" + q).join(" ");
+    for (const [key, pat] of PROPS) {
+      let rows;
+      try { rows = await sparql(`SELECT ?item ?v WHERE { VALUES ?item { ${vals} } ${pat} }`); }
+      catch (e) { log("facts", key, i, "failed", e.message.slice(0, 100)); continue; }
+      for (const b of rows) {
+        if (!b.v) continue;
+        const it = items.get(b.item.value.split("/").pop()); if (!it) continue;
+        const v = b.v.value;
+        if (key === "label") it.label = v;
+        else if (key === "desc") it.desc = v;
+        else if (key === "date") { const y = +v.slice(0, 4); if (y > 1970 && (!it.year || y < it.year)) it.year = y; }
+        else (it[key] ||= new Set()).add(v);
+      }
+      await sleep(150);
     }
-    if (i % 3000 === 0) log("facts", i, "/", qs.length);
-    await sleep(700);
+    if (i % 2500 === 0) log("facts", i, "/", qs.length);
   }
 }
 // exact English-label lookup for games whose Wikidata entry doesn't list the PlayStation platform
@@ -308,6 +312,10 @@ for (const g of games) {
   }
 }
 log("match routes", JSON.stringify(how));
+for (const t of ["Grand Theft Auto : Liberty City Stories", "Chill", "Spider-Man", "Capcom vs. SNK Pro"]) {
+  const k = norm(t), hits = [...items.values()].filter((it) => [...it.names].some((n) => norm(n) === k));
+  log("probe", JSON.stringify(t), "norm", JSON.stringify(k), "items", JSON.stringify(hits.slice(0, 4).map((it) => ({ q: it.q, cons: [...it.cons], y: it.year, plats: it.plats ? [...it.plats] : [] }))));
+}
 log("matched to Wikidata", matched.size, "of", games.length);
 const arts = [...new Set([...matched.values()].map((it) => it.article).filter(Boolean))];
 const ext = await extracts(arts);
