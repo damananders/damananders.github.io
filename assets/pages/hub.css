@@ -145,15 +145,29 @@
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* ---- "Rate the games" strip under the avenues (links to /games/) ---- */
-.hb-rate{display:flex;align-items:center;gap:16px;margin-top:18px;padding:16px 22px;text-decoration:none;color:var(--sx-text);background:rgba(15,18,22,.82);backdrop-filter:blur(8px);border:1px solid var(--sx-line);border-radius:16px;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-2px);border-color:var(--anyps);box-shadow:0 16px 40px -24px var(--anyps);outline:none}
-.hb-rate svg{flex:none;width:30px;height:30px;color:var(--anyps)}
-.hb-rate__text{display:grid;gap:2px;min-width:0;flex:1}
-.hb-rate__text strong{font:600 1.1rem var(--sx-display)}
-.hb-rate__text span{color:var(--sx-muted);font-size:.95rem}
-.hb-rate__cta{flex:none;font:600 1rem var(--sx-display);color:var(--anyps)}
-:root[data-theme="light"] .hb-rate{background:var(--sx-surface)}
-@media (max-width:520px){.hb-rate__cta{display:none}}
+.hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:22px;margin-top:22px;padding:24px 28px;text-decoration:none;color:var(--sx-text);border-radius:22px;
+  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--hr) 22%,transparent),transparent 55%),radial-gradient(120% 140% at 100% 100%,color-mix(in srgb,var(--hr2) 22%,transparent),transparent 55%),rgba(13,16,21,.88);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--hr) 40%,var(--sx-line));box-shadow:0 22px 50px -30px var(--hr);transition:transform .2s,box-shadow .2s,border-color .2s}
+.hb-rate::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.35;background-image:radial-gradient(circle,rgba(255,255,255,.12) 1px,transparent 1.4px);background-size:16px 16px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 70%);mask-image:linear-gradient(90deg,transparent,#000 70%)}
+.hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-3px);border-color:var(--hr);box-shadow:0 28px 60px -28px var(--hr);outline:none}
+.hb-rate:focus-visible{outline:2px solid var(--hr);outline-offset:3px}
+.hb-rate__icon{flex:none;display:grid;place-items:center;width:76px;height:76px;border-radius:20px;color:var(--hr);background:color-mix(in srgb,var(--hr) 14%,rgba(0,0,0,.35));border:1px solid color-mix(in srgb,var(--hr) 45%,transparent);box-shadow:inset 0 0 22px -8px var(--hr)}
+.hb-rate__icon svg{width:52px;height:52px}
+:root:not([data-motion="reduce"]) .hb-rate:hover .hb-rate__icon svg{animation:hb-rate-bob .9s ease-in-out infinite alternate}
+@keyframes hb-rate-bob{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-3px) rotate(4deg)}}
+.hb-rate__text{display:grid;gap:5px;min-width:0;flex:1}
+.hb-rate__eyebrow{font:600 .72rem var(--sx-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--hr)}
+.hb-rate__text strong{font:700 clamp(1.4rem,2.6vw,1.9rem)/1.05 var(--sx-display);letter-spacing:-.01em}
+.hb-rate__lead{color:var(--sx-muted);font-size:.98rem;line-height:1.45}
+.hb-rate__tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.hb-rate__tags span{padding:3px 10px;border-radius:999px;font:600 .74rem var(--sx-display);color:var(--sx-text);background:rgba(255,255,255,.06);border:1px solid var(--sx-line)}
+.hb-rate__cta{flex:none;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font:700 1rem var(--sx-display);color:#06140d;background:linear-gradient(135deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)));box-shadow:0 10px 26px -12px var(--hr);transition:transform .2s}
+.hb-rate:hover .hb-rate__cta{transform:translateX(3px)}
+:root[data-theme="light"] .hb-rate{background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--hr) 16%,transparent),transparent 55%),var(--sx-surface)}
+:root[data-theme="light"] .hb-rate__tags span{background:rgba(0,0,0,.04)}
+:root[data-theme="light"] .hb-rate__cta{color:#fff}
+:root[data-theme="light"] .hb-rate__icon{background:color-mix(in srgb,var(--hr) 12%,#fff)}
+@media (max-width:640px){.hb-rate{flex-wrap:wrap;gap:14px;padding:18px}.hb-rate__icon{width:56px;height:56px;border-radius:16px}.hb-rate__icon svg{width:38px;height:38px}.hb-rate__text{flex-basis:calc(100% - 70px)}.hb-rate__cta{width:100%;justify-content:center}}
 
 /* ---- "Want to work with me?" footer link (opens the contact gate) ---- */
 .hb-hire-row{margin:26px 0 2px;text-align:center}

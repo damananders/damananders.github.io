@@ -121,32 +121,67 @@ export function onAuth(fn) {
 /* The slim pill under the Donate / Discord / Twitch banner */
 export function authPill(box, opts) {
   box.replaceChildren();
+  box.classList.add("rop-me");
   const o = opts || {};
   if (!me.user) {
-    box.append(el("p", { class: "gm-auth__line", text: o.why || "Rating, posting and profiles are a Discord-server perk." }),
-      el("div", { class: "gm-auth__row" },
-        el("button", { class: "btn gm-btn", type: "button", onclick: signIn, text: "Sign in with Discord" }),
-        el("a", { class: "linkbtn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the server first" })));
+    box.append(
+      el("div", { class: "rop-me__head" }, el("span", { class: "rop-me__discord", "aria-hidden": "true" }, discordSvg()),
+        el("div", { class: "rop-me__who" }, el("b", { class: "rop-me__name", text: "Join the conversation" }), el("span", { class: "rop-me__sub", text: o.why || "Rating, reviews, forums and profiles are a Discord-server perk." }))),
+      el("div", { class: "rop-me__btns" },
+        el("button", { class: "btn gm-btn rop-me__main", type: "button", onclick: signIn, text: "Sign in with Discord" }),
+        el("a", { class: "rop-me__btn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the server first" })));
     return;
   }
-  const who = me.ready && me.profile && me.profile.handle
-    ? el("a", { class: "gm-auth__me", href: profileUrl(me.profile.handle), title: "Your profile" }, avatar(myAvatar(), myName(), 22), el("span", { text: myName() }))
-    : el("b", { text: myName() });
-  if (me.banned) box.append(el("p", { class: "gm-auth__line gm-bad" }, "Signed in as ", who, " · this account is suspended."));
-  else if (me.member) box.append(el("p", { class: "gm-auth__line gm-ok" }, "Signed in as ", who, " · in the server" + (o.okTail || ", votes count.")));
-  else box.append(el("p", { class: "gm-auth__line" }, "Signed in as ", who, " · not in the server yet."),
-    el("div", { class: "gm-auth__row" },
-      el("a", { class: "btn gm-btn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
-      el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "I've joined — check again" })));
-  if (me.admin) box.append(el("a", { class: "linkbtn gm-auth__op", href: "/games/station/", text: "Operation Station" }));
-  box.append(el("button", { class: "linkbtn gm-out", type: "button", text: "Sign out", onclick: async () => { await sb.auth.signOut(); } }));
+  const handle = me.ready && me.profile && me.profile.handle;
+  const flair = el("span", { class: "rop-me__flair" }, me.admin ? ownerTag() : null, me.staff ? adminTag() : null);
+  const status = me.banned ? el("span", { class: "rop-me__sub gm-bad", text: "This account is suspended." })
+    : me.member ? el("span", { class: "rop-me__sub gm-ok", text: "In the server" + (o.okTail ? o.okTail.replace(/^,\s*/, " · ").replace(/\.$/, "") : " · votes count") })
+    : el("span", { class: "rop-me__sub", text: "Not in the server yet" });
+  const stat = (label) => { const b = el("b", { text: "–" }); return [el("li", null, b, el("span", { text: label })), b]; };
+  const [rLi, rB] = stat("Reviews"), [pLi, pB] = stat("Posts"), [cLi, cB] = stat("Comments");
+  box.append(
+    el("div", { class: "rop-me__head" }, avatar(myAvatar(), myName(), 52, "rop-me__av"),
+      el("div", { class: "rop-me__who" }, el("span", { class: "rop-me__line" }, el("b", { class: "rop-me__name", text: myName() }), flair), status)),
+    el("ul", { class: "rop-me__stats" }, rLi, pLi, cLi));
+  const btns = el("div", { class: "rop-me__btns" });
+  if (!me.member && !me.banned) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
+    el("button", { class: "rop-me__btn", type: "button", onclick: signIn, text: "I've joined, check again" }));
+  if (handle) btns.append(el("a", { class: (me.member ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
+  if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/station/", text: "Operation Station" }));
+  btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
+  box.append(btns);
+  if (!handle) { [rB, pB, cB].forEach((x) => { x.textContent = "0"; }); return; }
+  // counts and the top-3 voter medal, filled in as they arrive
+  sb.from("member_profiles").select("reviews,posts").eq("handle", handle).maybeSingle().then(({ data }) => {
+    rB.textContent = String((data && data.reviews) || 0); pB.textContent = String((data && data.posts) || 0);
+  }, () => {});
+  sb.from("forum_thread").select("id", { count: "exact", head: true }).eq("handle", handle).then((r) => { cB.textContent = String(r.count || 0); }, () => { cB.textContent = "0"; });
+  sb.from("voter_stats").select("handle").order("votes", { ascending: false }).limit(3).then(({ data }) => {
+    const i = (data || []).findIndex((x) => x.handle === handle);
+    if (i >= 0) flair.append(el("span", { class: "rop-me__medal rop-me__medal--" + ["gold", "silver", "bronze"][i], title: "Top " + (i + 1) + " voter on the leaderboard", text: ["1st", "2nd", "3rd"][i] }));
+  }, () => {});
+}
+function discordSvg() {
+  const ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
+  s.setAttribute("viewBox", "0 0 127.14 96.36"); s.setAttribute("fill", "currentColor");
+  p.setAttribute("d", "M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z");
+  s.append(p); return s;
 }
 
-/* Ratings / Forums / My profile tabs */
+/* Ratings / Forums: two big main tabs (your profile lives in the account box) */
 export function subnav(box, active) {
   if (!box) return;
-  const tabs = [["ratings", "Ratings", "/games/"], ["forum", "Forums", "/games/forum/"], ["profile", "My profile", "/games/profile/"]];
-  box.replaceChildren(...tabs.map(([k, label, href]) => el("a", { class: "rop-tab" + (k === active ? " is-on" : ""), href, "aria-current": k === active ? "page" : null, text: label })));
+  const tabs = [["ratings", "Ratings", "Score and review games", "/games/", "M12 3l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 16.9 6.6 19.8l1.1-6.1L3.2 9.4l6.1-.8z"],
+                ["forum", "Forums", "Talk with the community", "/games/forum/", "M4 5h16v10H9l-5 4zM8 9h8M8 12h5"]];
+  box.classList.add("rop-tabs--big");
+  box.replaceChildren(...tabs.map(([k, label, sub, href, d]) => {
+    const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg"), path = document.createElementNS(ns, "path");
+    svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.8");
+    svg.setAttribute("stroke-linecap", "round"); svg.setAttribute("stroke-linejoin", "round"); svg.setAttribute("aria-hidden", "true"); svg.classList.add("rop-tab__i");
+    path.setAttribute("d", d); svg.append(path);
+    return el("a", { class: "rop-tab rop-tab--big" + (k === active ? " is-on" : ""), href, "aria-current": k === active ? "page" : null },
+      svg, el("span", { class: "rop-tab__t" }, el("b", { text: label }), el("small", { text: sub })));
+  }));
 }
 
 /* Share: the phone share sheet when there is one, otherwise copy the link */
