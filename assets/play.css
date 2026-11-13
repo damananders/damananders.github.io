@@ -66,3 +66,10 @@ html.pl-preboot body{visibility:hidden}
 @media (prefers-reduced-motion:reduce){.pl-trophy{transition:opacity .2s}body{transition:none}}
 :root[data-motion="reduce"] body{transition:none}
 @media print{.pl-trophy,.pl-cup,.pl-boot,.pl-matrix{display:none!important}html.pl-crt::after{display:none}}
+
+/* the Super Duper Special trophy: its own colours, set apart below the rest */
+.pl-item--special{margin-top:10px;border-style:dashed}
+.pl-item--special.is-got{border-style:solid;border-color:transparent;background:linear-gradient(var(--sx-surface,#0c1014),var(--sx-surface,#0c1014)) padding-box,linear-gradient(120deg,#ff5f6d,#ffc371,#47e5a0,#5aa9ff,#c77dff) border-box}
+.pl-item--special.is-got .pl-item__ico,.pl-trophy--special .pl-trophy__ico{background:linear-gradient(135deg,#ffc371,#ff5f6d 45%,#c77dff);color:#1a0b12;border-color:transparent}
+.pl-item--special.is-got strong,.pl-trophy--special strong{background:linear-gradient(90deg,#ffc371,#ff8fa3,#c9a0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pl-cup--special{box-shadow:0 0 0 1px #ffc371,0 0 14px rgba(255,195,113,.45)}

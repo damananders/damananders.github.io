@@ -37,19 +37,36 @@
     { id: "codes",     name: "Codebreaker",       desc: "Discovered three different secret words.", secret: true },
     { id: "combo",     name: "Button Masher",     desc: "Pulled off the controller combo.", secret: true },
     { id: "sailor",    name: "Old Salt",          desc: "Scored 300 or more in the game on the lost page.", secret: true },
-    { id: "all",       name: "Completionist",     desc: "Earned every other trophy." }
+    { id: "menu",      name: "Navigator",         desc: "Opened the page menu." },
+    { id: "deepcuts",  name: "Deep Cuts",         desc: "Visited Links I Like, the stream page, Uses and What's New." },
+    { id: "forum",     name: "Town Square",       desc: "Dropped by the Rate-O-Pedia forums." },
+    { id: "linkout",   name: "Link Hopper",       desc: "Visited a site from Links I Like." },
+    { id: "voter",     name: "Have Your Say",     desc: "Voted on a site in Links I Like." },
+    { id: "classic",   name: "Lighthouse Keeper", desc: "Switched the site to its Classic skin." },
+    { id: "seasons",   name: "Four Seasons",      desc: "Tried the fall, winter, spring and summer skins." },
+    { id: "access",    name: "Easy Reader",       desc: "Tried an accessibility option." },
+    { id: "shortcuts", name: "Shortcut Artist",   desc: "Opened the keyboard shortcut map." },
+    { id: "room",      name: "Window Shopper",    desc: "Looked through the trophy list." },
+    { id: "regular",   name: "Regular",           desc: "Came back on three different days." },
+    { id: "miss5",     name: "Unfivetunately",    desc: "Typed five wrong codes into the hidden door.", secret: true },
+    { id: "nightowl",  name: "Night Owl",         desc: "Visited between midnight and four in the morning.", secret: true },
+    { id: "all",       name: "Completionist",     desc: "Earned every other trophy." },
+    /* special: sits below Completionist, never counts toward it, and is only given to members Anders has made
+       an Admin in Discord. The Rate-O-Pedia pages confirm that with the server and emit "rop:admin". */
+    { id: "special",   name: "Super Duper Special", desc: "Reserved for the people Anders has made an Admin in Discord.", special: true }
   ];
+  var CORE = TROPHIES.filter(function (t) { return !t.special; });
   var CUP = '<path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.2a2.6 2.6 0 0 0 2.9 3.6M16 5.5h2.8a2.6 2.6 0 0 1-2.9 3.6M12 13v3.5M8.5 20h7M9.5 20c0-2 1-3.5 2.5-3.5s2.5 1.5 2.5 3.5"/>';
   var got = Site.store.get("trophies", {}) || {};
   var queue = [], showing = false, cupBtn = null, cupCount = null;
 
-  function count() { var n = 0; TROPHIES.forEach(function (t) { if (got[t.id]) n++; }); return n; }
-  function paintCup() { if (cupCount) cupCount.textContent = count() + "/" + TROPHIES.length; }
+  function count() { var n = 0; CORE.forEach(function (t) { if (got[t.id]) n++; }); return n; }
+  function paintCup() { if (cupCount) cupCount.textContent = count() + "/" + CORE.length; if (cupBtn) cupBtn.classList.toggle("pl-cup--special", !!got.special); }
   function nextPop() {
     if (showing || !queue.length || !doc.body) return;
     showing = true;
     var t = queue.shift();
-    var pop = el("div", { class: "pl-trophy", role: "status" },
+    var pop = el("div", { class: "pl-trophy" + (t.special ? " pl-trophy--special" : ""), role: "status" },
       el("span", { class: "pl-trophy__ico" }, svg(CUP)),
       el("span", { class: "pl-trophy__txt" }, el("small", { text: "Trophy earned" }), el("strong", { text: t.name }), el("span", { text: t.desc })));
     doc.body.appendChild(pop);
@@ -64,7 +81,7 @@
     if (!t) return false;
     got[id] = Date.now(); Site.store.set("trophies", got); paintCup();
     queue.push(t); setTimeout(nextPop, 350);
-    if (id !== "all" && count() === TROPHIES.length - 1) setTimeout(function () { award("all"); }, 600);
+    if (id !== "all" && !t.special && !got.all && count() === CORE.length - 1) setTimeout(function () { award("all"); }, 600);
     return true;
   }
   Site.trophy = award;
@@ -73,17 +90,18 @@
     var list = el("ul", { class: "pl-list" });
     TROPHIES.forEach(function (t) {
       var have = !!got[t.id], hidden = t.secret && !have;
-      list.appendChild(el("li", { class: "pl-item" + (have ? " is-got" : "") },
+      list.appendChild(el("li", { class: "pl-item" + (have ? " is-got" : "") + (t.special ? " pl-item--special" : "") },
         el("span", { class: "pl-item__ico" }, svg(CUP)),
         el("span", { class: "pl-item__txt" }, el("strong", { text: hidden ? "Secret trophy" : t.name }), el("span", { text: hidden ? "Keep poking around." : t.desc }))));
     });
     var body = el("div", {},
-      el("p", { class: "pl-list__sum", text: count() + " of " + TROPHIES.length + " earned. They're saved in this browser only." }),
+      el("p", { class: "pl-list__sum", text: count() + " of " + CORE.length + " earned. They're saved in this browser only." }),
       list,
       el("p", { class: "pl-list__hint", text: "Psst: some words do things if you just type them. One of them is a country where everything is upside down." }));
     var d = Site.modal({ id: "pl-trophies", title: "Trophies", className: "pl-modal", body: body });
     d.addEventListener("close", function () { d.remove(); });
     Site.dialog.open(d);
+    setTimeout(function () { award("room"); }, 900);
   }
 
   Site.ready(function () {
@@ -100,13 +118,38 @@
     var seen = Site.store.get("seen", {}) || {};
     if (Site.page) { seen[Site.page] = 1; Site.store.set("seen", seen); }
     if (seen.hub && seen.anderscraft && seen.anyps && seen.games && seen.resume) setTimeout(function () { award("explorer"); }, 2600);
+    if (seen.links && seen.stream && seen.uses && seen.changelog) setTimeout(function () { award("deepcuts"); }, 3000);
+    if (/^\/games\/forum\//.test(location.pathname)) setTimeout(function () { award("forum"); }, 1500);
+    try {
+      var now = new Date(), day = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(), days = Site.store.get("days", []) || [];
+      if (days.indexOf(day) < 0) { days.push(day); Site.store.set("days", days.slice(-5)); }
+      if (days.length >= 3) setTimeout(function () { award("regular"); }, 3400);
+      if (now.getHours() < 4) setTimeout(function () { award("nightowl"); }, 4200);
+    } catch (e) {}
+    /* skins: only a choice the visitor makes counts, not the calendar */
+    Site.on("pref:season", function (v) {
+      if (v && v.detail) v = v.detail;
+      if (v === "classic" || v === "off") award("classic");
+      var tried = Site.store.get("skinsTried", {}) || {};
+      if (/^(fall|winter|spring|summer)$/.test(v)) { tried[v] = 1; Site.store.set("skinsTried", tried); }
+      if (tried.fall && tried.winter && tried.spring && tried.summer) award("seasons");
+    });
+    ["textSize", "contrast", "readFont"].forEach(function (k) { Site.on("pref:" + k, function (v) { if (v && v !== "normal") award("access"); }); });
+    /* five wrong codes at the hidden door */
+    if (Site.codeMiss && !Site.codeMiss.pl) {
+      var say = Site.codeMiss, misses = 0;
+      Site.codeMiss = function () { if (++misses >= 5) award("miss5"); return say(); }; Site.codeMiss.pl = true;
+    }
+    /* the Rate-O-Pedia pages tell us when the signed-in member really is an Admin */
+    Site.on("rop:admin", function (v) { if (v === true || (v && v.detail === true)) award("special"); });
+    if (window.ROP_ADMIN === true) setTimeout(function () { award("special"); }, 2000);   /* confirmed before this file loaded */
     if (Site.page === "404") setTimeout(function () { award("lost"); }, 1200);
     if (Site.page === "vault" || Site.page === "locker") setTimeout(function () { award("key"); }, 1200);
     Site.on("pref:soundscape", function (v) { if (v === true || (v && v.detail === true)) award("dj"); });
     Site.on("konami", function () { award("konami"); });
     Site.on("dialog:open", function (d) {
       var n = d && d.id ? d : d && d.detail; var id = n && n.id;
-      if (id === "hb-code") award("door"); else if (id === "hg-box") award("hire");
+      if (id === "hb-code") award("door"); else if (id === "hg-box") award("hire"); else if (id === "ax-keys") award("shortcuts");
     });
     doc.addEventListener("click", function (e) {
       var t = e.target; if (!t || !t.closest) return;
@@ -114,6 +157,9 @@
       else if (t.closest(".ch-gear")) award("settings");
       else if (t.closest(".ch-share")) award("share");
       else if (t.closest(".rz-card__head")) award("card");
+      else if (t.closest(".ch-menu")) award("menu");
+      else if (t.closest(".lk2-go,.lk2-shotlink")) award("linkout");
+      else if (t.closest(".lk2-vote")) award("voter");
     });
     var bottomDone = false;
     window.addEventListener("scroll", function () {

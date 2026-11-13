@@ -829,7 +829,7 @@
       var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
       if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
     } catch (e) {}
-    load("play", 5, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 6, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
     /* service worker: instant repeat visits and basic offline. features.serviceWorker = false unregisters it. */
     try {
       if ("serviceWorker" in navigator && /^https:$/.test(location.protocol)) {
@@ -838,6 +838,6 @@
       }
     } catch (e) {}
     load("a11y", 2, "a11y");
-    load("seasons", 2, "seasons");
+    load("seasons", 3, "seasons");
   }, "add-on loader");
 })();
