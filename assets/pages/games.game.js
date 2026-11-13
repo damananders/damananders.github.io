@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=7";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip } from "./games.common.js?v=8";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -53,7 +53,7 @@ async function render() {
   const card = el("article", { class: "gi-card", "data-c": game.console },
     el("header", { class: "gi-head" },
       el("div", { class: "gi-headtext" },
-        el("div", { class: "gi-chips" }, el("span", { class: "gm-console", "data-c": game.console, text: game.console }), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
+        el("div", { class: "gi-chips" }, consoleChip(game.console), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
         el("h1", { class: "gi-title", text: title }),
         sub ? el("p", { class: "gi-sub", text: sub }) : null),
       el("div", { class: "gi-headbtns" }, heartBtn(),
@@ -93,6 +93,7 @@ async function rate(stars) {
 /* ---------------- emulator playability ---------------- */
 function compatBox() {
   const c = info.c, emu = (c && c.e) || EMU[game.console];
+  if (!c && !EMU[game.console]) return null;   // no emulator list for this platform: leave the box out
   const box = el("section", { class: "gi-box gi-compat" }, el("h2", { class: "gi-h", text: "Emulator playability" }));
   if (!c) {
     box.append(el("p", { class: "gm-note", text: game.console === "PSP" ? "PPSSPP doesn't publish a compatibility list, so there's no rating for this one yet." : emu + " hasn't reported on this game yet." }));

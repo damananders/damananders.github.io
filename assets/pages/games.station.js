@@ -3,7 +3,7 @@
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast } from "./games.common.js?v=7";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=8";
 
 const root = $("op-root");
 const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"]];
@@ -227,7 +227,7 @@ async function games(body) {
   await loadPeople(data.map((g) => g.added_by));
   body.replaceChildren(el("p", { class: "gm-note", text: "Games members added to the list. Hide one to take it off the public list without deleting its ratings." }),
     ...data.map((g) => row(
-      el("div", { class: "op-meta" }, el("span", { class: "gm-console", "data-c": g.console, text: g.console }), el("b", { text: g.title }), pill(!g.approved, "hidden", true), el("span", { class: "gm-note", text: "added by" }), who(g.added_by)),
+      el("div", { class: "op-meta" }, consoleChip(g.console), el("b", { text: g.title }), pill(!g.approved, "hidden", true), el("span", { class: "gm-note", text: "added by" }), who(g.added_by)),
       el("div", { class: "op-acts" },
         btn(g.approved ? "Hide" : "Show", () => act("mod_game", { p_id: g.id, p_approved: !g.approved }, g.approved ? "Hidden" : "Visible", refresh)),
         btn("Delete", () => sure("Delete “" + g.title + "” and every rating and review on it?") && act("mod_delete", { p_kind: "game", p_id: g.id }, "Deleted", refresh), true)))));

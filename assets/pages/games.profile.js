@@ -2,7 +2,7 @@
  * Anyone can view a profile. The owner of a profile can edit its username, picture, motto (+ colour) and 3 favourite
  * games. Saving goes through the database function update_my_profile, which checks every field again.
  */
-import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL } from "./games.common.js?v=7";
+import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL, consoleChip } from "./games.common.js?v=8";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -51,7 +51,7 @@ async function render() {
       ? el("ol", { class: "pf-favs" }, ...favs.map((g, i) => el("li", null,
           el("a", { class: "pf-fav", href: "/games/game/?id=" + encodeURIComponent(g.id) },
             el("span", { class: "pf-fav__n", text: String(i + 1) }),
-            el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
+            consoleChip(g.console),
             el("span", { class: "pf-fav__t", text: g.title })))))
       : el("p", { class: "gm-note", text: mine ? "Pick up to 3 in Edit profile." : "No favourites picked yet." }));
 
@@ -65,7 +65,7 @@ async function render() {
     if (!data || !data.length) return heartBox.append(el("p", { class: "gm-note", text: mine ? "Tap the heart on any game's info card to bank it here." : "No hearted games yet." }));
     heartBox.firstChild.textContent = "♥ Hearted games (" + data.length + ")";
     heartBox.append(el("div", { class: "pf-bank" }, ...data.map((g) => el("a", { class: "pf-bank__g", href: "/games/game/?id=" + encodeURIComponent(g.game_id) },
-      el("span", { class: "gm-console", "data-c": g.console, text: g.console }), el("span", { class: "pf-fav__t", text: g.title })))));
+      consoleChip(g.console), el("span", { class: "pf-fav__t", text: g.title })))));
   });
   if (mine && params.has("edit")) editor(p);
 
@@ -143,7 +143,7 @@ function editor(p) {
   const drawFavs = () => favRows.replaceChildren(...favs.map((g, i) => favSlot(i)));
   function favSlot(i) {
     const g = favs[i];
-    if (g) return el("div", { class: "pf-slot" }, el("span", { class: "pf-fav__n", text: String(i + 1) }), el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
+    if (g) return el("div", { class: "pf-slot" }, el("span", { class: "pf-fav__n", text: String(i + 1) }), consoleChip(g.console),
       el("span", { class: "pf-fav__t", text: g.title }), el("button", { class: "linkbtn", type: "button", text: "Change", onclick: () => { favs[i] = null; drawFavs(); } }));
     const q = el("input", { class: "gm-search pf-in", type: "search", placeholder: "Search for favourite #" + (i + 1), "aria-label": "Favourite game " + (i + 1) });
     const res = el("div", { class: "pf-res" });
@@ -152,7 +152,7 @@ function editor(p) {
       const s = q.value.trim(); if (s.length < 2) { res.replaceChildren(); return; }
       const { data } = await sb.from("game_scores").select("id,title,console").ilike("title", "%" + s.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).limit(8);
       res.replaceChildren(...(data || []).filter((x) => !favs.some((f) => f && f.id === x.id)).map((x) =>
-        el("button", { type: "button", class: "pf-res__b", onclick: () => { favs[i] = x; drawFavs(); } }, el("span", { class: "gm-console", "data-c": x.console, text: x.console }), " " + x.title)));
+        el("button", { type: "button", class: "pf-res__b", onclick: () => { favs[i] = x; drawFavs(); } }, consoleChip(x.console), " " + x.title)));
       if (!res.children.length) res.append(el("p", { class: "gm-note", text: "No match. You can add missing games on the Ratings page." }));
     }, 220); });
     return el("div", { class: "pf-slot pf-slot--empty" }, el("span", { class: "pf-fav__n", text: String(i + 1) }), el("div", { class: "pf-slot__q" }, q, res));

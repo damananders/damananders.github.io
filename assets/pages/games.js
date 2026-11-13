@@ -4,12 +4,12 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=7";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName } from "./games.common.js?v=8";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
-let user = null, member = false, consoleFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "", loadSeq = 0;
+let user = null, member = false, consoleFilter = "", famFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "", loadSeq = 0;
 
 /* ---------------- sign-in and membership (shared pill, see games.common.js) ---------------- */
 function onSession(m) {
@@ -24,11 +24,27 @@ function onSession(m) {
 /* ---------------- list ---------------- */
 function tabs() {
   const t = $("gm-tabs"); t.replaceChildren();
-  for (const c of ["", ...CONSOLES]) {
-    t.append(el("button", { class: "gm-tab" + (c === consoleFilter ? " is-on" : ""), "data-c": c || "all", type: "button", "aria-pressed": c === consoleFilter ? "true" : "false",
-      text: c || "All", onclick: () => { consoleFilter = c; tabs(); load(); } }));
+  // row 1: platform families; row 2: the platforms in the chosen family
+  const row1 = el("div", { class: "gm-tabrow gm-tabrow--fam" });
+  for (const [k, name, color] of [["", "All", ""], ...FAMILIES]) {
+    const on = k === famFilter;
+    row1.append(el("button", { class: "gm-tab gm-tab--fam" + (on ? " is-on" : ""), "data-c": k || "all", style: color ? "--fc:" + color : null, type: "button", "aria-pressed": on ? "true" : "false",
+      text: name, onclick: () => { famFilter = k; consoleFilter = ""; tabs(); load(); } }));
+  }
+  t.append(row1);
+  if (famFilter) {
+    const row2 = el("div", { class: "gm-tabrow gm-tabrow--plat" });
+    const list = PLATFORMS.filter((p) => p.fam === famFilter);
+    for (const p of [{ id: "", name: "All " + FAMILY[famFilter].name }, ...list]) {
+      const on = p.id === consoleFilter;
+      row2.append(el("button", { class: "gm-tab gm-tab--plat" + (on ? " is-on" : ""), "data-c": p.id || "all", "data-f": famFilter, type: "button", "aria-pressed": on ? "true" : "false",
+        text: p.name, onclick: () => { consoleFilter = p.id; tabs(); load(); } }));
+    }
+    t.append(row2);
   }
 }
+const filterIds = () => consoleFilter ? [consoleFilter] : famFilter ? PLATFORMS.filter((p) => p.fam === famFilter).map((p) => p.id) : null;
+const filterName = () => consoleFilter ? platformName(consoleFilter) : famFilter ? FAMILY[famFilter].name : "All-time";
 function ratingRow(g) {
   const my = mine.has(g.id) ? mine.get(g.id) : null;
   const row = el("div", { class: "gm-rate", role: "group", "aria-label": "Your rating for " + g.title });
@@ -54,7 +70,7 @@ function card(g, rank) {
   const c = el("article", { class: "gm-card" + medalCls + (rank && rank <= 10 ? " gm-card--top10" : "") },
     el("div", { class: "gm-card__top" },
       rank && rank <= 3 ? medal(rank) : (rank ? el("span", { class: "gm-vrank", text: "#" + rank }) : null),
-      el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
+      consoleChip(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
       rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia" }, el("span", { "aria-hidden": "true", text: "★ " }), "Must Play!") : null,
       mood, el("span", { class: "gm-score", text: score }),
@@ -68,9 +84,10 @@ async function load() {
   const q = $("gm-q").value.trim(); lastQuery = q;
   const list = $("gm-list"), head = $("gm-head");
   let req = sb.from("game_scores").select("id,console,title,votes,average");
-  if (consoleFilter) req = req.eq("console", consoleFilter);
+  const ids = filterIds();
+  if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
   if (q.length >= 2) { req = req.ilike("title", "%" + q.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).order("title").limit(40); head.textContent = "Results for “" + q + "”"; }
-  else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = (consoleFilter || "All-time") + " top rated"; }
+  else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated"; }
   const { data, error } = await req;
   if (seq !== loadSeq) return;                        // a newer load is already on its way
   if (error) { say("Couldn't load the games: " + error.message, true); return; }
@@ -192,7 +209,9 @@ function addBox(q, data) {
   const box = $("gm-add"); box.replaceChildren();
   if (q.length < 2 || !user || !member) return;
   if (data.some((g) => g.title.toLowerCase() === q.toLowerCase())) return;
-  const sel = el("select", { class: "gm-sel", "aria-label": "Console" }, ...CONSOLES.map((c) => el("option", { value: c, text: c, selected: c === (consoleFilter || "PS3") })));
+  const pick = consoleFilter || (famFilter ? PLATFORMS.find((p) => p.fam === famFilter).id : "PC");
+  const sel = el("select", { class: "gm-sel", "aria-label": "Platform" }, ...FAMILIES.map(([k, name]) => el("optgroup", { label: name },
+    ...PLATFORMS.filter((p) => p.fam === k).map((p) => el("option", { value: p.id, text: p.name, selected: p.id === pick })))));
   const note = el("p", { class: "gm-note", role: "status" });
   box.append(el("p", { class: "gm-add__line", text: "Can't find it? Add “" + q + "” to the list:" }), sel,
     el("button", { class: "btn gm-btn", type: "button", text: "Add this game", onclick: async () => {

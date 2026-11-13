@@ -7,7 +7,9 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 export const SB_URL = "https://zjhlhkruqzfendvbglsb.supabase.co";
 const SB_KEY = "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk";
 export const INVITE = "https://discord.gg/U35dt6Qb2A";
-export const CONSOLES = ["PS1", "PS2", "PSP", "Vita", "PS3", "PS4", "PS5"];
+import { PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformName, familyOf } from "./games.platforms.js?v=1";
+export { PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformName, familyOf };
+export const CONSOLES = PLATFORMS.map((p) => p.id);
 export const sb = createClient(SB_URL, SB_KEY);
 
 export const $ = (id) => document.getElementById(id);
@@ -61,6 +63,7 @@ export function nameLink(handle, name, extra) {
   return handle ? el("a", { class: "rop-name " + (extra || ""), href: profileUrl(handle), text: name || "A member" }) : el("span", { class: "rop-name " + (extra || ""), text: name || "A member" });
 }
 export const ownerTag = () => el("span", { class: "rop-owner", title: "Site owner", text: "Owner" });
+export const consoleChip = (id) => el("span", { class: "gm-console", "data-c": id, "data-f": familyOf(id), title: platformName(id), text: id });
 export const adminTag = () => el("span", { class: "rop-admin", title: "Admin (from the Discord server)", text: "Admin" });
 
 /* ---------------- sign-in ----------------

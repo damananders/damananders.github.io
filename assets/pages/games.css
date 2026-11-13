@@ -479,3 +479,23 @@ dialog.sx-modal.gi-lb:not([open]){display:none}
 .rop-tab--big.is-on .rop-tab__i{color:#fff;background:rgba(255,255,255,.16)}
 .rop-tab--big.is-on small{color:rgba(255,255,255,.82)}
 @media (max-width:520px){.rop-tab--big{padding:12px;gap:10px}.rop-tab__i{width:26px;height:26px;padding:7px}.rop-tab__t b{font-size:1.1rem}.rop-tab__t small{display:none}}
+
+/* ---------------- every platform: family filters + platform badges ---------------- */
+.gm-tabs{display:grid;gap:8px}
+.gm-tabrow{display:flex;flex-wrap:wrap;gap:6px}
+.gm-tab--fam{--fc:var(--sx-accent,#cd4257)}
+.gm-tab--fam:not([data-c="all"]):not(.is-on)::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle;background:var(--fc)}
+.gm-tab--fam.is-on{background:var(--fc);color:#fff;border-color:transparent}
+.gm-tabrow--plat{padding:8px;border-radius:12px;background:var(--sx-surface,rgba(255,255,255,.03));border:1px solid var(--sx-line,rgba(255,255,255,.08))}
+.gm-tab--plat{font-size:.8rem;padding:4px 10px}
+:where(.gm-console)[data-f="ps"]{color:#3f83ff}
+:where(.gm-console)[data-f="xbox"]{color:#4fd14f}
+:where(.gm-console)[data-f="nin"]{color:#ff4b55}
+:where(.gm-console)[data-f="sega"]{color:#4f9bff}
+:where(.gm-console)[data-f="pc"]{color:#c3cbd6}
+:where(.gm-console)[data-f="atari"]{color:#ff8f3f}
+:where(.gm-console)[data-f="retro"]{color:#c98bff}
+:where(.gm-console)[data-f="comp"]{color:#37d6c4}
+:where(.gm-console)[data-f="mobile"]{color:#f5b84d}
+:where(.gm-console)[data-f="arcade"]{color:#ff6f86}
+.gm-sel optgroup{font-weight:700}
