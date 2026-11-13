@@ -117,3 +117,23 @@ dialog.sx-modal::backdrop{background:rgba(3,5,8,.72);backdrop-filter:blur(4px)}
   :root:not([data-page="hub"]) body.photo[style*="vault-bg.webp"]{--bg:image-set(url("/assets/vault-bg.avif") type("image/avif"),url("/assets/vault-bg.webp") type("image/webp"))!important}
   :root:not([data-page="hub"]) body.photo[style*="hub-bg.webp"]{--bg:image-set(url("/assets/hub-bg.avif") type("image/avif"),url("/assets/hub-bg.webp") type("image/webp"))!important}
 }
+
+/* ---- Print: any page prints as a clean black-on-white document ---- */
+@media print{
+  :root,:root[data-theme]{color-scheme:light;--ink:#fff;--text:#000;--muted:#333;--line:#bbb;--line-2:#888;--panel:#fff;--panel-2:#fff;
+    --sx-text:#000;--sx-muted:#333;--sx-line:#bbb;--sx-line-2:#888;--sx-glass:#fff;--sx-surface:#fff;--sx-surface-2:#fff;--sx-accent:#8e2c3b}
+  html,body,body.photo{background:#fff!important;background-image:none!important;color:#000!important}
+  *{text-shadow:none!important;box-shadow:none!important;backdrop-filter:none!important;animation:none!important;transition:none!important}
+  .wrap > nav,.sx-tools,.sx-toasts,.hx-scene,.nf-sky,.nf-game,canvas,video,iframe,dialog:not([open]),.hb-ticker,.hb-tick,.hb-door-row,.hb-hint,.hb-hire,
+  .ch-links,.ch-channels,.ch-counter,.ch-stamp__star,.rz-cta,.rz-filter,.rz-chips,.rz-contact__cta,.rz-card__chev,.rz-caret,.pg-filter,.pg-actions,[data-hire],.ac-tour,.ac-jump,.gm-auth,form button{display:none!important}
+  [data-reveal]{opacity:1!important;transform:none!important}
+  .wrap{max-width:none;padding:0}
+  .avenue,.panel,.game,.feat li,.rz-card,.rz-stat,.rz-job,.rz-skillset,.rz-cred__col,.rz-edge__box,.rz-contact,.pg-tile,.pg-log__row,.pg-card,.ac-q,.ac-tile,.card{
+    background:#fff!important;border:1px solid #bbb!important;break-inside:avoid;color:#000!important}
+  .rz-card__body{grid-template-rows:1fr!important}
+  details:not([open]) > *:not(summary){display:block!important}
+  h1,h2,h3{break-after:avoid;color:#000!important}
+  a{color:#000!important;text-decoration:underline}
+  main a[href^="https://"]:not(.btn):not(.rz-btn)::after,.rz-card__link[href^="https://"]::after{content:" (" attr(href) ")";font-size:.8em;word-break:break-all}
+  @page{margin:16mm}
+}
