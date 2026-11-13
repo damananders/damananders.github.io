@@ -22,20 +22,9 @@
 <style>
 .vsound{position:absolute;right:10px;bottom:10px;z-index:2;font:600 .8rem var(--display);color:var(--text);background:rgba(10,12,16,.72);border:1px solid var(--line-2);border-radius:999px;padding:6px 12px;cursor:pointer;backdrop-filter:blur(6px)}
 .vsound[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
-.gallery{margin:14px 0 4px;display:grid;grid-template-columns:36px 1fr 36px;align-items:center;gap:8px}
-.gstage{display:grid;grid-template-columns:1fr 3.2fr 1fr;align-items:center;gap:10px;min-width:0}
-.gside{display:block;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;opacity:.55;transition:opacity .2s,transform .2s;aspect-ratio:2560/1080}
-.gside:hover,.gside:focus-visible{opacity:.9;transform:scale(1.03);outline:none}
-.gside img{display:block;width:100%;height:100%;object-fit:cover}
-.gmain{margin:0;border:1px solid var(--line-2);border-radius:14px;overflow:hidden;background:#000;box-shadow:0 20px 50px -26px rgba(0,0,0,.9)}
-.gmain img{display:block;width:100%;aspect-ratio:2560/1080;object-fit:cover;transition:opacity .25s}
-.gmain figcaption{padding:8px 12px;font-size:.88rem;color:var(--muted);background:rgba(15,18,22,.9);border-top:1px solid var(--line)}
-.garr{width:36px;height:64px;border:1px solid var(--line-2);border-radius:12px;background:var(--panel);color:var(--text);font-size:1.6rem;line-height:1;cursor:pointer}
-.garr:hover,.garr:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
-.gdots{grid-column:1/-1;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:4px}
-.gdots button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--line-2);cursor:pointer}
-.gdots button[aria-selected="true"]{background:var(--accent);transform:scale(1.3)}
-@media (max-width:640px){.gstage{grid-template-columns:1fr}.gside{display:none}.gallery{grid-template-columns:28px 1fr 28px}}
+/* the landing feature list sits in two columns so it reads at about half the height */
+.feat{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+@media (max-width:560px){.feat{grid-template-columns:1fr}}
 .sec{margin-top:40px}
 .sec h2{font-family:var(--display);margin:0 0 14px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
@@ -64,15 +53,7 @@ body.photo .ctrl{background:rgba(15,18,22,.82);backdrop-filter:blur(8px)}
 .key{font-family:var(--mono);font-size:.72rem;color:var(--muted);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:6px;padding:3px 7px;background:var(--panel-2);white-space:nowrap}
 .ctrl .lbl{color:var(--text);font-size:.92rem;font-weight:600}
 .ctrl .lbl small{display:block;color:var(--muted);font-weight:400;font-size:.8rem}
-.gmain{cursor:zoom-in}
 .social.suggest{cursor:pointer;font:inherit}
-dialog.lightbox{width:min(96vw,1600px);max-width:96vw;padding:0;border:0;border-radius:14px;background:transparent}
-dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
-dialog.lightbox img{display:block;width:100%;height:auto;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 30px 80px -20px rgba(0,0,0,.9)}
-dialog.lightbox .lbcap{color:#e6e9ee;text-align:center;font-size:.9rem;margin-top:10px}
-dialog.lightbox .lbx{position:absolute;top:-6px;right:-6px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(10,12,16,.8);color:#fff;font-size:1.4rem;cursor:pointer}
-dialog.lightbox .lbnav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:70px;border:1px solid rgba(255,255,255,.25);background:rgba(10,12,16,.6);color:#fff;font-size:1.8rem;border-radius:12px;cursor:pointer}
-dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 .sform{display:grid;gap:12px}
 .sform label{font-size:.9rem;color:var(--text);font-weight:600;display:grid;gap:6px}
 .sform textarea,.sform input{font:inherit;color:var(--text);background:var(--panel-2);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;width:100%;box-sizing:border-box}
@@ -117,20 +98,10 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
       <h1>AnyPS</h1>
       <p class="lead">One launcher for six generations of PlayStation emulation. Plug in a controller, point it at your own games, and play from the couch without touching a mouse.</p>
       <div class="preview" style="aspect-ratio:16/9;position:relative">
-        <video id="preview" autoplay muted loop playsinline preload="metadata" poster="../assets/anyps-preview-v2.jpg" aria-label="AnyPS walkthrough" disablepictureinpicture disableremoteplayback>
-          <source src="../assets/anyps-preview-v2.mp4" type="video/mp4" />
+        <video id="preview" autoplay muted loop playsinline preload="metadata" poster="../assets/anyps-preview-v2.1.jpg" aria-label="AnyPS feature walkthrough" disablepictureinpicture disableremoteplayback>
+          <source src="../assets/anyps-preview-v2.1.mp4" type="video/mp4" />
         </video>
         <button class="vsound" id="vsound" type="button" aria-pressed="false" title="Sound">&#128263; Sound off</button>
-      </div>
-      <div class="gallery" id="gallery" aria-label="What AnyPS looks like">
-        <button class="garr" id="gprev" type="button" aria-label="Previous screen">&#8249;</button>
-        <div class="gstage">
-          <button class="gside" id="gsidel" type="button" aria-label="Previous screen"><img alt="" loading="lazy" /></button>
-          <figure class="gmain"><img id="gimg" alt="" /><figcaption id="gcap"></figcaption></figure>
-          <button class="gside" id="gsider" type="button" aria-label="Next screen"><img alt="" loading="lazy" /></button>
-        </div>
-        <button class="garr" id="gnext" type="button" aria-label="Next screen">&#8250;</button>
-        <div class="gdots" id="gdots" role="tablist" aria-label="Screens"></div>
       </div>
       <ul class="feat">
         <li><b>Six systems, one shelf</b> &mdash; PS1, PS2, PSP, PS Vita, PS3 and PS4 games side by side, powered by the open-source DuckStation, PCSX2, PPSSPP, Vita3K, RPCS3 and shadPS4 projects.</li>
@@ -173,15 +144,15 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   </div>
 
   <section class="sec" aria-label="Recent updates">
-    <h2>Latest: AnyPS V2.0</h2>
+    <h2>Latest: AnyPS V2.1</h2>
     <p class="lead" style="font-size:1rem">What landed in the newest build. <button class="linkbtn" id="openChangelog2" type="button" style="margin-top:0">Full changelog &rarr;</button></p>
     <div class="updrow">
-      <span class="chip"><b>Skylanders portal</b> in the overlay &mdash; no plastic needed</span>
-      <span class="chip"><b>Figure editor &amp; creator</b>, with names and portraits</span>
-      <span class="chip"><b>Per-game volume</b> on every console</span>
-      <span class="chip"><b>Online failsafe</b> for PS3 games with dead servers</span>
-      <span class="chip"><b>Snappy overlay</b> &amp; memory tools with saved mods</span>
-      <span class="chip"><b>One-press updates</b> that keep everything</span>
+      <span class="chip"><b>New XMB-style Memory Editor</b></span>
+      <span class="chip"><b>Redesigned game &amp; figure Portal</b></span>
+      <span class="chip"><b>PS button reopens</b> your last screen</span>
+      <span class="chip"><b>L1 + &#9633; quick menu</b> from any overlay</span>
+      <span class="chip"><b>Richer trophy pop-ups</b> with live progress</span>
+      <span class="chip"><b>New console icons</b> &amp; remembered sorting</span>
     </div>
   </section>
 
@@ -237,7 +208,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 
 
   <dialog class="features" id="features" aria-labelledby="featTitle">
-    <div class="dhead"><h2 id="featTitle">AnyPS V2.0: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="featTitle">AnyPS V2.1: complete feature list</h2><button class="x" id="closeFeatures" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
 <p>One launcher (<code>AnyPS.exe</code>) that boots straight into a console-style interface and plays PlayStation games across six systems (PS1, PS2, PSP, PS Vita, PS3, PS4), each in its own emulator, without ever leaving the app. Self-contained and shareable; you supply the games and the console system files.</p>
 <h3>1. The app itself</h3>
@@ -534,6 +505,33 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <li><b>Volume</b> row in the in-game overlay on every console, muted to 100% in 5% steps, remembered per game; other programs and Windows' volume are untouched.</li>
 <li><b>Online failsafe</b>: a PS3 game that crashes in its online code gets online switched off for that game only, with a plain-language card and one-press restart. Skylanders games start offline.</li>
 </ul>
+<h3>41. Memory Editor <span class="newtag">New in V2.1</span></h3>
+<ul>
+<li><b>A full-screen, XMB-style Memory Editor</b> in the in-game overlay on the consoles that support it: a title bar, a <b>data-type</b> dropdown (byte, 2- or 4-byte, float, double, with endianness), and a value field that opens a floating on-screen keyboard.</li>
+<li><b>New Scan</b> and <b>Scan Again</b> with narrowing by &ldquo;went up / down / changed / stayed the same&rdquo;; values take negatives and hex; a search down to one address is kept for you.</li>
+<li><b>A separate saved-values tab</b>, reached with the bumpers: set, freeze, watch and persist a value so a cheat you find is re-applied every time you start that game.</li>
+</ul>
+<h3>42. Game &amp; figure Portal, redesigned <span class="newtag">New in V2.1</span></h3>
+<ul>
+<li><b>Game-select cards</b> with cover art and a count of your playable figures (and their top level); <b>category cards</b> are collage art; card backgrounds take on each game's element colour.</li>
+<li><b>Smaller figure cards</b>, eight to a row, each showing element, level and play time; press <b>&#9633;</b> on a game for a pop-up portal to swap figures without leaving the shelf.</li>
+<li><b>Figure stats fixed</b>: a figure you have never played reads &ldquo;new&rdquo; rather than showing a stray level.</li>
+</ul>
+<h3>43. Overlay quick controls <span class="newtag">New in V2.1</span></h3>
+<ul>
+<li><b>The PS button reopens your last overlay screen</b> (a setting in Overlay settings switches it back to always opening the top menu); a new game still starts at the top menu.</li>
+<li><b>L1 + &#9633; quick menu</b> from any overlay screen, including the Memory Editor: Resume, Restart, AnyPS Home, Quit AnyPS. The legend shows it as &ldquo;L1+&#9633; Quick menu&rdquo;.</li>
+</ul>
+<h3>44. Trophies, richer <span class="newtag">New in V2.1</span></h3>
+<ul>
+<li><b>Trophy pop-ups</b> as a badge with the title and grade (RetroAchievements adds points and a tag); PS3, PS4 and Vita trophy files are watched live so a trophy appears the moment it is earned.</li>
+<li><b>Earned first, locked below</b>, with a face-button divider; the header shows earned/total and the percentage; PS3 and PS4 show progress on the game-select screen; <b>L1 + &#9651;</b> brings up the live trophy list in a game.</li>
+</ul>
+<h3>45. Shelf polish <span class="newtag">New in V2.1</span></h3>
+<ul>
+<li><b>New console icons</b> across the shelf.</li>
+<li><b>Sorting is remembered</b>: Default, Alphabetical, Time played, Most recent, and Trophy completion (exact for PS3 and PS4, alphabetical elsewhere).</li>
+</ul>
 <h3>Controls at a glance</h3>
 <div class="tbl"><table><thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead><tbody><tr><td>Move</td><td>D-pad / left stick</td><td>Arrows / WASD</td></tr><tr><td>Choose</td><td>✕ / A</td><td>Enter</td></tr><tr><td>Back</td><td>○ / B</td><td>Esc</td></tr><tr><td>Game options</td><td>△ / Y</td><td>Tab</td></tr><tr><td>Sort / Continue</td><td>□ / X</td><td>F</td></tr><tr><td>Home menu (in game)</td><td>PS / Guide, or hold Share/View</td><td>Ctrl+Shift+Q</td></tr><tr><td>Quit game</td><td>hold Share/View + Options/Start</td><td>—</td></tr><tr><td>Close AnyPS</td><td>—</td><td>Alt+F4 (or ○/Esc on picker)</td></tr></tbody></table></div>
 <h3>Not yet</h3>
@@ -546,8 +544,42 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   </dialog>
 
   <dialog class="features" id="changelog" aria-labelledby="clTitle">
-    <div class="dhead"><h2 id="clTitle">What's new in V2.0</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
+    <div class="dhead"><h2 id="clTitle">What's new in V2.1</h2><button class="x" data-close type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
+<p>Everything new, changed and fixed since V2.0.</p>
+<h3>New Features</h3>
+<h4>A new Memory Editor</h4>
+<ul>
+<li><b>A full-screen, XMB-style Memory Editor</b> on the consoles that support it: pick the data type (byte, 2- or 4-byte, float or double, and endianness), type a value on a floating on-screen keyboard, run <b>New Scan</b> and <b>Scan Again</b>, and narrow the hits by &ldquo;went up / down / changed / stayed the same&rdquo;.</li>
+<li><b>A separate saved-values tab</b>, reached with the bumpers, to set, freeze, watch and keep values across launches &mdash; so a cheat you find holds every time you start that game.</li>
+</ul>
+<h4>The game &amp; figure Portal, redesigned</h4>
+<ul>
+<li><b>Game-select cards</b> now show cover art and a count of your playable figures; category cards are collage art; the backgrounds pick up each game's element colour.</li>
+<li><b>Smaller figure cards</b>, eight to a row, each with its element, level and play time. Press <b>&#9633;</b> on a game for a quick pop-up portal to swap figures without leaving the shelf.</li>
+<li><b>Figure stats are fixed</b>: a figure you have never played reads &ldquo;new&rdquo; instead of showing level 20.</li>
+</ul>
+<h4>A smoother overlay</h4>
+<ul>
+<li><b>The PS button reopens your last screen.</b> Tap it to jump back to the overlay screen you were on; a new setting in Overlay settings switches it back to always opening the top menu. A fresh game still starts at the top menu.</li>
+<li><b>L1 + &#9633; quick menu</b> from any overlay screen, including the Memory Editor: Resume, Restart, AnyPS Home, or Quit AnyPS. The button legend shows it as &ldquo;L1+&#9633; Quick menu&rdquo;.</li>
+</ul>
+<h4>Richer trophies</h4>
+<ul>
+<li><b>Trophy pop-ups</b> now arrive as a badge with the trophy's title and grade (RetroAchievements adds its points and a tag). PS3, PS4 and Vita trophy files are watched live, so a trophy shows the moment you earn it.</li>
+<li><b>Earned trophies show first</b>, with the locked ones below; the header shows how many of how many and the percentage; game-select shows progress for PS3 and PS4; and <b>L1 + &#9651;</b> brings up the live trophy list in a game.</li>
+</ul>
+<h3>Improvements &amp; Changes</h3>
+<ul>
+<li><b>New console icons</b> across the shelf.</li>
+<li><b>Sorting is remembered</b>, with more ways to sort the game list: Default, Alphabetical, Time played, Most recent, and Trophy completion (exact for PS3 and PS4).</li>
+</ul>
+<h3>Notes</h3>
+<ul>
+<li>V2.1 is the AnyPS program itself &mdash; same emulators &mdash; so updating from inside AnyPS (Settings &rsaquo; AnyPS version) is all you need; your games, saves, trophies, memory cards, figures and sign-ins all stay exactly where they are. The full download is only for a brand-new install.</li>
+<li>No games, BIOS, firmware, Sony artwork/sounds or sign-ins are included in the release.</li>
+</ul>
+<details><summary><b>Earlier: what was new in V2.0</b></summary>
 <p>Everything new, changed and fixed since V1.05.1.</p>
 <h3>New Features</h3>
 <h4>Skylanders: the Portal of Power, inside AnyPS</h4>
@@ -583,6 +615,7 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
 <li>Figure catalogue and artwork references come from the open-source SkylanderTools project (MIT licence, credited in the download).</li>
 <li>PlayStation&nbsp;5 support is still &ldquo;coming soon&rdquo;. No games, BIOS, firmware or sign-ins are included in the release.</li>
 </ul>
+</details>
 <details><summary><b>Earlier: what was new in V1.05 and V1.05.1</b></summary>
 <h3>V1.05.1 update</h3>
 <ul>
@@ -883,14 +916,6 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
     </div>
   </dialog>
 
-  <dialog class="lightbox" id="lightbox" aria-label="Screenshot, enlarged">
-    <button class="lbx" id="lbClose" type="button" aria-label="Close">&times;</button>
-    <button class="lbnav lbprev" id="lbPrev" type="button" aria-label="Previous">&#8249;</button>
-    <img id="lbImg" alt="" />
-    <button class="lbnav lbnext" id="lbNext" type="button" aria-label="Next">&#8250;</button>
-    <div class="lbcap" id="lbCap"></div>
-  </dialog>
-
   <dialog class="features" id="suggest" aria-labelledby="sgTitle">
     <div class="dhead"><h2 id="sgTitle">Suggestions &amp; comments</h2><button class="x" id="sgClose" type="button" aria-label="Close">&times;</button></div>
     <div class="dbody">
@@ -965,64 +990,6 @@ dialog.lightbox .lbprev{left:8px} dialog.lightbox .lbnext{right:8px}
   vid.muted = true; vid.play && vid.play().catch(() => {});
   const vs = document.getElementById("vsound");
   vs.addEventListener("click", () => { vid.muted = !vid.muted; vs.setAttribute("aria-pressed", String(!vid.muted)); vs.innerHTML = vid.muted ? "&#128263; Sound off" : "&#128266; Sound on"; if (!vid.muted) vid.play && vid.play().catch(() => {}); });
-
-  // ---- screenshot carousel: the current screen in the middle, the previous and next as side previews
-  const shots = [
-    ["1_consoles", "System picker: seven consoles on one shelf, recently played below"],
-    ["43_ps3_lane_real", "PlayStation 3 lane: the XMB, with Install all for updates and DLC"],
-    ["37_ps1_lane_real", "PlayStation lane"],
-    ["41_ps2_lane_real", "PlayStation 2 lane"],
-    ["42_psp_lane_real", "PSP lane"],
-    ["31c_vita_lane", "PS Vita lane: new in V1.04"],
-    ["7_ps4", "PlayStation 4 home row"],
-    ["2_consoles_ps5", "PlayStation 5: coming soon"],
-    ["70_grid", "Box-art grid view"],
-    ["14_home", "In-game overlay on the PS button: settings, presets, notes, vault, saves, trophies"],
-    ["77_states", "Save states from the overlay"],
-    ["72_cheats", "Cheats manager"],
-    ["13_trophies", "Trophies"],
-    ["35_hub", "AnyPS Settings hub"],
-    ["31d_vita_settings", "PS Vita settings in plain language"],
-    ["54_remap", "Visual controller remap"],
-    ["87_smartlists", "Smart lists"],
-    ["94_vault", "Save vault"],
-    ["44_profiles_select", "Who's playing? Profiles with passcodes and avatars"],
-    ["71_wizard", "Set-up wizard"],
-    ["61_slideshow", "Screenshot slideshow"],
-  ];
-  const gimg = document.getElementById("gimg"), gcap = document.getElementById("gcap"), gdots = document.getElementById("gdots");
-  const sideL = document.getElementById("gsidel"), sideR = document.getElementById("gsider");
-  const src = i => "../assets/shots/" + shots[(i + shots.length) % shots.length][0] + ".webp";
-  let cur = 0;
-  shots.forEach((_, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab"); b.setAttribute("aria-label", shots[i][1]); b.addEventListener("click", () => show(i)); gdots.append(b); });
-  function show(i) {
-    cur = (i + shots.length) % shots.length;
-    gimg.style.opacity = 0;
-    const im = new Image(); im.onload = () => { gimg.src = im.src; gimg.alt = shots[cur][1]; gimg.style.opacity = 1; }; im.src = src(cur);
-    gcap.textContent = (cur + 1) + " / " + shots.length + "  ·  " + shots[cur][1];
-    sideL.querySelector("img").src = src(cur - 1); sideL.title = shots[(cur - 1 + shots.length) % shots.length][1];
-    sideR.querySelector("img").src = src(cur + 1); sideR.title = shots[(cur + 1) % shots.length][1];
-    [...gdots.children].forEach((d, k) => d.setAttribute("aria-selected", String(k === cur)));
-  }
-  document.getElementById("gprev").addEventListener("click", () => show(cur - 1));
-  document.getElementById("gnext").addEventListener("click", () => show(cur + 1));
-  sideL.addEventListener("click", () => show(cur - 1)); sideR.addEventListener("click", () => show(cur + 1));
-  document.addEventListener("keydown", e => { if (document.querySelector("dialog[open]")) return; if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
-  let tx = null; const gal = document.getElementById("gallery");
-  gal.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
-  gal.addEventListener("touchend", e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 40) show(dx < 0 ? cur + 1 : cur - 1); }, { passive: true });
-  show(0);
-
-  // ---- click a screenshot to enlarge it full-screen
-  const lb = document.getElementById("lightbox"), lbImg = document.getElementById("lbImg"), lbCap = document.getElementById("lbCap");
-  function openLb(i) { cur = (i + shots.length) % shots.length; lbImg.src = src(cur); lbImg.alt = shots[cur][1]; lbCap.textContent = (cur + 1) + " / " + shots.length + "  ·  " + shots[cur][1]; if (!lb.open) lb.showModal(); }
-  document.querySelector(".gmain").addEventListener("click", () => openLb(cur));
-  document.getElementById("lbClose").addEventListener("click", () => lb.close());
-  document.getElementById("lbPrev").addEventListener("click", () => openLb(cur - 1));
-  document.getElementById("lbNext").addEventListener("click", () => openLb(cur + 1));
-  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
-  lb.addEventListener("close", () => { show(cur); });
-  document.addEventListener("keydown", e => { if (!lb.open) return; if (e.key === "ArrowLeft") openLb(cur - 1); else if (e.key === "ArrowRight") openLb(cur + 1); });
 
   // ---- suggestions / comments -> the owner's inbox via Web3Forms (the address stays off the page)
   const SUGGEST_ENDPOINT = "https://formspree.io/f/mwloelbw";

@@ -6,14 +6,14 @@ window.SITE = {
   discord: "https://discord.gg/U35dt6Qb2A",
 
   anyps: {
-    version: "2.0",
-    date: "2026-11-11",
-    downloadUrl: "https://drive.google.com/file/d/1JcBEIKLtnoAW7tRovEz8OTBYl_R0Xk8Y/view?usp=sharing",
+    version: "2.1",
+    date: "2026-11-12",
+    downloadUrl: "https://drive.google.com/file/d/1O5PrRaR56RP8d5SN9ixTLRW4U6U-C_Kw/view?usp=sharing",
     // AnyPS.exe on its own (about 1 MB). AnyPS's built-in updater (Settings > AnyPS version) downloads THIS,
     // compares "version" above with the installed one, and swaps itself. Any Google Drive share link works.
     // Leave "" and the updater falls back to pulling AnyPS.exe out of the full zip at downloadUrl.
     exeUrl: "https://damananders.github.io/anyps/AnyPS.exe",
-    sizeLabel: "280 MB",    // e.g. "903 MB"
+    sizeLabel: "281 MB",    // e.g. "903 MB"
     // 32-bit Windows edition (PSP only). Leave download32Url "" to hide the link on the page.
     download32Url: "https://drive.google.com/file/d/1hd1W0whJiq3s7Fypmg4lrHr6IsltnCFs/view?usp=sharing",
     version32: "1.05.1",
