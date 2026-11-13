@@ -94,7 +94,7 @@ export async function loadMe(session) {
   if (me.ready) { try { const a = await sb.rpc("is_admin"); me.admin = a.data === true; } catch (e) {} }
   // Admin bubble (set server-side from the Discord role); tells the site trophies about it once per page load
   if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
-  if (me.staff && !staffSent) { staffSent = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
+  if (me.staff && !staffSent) { staffSent = true; window.ROP_ADMIN = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
   return me;
 }
 export const myName = () => (me.profile && (me.profile.display_name || me.profile.name)) || (me.user && me.user.user_metadata && (me.user.user_metadata.full_name || me.user.user_metadata.name)) || "you";
