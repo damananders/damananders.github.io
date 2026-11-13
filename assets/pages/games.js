@@ -4,64 +4,21 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=1";
 
-const SB_URL = "https://zjhlhkruqzfendvbglsb.supabase.co";
-const SB_KEY = "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk";
-const INVITE = "https://discord.gg/U35dt6Qb2A";
-const CONSOLES = ["PS1", "PS2", "PSP", "Vita", "PS3", "PS4", "PS5"];
-const sb = createClient(SB_URL, SB_KEY);
-
-const $ = (id) => document.getElementById(id);
-function el(tag, attrs, ...kids) {
-  const n = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs || {})) {
-    if (v == null || v === false) continue;
-    if (k === "text") n.textContent = v; else if (k === "class") n.className = v;
-    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? "" : v);
-  }
-  for (const k of kids) if (k != null) n.append(k);
-  return n;
-}
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
 let user = null, member = false, consoleFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "", loadSeq = 0;
 
-/* ---------------- sign-in and membership ---------------- */
-function signIn() {
-  sb.auth.signInWithOAuth({ provider: "discord", options: { scopes: "identify guilds.members.read", redirectTo: location.origin + "/games/" } });
-}
-async function refreshMember(session) {
-  // Right after the Discord redirect the session carries the visitor's Discord token: ask the server to check.
-  if (session && session.provider_token) {
-    try { await sb.functions.invoke("verify-member", { body: { provider_token: session.provider_token } }); } catch (e) { /* profile read below still answers */ }
-  }
-  const { data } = await sb.from("profiles").select("is_member,name,avatar").eq("id", user.id).maybeSingle();
-  member = !!(data && data.is_member);
-  return data;
-}
-async function onSession(session) {
-  user = session ? session.user : null; member = false;
-  const box = $("gm-auth"); box.replaceChildren();
-  if (!user) {
-    box.append(el("p", { class: "gm-auth__line", text: "Rating is a Discord-server perk." }),
-      el("div", { class: "gm-auth__row" },
-        el("button", { class: "btn gm-btn", type: "button", onclick: signIn, text: "Sign in with Discord" }),
-        el("a", { class: "linkbtn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the server first" })));
-  } else {
-    box.append(el("p", { class: "gm-auth__line", text: "Checking membership…" }));
-    const p = await refreshMember(session);
-    box.replaceChildren();
-    const name = (p && p.name) || (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || "you";
-    if (member) box.append(el("p", { class: "gm-auth__line gm-ok", text: "Signed in as " + name + " · in the server, votes count." }));
-    else box.append(el("p", { class: "gm-auth__line", text: "Signed in as " + name + " · not in the server yet." }),
-      el("div", { class: "gm-auth__row" },
-        el("a", { class: "btn gm-btn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
-        el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "I've joined — check again" })));
-    box.append(el("button", { class: "linkbtn gm-out", type: "button", text: "Sign out", onclick: async () => { await sb.auth.signOut(); } }));
-  }
+/* ---------------- sign-in and membership (shared pill, see games.common.js) ---------------- */
+function onSession(m) {
+  user = m.user; member = m.member;
+  // Discord always lands here; send people back to the Rate-O-Pedia page they signed in from
+  if (user) { const back = takeReturn(); if (back && back !== location.pathname + location.search) { location.replace(back); return; } }
+  authPill($("gm-auth"));
   load();
+  voters();
 }
 
 /* ---------------- list ---------------- */
@@ -146,10 +103,13 @@ async function rate(g, stars) {
 /* ---------------- reviews ---------------- */
 async function reviews(g, box) {
   box.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
-  const { data } = await sb.from("public_reviews").select("body,name,stars,created_at").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
+  const { data } = await sb.from("public_reviews").select("*").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
   box.replaceChildren();
-  for (const r of data || [])
-    box.append(el("blockquote", { class: "gm-review" }, el("p", { text: r.body }), el("footer", { text: (r.name || "A member") + (r.stars != null ? "  ·  " + r.stars + " / 5" : "") })));
+  for (const r of data || []) {
+    const foot = el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name || "A member"), r.stars != null ? "  ·  " + r.stars + " / 5" : null);
+    if (member && r.id != null && me.ready) foot.append(el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: (e) => report({ review_id: r.id }, e.target) }));
+    box.append(el("blockquote", { class: "gm-review" }, el("p", { text: r.body }), foot));
+  }
   if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
   if (user && member) {
     const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game (optional)", "aria-label": "Your review of " + g.title });
@@ -161,6 +121,14 @@ async function reviews(g, box) {
       if (!error) ta.value = "";
     } }), note);
   }
+}
+
+async function report(target, btn) {
+  const reason = prompt("What's wrong with it? (optional)") ;
+  if (reason === null) return;
+  const { error } = await sb.from("forum_reports").insert({ user_id: user.id, reason: reason.trim().slice(0, 300) || null, ...target });
+  btn.textContent = error ? "Couldn't report" : "Reported";
+  btn.disabled = true;
 }
 
 /* ---------------- add a missing game ---------------- */
@@ -179,10 +147,11 @@ function addBox(q, data) {
     } }), note);
 }
 
-/* ---------------- voters: profiles and badges ----------------
- * Counts come from the public voter_stats view (setup file 09_voter_stats.sql: display names and totals only,
- * never account ids). Until that view exists the section falls back to reviewers, from the public reviews.
- * Badge glyphs are the four face buttons, in their PlayStation colours. */
+/* ---------------- leaderboard: top voters, medals, mottos ----------------
+ * Rows come from the public voter_stats view (names, pictures, mottos and counts only, never account ids).
+ * Until that view exists the section falls back to reviewers, from the public reviews.
+ * #1 / #2 / #3 wear gold / silver / bronze medal flair. The right side of each row is the member's motto in the
+ * colour they chose on their profile. The earned badges live inside the opened row. */
 const BADGES = {
   topVoter:  { g: "△", c: "tri", name: "Top Voter",    why: "more votes than anyone else" },
   topCritic: { g: "○", c: "cir", name: "Top Critic",   why: "more reviews than anyone else" },
@@ -208,23 +177,41 @@ function badgesFor(v, ctx) {
   if (v.zeros >= 3) b.push("tough");
   return b;
 }
-const vb = (k, title) => el("span", { class: "gm-vb gm-vb--" + BADGES[k].c, title: title ? BADGES[k].name + " — " + BADGES[k].why : null, "aria-label": title ? BADGES[k].name : null, "aria-hidden": title ? null : "true", text: BADGES[k].g });
+const vb = (k) => el("span", { class: "gm-vb gm-vb--" + BADGES[k].c, "aria-hidden": "true", text: BADGES[k].g });
+
+const MEDALS = [null, { cls: "gold", label: "Gold medal, first place" }, { cls: "silver", label: "Silver medal, second place" }, { cls: "bronze", label: "Bronze medal, third place" }];
+let medalN = 0;
+function medal(place) {
+  const m = MEDALS[place], id = "gmm" + (++medalN);
+  const w = document.createElement("span");
+  w.className = "gm-medal gm-medal--" + m.cls; w.setAttribute("role", "img"); w.setAttribute("aria-label", m.label); w.title = m.label;
+  // ribbon + struck medal, drawn here so it stays sharp at any size; colours come from the CSS custom properties
+  w.innerHTML = '<svg viewBox="0 0 40 48" aria-hidden="true">'
+    + '<path d="M9 0h9l5 15h-9z" fill="var(--rib-a)"/><path d="M31 0h-9l-5 15h9z" fill="var(--rib-b)"/>'
+    + '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--m-hi)"/><stop offset=".5" stop-color="var(--m-mid)"/><stop offset="1" stop-color="var(--m-lo)"/></linearGradient></defs>'
+    + '<circle cx="20" cy="31" r="15" fill="url(#' + id + ')" stroke="var(--m-edge)" stroke-width="1.6"/>'
+    + '<circle cx="20" cy="31" r="11" fill="none" stroke="var(--m-edge)" stroke-opacity=".55" stroke-width="1"/>'
+    + '<text x="20" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="var(--m-ink)" font-family="Space Grotesk,system-ui,sans-serif">' + place + '</text></svg>';
+  return w;
+}
+
 let votersBusy = false;
 async function voters() {
   const box = $("gm-voters"); if (!box || votersBusy) return;
   votersBusy = true;
   try {
     let rows = [], full = true;
-    const r = await sb.from("voter_stats").select("name,avatar,votes,reviews,fives,zeros,first_vote,last_vote").order("votes", { ascending: false }).limit(200);
-    if (!r.error && Array.isArray(r.data)) rows = r.data.map((x) => ({ name: x.name, avatar: x.avatar, votes: +x.votes || 0, reviews: +x.reviews || 0, fives: +x.fives || 0, zeros: +x.zeros || 0, first: x.first_vote, last: x.last_vote }));
+    const r = await sb.from("voter_stats").select("*").order("votes", { ascending: false }).limit(200);
+    if (!r.error && Array.isArray(r.data)) rows = r.data.map((x) => ({ handle: x.handle || null, name: x.name, avatar: x.avatar, motto: x.motto || "", color: x.motto_color || "white", since: x.member_since || null,
+      votes: +x.votes || 0, reviews: +x.reviews || 0, fives: +x.fives || 0, zeros: +x.zeros || 0, first: x.first_vote, last: x.last_vote }));
     else {
       full = false;
-      const pr = await sb.from("public_reviews").select("name,avatar,created_at").limit(5000);
+      const pr = await sb.from("public_reviews").select("*").limit(5000);
       if (pr.error || !Array.isArray(pr.data)) { box.hidden = true; return; }
       const m = new Map();
       for (const x of pr.data) {
         if (!x.name) continue;
-        const v = m.get(x.name) || { name: x.name, avatar: x.avatar, votes: 0, reviews: 0, fives: 0, zeros: 0, first: x.created_at, last: x.created_at };
+        const v = m.get(x.name) || { handle: x.handle || null, name: x.name, avatar: x.avatar, motto: "", color: "white", votes: 0, reviews: 0, fives: 0, zeros: 0, first: x.created_at, last: x.created_at };
         v.reviews++; if (x.created_at < v.first) v.first = x.created_at; if (x.created_at > v.last) v.last = x.created_at;
         m.set(x.name, v);
       }
@@ -238,40 +225,41 @@ async function voters() {
     const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
     const SHOW = 12, list = el("div", { class: "gm-vlist" });
     rows.forEach((v, i) => {
-      const bs = badgesFor(v, ctx);
-      const av = typeof v.avatar === "string" && /^https:\/\/cdn\.discordapp\.com\//.test(v.avatar)
-        ? el("img", { class: "gm-vav", src: v.avatar, alt: "", loading: "lazy", width: "36", height: "36", referrerpolicy: "no-referrer",
-            onerror: (e) => { e.target.replaceWith(el("span", { class: "gm-vav gm-vav--txt", "aria-hidden": "true", text: v.name.trim().charAt(0).toUpperCase() })); } })
-        : el("span", { class: "gm-vav gm-vav--txt", "aria-hidden": "true", text: v.name.trim().charAt(0).toUpperCase() });
+      const place = i + 1, bs = badgesFor(v, ctx);
       const counts = full ? plural(v.votes, "vote") + (v.reviews ? " · " + plural(v.reviews, "review") : "") : plural(v.reviews, "review");
       const stats = [];
       const stat = (k, val) => stats.push(el("dt", { text: k }), el("dd", { text: String(val) }));
+      if (v.since) stat("Member since", memberSince(v.since));
       if (full) stat("Votes", v.votes);
       stat("Reviews", v.reviews);
       if (full) { stat("Perfect 5/5s", v.fives); stat("0/5s", v.zeros); }
       stat(full ? "First vote" : "First review", fmt(v.first));
       stat(full ? "Latest vote" : "Latest review", fmt(v.last));
-      list.append(el("details", { class: "gm-vcard" + (i >= SHOW ? " gm-vcard--more" : "") },
+      const medalCls = place <= 3 ? " gm-vcard--" + MEDALS[place].cls : "";
+      list.append(el("details", { class: "gm-vcard" + medalCls + (i >= SHOW ? " gm-vcard--more" : "") },
         el("summary", null,
-          el("span", { class: "gm-vrank", text: "#" + (i + 1) }), av,
-          el("span", { class: "gm-vname", text: v.name }),
-          el("span", { class: "gm-vcount", text: counts }),
-          el("span", { class: "gm-vbadges" }, ...bs.map((k) => vb(k, true)))),
+          place <= 3 ? medal(place) : el("span", { class: "gm-vrank", text: "#" + place }),
+          avatar(v.avatar, v.name, place <= 3 ? 42 : 36, "gm-vav"),
+          el("span", { class: "gm-vwho" },
+            el("span", { class: "gm-vname", text: v.name }),
+            el("span", { class: "gm-vcount", text: counts })),
+          v.motto ? el("span", { class: "gm-vmotto " + colorClass(v.color), title: v.motto, text: "“" + v.motto + "”" }) : el("span", { class: "gm-vmotto gm-vmotto--none" })),
         el("div", { class: "gm-vprofile" },
           el("dl", null, ...stats),
           bs.length
-            ? el("ul", { class: "gm-vblist" }, ...bs.map((k) => el("li", null, vb(k, false), el("b", { text: BADGES[k].name }), " — " + BADGES[k].why)))
-            : el("p", { class: "gm-note", text: "No badges yet. Keep rating." }))));
+            ? el("ul", { class: "gm-vblist" }, ...bs.map((k) => el("li", null, vb(k), el("b", { text: BADGES[k].name }), " — " + BADGES[k].why)))
+            : el("p", { class: "gm-note", text: "No badges yet. Keep rating." }),
+          v.handle ? el("a", { class: "linkbtn gm-vopen", href: profileUrl(v.handle), text: "Open full profile →" }) : null)));
     });
     const more = rows.length > SHOW ? el("button", { class: "linkbtn gm-vmore", type: "button", text: "Show all " + rows.length, onclick: () => { box.classList.add("gm-voters--all"); more.remove(); } }) : null;
     box.classList.remove("gm-voters--all");
     box.replaceChildren(
-      el("h2", { class: "gm-head", text: "Top voters" }),
-      el("p", { class: "gm-note", text: full ? "The Discord members who rate the most, and the badges they've earned. Open one to see their profile." : "The members who've written reviews, and the badges they've earned. Open one to see their profile." }),
+      el("h2", { class: "gm-head", text: "Leaderboard" }),
+      el("p", { class: "gm-note", text: full ? "The Discord members who rate the most. Open a row for their stats and badges." : "The members who've written reviews. Open a row for their stats and badges." }),
       list);
     if (more) box.append(more);
     box.hidden = false;
-  } catch (e) { /* the voters board is extra; never let it break the page */ }
+  } catch (e) { /* the leaderboard is extra; never let it break the page */ }
   finally { votersBusy = false; }
 }
 
@@ -280,5 +268,5 @@ async function voters() {
 try { const q0 = new URLSearchParams(location.search).get("q"); if (q0) $("gm-q").value = q0.slice(0, 80); } catch (e) {}
 tabs();
 $("gm-q").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(load, 250); });
-sb.auth.onAuthStateChange((_event, session) => { setTimeout(() => onSession(session), 0); });
-voters();
+subnav($("rop-tabs"), "ratings");
+onAuth(onSession);

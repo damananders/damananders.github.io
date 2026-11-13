@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/games.css" />
+<link rel="stylesheet" href="/assets/pages/games.css?v=2" />
 <!-- /site:head -->
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -41,6 +41,7 @@
   </nav>
 
   <section class="gm-auth" id="gm-auth" aria-label="Sign in"><p class="gm-auth__line">Loading…</p></section>
+  <div class="rop-tabs" id="rop-tabs" role="navigation" aria-label="Rate-O-Pedia"></div>
 
   <header class="hero" style="padding-bottom:8px">
     <div class="eyebrow">Rate-O-Pedia &middot; community rankings</div>
@@ -56,7 +57,7 @@
       <h2 class="gm-head" id="gm-head">Top rated</h2>
       <section class="gm-list" id="gm-list" aria-label="Games"></section>
       <section class="gm-add" id="gm-add" aria-label="Add a game"></section>
-      <section class="gm-voters" id="gm-voters" aria-label="Top voters" hidden></section>
+      <section class="gm-voters" id="gm-voters" aria-label="Leaderboard" hidden></section>
     </div>
     <noscript><p>This page needs JavaScript to load the games.</p></noscript>
   </main>
@@ -73,7 +74,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script type="module" src="/assets/pages/games.js"></script>
+<script type="module" src="/assets/pages/games.js?v=2"></script>
 <!-- /site:scripts -->
 </body>
 </html>
