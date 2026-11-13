@@ -50,7 +50,7 @@ function splitTitle(t) {
   return m ? [m[1].trim(), m[2].trim()] : [String(t).trim(), ""];
 }
 const fnv = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
-export const shardOf = (id) => (fnv(id) & 0xff).toString(16).padStart(2, "0");
+export const shardOf = (id) => (fnv(id) & 0xfff).toString(16).padStart(3, "0");   // 4096 small files
 
 /* ---------------- 1. our game list ---------------- */
 async function loadGames() {
@@ -358,7 +358,7 @@ log("descriptions", ext.size, "of", arts.length);
 
 const shards = {};
 const INFO_IN = process.env.INFO_IN || "assets/data/gameinfo";
-if (fs.existsSync(INFO_IN)) for (const f of fs.readdirSync(INFO_IN)) if (/^[0-9a-f]{2}\.json$/.test(f)) shards[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(INFO_IN, f), "utf8"));
+if (fs.existsSync(INFO_IN)) for (const f of fs.readdirSync(INFO_IN)) if (/^[0-9a-f]{2,3}\.json$/.test(f)) for (const [id, rec] of Object.entries(JSON.parse(fs.readFileSync(path.join(INFO_IN, f), "utf8")))) (shards[shardOf(id)] ||= {})[id] = rec;
 const stats = { built: new Date().toISOString(), games: games.length, wikidata: 0, description: 0, compat: 0, byConsole: {} };
 for (const g of games) {
   const it = matched.get(g.id), k = norm(g.title);

@@ -12,7 +12,7 @@ const EMU = { PS1: "DuckStation", PS2: "PCSX2", PSP: "PPSSPP", PS3: "RPCS3", Vit
 const EMU_SRC = { DuckStation: "https://github.com/stenzek/duckstation", PCSX2: "https://pcsx2.net/compat/", RPCS3: "https://rpcs3.net/compatibility", Vita3K: "https://vita3k.org/compatibility.html", shadPS4: "https://github.com/shadps4-emu/shadps4-game-compatibility" };
 const TIERS = ["Nothing", "Boots", "Menus", "In-game", "Playable", "Perfect"];
 const fnv = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
-const shardOf = (s) => (fnv(s) & 0xff).toString(16).padStart(2, "0");
+const shardOf = (s) => (fnv(s) & 0xfff).toString(16).padStart(3, "0");
 const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
 let game = null, info = {}, myStars = null;
 

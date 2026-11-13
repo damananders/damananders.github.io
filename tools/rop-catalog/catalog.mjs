@@ -58,7 +58,7 @@ function splitTitle(t) {
   return m ? [m[1].trim(), m[2].trim()] : [String(t).trim(), ""];
 }
 const fnv = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
-const shardOf = (id) => (fnv(id) & 0xff).toString(16).padStart(2, "0");
+const shardOf = (id) => (fnv(id) & 0xfff).toString(16).padStart(3, "0");   // 4096 small files
 const artTitle = (a) => a.replace(/\s*\((?:\d{4} )?(?:[\w .-]+ )?(?:video )?game\)$/i, "").trim();
 const clean = (s) => String(s || "").replace(/[\t\r\n]+/g, " ").replace(/\s+/g, " ").trim();
 
@@ -298,7 +298,7 @@ log("Wikipedia descriptions", ext.size, "of", arts.length);
 
 // ids, catalog files and info cards
 const shards = {};
-if (fs.existsSync(INFO_IN)) for (const f of fs.readdirSync(INFO_IN)) if (/^[0-9a-f]{2}\.json$/.test(f)) shards[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(INFO_IN, f), "utf8"));
+if (fs.existsSync(INFO_IN)) for (const f of fs.readdirSync(INFO_IN)) if (/^[0-9a-f]{2,3}\.json$/.test(f)) for (const [id, rec] of Object.entries(JSON.parse(fs.readFileSync(path.join(INFO_IN, f), "utf8")))) (shards[shardOf(id)] ||= {})[id] = rec;
 fs.mkdirSync(path.join(OUT, "catalog"), { recursive: true });
 fs.mkdirSync(path.join(OUT, "gameinfo"), { recursive: true });
 const index = { built: stats.built, platforms: {} };

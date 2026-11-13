@@ -1,0 +1,520 @@
+{
+ "built": "2026-11-13T14:45:13.932Z",
+ "platforms": {
+  "2600": 589,
+  "5200": 83,
+  "7800": 68,
+  "Vita": 651,
+  "PS4": 6497,
+  "PS5": 3504,
+  "Xbox": 1571,
+  "X360": 2489,
+  "XOne": 4504,
+  "XSX": 3987,
+  "NES": 2125,
+  "FDS": 323,
+  "SNES": 2424,
+  "N64": 553,
+  "GC": 1101,
+  "Wii": 4618,
+  "WiiU": 1621,
+  "Switch": 7378,
+  "Switch2": 578,
+  "GB": 1338,
+  "GBC": 1191,
+  "GBA": 2178,
+  "DS": 5449,
+  "3DS": 1490,
+  "VB": 37,
+  "PokeMini": 24,
+  "SG1000": 100,
+  "SMS": 459,
+  "GEN": 1472,
+  "SCD": 288,
+  "32X": 50,
+  "SAT": 1477,
+  "DC": 995,
+  "GG": 434,
+  "Pico": 317,
+  "PC": 138801,
+  "DOS": 14716,
+  "Mac": 27213,
+  "Linux": 19020,
+  "Lynx": 317,
+  "Jaguar": 202,
+  "ST": 3309,
+  "A8": 2828,
+  "CV": 154,
+  "INTV": 152,
+  "Vectrex": 38,
+  "O2": 82,
+  "ChanF": 34,
+  "PCE": 514,
+  "PCECD": 459,
+  "PCFX": 83,
+  "NeoGeo": 252,
+  "NGCD": 130,
+  "NGP": 100,
+  "WS": 243,
+  "3DO": 437,
+  "CDi": 1757,
+  "NGage": 61,
+  "Arcadia": 50,
+  "SV": 63,
+  "GCom": 20,
+  "Amiga": 7746,
+  "C64": 3353,
+  "VIC20": 221,
+  "ZX": 15817,
+  "MSX": 968,
+  "CPC": 2967,
+  "X68K": 1016,
+  "PC98": 715,
+  "Apple2": 235,
+  "iOS": 5940,
+  "Android": 4800,
+  "Arcade": 1961
+ },
+ "total": 318737,
+ "described": 157922,
+ "stats": {
+  "2600": {
+   "games": 589,
+   "libretro": 518,
+   "wikidataRows": 412,
+   "wikidataAdded": 71
+  },
+  "5200": {
+   "games": 83,
+   "libretro": 72,
+   "wikidataRows": 68,
+   "wikidataAdded": 11
+  },
+  "7800": {
+   "games": 68,
+   "libretro": 59,
+   "wikidataRows": 51,
+   "wikidataAdded": 9
+  },
+  "Vita": {
+   "games": 651,
+   "libretro": 227,
+   "wikidataRows": 966,
+   "wikidataAdded": 424
+  },
+  "PS4": {
+   "games": 6497,
+   "libretro": 0,
+   "wikidataRows": 6522,
+   "wikidataAdded": 6497
+  },
+  "PS5": {
+   "games": 3504,
+   "libretro": 0,
+   "wikidataRows": 3508,
+   "wikidataAdded": 3504
+  },
+  "Xbox": {
+   "games": 1571,
+   "libretro": 1404,
+   "wikidataRows": 1060,
+   "wikidataAdded": 167
+  },
+  "X360": {
+   "games": 2490,
+   "libretro": 1664,
+   "wikidataRows": 2013,
+   "wikidataAdded": 826
+  },
+  "XOne": {
+   "games": 4505,
+   "libretro": 0,
+   "wikidataRows": 4519,
+   "wikidataAdded": 4505
+  },
+  "XSX": {
+   "games": 3987,
+   "libretro": 0,
+   "wikidataRows": 3990,
+   "wikidataAdded": 3987
+  },
+  "NES": {
+   "games": 2125,
+   "libretro": 1923,
+   "wikidataRows": 1219,
+   "wikidataAdded": 202
+  },
+  "FDS": {
+   "games": 323,
+   "libretro": 247,
+   "wikidataRows": 180,
+   "wikidataAdded": 76
+  },
+  "SNES": {
+   "games": 2424,
+   "libretro": 2164,
+   "wikidataRows": 1442,
+   "wikidataAdded": 260
+  },
+  "N64": {
+   "games": 553,
+   "libretro": 480,
+   "wikidataRows": 422,
+   "wikidataAdded": 73
+  },
+  "GC": {
+   "games": 1101,
+   "libretro": 986,
+   "wikidataRows": 701,
+   "wikidataAdded": 115
+  },
+  "Wii": {
+   "games": 4618,
+   "libretro": 4426,
+   "wikidataRows": 1695,
+   "wikidataAdded": 192
+  },
+  "WiiU": {
+   "games": 1621,
+   "libretro": 1532,
+   "wikidataRows": 853,
+   "wikidataAdded": 89
+  },
+  "Switch": {
+   "games": 7379,
+   "libretro": 0,
+   "wikidataRows": 7393,
+   "wikidataAdded": 7379
+  },
+  "Switch2": {
+   "games": 578,
+   "libretro": 0,
+   "wikidataRows": 578,
+   "wikidataAdded": 578
+  },
+  "GB": {
+   "games": 1339,
+   "libretro": 1262,
+   "wikidataRows": 547,
+   "wikidataAdded": 77
+  },
+  "GBC": {
+   "games": 1191,
+   "libretro": 1127,
+   "wikidataRows": 466,
+   "wikidataAdded": 64
+  },
+  "GBA": {
+   "games": 2178,
+   "libretro": 1982,
+   "wikidataRows": 1069,
+   "wikidataAdded": 196
+  },
+  "DS": {
+   "games": 5450,
+   "libretro": 5187,
+   "wikidataRows": 1692,
+   "wikidataAdded": 263
+  },
+  "3DS": {
+   "games": 1490,
+   "libretro": 1274,
+   "wikidataRows": 785,
+   "wikidataAdded": 216
+  },
+  "VB": {
+   "games": 37,
+   "libretro": 32,
+   "wikidataRows": 26,
+   "wikidataAdded": 5
+  },
+  "PokeMini": {
+   "games": 24,
+   "libretro": 22,
+   "wikidataRows": 10,
+   "wikidataAdded": 2
+  },
+  "SG1000": {
+   "games": 100,
+   "libretro": 88,
+   "wikidataRows": 43,
+   "wikidataAdded": 12
+  },
+  "SMS": {
+   "games": 459,
+   "libretro": 427,
+   "wikidataRows": 275,
+   "wikidataAdded": 32
+  },
+  "GEN": {
+   "games": 1472,
+   "libretro": 1245,
+   "wikidataRows": 1045,
+   "wikidataAdded": 227
+  },
+  "SCD": {
+   "games": 288,
+   "libretro": 246,
+   "wikidataRows": 164,
+   "wikidataAdded": 42
+  },
+  "32X": {
+   "games": 50,
+   "libretro": 36,
+   "wikidataRows": 41,
+   "wikidataAdded": 14
+  },
+  "SAT": {
+   "games": 1479,
+   "libretro": 1362,
+   "wikidataRows": 569,
+   "wikidataAdded": 117
+  },
+  "DC": {
+   "games": 995,
+   "libretro": 884,
+   "wikidataRows": 497,
+   "wikidataAdded": 111
+  },
+  "GG": {
+   "games": 434,
+   "libretro": 404,
+   "wikidataRows": 190,
+   "wikidataAdded": 30
+  },
+  "Pico": {
+   "games": 317,
+   "libretro": 317,
+   "wikidataRows": 5,
+   "wikidataAdded": 0
+  },
+  "PC": {
+   "games": 138810,
+   "libretro": 0,
+   "wikidataRows": 141737,
+   "wikidataAdded": 138810
+  },
+  "DOS": {
+   "games": 14716,
+   "libretro": 14641,
+   "wikidataRows": 372,
+   "wikidataAdded": 75
+  },
+  "Mac": {
+   "games": 27217,
+   "libretro": 0,
+   "wikidataRows": 27859,
+   "wikidataAdded": 27217
+  },
+  "Linux": {
+   "games": 19022,
+   "libretro": 0,
+   "wikidataRows": 19077,
+   "wikidataAdded": 19022
+  },
+  "Lynx": {
+   "games": 317,
+   "libretro": 309,
+   "wikidataRows": 60,
+   "wikidataAdded": 8
+  },
+  "Jaguar": {
+   "games": 202,
+   "libretro": 189,
+   "wikidataRows": 66,
+   "wikidataAdded": 13
+  },
+  "ST": {
+   "games": 3309,
+   "libretro": 3083,
+   "wikidataRows": 1127,
+   "wikidataAdded": 226
+  },
+  "A8": {
+   "games": 2828,
+   "libretro": 2781,
+   "wikidataRows": 342,
+   "wikidataAdded": 47
+  },
+  "CV": {
+   "games": 154,
+   "libretro": 138,
+   "wikidataRows": 130,
+   "wikidataAdded": 16
+  },
+  "INTV": {
+   "games": 152,
+   "libretro": 137,
+   "wikidataRows": 97,
+   "wikidataAdded": 15
+  },
+  "Vectrex": {
+   "games": 38,
+   "libretro": 35,
+   "wikidataRows": 18,
+   "wikidataAdded": 3
+  },
+  "O2": {
+   "games": 82,
+   "libretro": 74,
+   "wikidataRows": 29,
+   "wikidataAdded": 8
+  },
+  "ChanF": {
+   "games": 34,
+   "libretro": 32,
+   "wikidataRows": 2,
+   "wikidataAdded": 2
+  },
+  "PCE": {
+   "games": 514,
+   "libretro": 361,
+   "wikidataRows": 356,
+   "wikidataAdded": 153
+  },
+  "PCECD": {
+   "games": 459,
+   "libretro": 455,
+   "wikidataRows": 17,
+   "wikidataAdded": 4
+  },
+  "PCFX": {
+   "games": 83,
+   "libretro": 68,
+   "wikidataRows": 28,
+   "wikidataAdded": 15
+  },
+  "NeoGeo": {
+   "games": 252,
+   "libretro": 181,
+   "wikidataRows": 166,
+   "wikidataAdded": 71
+  },
+  "NGCD": {
+   "games": 130,
+   "libretro": 102,
+   "wikidataRows": 49,
+   "wikidataAdded": 28
+  },
+  "NGP": {
+   "games": 100,
+   "libretro": 87,
+   "wikidataRows": 34,
+   "wikidataAdded": 13
+  },
+  "WS": {
+   "games": 243,
+   "libretro": 202,
+   "wikidataRows": 78,
+   "wikidataAdded": 41
+  },
+  "3DO": {
+   "games": 438,
+   "libretro": 401,
+   "wikidataRows": 173,
+   "wikidataAdded": 37
+  },
+  "CDi": {
+   "games": 1757,
+   "libretro": 1745,
+   "wikidataRows": 104,
+   "wikidataAdded": 12
+  },
+  "NGage": {
+   "games": 61,
+   "libretro": 0,
+   "wikidataRows": 62,
+   "wikidataAdded": 61
+  },
+  "Arcadia": {
+   "games": 50,
+   "libretro": 48,
+   "wikidataRows": 3,
+   "wikidataAdded": 2
+  },
+  "SV": {
+   "games": 63,
+   "libretro": 63,
+   "wikidataRows": 1,
+   "wikidataAdded": 0
+  },
+  "GCom": {
+   "games": 20,
+   "libretro": 20,
+   "wikidataRows": 0,
+   "wikidataAdded": 0
+  },
+  "Amiga": {
+   "games": 7746,
+   "libretro": 7473,
+   "wikidataRows": 1831,
+   "wikidataAdded": 273
+  },
+  "C64": {
+   "games": 3354,
+   "libretro": 2664,
+   "wikidataRows": 2773,
+   "wikidataAdded": 690
+  },
+  "VIC20": {
+   "games": 221,
+   "libretro": 171,
+   "wikidataRows": 95,
+   "wikidataAdded": 50
+  },
+  "ZX": {
+   "games": 15818,
+   "libretro": 15678,
+   "wikidataRows": 1660,
+   "wikidataAdded": 140
+  },
+  "MSX": {
+   "games": 968,
+   "libretro": 683,
+   "wikidataRows": 601,
+   "wikidataAdded": 285
+  },
+  "CPC": {
+   "games": 2968,
+   "libretro": 2687,
+   "wikidataRows": 1163,
+   "wikidataAdded": 281
+  },
+  "X68K": {
+   "games": 1016,
+   "libretro": 987,
+   "wikidataRows": 84,
+   "wikidataAdded": 29
+  },
+  "PC98": {
+   "games": 716,
+   "libretro": 716,
+   "wikidataRows": 0,
+   "wikidataAdded": 0
+  },
+  "Apple2": {
+   "games": 235,
+   "libretro": 0,
+   "wikidataRows": 235,
+   "wikidataAdded": 235
+  },
+  "iOS": {
+   "games": 5941,
+   "libretro": 0,
+   "wikidataRows": 6057,
+   "wikidataAdded": 5941
+  },
+  "Android": {
+   "games": 4801,
+   "libretro": 0,
+   "wikidataRows": 4821,
+   "wikidataAdded": 4801
+  },
+  "Arcade": {
+   "games": 1961,
+   "libretro": 0,
+   "wikidataRows": 1975,
+   "wikidataAdded": 1961
+  }
+ }
+}
