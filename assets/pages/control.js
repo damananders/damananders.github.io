@@ -139,7 +139,7 @@
   }
 
   /* ---------- the panel ---------- */
-  var TABS = [["links", "Links I Like"], ["switches", "Switches"], ["values", "Site values"], ["advanced", "Advanced"], ["security", "Sign-in"]];
+  var TABS = [["links", "Links I Like"], ["switches", "Switches"], ["values", "Site values"], ["cheats", "Cheats"], ["advanced", "Advanced"], ["security", "Sign-in"]];
   var saveBtn, saveMsg, panes = {};
   function paintSave() {
     if (!saveBtn) return;
@@ -172,7 +172,7 @@
         el("a", { class: "btn ghost", href: "/links/", text: "Links I Like" }),
         el("a", { class: "btn ghost", href: "https://supabase.com/dashboard/project/zjhlhkruqzfendvbglsb", target: "_blank", rel: "noopener", text: "Supabase ↗" }),
         el("a", { class: "btn ghost", href: "https://github.com/damananders/damananders.github.io", target: "_blank", rel: "noopener", text: "GitHub ↗" }))));
-    drawLinks(); drawSwitches(); drawValues(); drawAdvanced(); drawSecurity();
+    drawLinks(); drawSwitches(); drawValues(); drawCheats(); drawAdvanced(); drawSecurity();
   }
   /* The "you are live" strip: green when password and authenticator were both checked, amber on password alone. */
   var liveTimer = 0;
@@ -372,6 +372,43 @@
         grid.appendChild(el("label", { class: "cp-field" }, el("span", { text: f[1] }), inp));
       });
       p.appendChild(el("h3", { class: "cp-h3", text: g[0] })); p.appendChild(grid);
+    });
+  }
+
+  /* ---------- tab: cheats (read-only reference) ---------- */
+  var CHEATS = [
+    ["Type anywhere", "Type the word on any page — just not while you're in a text box. Press Esc to end an effect early.", [
+      ["australia", "Turns the whole site upside down. Type it again or press Esc to flip back."],
+      ["gravity", "Everything on the page drops to the floor."],
+      ["moon", "Low gravity — the page's bits drift and float."],
+      ["barrelroll", "The page does a quick barrel roll."],
+      ["crt", "Old CRT-screen look. Type it again to switch it off."],
+      ["disco", "Disco lights wash over the page."],
+      ["matrix", "Green Matrix code rains down the screen."],
+      ["404game", "Jumps straight to the 404 page — the boat game now, the case game later."]
+    ]],
+    ["Keyboard & controller", "", [
+      ["↑ ↑ ↓ ↓ ← → ← → B A", "The Konami code, on the keyboard or a controller — confetti, and the Old School trophy."],
+      ["△ ○ ✕ □", "On a controller — a barrel roll and the Button Masher trophy."]
+    ]],
+    ["Hidden door", "", [
+      ["Five quick clicks, bottom-left corner", "Opens the secret code box on the hub and the AnyPS page. Its two codes (Personal Vault and PS Locker) are kept out of the page source on purpose so the door stays hidden — you already know them."]
+    ]]
+  ];
+  function drawCheats() {
+    var p = panes.cheats; if (!p) return; p.textContent = "";
+    p.appendChild(el("h2", { text: "Cheat Codes" }));
+    p.appendChild(el("p", { class: "cp-fine", text: "Every secret code on the site, in one place. This tab only shows them; nothing here changes anything." }));
+    CHEATS.forEach(function (g) {
+      p.appendChild(el("h3", { class: "cp-h3", text: g[0] }));
+      if (g[1]) p.appendChild(el("p", { class: "cp-fine", text: g[1] }));
+      var list = el("ul", { class: "cp-cheats" });
+      g[2].forEach(function (c) {
+        list.appendChild(el("li", { class: "cp-cheat" },
+          el("code", { class: "cp-cheat__code", text: c[0] }),
+          el("span", { class: "cp-cheat__desc", text: c[1] })));
+      });
+      p.appendChild(list);
     });
   }
 
