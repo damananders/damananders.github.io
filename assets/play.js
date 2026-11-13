@@ -277,6 +277,7 @@
     }
   };
   var STILL_OK = { crt: 1 };                          /* effects that are fine with reduced motion */
+  var NAV = { "404game": "/404.html" };               /* cheat codes that just take you somewhere (digits allowed) */
 
   function run(word) {
     if (active[word]) { end(word); return; }
@@ -286,19 +287,26 @@
     found[word] = 1; Site.store.set("codes", found);
     if (Object.keys(found).length >= 3) award("codes");
   }
-  Site.secret = function (word) { word = String(word || "").toLowerCase().replace(/[^a-z]/g, ""); if (CODES[word]) { run(word); return true; } return false; };
+  Site.secret = function (word) {
+    var raw = String(word || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (NAV[raw]) { location.href = NAV[raw]; return true; }
+    var w = raw.replace(/[0-9]/g, "");
+    if (CODES[w]) { run(w); return true; }
+    return false;
+  };
 
   Site.ready(function () {
     if (!feat("secretCodes")) return;
     if (Site.store.get("crt", false) === true) root.classList.add("pl-crt");
-    var buf = "", names = Object.keys(CODES);
+    var buf = "", names = Object.keys(CODES), navs = Object.keys(NAV);
     doc.addEventListener("keydown", function (e) {
       if (e.key === "Escape") { endAll(); return; }
       if (e.ctrlKey || e.metaKey || e.altKey || !e.key || e.key.length !== 1) return;
       var t = e.target;
       if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
-      var c = e.key.toLowerCase(); if (c < "a" || c > "z") return;
+      var c = e.key.toLowerCase(); if (!((c >= "a" && c <= "z") || (c >= "0" && c <= "9"))) return;
       buf = (buf + c).slice(-16);
+      for (var j = 0; j < navs.length; j++) if (buf.slice(-navs[j].length) === navs[j]) { buf = ""; location.href = NAV[navs[j]]; return; }
       for (var i = 0; i < names.length; i++) if (buf.slice(-names[i].length) === names[i]) { buf = ""; run(names[i]); break; }
     });
   }, "secret codes");
