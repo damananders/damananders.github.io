@@ -1,0 +1,55 @@
+/* pages/control.css — the owner's control panel (/control/). Prefix cp-. */
+:root[data-page="control"]{--accent:var(--sx-accent,#cd4257)}
+.cp-login{max-width:560px}
+.cp-login h2,.cp-pane h2,.cp-jump h2{margin:0 0 12px;font-family:var(--display);font-size:1.3rem}
+.cp-fine{margin:10px 0 14px;font-size:.86rem;line-height:1.5;color:var(--sx-muted)}
+.cp-msg{font-size:.88rem;color:var(--sx-muted);min-height:1.3em}
+.cp-h3{margin:22px 0 10px;font-family:var(--display);font-size:1rem;letter-spacing:.02em;color:var(--text)}
+
+.cp-field{display:flex;flex-direction:column;gap:6px;font-size:.84rem;color:var(--sx-muted);min-width:0}
+.cp-field input,.cp-field select,.cp-field textarea,.cp-raw,.cp-pos{font:inherit;font-size:.95rem;color:var(--text);background:var(--panel-2);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;min-width:0;width:100%;box-sizing:border-box}
+.cp-field input[type="color"]{padding:4px;height:42px;cursor:pointer}
+.cp-field textarea,.cp-raw{resize:vertical;line-height:1.45}
+.cp-field input:focus-visible,.cp-field select:focus-visible,.cp-field textarea:focus-visible,.cp-raw:focus-visible,.cp-pos:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cp-field input[aria-invalid="true"]{border-color:#e5484d}
+.cp-raw{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+.cp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.cp-field--wide{grid-column:1/-1}
+
+.cp-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin:0 0 16px;position:sticky;top:8px;z-index:5;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(10px)}
+.cp-tabs{display:flex;flex-wrap:wrap;gap:8px}
+.cp-tab{font:inherit;font-size:.9rem;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;cursor:pointer}
+.cp-tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#06090c}
+.cp-savebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.cp-savebar .btn{padding:9px 16px;font-size:.92rem}
+.cp-save:disabled{background:var(--panel-2);color:var(--sx-muted);cursor:default;transform:none;filter:none}
+.cp-pane,.cp-jump{margin:0 0 18px}
+
+.cp-links{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.cp-link{border:1px solid var(--line);border-left:5px solid var(--lk,var(--accent));border-radius:14px;background:var(--panel-2);padding:10px 12px}
+.cp-link__head{display:flex;align-items:center;gap:8px;min-width:0}
+.cp-link__title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-link__stat{font-size:.8rem;color:var(--sx-muted);white-space:nowrap}
+.cp-pos{width:58px;flex:0 0 auto;padding:6px 8px;text-align:center}
+.cp-mini{font:inherit;font-size:.82rem;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--line-2);border-radius:9px;padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.cp-mini svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cp-mini:disabled{opacity:.35;cursor:default}
+.cp-link__body{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.cp-nums{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-top:14px}
+.cp-nums .cp-field{width:150px}
+.cp-link__foot{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:14px 0 0}
+.cp-danger{font:inherit;font-size:.84rem;font-weight:600;color:#ff8f8f;background:transparent;border:1px solid rgba(229,72,77,.5);border-radius:9px;padding:7px 12px;cursor:pointer}
+[data-theme="light"] .cp-danger{color:#b4232a}
+
+.cp-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}
+.cp-switch{display:flex;align-items:center;gap:10px;font-size:.93rem;padding:7px 2px;cursor:pointer}
+.cp-switch input{width:18px;height:18px;accent-color:var(--accent);flex:0 0 auto}
+
+@media (max-width:720px){
+  .cp-grid,.cp-switches{grid-template-columns:1fr}
+  .cp-link__stat{display:none}
+  .cp-pos{width:46px}
+  .cp-link__head{gap:6px}
+  .cp-mini{padding:6px 8px}
+  .cp-top{position:static}
+}

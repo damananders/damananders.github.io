@@ -1,6 +1,6 @@
 /* pages/links.js — the "Links I Like" page (/links/). Prefix lk2-.
  *
- * The list itself is assets/data/links.json (edit that file to add a site).
+ * The list is managed from the control panel (/control/). assets/data/links.json is the starting list and the fallback.
  * Clicks and votes are kept in the site's Supabase project, in the table and two functions created by the setup file
  * 10_links.sql. The key below is Supabase's publishable key: it is meant to be public. Until that setup file has
  * been run the page still works; it just shows no counts and keeps votes in this browser only.
@@ -17,7 +17,7 @@
   if (!list) return;
 
   function okId(id) { return /^[a-z0-9-]{1,40}$/.test(String(id || "")); }
-  function okUrl(u) { return /^https:\/\//.test(String(u || "")); }
+  function okUrl(u) { return /^https?:\/\//.test(String(u || "")); }
   function okMedia(u) { return /^(\/(?!\/)|https:\/\/)/.test(String(u || "")); }
   function okColor(c) { return /^#[0-9a-f]{6}$/i.test(String(c || "")) ? c : "#cd4257"; }
   function host(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
@@ -114,8 +114,10 @@
       var b = e.target.closest && e.target.closest("[data-sort]"); if (!b) return;
       sort = b.getAttribute("data-sort"); Site.store.set("linksSort", sort); Site.sfx("toggle"); draw();
     });
-    Site.data("links").then(function (d) {
-      items = ((d && d.items) || []).filter(function (x) { return x && okId(x.id) && x.title && okUrl(x.url); })
+    /* The control panel's saved list wins over the file when there is one. */
+    Promise.all([Site.data("links"), Site.remote ? Site.remote(true) : null]).then(function (got) {
+      var d = got[0], saved = got[1] && Array.isArray(got[1].links) && got[1].links.length ? got[1].links : null;
+      items = (saved || (d && d.items) || []).filter(function (x) { return x && okId(x.id) && x.title && okUrl(x.url); })
         .map(function (x, i) { return { id: x.id, title: String(x.title), url: x.url, founded: x.founded ? String(x.founded) : "", blurb: x.blurb ? String(x.blurb) : "", color: x.color, image: x.image || "", video: x.video || "", rank: isFinite(+x.rank) ? +x.rank : 1000 + i }; });
       draw();
       loadStats().then(function () {
