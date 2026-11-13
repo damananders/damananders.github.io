@@ -39,8 +39,12 @@ export function norm(t) {
     .normalize("NFKD").replace(/[̀-ͯ]/g, "")
     .replace(/&/g, " and ").replace(/['’`]/g, "")
     .replace(/[^\p{L}\p{N}]+/gu, " ")
-    .split(" ").filter(Boolean).map((w) => ROMAN[w] || w).filter((w) => w !== "the" && w !== "a").join(" ").trim();
+    .split(" ").filter(Boolean).map((w) => ROMAN[w] || w).filter((w) => w !== "the" && w !== "a").join(" ")
+    .replace(/\b(greatest hits|platinum|the best|playstation the best|best price|essentials|collectors edition|limited edition|special edition|demo|trial|disc \d+|vol \d+ disc \d+|bundle)\b/g, " ")
+    .replace(/\s+/g, " ").trim();
 }
+// looser key: also drops publisher/brand prefixes that Wikipedia often leaves off
+const loose = (t) => norm(t).replace(/^(disneys?|disney pixars?|pixars?|tom clancys|sid meiers|clive barkers|marvels?|dreamworks|nickelodeon|sega|namco|capcom|konami|ea sports|nba|nfl) /, "").replace(/ (game|video game)$/, "");
 function splitTitle(t) {
   const m = String(t).match(/^(.{2,}?)(?:\s*:\s+|\s+[-–—]\s+)(.+)$/);
   return m ? [m[1].trim(), m[2].trim()] : [String(t).trim(), ""];
@@ -79,6 +83,7 @@ const C = (e, s, l) => ({ e, s, l });
 async function compatSources() {
   const by = { PS1: new Map(), PS2: new Map(), PSP: new Map(), PS3: new Map(), Vita: new Map(), PS4: new Map() };
   const meta1 = new Map();     // PS1 facts from DuckStation, by normalised title
+  const enName = new Map();    // PS2 Japanese title -> PCSX2's English name
   const put = (con, title, c) => { const k = norm(title); if (!k) return; const old = by[con].get(k); if (!old || c.s > old.s) by[con].set(k, c); };
 
   try { // PS1: DuckStation
@@ -100,21 +105,32 @@ async function compatSources() {
     const t = await (await get("https://raw.githubusercontent.com/PCSX2/pcsx2/master/bin/resources/GameIndex.yaml")).text();
     const rows = readGameDb(t, ["name", "name-en", "compat"]);
     const R = { 6: C("PCSX2", 5, "Perfect"), 5: C("PCSX2", 4, "Playable"), 4: C("PCSX2", 3, "In-game"), 3: C("PCSX2", 2, "Menus"), 2: C("PCSX2", 1, "Intro"), 1: C("PCSX2", 0, "Nothing") };
-    for (const r of rows) if (R[r.compat]) { put("PS2", r.name, R[r.compat]); if (r["name-en"]) put("PS2", r["name-en"], R[r.compat]); }
+    for (const r of rows) {
+      if (r["name-en"]) { const k = norm(r.name); if (k && !enName.has(k)) enName.set(k, r["name-en"]); }
+      if (R[r.compat]) { put("PS2", r.name, R[r.compat]); if (r["name-en"]) put("PS2", r["name-en"], R[r.compat]); }
+    }
     log("PCSX2 rows", rows.length, "compat", by.PS2.size);
   } catch (e) { log("PCSX2 failed", e.message); }
 
-  try { // PS3: RPCS3 — the API answers searches; sweep it by leading character
+  try { // PS3: RPCS3 — the API pages through its whole list (r = results per page, p = page)
     const R = { Playable: C("RPCS3", 4, "Playable"), Ingame: C("RPCS3", 3, "In-game"), Intro: C("RPCS3", 1, "Intro"), Loadable: C("RPCS3", 1, "Loads"), Nothing: C("RPCS3", 0, "Nothing") };
-    let n = 0;
-    for (const ch of "abcdefghijklmnopqrstuvwxyz0123456789".split("")) {
-      const r = await get("https://rpcs3.net/compatibility?api=v1&g=" + ch);
-      const j = await r.json().catch(() => null);
-      if (!j || !j.results) { log("RPCS3", ch, "no results", j && j.return_code); continue; }
-      for (const v of Object.values(j.results)) if (R[v.status]) { put("PS3", v.title, R[v.status]); n++; }
-      await sleep(400);
+    const seen = new Set();
+    const take = (j) => { let fresh = 0; for (const [ser, v] of Object.entries((j && j.results) || {})) { if (seen.has(ser)) continue; seen.add(ser); fresh++; if (R[v.status]) put("PS3", v.title, R[v.status]); } return fresh; };
+    for (let p = 1; p <= 400; p++) {
+      const j = await (await get("https://rpcs3.net/compatibility?api=v1&r=100&p=" + p)).json().catch(() => null);
+      const fresh = take(j);
+      if (p <= 2) log("RPCS3 page", p, "code", j && j.return_code, "results", j && j.results ? Object.keys(j.results).length : 0, "fresh", fresh);
+      if (!fresh) break;
+      await sleep(250);
     }
-    log("RPCS3 entries", n, "titles", by.PS3.size);
+    if (seen.size < 2000) {   // paging not honoured: sweep searches by two-letter prefixes as well
+      const al = "abcdefghijklmnopqrstuvwxyz0123456789".split("");
+      for (const a of al) for (const b of ["", ...al.slice(0, 26)]) {
+        const j = await (await get("https://rpcs3.net/compatibility?api=v1&g=" + encodeURIComponent(a + b))).json().catch(() => null);
+        take(j); await sleep(150);
+      }
+    }
+    log("RPCS3 serials", seen.size, "titles", by.PS3.size);
   } catch (e) { log("RPCS3 failed", e.message); }
 
   async function ghIssues(repo, map) {
@@ -136,7 +152,7 @@ async function compatSources() {
     const n = await ghIssues("shadps4-emu/shadps4-game-compatibility", (title, labels) => { const hit = L.find(([l]) => labels.includes(l)); if (!hit) return null; put("PS4", title.replace(/^[A-Z]{4}\d{5}\s*[-–:]\s*/, ""), hit[1]); return 1; });
     log("shadPS4 issues", n, "titles", by.PS4.size);
   } catch (e) { log("shadPS4 failed", e.message); }
-  return { by, meta1 };
+  return { by, meta1, enName };
 }
 
 /* ---------------- 3. Wikidata ---------------- */
@@ -219,23 +235,31 @@ function tidy(x) {
 /* ---------------- main ---------------- */
 const games = await loadGames();
 log("games", games.length);
-const { by: compat, meta1 } = await compatSources();
+const { by: compat, meta1, enName } = await compatSources();
 const items = await wikidata();
 
-// index Wikidata by console + normalised name
-const idx = new Map();
-for (const it of items.values()) for (const nm of it.names) for (const con of it.cons) {
-  const k = con + "|" + norm(nm); if (!k.endsWith("|")) { const arr = idx.get(k) || []; if (!arr.includes(it)) arr.push(it); idx.set(k, arr); }
+// index Wikidata by console + normalised name, plus a console-free index of names that point at one item only
+const idx = new Map(), any = new Map(), idxL = new Map();
+const add = (m, k, it) => { if (!k) return; const arr = m.get(k) || []; if (!arr.includes(it)) arr.push(it); m.set(k, arr); };
+for (const it of items.values()) for (const nm of it.names) {
+  for (const con of it.cons) { add(idx, con + "|" + norm(nm), it); add(idxL, con + "|" + loose(nm), it); }
+  add(any, norm(nm), it);
 }
 const pick = (arr) => arr.slice().sort((a, b) => (b.article ? 1 : 0) - (a.article ? 1 : 0) || (b.plats ? b.plats.size : 0) - (a.plats ? a.plats.size : 0))[0];
-
+const how = {};
 const matched = new Map();
 for (const g of games) {
-  const k = norm(g.title);
-  let arr = idx.get(g.console + "|" + k);
-  if (!arr) { const [main] = splitTitle(g.title); if (main !== g.title) arr = idx.get(g.console + "|" + norm(main)); }
-  if (arr) matched.set(g.id, pick(arr));
+  const names = [g.title];
+  if (g.console === "PS2" && enName.has(norm(g.title))) names.push(enName.get(norm(g.title)));
+  const aka = g.title.match(/\(aka ([^)]+)\)/i); if (aka) names.push(aka[1]);
+  for (const n of [...names]) { const [main] = splitTitle(n); if (main !== n) names.push(main); }
+  let arr = null, via = "";
+  for (const n of names) { if ((arr = idx.get(g.console + "|" + norm(n)))) { via = "exact"; break; } }
+  if (!arr) for (const n of names) { if ((arr = idxL.get(g.console + "|" + loose(n)))) { via = "loose"; break; } }
+  if (!arr) for (const n of names) { const a = any.get(norm(n)); if (a && a.length === 1 && norm(n).length >= 6) { arr = a; via = "other-platform"; break; } }
+  if (arr) { matched.set(g.id, pick(arr)); how[via] = (how[via] || 0) + 1; }
 }
+log("match routes", JSON.stringify(how));
 log("matched to Wikidata", matched.size, "of", games.length);
 const arts = [...new Set([...matched.values()].map((it) => it.article).filter(Boolean))];
 const ext = await extracts(arts);
@@ -264,10 +288,18 @@ for (const g of games) {
     if (!rec.dev && m1.dev) rec.dev = [m1.dev];
     if (!rec.gn && m1.genre && !/DEMO/.test(m1.genre)) rec.gn = [m1.genre];
   }
-  const c = compat[g.console] && compat[g.console].get(k);
+  if (!rec.d && (rec.gn || rec.pub || rec.y)) {
+    const CN = { PS1: "PlayStation", PS2: "PlayStation 2", PSP: "PlayStation Portable", PS3: "PlayStation 3", Vita: "PlayStation Vita", PS4: "PlayStation 4", PS5: "PlayStation 5" };
+    const genre = rec.gn ? String(rec.gn[0]).replace(/\s*\/\s*/g, " / ").toLowerCase().replace(/ game$/, "") : "";
+    let line = (rec.st ? rec.t + ": " + rec.st : rec.t) + " is " + (genre ? (/^[aeiou]/.test(genre) ? "an " : "a ") + genre + " game" : "a game") + " for the " + CN[g.console];
+    if (rec.pub) line += ", published by " + rec.pub[0];
+    if (rec.y) line += " in " + rec.y;
+    rec.d = line + "."; rec.da = 1;   // da = description written from the facts, not quoted
+  }
+  const c = compat[g.console] && (compat[g.console].get(k) || (enName.has(k) && compat[g.console].get(norm(enName.get(k)))));
   if (c) rec.c = c;
   const s = (stats.byConsole[g.console] ||= { games: 0, wikidata: 0, description: 0, compat: 0 });
-  s.games++; if (it) { s.wikidata++; stats.wikidata++; } if (rec.d) { s.description++; stats.description++; } if (c) { s.compat++; stats.compat++; }
+  s.games++; if (it) { s.wikidata++; stats.wikidata++; } if (rec.d && !rec.da) { s.description++; stats.description++; } if (rec.d) { s.anyText = (s.anyText || 0) + 1; } if (c) { s.compat++; stats.compat++; }
   (shards[shardOf(g.id)] ||= {})[g.id] = rec;
 }
 fs.mkdirSync(OUT, { recursive: true });
