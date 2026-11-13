@@ -165,55 +165,78 @@ async function sparql(q) {
 async function wikidata() {
   const items = new Map();   // qid -> { names:Set, cons:Set, article }
   for (const [con, pq] of Object.entries(PLATFORM_Q)) {
-    const rows = await sparql(`SELECT ?item WHERE { ?item wdt:P400 wd:${pq} . }`);
+    const rows = await sparql(`SELECT ?item ?article WHERE { ?item p:P400/ps:P400 wd:${pq} .
+      OPTIONAL { ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . } }`);
     for (const b of rows) {
       const q = b.item.value.split("/").pop();
       const it = items.get(q) || { q, names: new Set(), cons: new Set(), article: null };
-      it.cons.add(con); items.set(q, it);
+      it.cons.add(con);
+      if (b.article) it.article = decodeURIComponent(b.article.value.split("/wiki/").pop()).replace(/_/g, " ");
+      items.set(q, it);
     }
-    log("Wikidata", con, rows.length, "items; total", items.size);
+    log("Wikidata", con, rows.length, "rows; items", items.size);
     await sleep(1000);
   }
   return items;
 }
-// Entity details straight from the Wikidata API (the query service's label index has gaps for some items)
+// Names and linked labels come from the Wikidata API: the query service's label index has gaps for some items.
 const labelCache = new Map();
 async function wbget(ids, props, langs) {
   const out = {};
+  let fails = 0;
   for (let i = 0; i < ids.length; i += 50) {
-    const u = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&maxlag=5&props=" + props + "&languages=" + langs + "&sitefilter=enwiki&ids=" + ids.slice(i, i + 50).join("|");
+    const u = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&maxlag=10&props=" + props + "&languages=" + langs + "&ids=" + ids.slice(i, i + 50).join("|");
     let j = null;
-    for (let t = 0; t < 4 && !(j && j.entities); t++) { j = await (await get(u)).json().catch(() => null); if (!(j && j.entities)) await sleep(3000); }
-    Object.assign(out, (j && j.entities) || {});
-    await sleep(100);
+    for (let t = 0; t < 10; t++) {
+      j = await (await get(u)).json().catch(() => null);
+      if (j && j.entities) break;
+      await sleep(4000 + 2000 * t);
+    }
+    if (j && j.entities) Object.assign(out, j.entities); else fails++;
+    await sleep(250);
   }
+  if (fails) log("wbget batches failed:", fails);
   return out;
 }
-const claimIds = (e, p) => ((e.claims || {})[p] || []).filter((c) => c.rank !== "deprecated" && c.mainsnak && c.mainsnak.datavalue).map((c) => c.mainsnak.datavalue.value.id).filter(Boolean);
+const PLAT_NAME = { Q10677: "PlayStation", Q10680: "PlayStation 2", Q170325: "PlayStation Portable", Q10683: "PlayStation 3", Q188808: "PlayStation Vita", Q5014725: "PlayStation 4", Q63184502: "PlayStation 5" };
 async function facts(items, qs) {
-  const raw = new Map();
-  for (let i = 0; i < qs.length; i += 1000) {
-    Object.entries(await wbget(qs.slice(i, i + 1000), "labels|aliases|descriptions|claims|sitelinks", "en|ja")).forEach(([q, e]) => raw.set(q, e));
-    log("entities", Math.min(i + 1000, qs.length), "/", qs.length);
-  }
+  // ids and dates from the query service (all non-deprecated statements, not just the "best" ones)
+  const PROPS = [["desc", `?item schema:description ?v FILTER(LANG(?v)="en")`], ["date", "P577"], ["plats", "P400"], ["pubs", "P123"], ["devs", "P178"], ["genres", "P136"]];
   const refs = new Set();
-  for (const e of raw.values()) for (const p of ["P400", "P123", "P178", "P136"]) claimIds(e, p).forEach((x) => { if (!labelCache.has(x)) refs.add(x); });
-  const labs = await wbget([...refs], "labels", "en");
-  for (const [q, e] of Object.entries(labs)) labelCache.set(q, e.labels && e.labels.en ? e.labels.en.value : null);
-  log("labels for", refs.size, "linked items");
-  const L = (ids) => new Set(ids.map((x) => labelCache.get(x)).filter(Boolean));
-  const QCON = Object.fromEntries(Object.entries(PLATFORM_Q).map(([c, q]) => [q, c]));
-  for (const [q, e] of raw) {
+  for (let i = 0; i < qs.length; i += 250) {
+    const vals = qs.slice(i, i + 250).map((q) => "wd:" + q).join(" ");
+    for (const [key, prop] of PROPS) {
+      const pat = prop.startsWith("P") ? `?item p:${prop} ?st . ?st ps:${prop} ?v . FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }` : prop;
+      let rows;
+      try { rows = await sparql(`SELECT ?item ?v WHERE { VALUES ?item { ${vals} } ${pat} }`); }
+      catch (e) { log("facts", key, i, "failed", e.message.slice(0, 100)); continue; }
+      for (const b of rows) {
+        const it = items.get(b.item.value.split("/").pop()); if (!it || !b.v) continue;
+        const v = b.v.value;
+        if (key === "desc") it.desc = v;
+        else if (key === "date") { const y = +v.slice(0, 4); if (y > 1970 && (!it.year || y < it.year)) it.year = y; }
+        else { const q = v.split("/").pop(); (it["_" + key] ||= []).push(q); if (!labelCache.has(q)) refs.add(q); }
+      }
+      await sleep(150);
+    }
+    if (i % 2500 === 0) log("facts", i, "/", qs.length);
+  }
+  // names (en + ja labels, en aliases) for the games themselves
+  const ents = await wbget(qs, "labels|aliases", "en|ja");
+  for (const [q, e] of Object.entries(ents)) {
     const it = items.get(q); if (!it || !e.labels) continue;
     for (const lang of ["en", "ja"]) if (e.labels[lang]) it.names.add(e.labels[lang].value);
     for (const al of (e.aliases && e.aliases.en) || []) it.names.add(al.value);
     if (e.labels.en) it.label = e.labels.en.value;
-    if (e.descriptions && e.descriptions.en) it.desc = e.descriptions.en.value;
-    if (e.sitelinks && e.sitelinks.enwiki) it.article = e.sitelinks.enwiki.title;
-    const years = ((e.claims || {}).P577 || []).filter((c) => c.rank !== "deprecated" && c.mainsnak && c.mainsnak.datavalue).map((c) => +String(c.mainsnak.datavalue.value.time).slice(1, 5)).filter((y) => y > 1970);
-    if (years.length) it.year = Math.min(...years);
-    const plat = claimIds(e, "P400"); plat.forEach((x) => { if (QCON[x]) it.cons.add(QCON[x]); });
-    it.plats = L(plat); it.pubs = L(claimIds(e, "P123")); it.devs = L(claimIds(e, "P178")); it.genres = L(claimIds(e, "P136"));
+  }
+  log("names for", Object.keys(ents).length, "of", qs.length);
+  const labs = await wbget([...refs], "labels", "en");
+  for (const [q, e] of Object.entries(labs)) labelCache.set(q, e.labels && e.labels.en ? e.labels.en.value : null);
+  for (const q of qs) {
+    const it = items.get(q); if (!it) continue;
+    const L = (arr) => new Set((arr || []).map((x) => PLAT_NAME[x] || labelCache.get(x)).filter(Boolean));
+    it.plats = L(it._plats); it.pubs = L(it._pubs); it.devs = L(it._devs); it.genres = L(it._genres);
+    for (const x of it._plats || []) for (const [c, pq] of Object.entries(PLATFORM_Q)) if (pq === x) it.cons.add(c);
   }
 }
 // exact English-label lookup for games whose Wikidata entry doesn't list the PlayStation platform
