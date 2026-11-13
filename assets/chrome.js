@@ -475,7 +475,8 @@
    * ==================================================================================================== */
   var PAGES = [
     ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
-    ["games", "/games/", "Rate-O-Pedia Forums"], ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
+    ["games", "/games/", "Rate-O-Pedia"], ["forum", "/games/forum/", "Forums"],
+    ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
     ["resume", "/resume/", "R\u00e9sum\u00e9"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's new"]
   ];
   Site.ready(function () {
@@ -484,8 +485,11 @@
     var btn = el("button", { type: "button", class: "sx-iconbtn ch-menu", "aria-label": "Site menu", "aria-haspopup": "true", "aria-expanded": "false", "aria-controls": "ch-menu-list", title: "Site menu" },
       svg('<path d="M4 6h16M4 12h16M4 18h16"/>'));
     var list = el("ul", { class: "ch-menu__list", id: "ch-menu-list", hidden: true });
+    var path = location.pathname.replace(/index\.html$/, "");
+    var exact = PAGES.some(function (p) { return p[1] === path; });
     PAGES.forEach(function (p) {
-      list.appendChild(el("li", {}, el("a", { href: p[1], class: "ch-menu__link", "aria-current": p[0] === here ? "page" : null, text: p[2] })));
+      var cur = exact ? p[1] === path : p[0] === here;
+      list.appendChild(el("li", {}, el("a", { href: p[1], class: "ch-menu__link", "aria-current": cur ? "page" : null, text: p[2] })));
     });
     var box = el("div", { class: "ch-menu__box" }, btn, list);
     nav.insertBefore(box, nav.firstChild);
