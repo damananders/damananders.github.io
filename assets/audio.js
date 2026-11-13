@@ -234,11 +234,13 @@
       }
       /* wind: a wide, low-Q band of air that wanders. Low Q keeps it from whistling. Every skin but summer has some. */
       var wbp = null, wind = null, windLvl = 0, rumble = null;
-      function breeze(lvl, centre) {
+      /* hp: where the low end is cut (higher = thinner, less like surf). sway: how much it swells (1 = sea-like). */
+      function breeze(lvl, centre, hp, sway) {
+        hp = hp || 180; sway = sway == null ? 1 : sway;
         windLvl = lvl; wbp = filter("bandpass", centre, 0.55); wind = gain(lvl);
-        chain(noise(1.19), wbp, filter("highpass", 180, 0.5), wind, dest);
-        lfo(rnd(0.028, 0.045), centre * 0.29, wbp.frequency); lfo(rnd(0.075, 0.1), centre * 0.13, wbp.frequency);
-        lfo(rnd(0.035, 0.055), lvl * 0.35, wind.gain); lfo(rnd(0.09, 0.12), lvl * 0.17, wind.gain);
+        chain(noise(1.19), wbp, filter("highpass", hp, 0.5), wind, dest);
+        lfo(rnd(0.028, 0.045), centre * 0.29 * sway, wbp.frequency); lfo(rnd(0.075, 0.1), centre * 0.13 * sway, wbp.frequency);
+        lfo(rnd(0.035, 0.055), lvl * 0.35 * sway, wind.gain); lfo(rnd(0.09, 0.12), lvl * 0.17 * sway, wind.gain);
       }
       /* a one-shot voice: an oscillator with its own envelope, cleaned up when it ends */
       function tone(type, hz, at, peak, attack, hold, release, into) {
@@ -252,16 +254,17 @@
       }
 
       /* the season beds are thinner than the sea, so they get a lift to sit at about the same loudness */
-      var TRIM = { fall: 2.8, winter: 2.3, spring: 2.6, summer: 2.2 };
+      var TRIM = { fall: 2.0, winter: 2.3, spring: 2.6, summer: 2.2 };
       if (TRIM[kind]) { var trim = gain(TRIM[kind]); trim.connect(dest); dest = trim; }
 
       if (kind === "fall") {
         /* a light breeze, and dry leaves coming down: short papery flutters, a few at a time */
-        breeze(0.34, 480);
+        /* kept thin, high and steady so it reads as air through trees, not surf; the leaves carry the scene */
+        breeze(0.2, 1150, 520, 0.35);
         var leafBp = filter("bandpass", 3800, 0.9), leafHp = filter("highpass", 1500, 0.5), leaves = gain(0);
         chain(noise(1.63), leafBp, leafHp, leaves, dest);
         every(2200, 6500, function () {
-          var at = c.currentTime + 0.05, n = 2 + Math.floor(Math.random() * 5), peak = rnd(0.07, 0.16);
+          var at = c.currentTime + 0.05, n = 2 + Math.floor(Math.random() * 5), peak = rnd(0.16, 0.34);
           leafBp.frequency.setValueAtTime(rnd(2800, 5200), at);
           for (var i = 0; i < n; i++) {
             var d = rnd(0.035, 0.09), a = peak * rnd(0.4, 1);
