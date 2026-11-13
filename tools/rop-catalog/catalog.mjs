@@ -213,6 +213,13 @@ async function dbGames() {
 /* ---------------- main ---------------- */
 if (process.env.PROBE) {   // which Wikidata items carry these labels, and how many games list each as a platform
   for (const lab of process.env.PROBE.split(",").map((x) => x.trim()).filter(Boolean)) {
+    if (/^Q\d+$/.test(lab)) {
+      try {
+        const rows = await sparql(`SELECT ?l ?d (COUNT(?g) AS ?n) WHERE { OPTIONAL { wd:${lab} rdfs:label ?l FILTER(LANG(?l)="en") } OPTIONAL { wd:${lab} schema:description ?d FILTER(LANG(?d)="en") } OPTIONAL { ?g wdt:P400 wd:${lab} } } GROUP BY ?l ?d`, 2);
+        log("PROBE", lab, rows.map((b) => (b.l ? b.l.value : "?") + " [" + b.n.value + "] " + (b.d ? b.d.value : "")).join(" | "));
+      } catch (e) { log("PROBE", lab, "failed", e.message.slice(0, 80)); }
+      continue;
+    }
     try {
       const rows = await sparql(`SELECT ?item ?d (COUNT(?g) AS ?n) WHERE { ?item rdfs:label ${JSON.stringify(lab)}@en . OPTIONAL { ?item schema:description ?d FILTER(LANG(?d)="en") }
         OPTIONAL { ?g wdt:P400 ?item } } GROUP BY ?item ?d ORDER BY DESC(?n) LIMIT 6`, 2);
