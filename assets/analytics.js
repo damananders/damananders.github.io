@@ -1,6 +1,6 @@
 /* analytics.js: loads GoatCounter (privacy friendly, no cookies) only when a site code is set in
  * assets/site-config.js (analytics.goatcounter). With a blank code this file does nothing and requests nothing.
- * It also stays off on localhost / file:, on the vault page, for visitors who send Do Not Track, and in owner view.
+ * It also stays off on localhost / file:, on the private pages (vault, locker, control panel, dashboard), for visitors who send Do Not Track, and in owner view.
  * See assets/README.md.
  */
 (function () {
@@ -16,7 +16,7 @@
 
     var host = location.hostname;
     if (location.protocol === "file:" || !host || host === "localhost" || host === "127.0.0.1" || host === "[::1]") return;
-    if (Site.page === "vault" || Site.page === "locker") return;
+    if (Site.page === "vault" || Site.page === "locker" || Site.page === "control" || Site.page === "dash") return;
     var dnt = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
     if (dnt === "1" || dnt === "yes") return;
     if (Site.owner) return;

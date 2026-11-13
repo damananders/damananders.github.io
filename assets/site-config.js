@@ -83,7 +83,7 @@ window.SITE_EXTRA = {
   counter: { provider: "abacus", namespace: "damananders-hub", key: "visits" },
 
   /* ---- Analytics (privacy friendly, no cookies). Your GoatCounter site code, e.g. "damananders". Blank = off. ---- */
-  analytics: { goatcounter: "" },
+  analytics: { goatcounter: "damananders" },
 
   /* ---- Feature switches. Set any to false to turn that effect off for everyone. ---- */
   features: {
