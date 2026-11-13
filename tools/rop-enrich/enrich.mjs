@@ -165,50 +165,55 @@ async function sparql(q) {
 async function wikidata() {
   const items = new Map();   // qid -> { names:Set, cons:Set, article }
   for (const [con, pq] of Object.entries(PLATFORM_Q)) {
-    const rows = await sparql(`SELECT ?item ?name ?article WHERE {
-      ?item wdt:P400 wd:${pq} .
-      { ?item rdfs:label ?name FILTER(LANG(?name) IN ("en","ja")) } UNION { ?item skos:altLabel ?name FILTER(LANG(?name) = "en") }
-      OPTIONAL { ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . } }`);
+    const rows = await sparql(`SELECT ?item WHERE { ?item wdt:P400 wd:${pq} . }`);
     for (const b of rows) {
       const q = b.item.value.split("/").pop();
       const it = items.get(q) || { q, names: new Set(), cons: new Set(), article: null };
-      it.names.add(b.name.value); it.cons.add(con);
-      if (b.article) it.article = decodeURIComponent(b.article.value.split("/wiki/").pop()).replace(/_/g, " ");
-      items.set(q, it);
+      it.cons.add(con); items.set(q, it);
     }
-    log("Wikidata", con, rows.length, "rows; items so far", items.size);
-    await sleep(1500);
+    log("Wikidata", con, rows.length, "items; total", items.size);
+    await sleep(1000);
   }
   return items;
 }
+// Entity details straight from the Wikidata API (the query service's label index has gaps for some items)
+const labelCache = new Map();
+async function wbget(ids, props, langs) {
+  const out = {};
+  for (let i = 0; i < ids.length; i += 50) {
+    const u = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&maxlag=5&props=" + props + "&languages=" + langs + "&sitefilter=enwiki&ids=" + ids.slice(i, i + 50).join("|");
+    let j = null;
+    for (let t = 0; t < 4 && !(j && j.entities); t++) { j = await (await get(u)).json().catch(() => null); if (!(j && j.entities)) await sleep(3000); }
+    Object.assign(out, (j && j.entities) || {});
+    await sleep(100);
+  }
+  return out;
+}
+const claimIds = (e, p) => ((e.claims || {})[p] || []).filter((c) => c.rank !== "deprecated" && c.mainsnak && c.mainsnak.datavalue).map((c) => c.mainsnak.datavalue.value.id).filter(Boolean);
 async function facts(items, qs) {
-  // one small query per property, so no cross-product can blow past the query service's limits
-  const PROPS = [
-    ["label", `OPTIONAL { ?item rdfs:label ?v FILTER(LANG(?v)="en") }`],
-    ["desc", `OPTIONAL { ?item schema:description ?v FILTER(LANG(?v)="en") }`],
-    ["date", `?item wdt:P577 ?v .`],
-    ["plats", `?item wdt:P400 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`],
-    ["pubs", `?item wdt:P123 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`],
-    ["devs", `?item wdt:P178 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`],
-    ["genres", `?item wdt:P136 ?x . ?x rdfs:label ?v FILTER(LANG(?v)="en")`]];
-  for (let i = 0; i < qs.length; i += 250) {
-    const vals = qs.slice(i, i + 250).map((q) => "wd:" + q).join(" ");
-    for (const [key, pat] of PROPS) {
-      let rows;
-      try { rows = await sparql(`SELECT ?item ?v WHERE { VALUES ?item { ${vals} } ${pat} }`); }
-      catch (e) { log("facts", key, i, "failed", e.message.slice(0, 100)); continue; }
-      for (const b of rows) {
-        if (!b.v) continue;
-        const it = items.get(b.item.value.split("/").pop()); if (!it) continue;
-        const v = b.v.value;
-        if (key === "label") it.label = v;
-        else if (key === "desc") it.desc = v;
-        else if (key === "date") { const y = +v.slice(0, 4); if (y > 1970 && (!it.year || y < it.year)) it.year = y; }
-        else (it[key] ||= new Set()).add(v);
-      }
-      await sleep(150);
-    }
-    if (i % 2500 === 0) log("facts", i, "/", qs.length);
+  const raw = new Map();
+  for (let i = 0; i < qs.length; i += 1000) {
+    Object.entries(await wbget(qs.slice(i, i + 1000), "labels|aliases|descriptions|claims|sitelinks", "en|ja")).forEach(([q, e]) => raw.set(q, e));
+    log("entities", Math.min(i + 1000, qs.length), "/", qs.length);
+  }
+  const refs = new Set();
+  for (const e of raw.values()) for (const p of ["P400", "P123", "P178", "P136"]) claimIds(e, p).forEach((x) => { if (!labelCache.has(x)) refs.add(x); });
+  const labs = await wbget([...refs], "labels", "en");
+  for (const [q, e] of Object.entries(labs)) labelCache.set(q, e.labels && e.labels.en ? e.labels.en.value : null);
+  log("labels for", refs.size, "linked items");
+  const L = (ids) => new Set(ids.map((x) => labelCache.get(x)).filter(Boolean));
+  const QCON = Object.fromEntries(Object.entries(PLATFORM_Q).map(([c, q]) => [q, c]));
+  for (const [q, e] of raw) {
+    const it = items.get(q); if (!it || !e.labels) continue;
+    for (const lang of ["en", "ja"]) if (e.labels[lang]) it.names.add(e.labels[lang].value);
+    for (const al of (e.aliases && e.aliases.en) || []) it.names.add(al.value);
+    if (e.labels.en) it.label = e.labels.en.value;
+    if (e.descriptions && e.descriptions.en) it.desc = e.descriptions.en.value;
+    if (e.sitelinks && e.sitelinks.enwiki) it.article = e.sitelinks.enwiki.title;
+    const years = ((e.claims || {}).P577 || []).filter((c) => c.rank !== "deprecated" && c.mainsnak && c.mainsnak.datavalue).map((c) => +String(c.mainsnak.datavalue.value.time).slice(1, 5)).filter((y) => y > 1970);
+    if (years.length) it.year = Math.min(...years);
+    const plat = claimIds(e, "P400"); plat.forEach((x) => { if (QCON[x]) it.cons.add(QCON[x]); });
+    it.plats = L(plat); it.pubs = L(claimIds(e, "P123")); it.devs = L(claimIds(e, "P178")); it.genres = L(claimIds(e, "P136"));
   }
 }
 // exact English-label lookup for games whose Wikidata entry doesn't list the PlayStation platform
@@ -348,8 +353,13 @@ for (const g of games) {
     if (it.article) { rec.w = it.article; const d = tidy(ext.get(it.article)); if (d) rec.d = d; }
     if (!rec.d && it.desc && !/^\d{4} video game$|^video game$/i.test(it.desc)) rec.d = it.desc.charAt(0).toUpperCase() + it.desc.slice(1) + ".";
   }
+  if (rec.y && !fitsEra({ year: rec.y }, g.console)) {   // a re-release date: prefer the year the lead section gives, else leave it out
+    const ys = (ext.get(it && it.article) || "").match(/\b(19[89]\d|20[0-3]\d)\b/g) || [];
+    const y2 = ys.map(Number).find((y) => fitsEra({ year: y }, g.console));
+    if (y2) rec.y = y2; else delete rec.y;
+  }
   if (m1) {
-    if (!rec.y && m1.date) rec.y = +m1.date.slice(0, 4);
+    if (m1.date && (!rec.y || +m1.date.slice(0, 4) < rec.y)) rec.y = +m1.date.slice(0, 4);
     if (!rec.pub && m1.pub) rec.pub = [m1.pub];
     if (!rec.dev && m1.dev) rec.dev = [m1.dev];
     if (!rec.gn && m1.genre && !/DEMO/.test(m1.genre)) rec.gn = [m1.genre];
