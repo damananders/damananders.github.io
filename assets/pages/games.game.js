@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=3";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=4";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -78,8 +78,7 @@ function scoreBox() {
   if (!me.user) row.append(el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "Sign in to rate" }));
   else if (!me.member) row.append(el("a", { class: "linkbtn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord to rate" }));
   else {
-    row.append(el("button", { class: "gm-zero" + (myStars === 0 ? " is-on" : ""), type: "button", text: "0", title: "0 out of 5", onclick: () => rate(myStars === 0 ? null : 0) }));
-    for (let i = 1; i <= 5; i++) row.append(el("button", { class: "gm-pip gm-pip--" + i + (myStars != null && i <= myStars ? " is-on" : ""), type: "button", "aria-label": i + " out of 5", text: SHAPES[i - 1], onclick: () => rate(myStars === i ? null : i) }));
+    row.append(chipRow(myStars, (v) => rate(v), "Your rating"));
   }
   box.append(row);
   return box;

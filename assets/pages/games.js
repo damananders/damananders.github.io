@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=3";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=4";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -29,17 +29,13 @@ function tabs() {
       text: c || "All", onclick: () => { consoleFilter = c; tabs(); load(); } }));
   }
 }
-const SHAPES = ["△", "○", "✕", "□", "△"];
 function ratingRow(g) {
   const my = mine.has(g.id) ? mine.get(g.id) : null;
   const row = el("div", { class: "gm-rate", role: "group", "aria-label": "Your rating for " + g.title });
   if (!user || !member) { row.append(el("span", { class: "gm-rate__lock", text: user ? "Join the Discord to rate" : "Sign in to rate" })); return row; }
-  row.append(el("button", { class: "gm-zero" + (my === 0 ? " is-on" : ""), type: "button", title: my === 0 ? "rated 0 — click to remove" : "0 out of 5", text: "0", onclick: () => rate(g, my === 0 ? null : 0) }));
-  for (let i = 1; i <= 5; i++)
-    row.append(el("button", { class: "gm-pip gm-pip--" + i + (my != null && i <= my ? " is-on" : ""), type: "button", title: my === i ? i + " — click again to remove your rating" : i + " out of 5", "aria-label": i + " out of 5", text: SHAPES[i - 1], onclick: () => rate(g, my === i ? null : i) }));
-  return row;
+  return chipRow(my, (v) => rate(g, v), "Your rating for " + g.title);
 }
-function card(g) {
+function card(g, rank) {
   const score = g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated yet";
   const more = el("div", { class: "gm-more", hidden: true });
   const n = reviewCounts.get(g.id) || 0;
@@ -51,11 +47,15 @@ function card(g) {
   }
   sync(false);
   toggle.addEventListener("click", () => { const open = more.hidden; more.hidden = !open; sync(open); if (open) reviews(g, more); });
-  const c = el("article", { class: "gm-card" },
+  const medalCls = rank && rank <= 3 ? " gm-card--" + MEDALS[rank].cls : "";
+  const mood = g.votes > 0 ? el("span", { class: "gm-mood rop-chip--" + Math.round(Number(g.average)), title: CHIP_WORD[Math.round(Number(g.average))] }, chipSvg(Math.round(Number(g.average)))) : null;
+  const c = el("article", { class: "gm-card" + medalCls + (rank && rank <= 10 ? " gm-card--top10" : "") },
     el("div", { class: "gm-card__top" },
+      rank && rank <= 3 ? medal(rank) : (rank ? el("span", { class: "gm-vrank", text: "#" + rank }) : null),
       el("span", { class: "gm-console", "data-c": g.console, text: g.console }),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
-      el("span", { class: "gm-score", text: score }),
+      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia" }, el("span", { "aria-hidden": "true", text: "★ " }), "Must Play!") : null,
+      mood, el("span", { class: "gm-score", text: score }),
       el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" })),
     ratingRow(g), toggle, more);
   c.dataset.id = g.id;
@@ -85,7 +85,8 @@ async function load() {
     for (const x of rc.data || []) counts.set(x.game_id, (counts.get(x.game_id) || 0) + 1);
   }
   mine = myMap; reviewCounts = counts;               // publish both only once this load is the live one
-  list.replaceChildren(...data.map(card));
+  const ranked = q.length < 2;   // the top-rated list (not search results) gets medals and Must Play! flair
+  list.replaceChildren(...data.map((g, i) => card(g, ranked ? i + 1 : 0)));
   if (!data.length) list.append(el("p", { class: "gm-empty", text: q.length >= 2 ? "No game by that name in the list yet." : "No ratings here yet. Search for a game and be the first." }));
   addBox(q, data);
 }

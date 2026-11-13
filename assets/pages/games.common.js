@@ -147,3 +147,35 @@ export async function share(url, title) {
   try { await navigator.clipboard.writeText(full); toast("Link copied", "ok"); sfx("copy"); }
   catch (e) { prompt("Copy this link:", full); }
 }
+
+/* ---------------- rating chips: a little CPU chip with a face, 0 (miserable) to 5 (overjoyed) ---------------- */
+const CHIP_FACE = [
+  // eyes, mouth (drawn in the chip's 24x24 die, centre 20,20)
+  '<path d="M14.5 15.5l3 3m0-3l-3 3M22.5 15.5l3 3m0-3l-3 3"/><path d="M14.5 27c2-3.4 9-3.4 11 0"/><path d="M27 19.5c.9 1.2.9 2.4 0 3.1" stroke-width="1.2"/>',
+  '<path d="M14 15.2l3.2 1.2M26 15.2l-3.2 1.2"/><circle cx="16" cy="18.3" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="18.3" r="1.3" fill="currentColor" stroke="none"/><path d="M15 26.4c2.2-2.6 7.8-2.6 10 0"/>',
+  '<circle cx="16" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><path d="M15.5 25.6c2-1.3 7-1.3 9 0"/>',
+  '<circle cx="16" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><path d="M15.5 24.6h9"/>',
+  '<circle cx="16" cy="17.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="17.6" r="1.3" fill="currentColor" stroke="none"/><path d="M15 23.4c2.4 2.6 7.6 2.6 10 0"/>',
+  '<path d="M13.8 18.4c.8-2 3.6-2 4.4 0M21.8 18.4c.8-2 3.6-2 4.4 0"/><path d="M14 22.2h12c0 4.4-3 6.2-6 6.2s-6-1.8-6-6.2z" fill="currentColor" fill-opacity=".9"/><path d="M16.5 26.5c2 1.3 5 1.3 7 0" stroke="var(--chip-bg,#0f1216)" stroke-width="1.1"/>',
+];
+const CHIP_PINS = '<path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/>';
+export const CHIP_WORD = ["Awful", "Bad", "Meh", "Okay", "Great", "Must play"];
+export function chipSvg(n) {
+  const w = document.createElement("span");
+  w.className = "rop-chip__svg"; w.setAttribute("aria-hidden", "true");
+  w.innerHTML = '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
+    + CHIP_PINS + '<rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/>'
+    + CHIP_FACE[n] + '</svg>';
+  return w;
+}
+/* the 0..5 picker: each chip is its own mood; the chosen one lights up */
+export function chipRow(current, onPick, label) {
+  const row = el("div", { class: "gm-rate rop-chips", role: "radiogroup", "aria-label": label || "Your rating" });
+  for (let i = 0; i <= 5; i++) {
+    const on = current === i;
+    row.append(el("button", { class: "rop-chip rop-chip--" + i + (on ? " is-on" : ""), type: "button", role: "radio", "aria-checked": on ? "true" : "false",
+      title: on ? i + " (" + CHIP_WORD[i] + ") — click again to remove your rating" : i + " out of 5 · " + CHIP_WORD[i], "aria-label": i + " out of 5, " + CHIP_WORD[i],
+      onclick: () => onPick(on ? null : i) }, chipSvg(i), el("span", { class: "rop-chip__n", text: String(i) })));
+  }
+  return row;
+}
