@@ -152,10 +152,13 @@ a.rop-name:hover{text-decoration:underline}
 .gm-vcard--silver .gm-vav{box-shadow:0 0 0 2px #c9d1db}
 .gm-vcard--bronze .gm-vav{box-shadow:0 0 0 2px #cd7f32}
 /* a slow sheen across gold (and a fainter one on silver) */
-.gm-vcard--gold::after,.gm-vcard--silver::after,.gm-card--gold::after,.gm-card--silver::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);transform:translateX(-120%);animation:gm-sheen 5.5s ease-in-out infinite}
-.gm-vcard--silver::after,.gm-card--silver::after{opacity:.55;animation-delay:1.4s;animation-duration:7s}
-@keyframes gm-sheen{0%,55%{transform:translateX(-120%)}85%,100%{transform:translateX(120%)}}
+/* medal glint: lives inside each gold/silver card (clipped to its rounded box) and loops without a pause */
+.gm-vcard--gold,.gm-vcard--silver,.gm-card--gold,.gm-card--silver{position:relative;overflow:hidden;isolation:isolate}
+.gm-vcard--gold::after,.gm-vcard--silver::after,.gm-card--gold::after,.gm-card--silver::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 40%,rgba(255,240,190,.16) 47%,rgba(255,255,255,.26) 50%,rgba(255,240,190,.16) 53%,transparent 60%) 0 0/300% 100% no-repeat;animation:gm-glint 4.5s linear infinite}
+.gm-vcard--silver::after,.gm-card--silver::after{background-image:linear-gradient(110deg,transparent 40%,rgba(225,232,245,.12) 47%,rgba(255,255,255,.2) 50%,rgba(225,232,245,.12) 53%,transparent 60%);animation-duration:6s;animation-delay:-2s}
+@keyframes gm-glint{from{background-position:100% 0}to{background-position:0 0}}
 :root[data-motion="reduce"] .gm-vcard--gold::after,:root[data-motion="reduce"] .gm-vcard--silver::after,:root[data-motion="reduce"] .gm-card--gold::after,:root[data-motion="reduce"] .gm-card--silver::after{animation:none;display:none}
+@media (prefers-reduced-motion:reduce){.gm-vcard--gold::after,.gm-vcard--silver::after,.gm-card--gold::after,.gm-card--silver::after{animation:none;display:none}}
 :root[data-theme="light"] .gm-vcard--gold .gm-vname{background:linear-gradient(90deg,#8a5c00,#b07a12);-webkit-background-clip:text;background-clip:text}
 :root[data-theme="light"] .gm-vcard--silver .gm-vname{color:#4b5563}
 :root[data-theme="light"] .gm-vcard--bronze .gm-vname{color:#8a4a17}
@@ -418,3 +421,7 @@ dialog.sx-modal.gi-lb:not([open]){display:none}
 .gm-write{display:grid;gap:8px;padding-top:6px}
 .gm-write__h{margin:0;font:600 .78rem var(--sx-mono,"DM Mono",monospace);letter-spacing:.06em;text-transform:uppercase;color:var(--sx-muted,#a8abb3)}
 .gm-write .gm-btn{justify-self:start}
+.gm-write__bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gm-write__count{margin-left:auto;font:500 .75rem var(--sx-mono,"DM Mono",monospace);color:var(--sx-muted,#a8abb3)}
+.gm-write .gm-ta:disabled{opacity:1;color:var(--sx-text,#e8e8ea);background:var(--sx-surface,rgba(255,255,255,.03));border-style:dashed;cursor:default;resize:none}
+.gm-cancel{margin:0}

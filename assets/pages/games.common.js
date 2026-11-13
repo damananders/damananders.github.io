@@ -77,7 +77,15 @@ export function takeReturn() {
 
 /* me = { user, profile, member, banned, ready } ; ready = the round-11 SQL (11_rateopedia_profiles_forums_station.sql) has been run (profiles have handles) */
 export const me = { user: null, profile: null, member: false, banned: false, ready: false, admin: false, staff: false };
-let staffSent = false;
+let staffSent = false, trophiesSent = -1;
+// The site's trophies live in this browser; copy the count to the profile so others can see it (best effort).
+function syncTrophies() {
+  let n = 0;
+  try { const got = (window.Site && Site.store && Site.store.get("trophies", {})) || {}; n = Object.keys(got).filter((k) => got[k]).length; } catch (e) { return; }
+  if (n === trophiesSent) return;
+  trophiesSent = n;
+  sb.rpc("set_my_trophies", { p_count: n }).then(() => {}, () => {});
+}
 const FULL = "is_member,name,avatar,handle,display_name,custom_avatar,motto,motto_color,fav_games,banned,created_at";
 export async function loadMe(session) {
   me.user = session ? session.user : null; me.profile = null; me.member = false; me.banned = false; me.admin = false; me.staff = false;
@@ -94,6 +102,7 @@ export async function loadMe(session) {
   if (me.ready) { try { const a = await sb.rpc("is_admin"); me.admin = a.data === true; } catch (e) {} }
   // Admin bubble (set server-side from the Discord role); tells the site trophies about it once per page load
   if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
+  if (me.ready && !me.banned) syncTrophies();
   if (me.staff && !staffSent) { staffSent = true; window.ROP_ADMIN = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
   return me;
 }

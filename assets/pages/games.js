@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=4";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=5";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -117,15 +117,65 @@ async function reviews(g, box) {
     box.append(art);
   }
   if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
-  if (user && member) {
-    const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game (optional)", "aria-label": "Your review of " + g.title });
-    const note = el("p", { class: "gm-note", role: "status" });
-    box.append(el("div", { class: "gm-write" }, el("p", { class: "gm-write__h", text: "Your review" }), ta, el("button", { class: "btn gm-btn", type: "button", text: "Send review", onclick: async () => {
-      const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
-      const { error } = await sb.from("reviews").insert({ user_id: user.id, game_id: g.id, body });
-      note.textContent = error ? (error.code === "23505" ? "You've already reviewed this game." : "That didn't send: " + error.message) : "Thanks! Your review is up.";
-      if (!error) { ta.value = ""; reviews(g, box); }
-    } }), note));
+  writeBox(g, box, data || []);
+}
+
+/* Your own review: a write box if you haven't reviewed the game yet, otherwise your review read-only with an Edit button. */
+async function writeBox(g, box, shown) {
+  if (!user) { box.append(el("p", { class: "gm-note", text: "Sign in with Discord to write a review." })); return; }
+  if (!member) { box.append(el("p", { class: "gm-note", text: "Join the Discord server to write reviews." })); return; }
+  const wrap = el("div", { class: "gm-write" });
+  box.append(wrap);
+  let mineRow = null;
+  const r = await sb.rpc("my_review", { p_game: g.id });
+  if (!r.error && r.data && r.data.length) mineRow = r.data[0];
+  else if (r.error && me.profile && me.profile.handle) {         // database update not run yet: find it among the shown reviews
+    const hit = shown.find((x) => x.handle === me.profile.handle);
+    if (hit) mineRow = { body: hit.body, created_at: hit.created_at, hidden: false };
+  }
+  const note = el("p", { class: "gm-note", role: "status" });
+  const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game", "aria-label": "Your review of " + g.title });
+  const count = el("span", { class: "gm-write__count", text: "0 / 1000" });
+  ta.addEventListener("input", () => { count.textContent = ta.value.length + " / 1000"; });
+  const send = el("button", { class: "btn gm-btn", type: "button" });
+
+  function showMine() {
+    ta.value = mineRow.body; ta.disabled = true; ta.readOnly = true; count.textContent = mineRow.body.length + " / 1000";
+    send.textContent = "Edit review"; send.onclick = startEdit;
+    wrap.replaceChildren(el("p", { class: "gm-write__h", text: "Your review" + (mineRow.hidden ? " (hidden by a moderator)" : "") }), ta,
+      el("div", { class: "gm-write__bar" }, send, count), note);
+  }
+  function startEdit() {
+    ta.disabled = false; ta.readOnly = false; ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    send.textContent = "Save changes"; send.onclick = save;
+    const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { note.textContent = ""; showMine(); } });
+    wrap.querySelector(".gm-write__bar").insertBefore(cancel, count);
+  }
+  async function save() {
+    const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
+    send.disabled = true;
+    const { error } = await sb.rpc("edit_my_review", { p_game: g.id, p_body: body });
+    send.disabled = false;
+    if (error) { note.textContent = /edit_my_review|function|schema cache/i.test(error.message) ? "Editing needs the latest database update. The owner has to run it first." : "That didn't save: " + error.message; return; }
+    mineRow.body = body; note.textContent = "Saved. Your review is updated."; reviews(g, box);
+  }
+  async function create() {
+    const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
+    send.disabled = true;
+    const { error } = await sb.from("reviews").insert({ user_id: user.id, game_id: g.id, body });
+    send.disabled = false;
+    if (error) {
+      if (error.code === "23505") { note.textContent = "You've already reviewed this game. Use Edit review to change it."; reviews(g, box); return; }
+      note.textContent = "That didn't send: " + error.message; return;
+    }
+    if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
+    reviewCounts.set(g.id, (reviewCounts.get(g.id) || 0) + 1);
+    reviews(g, box);
+  }
+  if (mineRow) showMine();
+  else {
+    send.textContent = "Send review"; send.onclick = create;
+    wrap.replaceChildren(el("p", { class: "gm-write__h", text: "Write a review" }), ta, el("div", { class: "gm-write__bar" }, send, count), note);
   }
 }
 

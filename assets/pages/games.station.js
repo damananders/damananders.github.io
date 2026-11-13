@@ -3,7 +3,7 @@
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast } from "./games.common.js?v=4";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast } from "./games.common.js?v=5";
 
 const root = $("op-root");
 const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"]];

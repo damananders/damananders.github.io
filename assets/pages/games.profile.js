@@ -2,7 +2,7 @@
  * Anyone can view a profile. The owner of a profile can edit its username, picture, motto (+ colour) and 3 favourite
  * games. Saving goes through the database function update_my_profile, which checks every field again.
  */
-import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL } from "./games.common.js?v=4";
+import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL } from "./games.common.js?v=5";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -39,7 +39,8 @@ async function render() {
         el("li", null, el("b", { text: String(p.votes) }), " votes"),
         el("li", null, el("b", { text: String(p.reviews) }), " reviews"),
         el("li", null, el("b", { text: String(p.posts) }), " forum posts"),
-        p.hearts != null ? el("li", null, el("b", { text: String(p.hearts) }), " hearted") : null)),
+        p.hearts != null ? el("li", null, el("b", { text: String(p.hearts) }), " hearted") : null,
+        p.trophies != null ? el("li", { class: "pf-trophies", title: "Site trophies earned" }, el("span", { "aria-hidden": "true", text: "🏆 " }), el("b", { text: String(p.trophies) }), p.trophies === 1 ? " trophy" : " trophies") : null)),
     el("div", { class: "pf-actions" },
       mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : null,
       el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") })));
