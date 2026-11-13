@@ -1,0 +1,37 @@
+{
+ "built": "2026-11-13T05:24:15.633Z",
+ "games": 17925,
+ "wikidata": 8104,
+ "description": 6731,
+ "compat": 5653,
+ "byConsole": {
+  "PS1": {
+   "games": 6142,
+   "wikidata": 2320,
+   "description": 1725,
+   "compat": 998,
+   "anyText": 5694
+  },
+  "PS2": {
+   "games": 6197,
+   "wikidata": 2780,
+   "description": 2315,
+   "compat": 2244,
+   "anyText": 2729
+  },
+  "PS3": {
+   "games": 4003,
+   "wikidata": 2218,
+   "description": 2016,
+   "compat": 2411,
+   "anyText": 2206
+  },
+  "PSP": {
+   "games": 1583,
+   "wikidata": 786,
+   "description": 675,
+   "compat": 0,
+   "anyText": 770
+  }
+ }
+}
