@@ -566,8 +566,8 @@
         var n = j && typeof j.value === "number" ? j.value : null; if (n == null) return;
         try { sessionStorage.setItem("ch.counted", "1"); } catch (e) {}
         var digits = String(Math.max(0, Math.floor(n))); while (digits.length < 6) digits = "0" + digits;
-        var box = el("p", { class: "ch-counter", "aria-label": "Visitor number " + n });
-        box.appendChild(el("span", { class: "ch-counter__label", "aria-hidden": "true", text: "You are visitor" }));
+        var box = el("p", { class: "ch-counter", "aria-label": "Total visitors: " + n });
+        box.appendChild(el("span", { class: "ch-counter__label", "aria-hidden": "true", text: "Total Visitors" }));
         var reel = el("span", { class: "ch-counter__reel", "aria-hidden": "true" });
         digits.split("").forEach(function (d) { reel.appendChild(el("i", { text: d })); });
         box.appendChild(reel); foot.insertBefore(box, stamp);
