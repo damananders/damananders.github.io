@@ -309,7 +309,7 @@
             var to = DOORS[hex(buf)];
             if (to) { Site.sfx("success"); location.href = to; return; }
             /* not a door: maybe one of the secret words (assets/play.js). Those run on the page behind the box. */
-            if (Site.secret && /^[a-z ]+$/.test(v) && Site.secret(v)) { input.value = ""; msg.textContent = ""; Site.dialog.close(dlg); return; }
+            if (Site.secret && /^[a-z0-9 ]+$/.test(v) && Site.secret(v)) { input.value = ""; msg.textContent = ""; Site.dialog.close(dlg); return; }
             msg.textContent = Site.codeMiss ? Site.codeMiss() : "Nothing happens."; Site.sfx("error");
             form.classList.remove("hb-code--no"); void form.offsetWidth; form.classList.add("hb-code--no");
             input.select();
