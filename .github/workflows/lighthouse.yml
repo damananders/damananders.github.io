@@ -1,0 +1,35 @@
+# Runs Lighthouse against the site's main pages on every push to main and every pull request,
+# so a change that hurts accessibility, SEO or speed shows up before (or right after) it ships.
+# Budgets live in .github/lighthouserc.json. Accessibility and SEO fail the job; performance only warns,
+# because shared CI runners make speed scores noisy.
+name: Lighthouse
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "tools/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Audit pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: .github/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false

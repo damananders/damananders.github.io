@@ -829,7 +829,14 @@
       var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
       if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
     } catch (e) {}
-    load("play", 3, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 4, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    /* service worker: instant repeat visits and basic offline. features.serviceWorker = false unregisters it. */
+    try {
+      if ("serviceWorker" in navigator && /^https:$/.test(location.protocol)) {
+        if (f.serviceWorker === false) navigator.serviceWorker.getRegistrations().then(function (rs) { rs.forEach(function (r) { r.unregister(); }); });
+        else window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); });
+      }
+    } catch (e) {}
     load("a11y", 1, "a11y");
     load("seasons", 1, "seasons");
   }, "add-on loader");

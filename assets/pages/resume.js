@@ -64,9 +64,8 @@
     if (!role || Site.reducedMotion || (Site.config.features || {}).typing === false) return;
     var full = role.textContent, lines = [full, "Builds private game servers for fun", "Takes software apart to see how it works",
       "Fortnite island creator (UEFN + Verse)", "Streams it all on Twitch", "90+ five-star customer reviews"];
-    role.setAttribute("aria-label", full);
     var txt = Site.el("span", { "aria-hidden": "true", text: full }), caret = Site.el("span", { class: "rz-caret", "aria-hidden": "true" });
-    role.textContent = ""; role.appendChild(txt); role.appendChild(caret);
+    role.textContent = ""; role.appendChild(Site.el("span", { class: "sx-sr", text: full })); role.appendChild(txt); role.appendChild(caret);
     var li = 0, pos = full.length, dir = -1;
     function tick() {
       if (document.hidden) { setTimeout(tick, 800); return; }
