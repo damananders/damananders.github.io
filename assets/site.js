@@ -26,6 +26,39 @@
     remove: function (k) { try { localStorage.removeItem(LS + k); } catch (e) {} }
   };
 
+  /* ---------- settings saved from the control panel (/control/) ----------
+     They live in the site_settings table (12_control_panel.sql): "config" is laid over site-config.js, "links" replaces
+     assets/data/links.json. The last copy is kept in this browser so pages start with it at once; a fresh copy is
+     fetched at most every five minutes and used from the next page on. Anyone can read them, only the panel can write. */
+  var SB = { url: "https://zjhlhkruqzfendvbglsb.supabase.co", key: "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk" };
+  var cfgBase; try { cfgBase = JSON.parse(JSON.stringify(cfg)); } catch (e) { cfgBase = {}; }
+  function isObj(v) { return v && typeof v === "object" && !Array.isArray(v); }
+  function overlay(dst, src) {
+    if (!isObj(src)) return dst;
+    Object.keys(src).forEach(function (k) {
+      if (k === "__proto__" || k === "constructor" || k === "prototype") return;
+      if (isObj(src[k])) { if (!isObj(dst[k])) dst[k] = {}; overlay(dst[k], src[k]); } else dst[k] = src[k];
+    });
+    return dst;
+  }
+  var remoteSaved = store.get("remote", null);
+  if (remoteSaved && isObj(remoteSaved.config)) overlay(cfg, remoteSaved.config);
+  var remoteP = null;
+  function remote(force) {
+    if (remoteP && !force) return remoteP;
+    var c = store.get("remote", null);
+    if (!force && c && Date.now() - (c.t || 0) < 300000) return (remoteP = Promise.resolve(c));
+    remoteP = fetch(SB.url + "/rest/v1/site_settings?select=key,value", { headers: { apikey: SB.key, Authorization: "Bearer " + SB.key }, cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw r.status; return r.json(); })
+      .then(function (rows) {
+        var out = { t: Date.now(), config: null, links: null };
+        (rows || []).forEach(function (x) { if (x.key === "config" && isObj(x.value)) out.config = x.value; if (x.key === "links" && Array.isArray(x.value)) out.links = x.value; });
+        store.set("remote", out); return out;
+      })
+      .catch(function () { var keep = store.get("remote", null) || { config: null, links: null }; keep.t = Date.now(); keep.offline = true; store.set("remote", keep); return keep; });
+    return remoteP;
+  }
+
   /* ---------- events ---------- */
   var bus = document.createElement("i");
   function on(evt, fn) { var h = function (e) { try { fn(e.detail); } catch (err) { console.error("[site] handler for " + evt, err); } }; bus.addEventListener(evt, h); return function () { bus.removeEventListener(evt, h); }; }
@@ -348,7 +381,7 @@
 
   window.Site = {
     version: 1,
-    page: page, config: cfg, legacy: window.SITE || null,
+    page: page, config: cfg, configBase: cfgBase, remote: remote, sb: SB, legacy: window.SITE || null,
     store: store, pref: pref, setPref: setPref, prefs: PREFS,
     get reducedMotion() { return reduced(); },
     get owner() { return store.get("owner", false) === true; },
@@ -363,6 +396,7 @@
     fmtDate: fmtDate, fmtNum: fmtNum, fmtBytes: fmtBytes
   };
 
+  if (debug("remote") !== "off") setTimeout(function () { remote(); }, 1200);
   reveal("[data-reveal]");
   if (pendingToast) setTimeout(function () { toast(pendingToast, { type: "ok", ms: 4200 }); }, 400);
 })();
