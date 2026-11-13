@@ -23,8 +23,11 @@ window.SITE_EXTRA = {
 
   /* ---- AndersCraft ---- */
   anderscraft: {
-    // Read-only status endpoint (player counts, leaderboard). Blank = those widgets stay hidden.
-    statusUrl: "",
+    // Read-only status endpoint: drives the Online/Offline pip on each realm card (and, if the
+    // endpoint also returns counts/leaderboard, those widgets). Blank = those stay hidden.
+    // Served by status.php next to the sign-up service on the same ngrok tunnel; the realm pips
+    // appear once it answers and go quiet if the PC/tunnel is down (same as the sign-up pip).
+    statusUrl: "https://banish-amends-useable.ngrok-free.dev/status.php",
     // Only used by the hub card's "Sign-ups open" chip. Keep the same as apiUrl in anderscraft/index.html.
     apiUrl: "https://banish-amends-useable.ngrok-free.dev/register.php",
   },
