@@ -9,7 +9,7 @@
  */
 (function () {
   "use strict";
-  if (!window.Site || window.Site.page !== "404") return;
+  if (!window.Site || (window.Site.page !== "404" && window.Site.page !== "arcade")) return;
   var Site = window.Site, el = Site.el, doc = document, store = Site.store;
   if (((Site.config && Site.config.features) || {}).caseGame404 === false) return;
 
@@ -50,7 +50,7 @@
   }
 
   Site.ready(function () {
-    var hero = doc.querySelector(".nf-hero"); if (!hero) return;
+    var hero = doc.querySelector(".nf-arcade") || doc.querySelector(".nf-hero"); if (!hero) return;
     var boat = doc.getElementById("nf-game-boat");
 
     /* ---- game picker (both games stay; visitor chooses) ---- */

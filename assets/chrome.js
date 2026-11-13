@@ -503,7 +503,7 @@
     ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
     ["games", "/games/", "Rate-O-Pedia"], ["forum", "/games/forum/", "Forums"],
     ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
-    ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
+    ["arcade", "/arcade/", "Arcade"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
   ];
   Site.ready(function () {
     if (!feat("navMenu") || !nav) return;
