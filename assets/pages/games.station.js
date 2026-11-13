@@ -3,7 +3,7 @@
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast } from "./games.common.js?v=1";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast } from "./games.common.js?v=2";
 
 const root = $("op-root");
 const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"]];
@@ -179,7 +179,7 @@ async function members(body) {
   body.replaceChildren(el("div", { class: "fr-tools" }, q, only), list);
   let t = 0; q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(go, 250); }); only.addEventListener("change", go);
   async function go() {
-    let req = sb.from("profiles").select("id,handle,name,display_name,avatar,custom_avatar,motto,is_member,banned,created_at").order("created_at", { ascending: false }).limit(100);
+    let req = sb.from("profiles").select("*").order("created_at", { ascending: false }).limit(100);
     const s = q.value.trim().replace(/[%_,()]/g, " ");
     if (s.length >= 2) req = req.or("name.ilike.%" + s + "%,display_name.ilike.%" + s + "%");
     if (only.value === "banned") req = req.eq("banned", true);
@@ -188,10 +188,11 @@ async function members(body) {
     for (const p of data) people.set(p.id, p);
     list.replaceChildren(...data.map((p) => { const n = p.display_name || p.name || "member"; return row(
       el("div", { class: "op-meta" }, who(p.id), p.display_name && p.name && p.display_name !== p.name ? el("span", { class: "gm-note", text: "Discord: " + p.name }) : null,
-        pill(!p.is_member, "not in server"), el("span", { class: "gm-note", text: "joined " + shortDate(p.created_at) })),
+        pill(!p.is_member, "not in server"), p.is_staff ? el("span", { class: "rop-admin", text: "Admin" }) : null, el("span", { class: "gm-note", text: "joined " + shortDate(p.created_at) })),
       p.motto ? el("p", { class: "op-snip", text: "“" + p.motto + "”" }) : null,
       el("div", { class: "op-acts" },
         el("a", { class: "op-btn", href: profileUrl(p.handle), target: "_blank", rel: "noopener", text: "Profile" }),
+        p.is_staff !== undefined ? btn(p.is_staff ? "Remove Admin badge" : "Give Admin badge", () => act("mod_staff", { p_handle: p.handle, p_staff: !p.is_staff }, p.is_staff ? "Badge removed" : "Admin badge given", go)) : null,
         btn("Reset name / picture / motto", () => sure("Clear " + n + "'s custom username, picture and motto?") && act("mod_reset_profile", { p_handle: p.handle }, "Profile reset", go)),
         btn("Wipe all their ratings", () => sure("Delete every rating " + n + " has given? This can't be undone.") && act("mod_delete", { p_kind: "rating-wipe", p_id: p.handle }, "Ratings wiped", go), true),
         btn(p.banned ? "Unban" : "Ban", () => (p.banned || sure("Ban " + n + "? They can't rate, review, post or react, and they vanish from public lists.")) && act("mod_ban", { p_handle: p.handle, p_banned: !p.banned }, p.banned ? "Unbanned" : "Banned", () => { counts(); go(); }), !p.banned))); }));

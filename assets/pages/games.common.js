@@ -61,6 +61,7 @@ export function nameLink(handle, name, extra) {
   return handle ? el("a", { class: "rop-name " + (extra || ""), href: profileUrl(handle), text: name || "A member" }) : el("span", { class: "rop-name " + (extra || ""), text: name || "A member" });
 }
 export const ownerTag = () => el("span", { class: "rop-owner", title: "Site owner", text: "Owner" });
+export const adminTag = () => el("span", { class: "rop-admin", title: "Admin (from the Discord server)", text: "Admin" });
 
 /* ---------------- sign-in ----------------
  * Discord always sends people back to /games/ (the one address Supabase is known to allow), and that page then

@@ -2,7 +2,7 @@
  * Everyone can read. Discord-server members can post, comment, react and report. Posts and comments are plain
  * text (links become clickable); nothing a member writes is ever inserted as HTML.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=1";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=2";
 
 const CATS = [["", "All"], ["anyps", "AnyPS"], ["games", "Games"], ["general", "General"], ["help", "Help"], ["offtopic", "Off-topic"]];
 const catName = (k) => (CATS.find(([c]) => c === k) || [k, k])[1];
@@ -45,7 +45,7 @@ function gate(what) {
   return null;
 }
 function byline(x, extra) {
-  return el("div", { class: "fr-by" }, avatar(x.avatar, x.author, 28), nameLink(x.handle, x.author), x.author_is_owner ? ownerTag() : null,
+  return el("div", { class: "fr-by" }, avatar(x.avatar, x.author, 28), nameLink(x.handle, x.author), x.author_is_owner ? ownerTag() : null, x.author_is_staff ? adminTag() : null,
     el("span", { class: "fr-when", title: new Date(x.created_at).toLocaleString(), text: ago(x.created_at) + (x.edited_at ? " · edited" : "") }), extra || null);
 }
 async function report(target, btn) {

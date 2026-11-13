@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=1";
+import { sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx } from "./games.common.js?v=2";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -106,7 +106,7 @@ async function reviews(g, box) {
   const { data } = await sb.from("public_reviews").select("*").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
   box.replaceChildren();
   for (const r of data || []) {
-    const foot = el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name || "A member"), r.stars != null ? "  ·  " + r.stars + " / 5" : null);
+    const foot = el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null, r.stars != null ? "  ·  " + r.stars + " / 5" : null);
     if (member && r.id != null && me.ready) foot.append(el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: (e) => report({ review_id: r.id }, e.target) }));
     box.append(el("blockquote", { class: "gm-review" }, el("p", { text: r.body }), foot));
   }
@@ -202,7 +202,7 @@ async function voters() {
   try {
     let rows = [], full = true;
     const r = await sb.from("voter_stats").select("*").order("votes", { ascending: false }).limit(200);
-    if (!r.error && Array.isArray(r.data)) rows = r.data.map((x) => ({ handle: x.handle || null, name: x.name, avatar: x.avatar, motto: x.motto || "", color: x.motto_color || "white", since: x.member_since || null,
+    if (!r.error && Array.isArray(r.data)) rows = r.data.map((x) => ({ handle: x.handle || null, staff: !!x.is_staff, name: x.name, avatar: x.avatar, motto: x.motto || "", color: x.motto_color || "white", since: x.member_since || null,
       votes: +x.votes || 0, reviews: +x.reviews || 0, fives: +x.fives || 0, zeros: +x.zeros || 0, first: x.first_vote, last: x.last_vote }));
     else {
       full = false;
@@ -211,7 +211,7 @@ async function voters() {
       const m = new Map();
       for (const x of pr.data) {
         if (!x.name) continue;
-        const v = m.get(x.name) || { handle: x.handle || null, name: x.name, avatar: x.avatar, motto: "", color: "white", votes: 0, reviews: 0, fives: 0, zeros: 0, first: x.created_at, last: x.created_at };
+        const v = m.get(x.name) || { handle: x.handle || null, staff: !!x.is_staff, name: x.name, avatar: x.avatar, motto: "", color: "white", votes: 0, reviews: 0, fives: 0, zeros: 0, first: x.created_at, last: x.created_at };
         v.reviews++; if (x.created_at < v.first) v.first = x.created_at; if (x.created_at > v.last) v.last = x.created_at;
         m.set(x.name, v);
       }
@@ -241,7 +241,7 @@ async function voters() {
           place <= 3 ? medal(place) : el("span", { class: "gm-vrank", text: "#" + place }),
           avatar(v.avatar, v.name, place <= 3 ? 42 : 36, "gm-vav"),
           el("span", { class: "gm-vwho" },
-            el("span", { class: "gm-vname", text: v.name }),
+            el("span", { class: "gm-vname" }, v.name, v.staff ? adminTag() : null),
             el("span", { class: "gm-vcount", text: counts })),
           v.motto ? el("span", { class: "gm-vmotto " + colorClass(v.color), title: v.motto, text: "“" + v.motto + "”" }) : el("span", { class: "gm-vmotto gm-vmotto--none" })),
         el("div", { class: "gm-vprofile" },

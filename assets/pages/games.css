@@ -370,3 +370,6 @@ dialog.sx-modal.gi-lb:not([open]){display:none}
 .op-mtile{margin:0;display:grid;gap:6px;padding:10px;border-radius:14px;border:1px solid var(--sx-line,rgba(255,255,255,.1));background:var(--sx-surface,rgba(255,255,255,.03))}
 .op-mtile img,.op-mtile video{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:#05070a}
 .op-mtile.is-hidden img,.op-mtile.is-hidden video{opacity:.4}
+/* red "Admin" bubble (members holding the Discord admin role) */
+.rop-admin{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;font:700 .68rem var(--sx-mono,"DM Mono",monospace);letter-spacing:.06em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#ff4d4d,#c81e3a);box-shadow:0 0 10px rgba(255,60,60,.35);vertical-align:middle;-webkit-text-fill-color:#fff}
+.gm-vname .rop-admin{font-size:.6rem}

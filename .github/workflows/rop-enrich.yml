@@ -1,13 +1,13 @@
 # Builds the Rate-O-Pedia game info cards (assets/data/gameinfo/*.json) from Wikidata, Wikipedia and the
 # emulator compatibility lists. Run by hand from the Actions tab (or `gh workflow run rop-enrich.yml`).
-# The result is uploaded as an artifact; it is reviewed and committed separately.
+# The result is pushed to the branch rop-gameinfo-data (replaced each run); it is reviewed and merged separately.
 name: Rate-O-Pedia game info
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   issues: read
 
 jobs:
@@ -24,8 +24,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUT: out/gameinfo
         run: node tools/rop-enrich/enrich.mjs
-      - uses: actions/upload-artifact@v4
-        with:
-          name: gameinfo
-          path: out/gameinfo
-          retention-days: 7
+      - name: Push the result to rop-gameinfo-data
+        run: |
+          git config user.name "rop-enrich bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan rop-gameinfo-data
+          git rm -rq --cached .
+          mkdir -p assets/data && rm -rf assets/data/gameinfo && mv out/gameinfo assets/data/gameinfo
+          git add assets/data/gameinfo
+          git commit -qm "Rate-O-Pedia game info data ($(date -u +%F))"
+          git push -f origin rop-gameinfo-data

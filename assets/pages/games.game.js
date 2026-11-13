@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, share, sfx, toast, INVITE } from "./games.common.js?v=1";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=2";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -117,7 +117,7 @@ function reviewBox() {
     const r = rows.slice().sort((a, b) => (b.stars ?? -1) - (a.stars ?? -1))[0];
     const body = r.body.length > 280 ? r.body.slice(0, 277).replace(/\s+\S*$/, "") + "…" : r.body;
     box.append(el("blockquote", { class: "gm-review gi-quote" }, el("p", { text: "“" + body + "”" }),
-      el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name), r.stars != null ? "  ·  " + r.stars + " / 5" : null)),
+      el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name), r.is_staff ? adminTag() : null, r.stars != null ? "  ·  " + r.stars + " / 5" : null)),
       el("a", { class: "linkbtn", href: "/games/?q=" + encodeURIComponent(game.title), text: "Read all " + plural(rows.length, "review") + " →" }));
   });
   return box;
@@ -163,7 +163,7 @@ function mediaBox() {
     const mine = me.profile && me.profile.handle === m.handle;
     return el("figure", { class: "gi-tile" + (m.kind === "video" ? " gi-tile--v" : "") },
       el("button", { class: "gi-tile__open", type: "button", "aria-label": "Open " + (m.kind === "video" ? "clip" : "screenshot"), onclick: () => lightbox(m) }, media),
-      el("figcaption", null, m.caption ? el("span", { text: m.caption }) : null, el("span", { class: "gm-note" }, "by ", nameLink(m.handle, m.author)),
+      el("figcaption", null, m.caption ? el("span", { text: m.caption }) : null, el("span", { class: "gm-note" }, "by ", nameLink(m.handle, m.author), m.is_staff ? adminTag() : null),
         mine ? el("button", { class: "linkbtn gm-report", type: "button", text: "Delete", onclick: async () => {
           if (!confirm("Delete this upload?")) return;
           const row = await sb.from("game_media").select("path").eq("id", m.id).maybeSingle();

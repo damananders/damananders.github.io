@@ -2,7 +2,7 @@
  * Anyone can view a profile. The owner of a profile can edit its username, picture, motto (+ colour) and 3 favourite
  * games. Saving goes through the database function update_my_profile, which checks every field again.
  */
-import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, share, sfx, toast, SB_URL } from "./games.common.js?v=1";
+import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL } from "./games.common.js?v=2";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -32,7 +32,7 @@ async function render() {
   const head = el("section", { class: "pf-card pf-head" },
     avatar(p.avatar, p.name, 112, "pf-av"),
     el("div", { class: "pf-id" },
-      el("h1", { class: "pf-name" }, el("span", { text: p.name }), p.is_owner ? ownerTag() : null),
+      el("h1", { class: "pf-name" }, el("span", { text: p.name }), p.is_owner ? ownerTag() : null, p.is_staff ? adminTag() : null),
       p.motto ? el("p", { class: "pf-motto " + colorClass(p.motto_color), text: "“" + p.motto + "”" }) : (mine ? el("p", { class: "pf-motto pf-motto--none", text: "No motto yet." }) : null),
       el("p", { class: "pf-since" }, el("b", { text: "Member Since: " }), memberSince(p.member_since)),
       el("ul", { class: "pf-stats" },
