@@ -486,6 +486,32 @@
       links.appendChild(el("a", { href: l[1], text: l[2] }));
     });
     if (links.firstChild && feat("footerLinks")) foot.appendChild(links);
+
+    /* other channels (site-config channels): one small badge per link that is filled in */
+    var ch = (Site.config && Site.config.channels) || {}, NAMES = { youtube: "YouTube", tiktok: "TikTok", x: "X", instagram: "Instagram", bluesky: "Bluesky" };
+    var badges = el("p", { class: "ch-channels" });
+    Object.keys(NAMES).forEach(function (k) {
+      var u = String(ch[k] || ""); if (!/^https:\/\//.test(u)) return;
+      badges.appendChild(el("a", { class: "ch-channel ch-channel--" + k, href: u, target: "_blank", rel: "noopener me", text: NAMES[k] }));
+    });
+    if (badges.firstChild && feat("channelBadges")) foot.appendChild(badges);
+
+    /* retro visitor counter: counts once per browser session, hides itself if the counter does not answer */
+    var cc = (Site.config && Site.config.counter) || {};
+    if (feat("visitorCounter") && cc.provider === "abacus" && /^[\w-]{3,64}$/.test(cc.namespace || "") && /^[\w-]{1,64}$/.test(cc.key || "")) {
+      var counted = false; try { counted = sessionStorage.getItem("ch.counted") === "1"; } catch (e) {}
+      var base = "https://abacus.jasoncameron.dev/" + (counted || Site.owner ? "get" : "hit") + "/" + cc.namespace + "/" + cc.key;
+      Site.fetchJSON(base, { timeout: 5000 }).then(function (j) {
+        var n = j && typeof j.value === "number" ? j.value : null; if (n == null) return;
+        try { sessionStorage.setItem("ch.counted", "1"); } catch (e) {}
+        var digits = String(Math.max(0, Math.floor(n))); while (digits.length < 6) digits = "0" + digits;
+        var box = el("p", { class: "ch-counter", "aria-label": "Visitor number " + n });
+        box.appendChild(el("span", { class: "ch-counter__label", "aria-hidden": "true", text: "You are visitor" }));
+        var reel = el("span", { class: "ch-counter__reel", "aria-hidden": "true" });
+        digits.split("").forEach(function (d) { reel.appendChild(el("i", { text: d })); });
+        box.appendChild(reel); foot.insertBefore(box, stamp);
+      }).catch(function () {});
+    }
     foot.appendChild(stamp);
     function render(dateStr) {
       stamp.textContent = "";

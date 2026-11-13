@@ -69,6 +69,19 @@ window.SITE_EXTRA = {
     pdfUrl: "",
   },
 
+  /* ---- Other channels. Each one with a link shows as a small badge in the footer of every page. Blank = hidden. ---- */
+  channels: {
+    youtube: "https://www.youtube.com/@DaManAnders",
+    tiktok: "",
+    x: "",
+    instagram: "",
+    bluesky: "",
+  },
+
+  /* ---- Retro visitor counter in the footer. It only counts page opens; no cookies, nothing about the visitor is stored.
+     provider "abacus" uses the free abacus.jasoncameron.dev counter. provider "" hides the counter. ---- */
+  counter: { provider: "abacus", namespace: "damananders-hub", key: "visits" },
+
   /* ---- Analytics (privacy friendly, no cookies). Your GoatCounter site code, e.g. "damananders". Blank = off. ---- */
   analytics: { goatcounter: "" },
 
