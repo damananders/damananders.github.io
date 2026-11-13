@@ -65,6 +65,42 @@
     document.addEventListener("visibilitychange", function () { if (!document.hidden && Date.now() - last >= EVERY) check(); });
   }, "social-twitch");
 
+  /* ---------- Twitch: follower count ---------- */
+  Site.ready(function () {
+    if (!enabled("twitchFollowers")) return;
+    var t = cfg.twitch || {};
+    if (!t.channel || t.showFollowers === false) return;
+    var b = btn("twitch"); if (!b) return;
+    var pill = null;
+    function show(n) {
+      n = Math.round(Number(n));
+      if (!(n >= 0)) return hide();
+      if (!pill) { pill = el("span", { class: "sl-badge sl-count sl-follows", "aria-hidden": "true" }); b.appendChild(pill); }
+      pill.textContent = compact(n);
+      b.classList.add("sl-on");
+    }
+    function hide() {
+      if (pill) { pill.remove(); pill = null; }
+      if (!b.querySelector(".sl-badge,.sl-goal")) b.classList.remove("sl-on");
+    }
+    /* decapi returns a bare number when the channel exists, a short error phrase otherwise */
+    function fetchCount() {
+      return Site.fetchJSON("https://decapi.me/twitch/followcount/" + encodeURIComponent(t.channel), { ttl: 600, text: true, timeout: 5000 }).then(function (txt) {
+        if (typeof txt !== "string") return null;
+        var s = txt.trim().replace(/,/g, "");
+        return (s && s.length < 12 && /^\d+$/.test(s)) ? parseInt(s, 10) : null;
+      });
+    }
+    var testing = !!Site.debug("twitch");
+    var seen = testing ? null : Site.store.get("sl.twfollow", null);
+    if (seen && typeof seen.n === "number" && Date.now() - (seen.t || 0) < 7 * 864e5) show(seen.n);
+    fetchCount().then(function (n) {
+      if (n == null) { if (!seen) hide(); return; }
+      show(n);
+      if (!testing) Site.store.set("sl.twfollow", { n: n, t: Date.now() });
+    }, function () { if (!seen) hide(); });
+  }, "social-twitch-followers");
+
   /* ---------- Discord: member count ---------- */
   Site.ready(function () {
     if (!enabled("discordCount")) return;

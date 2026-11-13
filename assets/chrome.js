@@ -152,6 +152,13 @@
     if (document.fonts && document.fonts.ready && document.fonts.ready.then) document.fonts.ready.then(remeasureSoon, function () {});
   }, "chrome:header");
 
+  /* The hub brand ("Anders …") always returns to the landing page, from any page or depth. */
+  Site.ready(function () {
+    Array.prototype.forEach.call(document.querySelectorAll("a.brand"), function (a) {
+      if (/anders/i.test(a.textContent || "")) a.setAttribute("href", "/");
+    });
+  }, "chrome:brand");
+
   /* ------------------------------------------------------------------------------------------------
      Skip link
      ------------------------------------------------------------------------------------------------ */

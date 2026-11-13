@@ -57,9 +57,29 @@
     var pick = el("div", { class: "nf-pick", role: "group", "aria-label": "Pick a game" });
     var bBoat = el("button", { type: "button", class: "nf-pick__b is-active", "aria-pressed": "true" }, "🚣 Row home");
     var bCase = el("button", { type: "button", class: "nf-pick__b", "aria-pressed": "false" }, "🎮 Review Score");
-    pick.appendChild(bBoat); pick.appendChild(bCase);
+    var bBig = el("button", { type: "button", class: "nf-pick__b nf-pick__big", "aria-pressed": "false", title: "Enlarge and center the game" }, "⤢ Enlarge");
+    pick.appendChild(bBoat); pick.appendChild(bCase); pick.appendChild(bBig);
     if (boat && boat.parentNode) boat.parentNode.insertBefore(pick, boat);
     else hero.appendChild(pick);
+
+    /* ---- enlarge + center the active game into a focused overlay ---- */
+    var dim = el("div", { class: "nf-big-dim", hidden: "" });
+    var bigClose = el("button", { type: "button", class: "nf-big-close", "aria-label": "Shrink the game", hidden: "" }, "⤡ Shrink");
+    var host = doc.body || hero; host.appendChild(dim); host.appendChild(bigClose);
+    var big = false;
+    function setBig(on) {
+      big = !!on;
+      var active = box.hidden ? boat : box;
+      [boat, box].forEach(function (g) { if (g) g.classList.toggle("is-big", big && g === active); });
+      dim.hidden = !big; bigClose.hidden = !big;
+      bBig.setAttribute("aria-pressed", big ? "true" : "false");
+      bBig.classList.toggle("is-active", big);
+      bBig.textContent = big ? "⤡ Shrink" : "⤢ Enlarge";
+    }
+    bBig.addEventListener("click", function () { setBig(!big); });
+    bigClose.addEventListener("click", function () { setBig(false); });
+    dim.addEventListener("click", function () { setBig(false); });
+    doc.addEventListener("keydown", function (e) { if (big && e.key === "Escape") { setBig(false); e.preventDefault(); } });
 
     /* ---- case-game shell (reuses .nf-game styling) ---- */
     var cv = el("canvas", { class: "nf-game__cv", width: String(W), height: String(H), role: "img", "aria-label": "Review Score, a game-stamping game" });
@@ -149,6 +169,7 @@
       if (sc > best) store.set(bk, sc);
       var newUnlock = false;
       if (won && diff.key === "harder" && !hardererUnlocked()) { store.set(HR_KEY, true); newUnlock = true; }
+      if (won && Site.trophy) Site.trophy("rs-" + diff.key);
       var head = el("p", { class: "nf-cg__result " + (won ? "is-win" : "is-lose"),
         text: won ? "Stamped! Review Score " + sc + " — goal was " + goal + "." : (lives <= 0.0001 ? "Out of lives at Review Score " + sc + "." : "Time! " + sc + " of " + goal + " — just short.") });
       renderMenu(head);

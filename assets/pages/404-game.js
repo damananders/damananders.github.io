@@ -92,7 +92,7 @@
       if (rec) { best = s; Site.store.set("best404", best); paintBest(); }
       msg.textContent = (rec ? "New best: " : "You hit the rocks at ") + s + ". " + (rec ? "The lighthouse keeper is impressed." : "Have another go?");
       btn.textContent = "Play again"; Site.sfx(rec ? "success" : "error");
-      if (Site.trophy && s >= 300) Site.trophy("sailor");
+      if (Site.trophy) { if (s >= 300) Site.trophy("sailor"); if (s >= 1000) Site.trophy("boat1k"); if (s >= 5000) Site.trophy("boat5k"); }
     }
     btn.addEventListener("click", start);
     doc.addEventListener("keydown", function (e) {

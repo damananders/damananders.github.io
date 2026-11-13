@@ -108,3 +108,11 @@
 .nf-cg__diff.is-secret{border-color:#f0c23a;box-shadow:0 0 0 1px rgba(240,194,58,.5)}
 .nf-cg__diff.is-secret b{color:#f0c23a}
 .nf-cg__best{font:500 .82rem var(--mono);color:var(--muted)}
+
+/* ---- enlarge + center a game into a focused overlay (pages/404-case-game.js) ---- */
+.nf-pick__big{margin-left:auto}
+.nf-big-dim{position:fixed;inset:0;background:rgba(4,8,14,.74);backdrop-filter:blur(3px);z-index:70}
+.nf-game.is-big{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(94vw,860px);max-width:none;max-height:92vh;overflow:auto;z-index:71;margin:0;box-shadow:0 30px 80px -20px rgba(0,0,0,.85)}
+.nf-big-close{position:fixed;top:14px;right:14px;z-index:72;font:600 .9rem var(--display);color:var(--text);background:var(--sx-glass);border:1px solid var(--line-2);border-radius:999px;padding:9px 16px;min-height:42px;cursor:pointer;backdrop-filter:blur(8px)}
+.nf-big-close:focus-visible,.nf-pick__big:focus-visible{outline:2px solid var(--sx-accent);outline-offset:3px}
+@media (max-width:560px){.nf-game.is-big{width:96vw}.nf-pick__big{margin-left:0}}
