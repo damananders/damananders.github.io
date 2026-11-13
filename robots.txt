@@ -1,0 +1,6 @@
+# Everything public may be crawled. Private pages carry their own "noindex" tag instead of being listed here,
+# because naming them in this file would only advertise them.
+User-agent: *
+Allow: /
+
+Sitemap: https://damananders.github.io/sitemap.xml

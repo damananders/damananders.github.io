@@ -90,7 +90,7 @@
     if (!feat("trophies")) return;
     var tools = Site.tools();
     if (tools) {
-      cupCount = el("span", { class: "pl-cup__n" });
+      cupCount = el("span", { class: "pl-cup__n", "aria-hidden": "true" });
       cupBtn = el("button", { type: "button", class: "sx-iconbtn pl-cup", style: { order: "40" }, "aria-label": "Trophies", title: "Trophies" }, svg(CUP), cupCount);
       cupBtn.addEventListener("click", function () { Site.sfx("open"); openList(); });
       tools.appendChild(cupBtn); paintCup();

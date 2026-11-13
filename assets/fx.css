@@ -109,3 +109,11 @@ dialog.sx-modal::backdrop{background:rgba(3,5,8,.72);backdrop-filter:blur(4px)}
 :root:not([data-motion="reduce"]) dialog.sx-modal[open]{animation:sx-pop .22s var(--sx-ease)}
 @keyframes sx-pop{from{opacity:0;transform:translateY(10px) scale(.98)}}
 @media (max-width:520px){.sx-modal__head{padding:14px 16px}.sx-modal__body{padding:14px 16px 18px}}
+
+/* AVIF backgrounds where the browser can use them (WebP stays the fallback in each page's own --bg).
+   The hub keeps its WebP because its parallax layer reads --bg as a plain url(). */
+@supports (background-image:image-set(url("a.avif") type("image/avif"))){
+  :root:not([data-page="hub"]) body.photo[style*="anyps-bg.webp"]{--bg:image-set(url("/assets/anyps-bg.avif") type("image/avif"),url("/assets/anyps-bg.webp") type("image/webp"))!important}
+  :root:not([data-page="hub"]) body.photo[style*="vault-bg.webp"]{--bg:image-set(url("/assets/vault-bg.avif") type("image/avif"),url("/assets/vault-bg.webp") type("image/webp"))!important}
+  :root:not([data-page="hub"]) body.photo[style*="hub-bg.webp"]{--bg:image-set(url("/assets/hub-bg.avif") type("image/avif"),url("/assets/hub-bg.webp") type("image/webp"))!important}
+}
