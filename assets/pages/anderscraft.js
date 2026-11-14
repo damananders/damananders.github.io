@@ -379,4 +379,326 @@
     if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { seen = es[0].isIntersecting; }, { threshold: 0.3 }).observe(box); else seen = true;
     requestAnimationFrame(tick);
   }, "ac-tour");
+
+  /* ======================================================================
+     AZEROTH LAYER (v3): achievements, realm charters, loot tooltips, the
+     quest log, roll-a-hero, the XP bar and a counting stat band.
+     ====================================================================== */
+  var Ach = (function () {
+    var KEY = "ac.ach", got = Site.store.get(KEY, {});
+    if (!got || typeof got !== "object" || Array.isArray(got)) got = {};
+    var DEFS = [
+      { id: "scout", name: "Realm Scout", desc: "Read both realm charters.", pts: 10 },
+      { id: "loot", name: "Loot Goblin", desc: "Inspect every custom feature.", pts: 10 },
+      { id: "quests", name: "Quest Completionist", desc: "Turn in every quest in the quest log.", pts: 10 },
+      { id: "alts", name: "Altoholic", desc: "Roll ten heroes.", pts: 5 },
+      { id: "ding", name: "Ding!", desc: "Reach level 125 on the XP bar.", pts: 10 },
+      { id: "signup", name: "Welcome to Azeroth", desc: "Create your AndersCraft account.", pts: 25 },
+      { id: "murloc", name: "Mrgllglglgl!", desc: "Find the murloc hiding in the title.", pts: 5, hidden: true }
+    ];
+    var listeners = [], queue = [], showing = false;
+    function def(id) { return DEFS.filter(function (d) { return d.id === id; })[0]; }
+    function pop() {
+      if (showing || !queue.length) return;
+      showing = true;
+      var d = queue.shift();
+      var box = el("div", { class: "ac-ach", role: "status", "aria-live": "polite" },
+        el("span", { class: "ac-ach-shield", "aria-hidden": "true", text: String(d.pts) }),
+        el("span", null, el("span", { class: "ac-ach-k", text: "Achievement earned" }), el("span", { class: "ac-ach-n", text: d.name }), el("span", { class: "ac-ach-d", text: d.desc })));
+      document.body.appendChild(box);
+      try { if (box.showPopover) { box.setAttribute("popover", "manual"); box.showPopover(); } } catch (e) {}
+      Site.sfx("win");
+      requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("is-in"); }); });
+      setTimeout(function () { box.classList.remove("is-in"); setTimeout(function () { box.remove(); showing = false; pop(); }, 480); }, 3800);
+    }
+    return {
+      defs: DEFS, has: function (id) { return got[id] === true; },
+      award: function (id) {
+        var d = def(id); if (!d || got[id] === true) return;
+        got[id] = true; Site.store.set(KEY, got);
+        queue.push(d); pop();
+        listeners.forEach(function (fn) { try { fn(); } catch (e) {} });
+      },
+      reset: function () { got = {}; Site.store.remove(KEY); listeners.forEach(function (fn) { try { fn(); } catch (e) {} }); },
+      on: function (fn) { listeners.push(fn); }
+    };
+  })();
+
+  function floatText(text, x, y) {
+    if (Site.reducedMotion) return;
+    var n = el("span", { class: "ac-float", "aria-hidden": "true", text: text, style: { left: x + "px", top: y + "px" } });
+    document.body.appendChild(n); setTimeout(function () { n.remove(); }, 1500);
+  }
+
+  /* ---------- realm charters: the realm banners open a dialog with live numbers ---------- */
+  Site.ready(function () {
+    var dialogs = $all("dialog[data-ac-realm-dlg]"); if (!dialogs.length) return;
+    var seen = Site.store.get("ac.realmsSeen", {}); if (!seen || typeof seen !== "object") seen = {};
+    var ROMAN = { "1": "Realm I", "2": "Realm II" };
+
+    function fmtUptime(sec) {
+      if (!isNum(sec)) return null;
+      var d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60);
+      return d ? d + "d " + h + "h" : h ? h + "h " + m + "m" : m + "m";
+    }
+    function population(r) {
+      if (!r || r.online === false) return ["offline", "Offline"];
+      if (!isNum(r.players)) return ["", "Unknown"];
+      var p = r.players;
+      return p >= 30 ? ["full", "Full"] : p >= 15 ? ["high", "High"] : p >= 5 ? ["medium", "Medium"] : ["low", "Low"];
+    }
+    function setStat(dlg, key, value) {
+      var n = $('[data-ac-stat="' + key + '"]', dlg); if (!n) return;
+      var has = value != null && value !== "";
+      n.textContent = has ? value : "—";
+      n.classList.toggle("ac-dim", !has);
+    }
+    function fill(dlg, d) {
+      var id = dlg.getAttribute("data-ac-realm-dlg");
+      var r = d && Array.isArray(d.realms) ? d.realms.filter(function (x) { return x && String(x.id) === id; })[0] : null;
+      var chip = $('[data-ac-stat="chip"]', dlg), state = $('[data-ac-stat="state"]', dlg);
+      if (chip && state) {
+        var known = r && typeof r.online === "boolean";
+        chip.className = "sx-chip " + (!known ? "is-wait" : r.online ? "is-on" : "is-off");
+        state.textContent = !known ? "The scrying orb is cloudy" : r.online ? "Online and accepting heroes" : "Offline. The realm sleeps";
+      }
+      var pop = population(r), popN = $('[data-ac-stat="pop"]', dlg);
+      if (popN) { popN.textContent = pop[1]; if (pop[0]) popN.setAttribute("data-pop", pop[0]); else popN.removeAttribute("data-pop"); }
+      var online = r && r.online === true;
+      setStat(dlg, "players", online && isNum(r.players) ? Site.fmtNum(r.players) : null);
+      setStat(dlg, "bots", online && isNum(r.bots) ? Site.fmtNum(r.bots) : null);
+      var accounts = r && isNum(r.accounts) ? r.accounts : d && isNum(d.accounts) ? d.accounts : null;
+      setStat(dlg, "accounts", accounts != null ? Site.fmtNum(accounts) : null);
+      setStat(dlg, "characters", r && isNum(r.characters) ? Site.fmtNum(r.characters) : null);
+      setStat(dlg, "peak", r && isNum(r.peak) ? Site.fmtNum(r.peak) : null);
+      setStat(dlg, "uptime", online ? fmtUptime(r.uptime) : null);
+      var kind = $(".ac-dlg-kind", dlg), name = r && typeof r.name === "string" ? r.name.trim().slice(0, 40) : "";
+      if (kind) kind.textContent = (ROMAN[id] || "Realm") + (name ? " · " + name : "");
+    }
+    function refresh(dlg) { Site.live.realms().then(function (d) { fill(dlg, d); }, function () { fill(dlg, null); }); }
+
+    var opener = null, timers = {};
+    dialogs.forEach(function (dlg) {
+      var id = dlg.getAttribute("data-ac-realm-dlg");
+      var card = $('.ac-realm[data-ac-realm="' + id + '"]'), crest = card && $(".ac-realm-crest svg", card), slot = $(".ac-dlg-crest", dlg);
+      if (crest && slot) slot.appendChild(crest.cloneNode(true));
+      if (typeof dlg.showModal !== "function") return;
+      dlg.addEventListener("click", function (e) {
+        if (e.target === dlg) { dlg.close(); return; }                 /* a click on the backdrop */
+        var c = e.target.closest("[data-ac-close]"); if (!c) return;
+        var pick = c.getAttribute("data-ac-pick");
+        if (pick) Site.toast((pick === "2" ? "Andersian Hardcore" : "The main realm") + " it is. One account opens both realms.", { type: "ok", ms: 3600 });
+        dlg.close();
+      });
+      dlg.addEventListener("close", function () {
+        clearInterval(timers[id]); Site.sfx("close");
+        if (opener && document.contains(opener) && !location.hash.match(/^#ac-signup$/)) opener.focus();
+      });
+    });
+    function open(dlg, from) {
+      var id = dlg.getAttribute("data-ac-realm-dlg");
+      opener = from || null;
+      fill(dlg, null); refresh(dlg);
+      clearInterval(timers[id]); timers[id] = setInterval(function () { if (!document.hidden) refresh(dlg); }, 30000);
+      dlg.showModal(); Site.sfx("open");
+      seen[id] = true; Site.store.set("ac.realmsSeen", seen);
+      if (seen["1"] && seen["2"]) Ach.award("scout");
+    }
+    $all("[data-ac-open]").forEach(function (b) {
+      var dlg = document.getElementById(b.getAttribute("data-ac-open"));
+      if (!dlg || typeof dlg.showModal !== "function") { b.hidden = true; return; }
+      b.addEventListener("click", function () { open(dlg, b); });
+    });
+    /* a click anywhere on the banner counts, except on links inside it */
+    $all(".ac-realm[data-ac-realm]").forEach(function (card) {
+      card.addEventListener("click", function (e) {
+        if (e.target.closest("a,button")) return;
+        var b = $("[data-ac-open]", card); if (b && !b.hidden) b.click();
+      });
+    });
+    /* deep links: /anderscraft/#realm-1 or #realm-2 open the charter */
+    var m = /^#realm-([12])$/.exec(location.hash || "");
+    if (m) { var d0 = document.getElementById("ac-dlg-" + m[1]); if (d0 && typeof d0.showModal === "function") setTimeout(function () { open(d0, null); }, 400); }
+  }, "ac-realm-dialogs");
+
+  /* ---------- feature tiles: item tooltips, like inspecting loot ---------- */
+  Site.ready(function () {
+    var tiles = $all(".ac-tile[data-ac-q]"); if (!tiles.length) return;
+    var KEY = "ac.lootSeen", seen = Site.store.get(KEY, {}); if (!seen || typeof seen !== "object") seen = {};
+    var tip = el("div", { class: "ac-tip", role: "tooltip", id: "ac-tip" }); document.body.appendChild(tip);
+    var current = null, hideT = 0;
+    var BIND = { uncommon: "Binds when equipped", rare: "Binds when picked up", epic: "Binds to account", legendary: "Unique · Binds to soul" };
+    function key(t) { return ($("b", t) || t).textContent.trim(); }
+    function place(t) {
+      var r = t.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+      var x = r.right + 10, y = r.top;
+      if (x + w > vw - 8) { x = Math.max(8, Math.min(vw - w - 8, r.left)); y = r.bottom + 8; if (y + h > vh - 20) y = r.top - h - 8; }
+      if (y + h > vh - 20) y = vh - h - 20; if (y < 8) y = 8;
+      tip.style.left = Math.round(x) + "px"; tip.style.top = Math.round(y) + "px";
+    }
+    function show(t) {
+      clearTimeout(hideT);
+      if (current && current !== t) current.classList.remove("ac-tip-on");
+      current = t; t.classList.add("ac-tip-on");
+      var q = t.getAttribute("data-ac-q"), name = key(t), body = ($("span", t) || {}).textContent || "", flavor = t.getAttribute("data-ac-flavor");
+      tip.textContent = "";
+      tip.appendChild(el("b", { text: name, style: { color: "var(--q-" + q + ")" } }));
+      tip.appendChild(el("i", { class: "t-bind", text: BIND[q] || "Soulbound" }));
+      tip.appendChild(el("i", { class: "t-q", text: q + " server feature" }));
+      tip.appendChild(el("i", { class: "t-use", text: "Equip: " + body }));
+      if (flavor) tip.appendChild(el("i", { class: "t-flavor", text: "“" + flavor + "”" }));
+      tip.classList.add("is-on"); place(t);
+      if (!seen[name]) {
+        seen[name] = true; Site.store.set(KEY, seen); t.classList.add("ac-seen");
+        if (tiles.every(function (x) { return seen[key(x)]; })) Ach.award("loot");
+      }
+    }
+    function hide() { hideT = setTimeout(function () { tip.classList.remove("is-on"); if (current) current.classList.remove("ac-tip-on"); current = null; }, 60); }
+    tiles.forEach(function (t) {
+      t.setAttribute("tabindex", "0"); t.setAttribute("aria-describedby", "ac-tip");
+      if (seen[key(t)]) t.classList.add("ac-seen");
+      t.addEventListener("mouseenter", function () { show(t); });
+      t.addEventListener("mouseleave", hide);
+      t.addEventListener("focus", function () { show(t); });
+      t.addEventListener("blur", hide);
+      t.addEventListener("click", function () { if (current === t && tip.classList.contains("is-on")) hide(); else { show(t); Site.sfx("tap"); } });
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && current) hide(); });
+    window.addEventListener("scroll", function () { if (current) hide(); }, { passive: true });
+  }, "ac-loot-tips");
+
+  /* ---------- quest log: every rules / FAQ entry is a quest to turn in ---------- */
+  Site.ready(function () {
+    var qs = $all("#ac-rules .ac-q, #ac-faq .ac-q"); if (!qs.length) return;
+    var KEY = "ac.questsRead", read = Site.store.get(KEY, {}); if (!read || typeof read !== "object") read = {};
+    function k(q) { var s = $("summary", q); return s ? s.textContent.trim().slice(0, 60) : ""; }
+    qs.forEach(function (q) {
+      if (read[k(q)]) q.classList.add("ac-read");
+      q.addEventListener("toggle", function () {
+        if (!q.open) return;
+        Site.sfx("open");
+        if (read[k(q)]) return;
+        read[k(q)] = true; Site.store.set(KEY, read); q.classList.add("ac-read");
+        var s = $("summary", q), r = s && s.getBoundingClientRect();
+        if (r) floatText("Quest complete", r.left + 120, r.top);
+        if (qs.every(function (x) { return read[k(x)]; })) Ach.award("quests");
+      });
+    });
+  }, "ac-quest-log");
+
+  /* ---------- roll a hero: any race, any class, any regrettable title ---------- */
+  Site.ready(function () {
+    var box = $("#ac-roll"), btn = $("#ac-roll-btn"), nameN = $("#ac-roll-name"), lineN = $("#ac-roll-line"); if (!box || !btn) return;
+    var RACES = ["Human", "Dwarf", "Night Elf", "Gnome", "Draenei", "Worgen", "Orc", "Undead", "Tauren", "Troll", "Blood Elf", "Goblin"];
+    var CLASSES = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Druid"];
+    var A = ["Grim", "Thrag", "Mor", "Bel", "Zul", "Gor", "Fen", "Kael", "Bram", "Vol", "Ur", "Snik", "Mog", "Dra", "Thal", "Grub", "Ash", "Vex"];
+    var B = ["dak", "thas", "gul", "wick", "nar", "rok", "iel", "zz", "ble", "goth", "ius", "mo", "fang", "drin", "bottom", "ra"];
+    var TITLES = ["the Unkillable (Probably)", "Slayer of Several Boars", "the Mildly Feared", "Bane of Kobolds", "Who Pulled Too Much", "the Twice Resurrected",
+      "Keeper of the Spare Hearthstone", "the Unbound", "Champion of Goldshire", "the Very Serious", "of the Ashen Ledger", "Dread Lord of the Bank Alt",
+      "the Patient, Eventually", "Scourge of the Auction House", "Who Stood in the Fire", "the Last Light of Westfall", "the Grim", "Herald of Questionable Gear"];
+    var rolls = 0, busy = false;
+    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+    function hero() {
+      var lvl = 1 + Math.floor(Math.random() * 125);
+      return { name: pick(A) + pick(B) + " " + pick(TITLES), line: "Level " + lvl + " " + pick(RACES) + " " + pick(CLASSES),
+        q: lvl >= 120 ? "legendary" : lvl >= 80 ? "epic" : lvl >= 40 ? "rare" : "uncommon" };
+    }
+    function paint(h) { nameN.textContent = h.name; lineN.textContent = h.line; nameN.style.color = "var(--q-" + h.q + ")"; }
+    btn.addEventListener("click", function () {
+      if (busy) return; busy = true;
+      var card = $(".ac-roll-card", box), n = Site.reducedMotion ? 0 : 7;
+      card.classList.add("is-rolling");
+      (function spin() {
+        paint(hero()); Site.sfx("tap");
+        if (n-- > 0) return setTimeout(spin, 70);
+        card.classList.remove("is-rolling"); busy = false;
+        rolls++; Site.store.set("ac.rolls", (Site.store.get("ac.rolls", 0) || 0) + 1);
+        var r = btn.getBoundingClientRect(); floatText("+1 Alt", r.left + r.width / 2, r.top - 6);
+        if ((Site.store.get("ac.rolls", 0) || 0) >= 10) Ach.award("alts");
+      })();
+    });
+    paint(hero()); box.hidden = false;
+  }, "ac-roll");
+
+  /* ---------- the murloc in the title (click it five times) ---------- */
+  Site.ready(function () {
+    var h1 = $(".ac-hero h1"); if (!h1) return;
+    var clicks = 0, t = 0;
+    h1.addEventListener("click", function (e) {
+      clicks++; clearTimeout(t); t = setTimeout(function () { clicks = 0; }, 1600);
+      if (clicks < 5) return;
+      clicks = 0;
+      floatText(pick(["Mrgllglglgl!", "Aaaaughibbrgubugbugrguburgle!", "Mrrrggk!"]), e.clientX, e.clientY - 10);
+      Site.sfx("success"); Ach.award("murloc");
+    });
+    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  }, "ac-murloc");
+
+  /* ---------- XP bar: scrolling the page levels you up to 125 ---------- */
+  Site.ready(function () {
+    if (!enabled("acXpBar")) return;
+    var fill = el("i", { class: "ac-xp-fill" }), label = el("span", { class: "ac-xp-t" });
+    var bar = el("div", { class: "ac-xp", "aria-hidden": "true", title: "Experience: earned by reading. Very realistic." }, fill, label);
+    document.body.appendChild(bar); document.body.classList.add("ac-has-xp");
+    var lastLvl = 0, raf = 0, dinged = false;
+    function paint() {
+      raf = 0;
+      var max = document.documentElement.scrollHeight - window.innerHeight, p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
+      var lvl = p >= 0.995 ? 125 : 1 + Math.floor(p * 124);
+      fill.style.width = (p * 100).toFixed(2) + "%";
+      if (lvl !== lastLvl) {
+        label.textContent = lvl >= 125 ? "Level 125 · Ding! Max level" : "Level " + lvl + " · " + Math.round(p * 100) + "% to 125";
+        bar.classList.toggle("is-ding", lvl >= 125);
+        if (lvl >= 125 && !dinged && lastLvl) { dinged = true; Ach.award("ding"); }
+        lastLvl = lvl;
+      }
+    }
+    window.addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
+    window.addEventListener("resize", function () { if (!raf) raf = requestAnimationFrame(paint); });
+    paint();
+  }, "ac-xp");
+
+  /* ---------- stat band: the numbers count up when they come into view ---------- */
+  Site.ready(function () {
+    if (Site.reducedMotion || !("IntersectionObserver" in window)) return;
+    var nums = $all(".ac-statband .ac-stat b").filter(function (b) { return /^\d+$/.test(b.textContent.trim()); }); if (!nums.length) return;
+    nums.forEach(function (b) { b.setAttribute("data-ac-to", b.textContent.trim()); });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return; io.unobserve(e.target);
+        var b = e.target, to = parseInt(b.getAttribute("data-ac-to"), 10), t0 = 0;
+        (function step(now) {
+          if (!t0) t0 = now; var k = Math.min(1, (now - t0) / 1100), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+          b.textContent = String(v); if (k < 1) requestAnimationFrame(step);
+        })(performance.now());
+      });
+    }, { threshold: 0.6 });
+    nums.forEach(function (b) { io.observe(b); });
+  }, "ac-countup");
+
+  /* ---------- account created: the big one ---------- */
+  Site.ready(function () {
+    var msg = $("#msg"); if (!msg || !("MutationObserver" in window)) return;
+    new MutationObserver(function () { if (msg.classList.contains("ok")) Ach.award("signup"); })
+      .observe(msg, { attributes: true, attributeFilter: ["class"] });
+  }, "ac-ach-signup");
+
+  /* ---------- achievements panel ---------- */
+  Site.ready(function () {
+    var section = $("#ac-feats"), list = $("#ac-feats-list"), count = $("#ac-feats-count"); if (!section || !list) return;
+    function paint() {
+      list.textContent = "";
+      var n = 0, pts = 0;
+      Ach.defs.forEach(function (d) {
+        var got = Ach.has(d.id); if (got) { n++; pts += d.pts; }
+        list.appendChild(el("li", { class: "ac-feat" + (got ? " is-got" : "") },
+          el("span", { class: "ac-ach-shield", "aria-hidden": "true", text: String(d.pts) }),
+          el("div", null, el("b", { text: !got && d.hidden ? "Hidden achievement" : d.name }),
+            el("span", { text: !got && d.hidden ? "Some deeds are found, not followed." : d.desc }),
+            el("span", { class: "sx-sr", text: got ? "Earned." : "Not earned yet." }))));
+      });
+      if (count) count.textContent = n + " of " + Ach.defs.length + " earned · " + pts + " points.";
+    }
+    Ach.on(paint); paint(); section.hidden = false;
+  }, "ac-ach-panel");
 })();

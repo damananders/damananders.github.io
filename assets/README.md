@@ -80,3 +80,5 @@ Watch out on the AndersCraft page: its own stylesheet styles bare `button`, `inp
     }
 
 Until it is set, the player counts and leaderboard simply don't appear.
+
+Optional extra fields fill the realm charter dialogs (any that are missing show a dash): top-level `accounts` (total registered players, bot accounts excluded), and per realm `characters` (player characters created), `peak` (most players at once) and `uptime` (seconds since the worldserver started).

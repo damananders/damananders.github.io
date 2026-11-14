@@ -78,12 +78,12 @@
 .ac-realms{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .ac-realm{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line-2);border-top:4px solid var(--royal);border-radius:18px;padding:22px 24px;
   box-shadow:0 18px 44px -28px rgba(0,0,0,.72);transition:transform .18s,box-shadow .18s,border-color .18s}
-.ac-realm:hover{transform:translateY(-4px);border-color:var(--royal);box-shadow:0 26px 54px -26px rgba(255,122,31,.4)}
+.ac-realm:hover{transform:translateY(-4px);border-color:var(--royal);box-shadow:0 26px 54px -26px rgba(227,176,75,.4)}
 .ac-realm--hc{border-top-color:var(--red)}
-.ac-realm--hc:hover{border-color:var(--red);box-shadow:0 26px 54px -26px rgba(255,107,94,.42)}
+.ac-realm--hc:hover{border-color:var(--red);box-shadow:0 26px 54px -26px rgba(205,66,87,.42)}
 .ac-realm-top{display:flex;align-items:center;gap:14px}
-.ac-realm-ico{width:46px;height:46px;flex:none;padding:9px;border-radius:12px;color:var(--royal);background:rgba(255,122,31,.1);border:1px solid var(--line-2);box-shadow:0 0 22px -6px rgba(255,122,31,.5) inset}
-.ac-realm--hc .ac-realm-ico{background:rgba(255,107,94,.1);box-shadow:0 0 22px -6px rgba(255,107,94,.5) inset}
+.ac-realm-ico{width:46px;height:46px;flex:none;padding:9px;border-radius:12px;color:var(--royal);background:rgba(227,176,75,.1);border:1px solid var(--line-2);box-shadow:0 0 22px -6px rgba(227,176,75,.5) inset}
+.ac-realm--hc .ac-realm-ico{background:rgba(205,66,87,.1);box-shadow:0 0 22px -6px rgba(205,66,87,.5) inset}
 .ac-realm--hc .ac-realm-ico{color:var(--red)}
 .ac-realm-name{font-family:var(--display);font-weight:700;font-size:1.3rem;line-height:1.2;margin:0;color:var(--text)}
 .ac-realm-tag{margin:2px 0 0;color:var(--muted);font-size:1rem;line-height:1.35}
@@ -102,8 +102,8 @@
 .ac-tile{display:flex;align-items:flex-start;gap:13px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;transition:border-color .2s,transform .18s,background-color .2s}
 .ac-tile:hover{border-color:var(--line-2);transform:translateY(-3px);background:var(--surface)}
 .ac-tile svg{width:42px;height:42px;flex:none;padding:8px;border-radius:11px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
-  color:var(--royal);background:rgba(255,122,31,.1);border:1px solid var(--line-2);transition:box-shadow .2s}
-.ac-tile:hover svg{box-shadow:0 0 20px -4px rgba(255,122,31,.55)}
+  color:var(--royal);background:rgba(227,176,75,.1);border:1px solid var(--line-2);transition:box-shadow .2s}
+.ac-tile:hover svg{box-shadow:0 0 20px -4px rgba(227,176,75,.55)}
 .ac-tile b{display:block;font-family:var(--display);font-weight:600;font-size:.98rem;letter-spacing:.02em;line-height:1.3;color:var(--text)}
 .ac-tile span{display:block;color:var(--muted);font-size:1rem;line-height:1.4;margin-top:3px}
 
@@ -228,7 +228,7 @@
 .ac-tour-input,.ac-tour-file2 code{display:block;min-height:34px;padding:6px 10px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line-2);font:500 .95rem ui-monospace,monospace;color:var(--text);overflow-wrap:anywhere}
 .ac-tour-type::after{content:"";display:inline-block;width:2px;height:1em;margin-left:1px;vertical-align:-.12em;background:var(--royal);animation:ac-tour-blink 1s steps(1) infinite}
 @keyframes ac-tour-blink{50%{opacity:0}}
-.ac-tour-btn{justify-self:start;margin-top:4px;padding:8px 16px;border-radius:10px;background:var(--royal);color:#1a0d03;font-family:var(--display);font-weight:700;animation:ac-tour-press 1.2s ease 2.2s both}
+.ac-tour-btn{justify-self:start;margin-top:4px;padding:8px 16px;border-radius:10px;background:var(--royal);color:#1a1104;font-family:var(--display);font-weight:700;animation:ac-tour-press 1.2s ease 2.2s both}
 .ac-tour-btn--go{justify-self:center;padding:10px 26px}
 @keyframes ac-tour-press{0%,60%{transform:none;filter:none}75%{transform:scale(.94);filter:brightness(1.3)}100%{transform:none}}
 .ac-tour-msg{margin:0;padding:8px 12px;border-radius:12px 12px 12px 3px;background:var(--surface-2);border:1px solid var(--line);max-width:80%;animation:ac-tour-in .4s ease both}
@@ -248,7 +248,7 @@
 body>.wrap{position:relative;z-index:1}
 .ac-atmos{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict}
 .ac-atmos-glow{position:absolute;left:50%;top:-12%;width:130vw;height:74vh;transform:translateX(-50%);
-  background:radial-gradient(58% 60% at 50% 0,rgba(255,122,31,.2),rgba(255,122,31,.06) 42%,transparent 72%);filter:blur(8px)}
+  background:radial-gradient(58% 60% at 50% 0,rgba(227,176,75,.2),rgba(227,176,75,.06) 42%,transparent 72%);filter:blur(8px)}
 .ac-atmos::after{content:"";position:absolute;inset:0;background:radial-gradient(130% 95% at 50% 8%,transparent 54%,rgba(3,4,6,.62))}
 .ac-embers{position:absolute;inset:0}
 .ac-embers i{position:absolute;bottom:-24px;width:var(--s,4px);height:var(--s,4px);border-radius:50%;
@@ -257,7 +257,7 @@ body>.wrap{position:relative;z-index:1}
 @keyframes ac-rise{0%{transform:translateY(0) translateX(0) scale(1);opacity:0}
   8%{opacity:.9}70%{opacity:.6}100%{transform:translateY(-94vh) translateX(var(--dx,20px)) scale(.3);opacity:0}}
 /* the light theme sky is pale: keep only a soft warm wash, no embers */
-:root[data-theme="light"] .ac-atmos-glow{background:radial-gradient(58% 60% at 50% 0,rgba(255,150,70,.14),transparent 70%)}
+:root[data-theme="light"] .ac-atmos-glow{background:radial-gradient(58% 60% at 50% 0,rgba(214,170,92,.14),transparent 70%)}
 :root[data-theme="light"] .ac-atmos::after{background:radial-gradient(130% 95% at 50% 8%,transparent 60%,rgba(255,250,244,.5))}
 :root[data-theme="light"] .ac-embers{display:none}
 :root[data-motion="reduce"] .ac-embers{display:none}
@@ -266,42 +266,318 @@ body>.wrap{position:relative;z-index:1}
 .ac-hero{position:relative}
 .ac-hero h1{background:linear-gradient(176deg,#fff4e0 0%,var(--royal-2) 40%,var(--royal) 74%,var(--royal-deep) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;text-shadow:none;
-  filter:drop-shadow(0 2px 1px rgba(0,0,0,.45)) drop-shadow(0 0 30px rgba(255,122,31,.4))}
-:root[data-theme="light"] .ac-hero h1{background:linear-gradient(176deg,#7a3400,#b4500a 60%,#e0670f);-webkit-background-clip:text;background-clip:text;filter:none}
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.45)) drop-shadow(0 0 30px rgba(227,176,75,.4))}
+:root[data-theme="light"] .ac-hero h1{background:linear-gradient(176deg,#7a3400,#b4500a 60%,#a8761f);-webkit-background-clip:text;background-clip:text;filter:none}
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){.ac-hero h1{color:var(--royal-2);-webkit-text-fill-color:currentColor}}
 .ac-flourish{display:flex;align-items:center;gap:0;max-width:380px;margin:-4px 0 20px}
-.ac-fl-line{height:2px;flex:1;max-width:150px;background:linear-gradient(90deg,transparent,rgba(255,170,90,.75))}
-.ac-fl-line:last-child{background:linear-gradient(90deg,rgba(255,170,90,.75),transparent)}
+.ac-fl-line{height:2px;flex:1;max-width:150px;background:linear-gradient(90deg,transparent,rgba(226,186,110,.75))}
+.ac-fl-line:last-child{background:linear-gradient(90deg,rgba(226,186,110,.75),transparent)}
 .ac-fl-dia{flex:none;width:9px;height:9px;margin:0 13px;transform:rotate(45deg);background:var(--royal);box-shadow:0 0 12px var(--royal)}
 
 /* ---- ornamental divider above every section ---- */
 .ac-sec::before{content:"";display:block;height:12px;margin:0 auto 28px;width:min(260px,64%);
-  background:linear-gradient(90deg,transparent,rgba(255,150,70,.5) 16%,rgba(255,150,70,.5) 84%,transparent) center/100% 1px no-repeat,
+  background:linear-gradient(90deg,transparent,rgba(214,170,92,.5) 16%,rgba(214,170,92,.5) 84%,transparent) center/100% 1px no-repeat,
     radial-gradient(circle at 50% 50%,var(--royal) 0 3.5px,transparent 4.6px) center/13px 13px no-repeat;
-  filter:drop-shadow(0 0 6px rgba(255,122,31,.45))}
+  filter:drop-shadow(0 0 6px rgba(227,176,75,.45))}
 :root[data-theme="light"] .ac-sec::before{filter:none}
 
 /* ---- framed "artifact" panels: a fine inset ring inside the card border ---- */
 .card::after,.ac-realm::after,.ac-wiz::after,.ac-board::after,.ac-tour::after,.ac-game::after{content:"";position:absolute;inset:7px;
-  border:1px solid rgba(255,170,90,.12);border-radius:13px;pointer-events:none}
+  border:1px solid rgba(226,186,110,.12);border-radius:13px;pointer-events:none}
 .ac-wiz,.ac-board,.ac-tour{position:relative}
 .card::after{border-radius:14px}
 
 /* ---- realm cards: heavier, more monumental; the hardcore realm smoulders ---- */
-.ac-realm{background:linear-gradient(185deg,rgba(255,150,70,.05),var(--surface) 60%)}
-.ac-realm-name{text-shadow:0 1px 20px rgba(255,122,31,.28)}
+.ac-realm{background:linear-gradient(185deg,rgba(214,170,92,.05),var(--surface) 60%)}
+.ac-realm-name{text-shadow:0 1px 20px rgba(227,176,75,.28)}
 .ac-realm--hc{background:linear-gradient(185deg,rgba(90,16,16,.4),var(--surface) 62%)}
-.ac-realm--hc .ac-realm-name{text-shadow:0 1px 20px rgba(255,80,70,.3)}
+.ac-realm--hc .ac-realm-name{text-shadow:0 1px 20px rgba(205,66,87,.3)}
 :root:not([data-motion="reduce"]) .ac-realm--hc .ac-realm-ico{animation:ac-ember 3.4s ease-in-out infinite}
-@keyframes ac-ember{0%,100%{box-shadow:0 0 22px -6px rgba(255,107,94,.5) inset}50%{box-shadow:0 0 30px -2px rgba(255,107,94,.85) inset}}
+@keyframes ac-ember{0%,100%{box-shadow:0 0 22px -6px rgba(205,66,87,.5) inset}50%{box-shadow:0 0 30px -2px rgba(205,66,87,.85) inset}}
 
 /* ---- sign-up card: a warm inner light at the top edge ---- */
-#ac-signup.card{background-image:radial-gradient(120% 70% at 50% -10%,rgba(255,122,31,.12),transparent 60%)}
+#ac-signup.card{background-image:radial-gradient(120% 70% at 50% -10%,rgba(227,176,75,.12),transparent 60%)}
 
 /* ---- stat band: engraved divider gems between the numbers ---- */
 .ac-stat{position:relative}
 .ac-stat+.ac-stat::before{content:"";position:absolute;left:-4px;top:50%;width:7px;height:7px;margin-top:-3.5px;
-  transform:rotate(45deg);background:rgba(255,150,70,.5)}
+  transform:rotate(45deg);background:rgba(214,170,92,.5)}
 
 /* reduced motion: drop the title glow animation hooks (none pulse by default) and ember pulse already guarded */
 :root[data-motion="reduce"] .ac-realm--hc .ac-realm-ico{animation:none}
+
+/* ============================================================================
+   AZEROTH LAYER (v5): the World of Warcraft look. Old gold on dark stone,
+   blood-red buttons, item tooltips, a quest log, an XP bar and achievements.
+   Dark, archaic, a little magical, a little silly. Always night here.
+   ============================================================================ */
+:root{
+  --wow-gold:#ffd100; --wow-gold-2:#e3b04b; --wow-brass:#7a5c22; --wow-brass-2:#4a3712;
+  --wow-stone:#120e0b; --wow-stone-2:#1c1611; --wow-blood:#8e1420; --wow-blood-2:#5a0b13; --wow-maroon:#cd4257;
+  --q-poor:#9d9d9d; --q-common:#fff; --q-uncommon:#1eff00; --q-rare:#3d9bff; --q-epic:#b65cff; --q-legendary:#ff8000;
+  --wow-frame:linear-gradient(180deg,rgba(28,22,17,.94),rgba(12,9,7,.96));
+}
+/* the light theme does not reach Azeroth: the page keeps its night palette */
+:root[data-theme="light"] .ac-atmos-glow{background:radial-gradient(58% 60% at 50% 0,rgba(227,176,75,.16),rgba(227,176,75,.05) 42%,transparent 72%)}
+:root[data-theme="light"] .ac-atmos::after{background:radial-gradient(130% 95% at 50% 8%,transparent 54%,rgba(3,4,6,.62))}
+:root[data-theme="light"]:not([data-motion="reduce"]) .ac-embers{display:block}
+:root[data-theme="light"] .ac-hero h1{background:linear-gradient(176deg,#fff6d8 0%,var(--royal-2) 38%,var(--royal) 70%,var(--royal-deep) 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 2px 1px rgba(0,0,0,.6)) drop-shadow(0 0 26px rgba(227,176,75,.35))}
+
+/* ---- typography: carved capitals ---- */
+.ac-hero h1{letter-spacing:.01em;filter:drop-shadow(0 3px 0 rgba(0,0,0,.75)) drop-shadow(0 0 26px rgba(227,176,75,.35))}
+.ac-h{font-family:var(--display);font-weight:900;letter-spacing:.03em;color:var(--wow-gold);
+  text-shadow:0 2px 0 #000,0 0 22px rgba(255,209,0,.22)}
+.eyebrow{border-radius:3px;background:linear-gradient(180deg,rgba(90,11,19,.75),rgba(40,6,10,.75));border-color:rgba(227,176,75,.5);color:var(--wow-gold)}
+.eyebrow::before{border-radius:0;transform:rotate(45deg);background:var(--wow-gold);box-shadow:0 0 8px rgba(255,209,0,.7)}
+.lead,.ac-lede{text-shadow:0 1px 2px #000}
+
+/* ---- every panel becomes a carved frame with brass corner studs ---- */
+.card,.ac-realm,.ac-wiz,.ac-board,.ac-tour,.ac-statband,.ac-dlg-frame{
+  border-radius:6px;border:2px solid var(--wow-brass);background-color:transparent;background-image:var(--wow-frame);
+  box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,209,0,.08),inset 0 0 40px rgba(0,0,0,.65),0 24px 50px -24px #000}
+.card::before{height:3px;background:linear-gradient(90deg,transparent,var(--wow-gold-2) 20%,var(--wow-gold) 50%,var(--wow-gold-2) 80%,transparent)}
+.card::after,.ac-realm::after,.ac-wiz::after,.ac-board::after,.ac-tour::after{inset:5px;border:1px solid rgba(227,176,75,.16);border-radius:3px;
+  background:
+    radial-gradient(circle,var(--wow-gold-2) 0 2px,#3b2a0c 2.6px 3.6px,transparent 4.2px) 0 0/10px 10px no-repeat,
+    radial-gradient(circle,var(--wow-gold-2) 0 2px,#3b2a0c 2.6px 3.6px,transparent 4.2px) 100% 0/10px 10px no-repeat,
+    radial-gradient(circle,var(--wow-gold-2) 0 2px,#3b2a0c 2.6px 3.6px,transparent 4.2px) 0 100%/10px 10px no-repeat,
+    radial-gradient(circle,var(--wow-gold-2) 0 2px,#3b2a0c 2.6px 3.6px,transparent 4.2px) 100% 100%/10px 10px no-repeat}
+#ac-signup.card{background-image:radial-gradient(120% 60% at 50% -10%,rgba(227,176,75,.12),transparent 60%),var(--wow-frame)}
+.ac-statband{position:relative}
+
+/* ---- inputs: the old login screen ---- */
+#ac-signup input{border-radius:3px;background:linear-gradient(180deg,#050403,#0d0a08);border:1px solid #5d4a26;box-shadow:inset 0 2px 6px #000}
+#ac-signup input:focus{border-color:var(--wow-gold);box-shadow:inset 0 2px 6px #000,0 0 0 2px rgba(255,209,0,.18),0 0 14px rgba(255,209,0,.25)}
+#ac-signup label{color:var(--wow-gold-2)}
+
+/* ---- the red-and-gold button (sign-up, dialogs, roll, anything that matters) ---- */
+#go,.ac-wbtn{position:relative;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:none;color:var(--wow-gold);
+  text-shadow:0 1px 0 #000,0 0 8px rgba(255,209,0,.25);border-radius:4px;border:1px solid #c79a3c;
+  background:linear-gradient(180deg,#b81c26 0%,#8e1420 45%,#5a0b13 100%);
+  box-shadow:inset 0 1px 0 rgba(255,220,150,.35),inset 0 -2px 4px rgba(0,0,0,.5),0 0 0 1px #000,0 8px 18px -10px rgba(205,66,87,.8)}
+#go:hover,.ac-wbtn:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,220,150,.45),inset 0 -2px 4px rgba(0,0,0,.5),0 0 0 1px #000,0 0 18px rgba(255,209,0,.3)}
+#go:active,.ac-wbtn:active{transform:translateY(1px);filter:brightness(.92)}
+#go:disabled{filter:grayscale(.5) brightness(.8)}
+.ac-wbtn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:0 20px;font-size:1rem;text-decoration:none;cursor:pointer;margin:0;width:auto}
+.ac-wbtn svg{width:20px;height:20px}
+.ac-wbtn--ghost{color:var(--text);border-color:#5d4a26;background:linear-gradient(180deg,#2a2119,#130f0b);box-shadow:inset 0 1px 0 rgba(255,220,150,.12),0 0 0 1px #000}
+.ac-jump{border-radius:4px;border:1px solid #c79a3c;background:linear-gradient(180deg,#b81c26,#5a0b13);color:var(--wow-gold)}
+.ac-links a{border-radius:3px}
+
+/* ---- hero facts: little quest-scroll lines ---- */
+.ac-facts li{border-radius:3px}
+
+/* ---- stat band: engraved numerals that count up ---- */
+.ac-stat b{color:var(--wow-gold);text-shadow:0 2px 0 #000,0 0 22px rgba(255,209,0,.3);font-variant-numeric:tabular-nums}
+.ac-stat{cursor:default;transition:background-color .2s}
+.ac-stat:hover{background:rgba(227,176,75,.06)}
+
+/* ---- realm banners: big, clickable, monumental ---- */
+.ac-realm{cursor:pointer;padding-top:30px;padding-bottom:0;overflow:hidden;
+  background-image:radial-gradient(90% 60% at 85% 0,rgba(227,176,75,.14),transparent 60%),var(--wow-frame);
+  transition:transform .2s,box-shadow .2s,border-color .2s}
+.ac-realm--hc{background-image:radial-gradient(90% 60% at 85% 0,rgba(205,66,87,.24),transparent 62%),linear-gradient(180deg,rgba(40,8,12,.94),rgba(12,6,7,.96))}
+.ac-realm:hover,.ac-realm:focus-within{transform:translateY(-6px);border-color:var(--wow-gold-2);box-shadow:0 0 0 1px #000,inset 0 0 40px rgba(0,0,0,.6),0 0 34px -6px rgba(255,209,0,.35),0 30px 60px -26px #000}
+.ac-realm--hc:hover,.ac-realm--hc:focus-within{border-color:var(--wow-maroon);box-shadow:0 0 0 1px #000,inset 0 0 40px rgba(0,0,0,.6),0 0 34px -6px rgba(205,66,87,.55),0 30px 60px -26px #000}
+.ac-realm-crest{position:absolute;right:18px;top:16px;width:74px;height:84px;filter:drop-shadow(0 4px 8px #000);transition:transform .35s}
+.ac-realm:hover .ac-realm-crest{transform:rotate(-4deg) scale(1.06)}
+.ac-realm-crest svg{width:100%;height:100%;overflow:visible}
+.ac-cr-shield{fill:#2a1d0a;stroke:var(--wow-gold-2);stroke-width:2.5}
+.ac-cr-inner{fill:#5a0b13;stroke:#c79a3c;stroke-width:1}
+.ac-realm--hc .ac-cr-inner{fill:#16090b}
+.ac-cr-mark{fill:none;stroke:var(--wow-gold);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ac-realm--hc .ac-cr-mark{stroke:#e9dccb}
+.ac-realm-top{padding-right:86px}
+.ac-realm-kind{margin:0 0 2px;font-family:var(--display);font-weight:700;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wow-gold-2)}
+.ac-realm--hc .ac-realm-kind{color:#ff8b9a}
+.ac-realm-name{font-size:clamp(1.5rem,3vw,2rem);font-weight:900;color:var(--wow-gold);text-shadow:0 2px 0 #000,0 0 24px rgba(255,209,0,.25)}
+.ac-realm--hc .ac-realm-name{color:#ffd9d0;text-shadow:0 2px 0 #000,0 0 24px rgba(205,66,87,.5)}
+.ac-rules li::before{border-color:var(--wow-gold-2)}
+.ac-realm--hc .ac-rules li::before{border-color:var(--wow-maroon)}
+.ac-realm--hc .ac-best b{color:#ff8b9a}
+/* the button covers the whole banner, and shows as a bar along its foot */
+.ac-realm-open{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:8px;margin:20px -26px 0;padding:15px 18px;cursor:pointer;
+  font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:.06em;color:var(--wow-gold);text-shadow:0 1px 0 #000;
+  background:linear-gradient(180deg,#8e1420,#4a0910);border-top:1px solid #c79a3c;transition:filter .2s,letter-spacing .25s}
+.ac-realm-open::before{content:"";position:absolute;inset:0;z-index:1}
+.ac-realm-open svg{width:20px;height:20px;transition:transform .25s}
+.ac-realm:hover .ac-realm-open{filter:brightness(1.2);letter-spacing:.09em}
+.ac-realm:hover .ac-realm-open svg{transform:translateX(4px)}
+.ac-realm-open:focus-visible{outline:2px solid var(--wow-gold);outline-offset:-4px}
+.ac-realm--hc .ac-realm-open{background:linear-gradient(180deg,#3a0c12,#1a0507);color:#ffd9d0}
+.ac-realm .ac-realm-live{position:relative;z-index:2}
+@media (max-width:600px){ .ac-realm-open{margin:18px -16px 0} .ac-realm-crest{width:58px;height:66px;right:12px} .ac-realm-top{padding-right:64px} }
+
+/* ---- realm charter dialog ---- */
+.ac-dlg{padding:0;border:0;background:transparent;color:var(--text);width:min(780px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:visible;margin:auto}
+.ac-dlg::backdrop{background:radial-gradient(70% 70% at 50% 40%,rgba(40,8,12,.55),rgba(0,0,0,.86));backdrop-filter:blur(3px)}
+.ac-dlg[open]{animation:ac-dlg-in .32s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes ac-dlg-in{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+:root[data-motion="reduce"] .ac-dlg[open]{animation:none}
+.ac-dlg-frame{position:relative;padding:34px 30px 24px;max-height:calc(100dvh - 24px);overflow:auto;border-width:3px;
+  background-image:radial-gradient(80% 40% at 50% 0,rgba(227,176,75,.12),transparent 70%),var(--wow-frame);font-size:1.04rem}
+.ac-dlg--hc .ac-dlg-frame{background-image:radial-gradient(80% 40% at 50% 0,rgba(205,66,87,.22),transparent 70%),linear-gradient(180deg,rgba(34,8,11,.97),rgba(10,5,6,.98))}
+.ac-dlg-plaque{position:sticky;top:-34px;display:flex;justify-content:center;margin:-34px 0 14px;pointer-events:none;z-index:2}
+.ac-dlg-plaque span{display:inline-block;padding:6px 26px 7px;font-family:var(--display);font-weight:700;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--wow-gold);
+  background:linear-gradient(180deg,#8e1420,#4a0910);border:1px solid #c79a3c;border-top:0;border-radius:0 0 8px 8px;box-shadow:0 6px 14px -6px #000}
+.ac-dlg-x{all:unset;box-sizing:border-box;position:absolute;top:10px;right:10px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;z-index:3;
+  border-radius:4px;border:1px solid #c79a3c;background:linear-gradient(180deg,#b81c26,#5a0b13);color:var(--wow-gold);box-shadow:0 0 0 1px #000}
+.ac-dlg-x svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.ac-dlg-x:hover{filter:brightness(1.25)}
+.ac-dlg-x:focus-visible{outline:2px solid var(--wow-gold);outline-offset:2px}
+.ac-dlg-head{display:flex;align-items:center;gap:18px}
+.ac-dlg-crest{flex:none;width:78px;height:88px;filter:drop-shadow(0 4px 10px #000)}
+.ac-dlg-crest svg{width:100%;height:100%;overflow:visible}
+.ac-dlg-kind{margin:0;font-family:var(--display);font-weight:700;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--wow-gold-2)}
+.ac-dlg-name{margin:2px 0 8px;font-family:var(--display);font-weight:900;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.05;color:var(--wow-gold);text-shadow:0 2px 0 #000,0 0 26px rgba(255,209,0,.28)}
+.ac-dlg--hc .ac-dlg-name{color:#ffd9d0;text-shadow:0 2px 0 #000,0 0 26px rgba(205,66,87,.55)}
+.ac-dlg-tags{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.ac-tag{font-family:var(--display);font-weight:700;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:3px;color:var(--muted);background:rgba(0,0,0,.45);border:1px solid #4a3a1e}
+.ac-tag--rec{color:#7dff6a;border-color:rgba(30,255,0,.4)}
+.ac-tag--hc{color:#ffb3bd;border-color:rgba(205,66,87,.6);background:rgba(90,11,19,.5)}
+.ac-dlg-status{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin:20px 0 12px;padding:10px 14px;border-radius:4px;background:rgba(0,0,0,.45);border:1px solid #3d2f16}
+.ac-dlg-pop{font-family:var(--display);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ac-dlg-pop b{margin-left:6px;font-size:.9rem}
+.ac-dlg-pop b[data-pop="low"]{color:#7dff6a} .ac-dlg-pop b[data-pop="medium"]{color:var(--wow-gold)} .ac-dlg-pop b[data-pop="high"]{color:#ff9f40} .ac-dlg-pop b[data-pop="full"]{color:#ff5a6e}
+.ac-dlg-pop b[data-pop="offline"]{color:var(--q-poor)}
+.ac-dlg-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 18px}
+.ac-dlg-stats div{padding:12px 12px 10px;border-radius:4px;text-align:center;background:linear-gradient(180deg,rgba(255,209,0,.05),rgba(0,0,0,.35));border:1px solid #3d2f16}
+.ac-dlg-stats dt{font-family:var(--display);font-weight:600;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ac-dlg-stats dd{margin:4px 0 0;font-family:var(--display);font-weight:900;font-size:1.45rem;line-height:1.1;color:var(--wow-gold);text-shadow:0 2px 0 #000;font-variant-numeric:tabular-nums}
+.ac-dlg--hc .ac-dlg-stats dd{color:#ffd9d0}
+.ac-dlg-stats dd.ac-dim{font-size:1.05rem;color:var(--q-poor);font-weight:700}
+.ac-dlg-cols{display:grid;grid-template-columns:1fr 1.25fr;gap:18px 26px}
+.ac-dlg-sub{margin:0 0 8px;font-family:var(--display);font-weight:700;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wow-gold-2);border-bottom:1px solid #3d2f16;padding-bottom:6px}
+.ac-dlg-list,.ac-dlg-feats{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.ac-dlg-list b{display:inline-block;min-width:6.4em;font-family:var(--display);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ac-dlg-feats li{position:relative;padding-left:22px;line-height:1.4}
+.ac-dlg-feats li::before{content:"";position:absolute;left:2px;top:.5em;width:8px;height:8px;transform:rotate(45deg);background:var(--wow-gold-2);box-shadow:0 0 8px rgba(255,209,0,.5)}
+.ac-dlg--hc .ac-dlg-feats li::before{background:var(--wow-maroon);box-shadow:0 0 8px rgba(205,66,87,.7)}
+.ac-dlg-lore{margin:20px 0 0;padding:12px 16px;font-style:italic;color:var(--wow-gold);border-left:3px solid #7a5c22;background:rgba(0,0,0,.35)}
+.ac-dlg-foot{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:20px}
+@media (max-width:640px){
+  .ac-dlg-frame{padding:30px 16px 18px}
+  .ac-dlg-plaque{top:-30px;margin-top:-30px}
+  .ac-dlg-crest{width:56px;height:64px}
+  .ac-dlg-stats{grid-template-columns:repeat(2,1fr)}
+  .ac-dlg-cols{grid-template-columns:1fr}
+  .ac-dlg-foot .ac-wbtn{flex:1 1 auto}
+}
+
+/* ---- feature tiles: loot with a rarity, inspected by tooltip ---- */
+.ac-tile{cursor:help;border-radius:4px;border:1px solid #3d2f16;border-left:3px solid var(--q,#9d9d9d);background:linear-gradient(180deg,rgba(26,20,15,.88),rgba(10,8,6,.9));outline:none}
+.ac-tile[data-ac-q="uncommon"]{--q:var(--q-uncommon)} .ac-tile[data-ac-q="rare"]{--q:var(--q-rare)} .ac-tile[data-ac-q="epic"]{--q:var(--q-epic)} .ac-tile[data-ac-q="legendary"]{--q:var(--q-legendary)}
+.ac-tile b{color:var(--q,var(--text))}
+.ac-tile svg{color:var(--q);border-radius:4px;border-color:color-mix(in srgb,var(--q) 45%,transparent);background:color-mix(in srgb,var(--q) 10%,#000)}
+.ac-tile:hover,.ac-tile:focus-visible,.ac-tile.ac-tip-on{border-color:color-mix(in srgb,var(--q) 55%,#3d2f16);box-shadow:0 0 18px -6px var(--q)}
+.ac-tile:hover svg,.ac-tile:focus-visible svg{box-shadow:0 0 18px -2px var(--q)}
+.ac-tile.ac-seen::after{content:"";position:absolute}
+.ac-tile{position:relative}
+.ac-tile.ac-seen b::after{content:" \2726";font-size:.7em;color:var(--wow-gold-2);vertical-align:.15em}
+.ac-tip{position:fixed;z-index:60;max-width:300px;padding:9px 12px 10px;pointer-events:none;border-radius:5px;font-family:var(--body);font-size:.98rem;line-height:1.35;color:#fff;
+  background:linear-gradient(180deg,rgba(9,12,32,.96),rgba(4,6,18,.97));border:1px solid #9aa0ad;box-shadow:0 0 0 1px #000,0 10px 26px rgba(0,0,0,.7);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.ac-tip.is-on{opacity:1;transform:none}
+.ac-tip b{display:block;font-family:var(--display);font-weight:700;font-size:1.04rem;margin-bottom:2px}
+.ac-tip i{display:block;font-style:normal}
+.ac-tip .t-q{color:var(--q-poor);font-size:.86rem;text-transform:capitalize}
+.ac-tip .t-flavor{color:var(--wow-gold);margin-top:6px}
+.ac-tip .t-use{color:var(--q-uncommon)}
+
+/* ---- quest log (rules + FAQ) ---- */
+.ac-q{border-radius:4px;border:1px solid #3d2f16;background:linear-gradient(180deg,rgba(26,20,15,.85),rgba(10,8,6,.88))}
+.ac-q[open]{border-color:#7a5c22;border-left-color:var(--wow-gold);background:linear-gradient(180deg,rgba(40,30,18,.9),rgba(12,9,7,.9))}
+.ac-q summary{justify-content:flex-start;color:var(--wow-gold);text-shadow:0 1px 0 #000}
+.ac-q summary::before{content:"!";flex:none;width:22px;text-align:center;font-family:var(--display);font-weight:900;font-size:1.5rem;line-height:1;color:var(--wow-gold);
+  text-shadow:0 0 0 #000,1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,0 0 10px rgba(255,209,0,.6)}
+.ac-q[open] summary::before{content:"?"}
+.ac-q.ac-read:not([open]) summary::before{content:"\2713";font-size:1.05rem;color:var(--q-poor);text-shadow:none}
+.ac-q.ac-read:not([open]) summary{color:var(--muted)}
+.ac-q summary::after{margin-left:auto}
+.ac-q summary::after{border-color:var(--wow-gold-2)}
+.ac-a{color:#d8cdb4}
+.ac-bang{font-family:var(--display);font-weight:900;color:var(--wow-gold);text-shadow:1px 1px 0 #000,-1px -1px 0 #000,0 0 10px rgba(255,209,0,.6)}
+:root:not([data-motion="reduce"]) .ac-q:not([open]):not(.ac-read) summary::before{animation:ac-bob 2.4s ease-in-out infinite}
+@keyframes ac-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* ---- how to play, leaderboard and walkthrough pick up the gold ---- */
+.ac-check{border-radius:4px;color:var(--wow-gold)}
+.ac-tab{border-radius:3px}
+.ac-tab[aria-selected="true"],.ac-tab[aria-selected="true"]:hover{color:var(--wow-gold);background:linear-gradient(180deg,#b81c26,#5a0b13);border-color:#c79a3c}
+.ac-news li{border-radius:4px;border-left-color:var(--wow-gold-2)}
+.ac-btn{border-radius:4px}
+
+/* ---- roll a hero ---- */
+.ac-roll{display:flex;align-items:stretch;gap:12px;flex-wrap:wrap;margin-top:22px}
+.ac-roll[hidden]{display:none}
+.ac-roll-card{flex:1 1 220px;min-width:0;padding:10px 14px;border-radius:4px;border:1px solid #5d4a26;background:linear-gradient(180deg,rgba(9,12,32,.9),rgba(4,6,18,.92));box-shadow:0 0 0 1px #000}
+.ac-roll-k{display:block;font-family:var(--display);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.ac-roll-name{display:block;font-family:var(--display);font-weight:900;font-size:1.15rem;color:var(--q-epic);line-height:1.3;overflow-wrap:anywhere}
+.ac-roll-line{display:block;color:#fff;font-size:.98rem}
+.ac-roll-card.is-rolling .ac-roll-name,.ac-roll-card.is-rolling .ac-roll-line{opacity:.55;filter:blur(.6px)}
+.ac-roll-btn{flex:none}
+
+/* ---- XP bar along the foot of the window ---- */
+.ac-xp{position:fixed;left:0;right:0;bottom:0;z-index:40;height:14px;background:#07050a;border-top:1px solid #5d4a26;box-shadow:0 -4px 14px rgba(0,0,0,.6);cursor:default}
+.ac-xp-fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(180deg,#a56cf0,#6a2fb4 55%,#3d1470);box-shadow:0 0 10px rgba(166,108,240,.6);transition:width .25s linear}
+.ac-xp::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(5% - 1px),rgba(0,0,0,.75) calc(5% - 1px) 5%)}
+.ac-xp-t{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;font:600 10.5px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#fff;text-shadow:0 1px 1px #000,0 0 3px #000;opacity:.92}
+.ac-xp.is-ding .ac-xp-fill{background:linear-gradient(180deg,#ffe37a,#e3b04b 55%,#8a5f12);box-shadow:0 0 16px rgba(255,209,0,.8)}
+body.ac-has-xp{padding-bottom:14px}
+@media print{.ac-xp{display:none}}
+
+/* ---- achievement toast ---- */
+.ac-ach{position:fixed;left:50%;top:84px;z-index:70;width:min(360px,calc(100vw - 24px));display:flex;align-items:center;gap:12px;padding:10px 16px 10px 10px;border-radius:6px;
+  background:linear-gradient(180deg,#2a2016,#0f0b08);border:2px solid #c79a3c;box-shadow:0 0 0 1px #000,0 0 30px rgba(255,209,0,.3),0 14px 30px rgba(0,0,0,.8);
+  transform:translate(-50%,-30px);opacity:0;transition:transform .45s cubic-bezier(.2,.9,.3,1.3),opacity .3s;pointer-events:none}
+.ac-ach.is-in{transform:translate(-50%,0);opacity:1}
+.ac-ach-shield{flex:none;width:50px;height:56px;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:1.05rem;color:#1a1104;
+  background:linear-gradient(180deg,#ffe37a,#c79a3c);clip-path:polygon(50% 0,100% 14%,100% 56%,50% 100%,0 56%,0 14%)}
+.ac-ach-k{display:block;font-family:var(--display);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--wow-gold)}
+.ac-ach-n{display:block;font-family:var(--display);font-weight:700;font-size:1.05rem;color:#fff;line-height:1.25}
+.ac-ach-d{display:block;font-size:.9rem;color:var(--muted);line-height:1.3}
+:root[data-motion="reduce"] .ac-ach{transition:opacity .2s;transform:translate(-50%,0)}
+
+/* ---- achievements list ---- */
+.ac-feats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.ac-feat{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:4px;border:1px solid #3d2f16;background:linear-gradient(180deg,rgba(26,20,15,.85),rgba(10,8,6,.88))}
+.ac-feat .ac-ach-shield{width:40px;height:45px;font-size:.9rem}
+.ac-feat b{display:block;font-family:var(--display);font-size:.98rem;color:#fff}
+.ac-feat span{display:block;color:var(--muted);font-size:.92rem;line-height:1.3}
+.ac-feat:not(.is-got){opacity:.62}
+.ac-feat:not(.is-got) .ac-ach-shield{background:linear-gradient(180deg,#5a5246,#2b2620);color:#1a1612}
+.ac-feat:not(.is-got) b{color:var(--muted)}
+.ac-feat.is-got{border-color:#7a5c22;box-shadow:inset 0 0 20px rgba(255,209,0,.06)}
+#ac-feats-count{color:var(--wow-gold);font-family:var(--display);font-weight:700}
+
+/* ---- the floating combat text when a hero is rolled or a murloc shouts ---- */
+.ac-float{position:fixed;z-index:65;pointer-events:none;font-family:var(--display);font-weight:900;font-size:1.3rem;color:var(--wow-gold);
+  text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;animation:ac-floatup 1.4s ease-out forwards;white-space:nowrap}
+@keyframes ac-floatup{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-70px)}}
+
+/* reduced motion: the new layer stays still too */
+:root[data-motion="reduce"] .ac-realm,:root[data-motion="reduce"] .ac-realm-crest,:root[data-motion="reduce"] .ac-realm-open,:root[data-motion="reduce"] .ac-realm-open svg,
+:root[data-motion="reduce"] .ac-tip,:root[data-motion="reduce"] .ac-xp-fill{transition:none}
+:root[data-motion="reduce"] .ac-realm:hover,:root[data-motion="reduce"] .ac-realm:focus-within,:root[data-motion="reduce"] .ac-realm:hover .ac-realm-crest{transform:none}
+:root[data-motion="reduce"] .ac-float{animation-duration:.01s}
+
+/* ---- section heads: centred, with a carved wing on each side of the title ---- */
+.ac-head{text-align:center;margin-bottom:24px}
+.ac-head .eyebrow{display:inline-flex}
+.ac-h{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px;padding-bottom:0;background:none;font-size:clamp(1.7rem,4vw,2.45rem)}
+.ac-h::before,.ac-h::after{content:"";flex:0 1 110px;height:12px;
+  background:linear-gradient(90deg,transparent,var(--wow-gold-2)) center/100% 1px no-repeat,radial-gradient(circle at 100% 50%,var(--wow-gold) 0 3px,transparent 3.6px)}
+.ac-h::after{transform:scaleX(-1)}
+.ac-head .ac-lede{margin-left:auto;margin-right:auto}
+@media (max-width:600px){.ac-h::before,.ac-h::after{flex-basis:28px}}
+.ac-dlg-list li{display:grid;grid-template-columns:6.8em 1fr;gap:10px;align-items:baseline}
+.ac-dlg-list b{min-width:0}
+.ac-dlg:focus,.ac-dlg:focus-visible{outline:none}
+@media (max-width:640px){
+  .ac-dlg-head{gap:12px}
+  .ac-dlg-stats div{padding:9px 8px 8px}
+  .ac-dlg-stats dt{font-size:.6rem;letter-spacing:.08em}
+  .ac-dlg-stats dd{font-size:1.25rem}
+  .ac-dlg-stats dd.ac-dim{font-size:.95rem}
+  .ac-dlg-status{flex-direction:column;align-items:flex-start}
+}
+.ac-roll{align-items:center}
