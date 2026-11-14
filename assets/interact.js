@@ -496,6 +496,7 @@
 
     /* Keyboard: only listens, never preventDefault, so the pages' own arrow-key shortcuts keep working. */
     doc.addEventListener("keydown", function (e) {
+      if (document.documentElement.hasAttribute("data-arcade-input")) return;   /* a playable game owns input */
       if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === "Shift" || e.key === "CapsLock") return;
       var t = e.target;
@@ -506,6 +507,7 @@
     /* Controller: registered before the navigation below, so it can claim the closing B and A
        (otherwise B would go back and A would click something). */
     Site.gamepad.on(function (btn) {
+      if (document.documentElement.hasAttribute("data-arcade-input")) return;   /* a playable game owns the pad */
       var n = pad(btn);
       padSwallow = "";
       if (n === CODE.length) { padSwallow = btn; pad.reset(); party(); }
@@ -791,6 +793,7 @@
     }
 
     Site.gamepad.on(function (btn) {
+      if (document.documentElement.hasAttribute("data-arcade-input")) return;   /* a playable game owns the pad */
       if (padSwallow === btn) { padSwallow = ""; return; }   /* the last two presses of the Konami code */
       padSwallow = "";
       if (btn === "up" || btn === "down" || btn === "left" || btn === "right") move(btn);
@@ -829,7 +832,7 @@
       var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
       if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
     } catch (e) {}
-    load("play", 10, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 11, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
     /* service worker: instant repeat visits and basic offline. features.serviceWorker = false unregisters it. */
     try {
       if ("serviceWorker" in navigator && /^https:$/.test(location.protocol)) {

@@ -414,6 +414,7 @@
     if (Site.store.get("crt", false) === true) root.classList.add("pl-crt");
     var buf = "", names = Object.keys(CODES), navs = Object.keys(NAV);
     doc.addEventListener("keydown", function (e) {
+      if (document.documentElement.hasAttribute("data-arcade-input")) return;   /* a playable game owns input (WASD/arrows/Esc/P) */
       if (e.key === "Escape") { endAll(); return; }
       if (e.ctrlKey || e.metaKey || e.altKey || !e.key || e.key.length !== 1) return;
       var t = e.target;

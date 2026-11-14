@@ -735,6 +735,7 @@
 
     document.addEventListener("keydown", function (e) {
       if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (document.documentElement.hasAttribute("data-arcade-input")) return;   /* a playable game owns input */
       var t = e.target; if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
       if (dlg && dlg.open) return;
       e.preventDefault(); sfx("open"); openSearch();
