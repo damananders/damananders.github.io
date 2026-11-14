@@ -25,6 +25,20 @@
   var nav = document.querySelector(".wrap > nav") || document.querySelector("nav");
   root.classList.add("ch-js");
 
+  /* Site accent colour: the owner can set one in the control panel (config appearance.accent). Blank keeps the
+     built-in maroon that lives in the CSS. Applied here because this file loads on every page and self-heals
+     through the service worker, so a new colour reaches the whole site without a version bump. */
+  (function applyAccent() {
+    try {
+      var a = (Site.config && Site.config.appearance) || {}, c = typeof a.accent === "string" ? a.accent.trim() : "";
+      if (!/^#[0-9a-fA-F]{6}$/.test(c)) { root.style.removeProperty("--sx-accent"); root.style.removeProperty("--sx-on-accent"); return; }
+      root.style.setProperty("--sx-accent", c);
+      var r = parseInt(c.slice(1, 3), 16), g = parseInt(c.slice(3, 5), 16), b = parseInt(c.slice(5, 7), 16);
+      var lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      root.style.setProperty("--sx-on-accent", lum > 0.6 ? "#06090c" : "#fff");
+    } catch (e) {}
+  })();
+
   function feat(name) { var f = (Site.config && Site.config.features) || {}; return f[name] !== false; }
   function sfx(name) { try { Site.sfx(name); } catch (e) {} }
   function focusQuietly(n) { if (!n) return; try { n.focus({ preventScroll: true }); } catch (e) { try { n.focus(); } catch (e2) {} } }
