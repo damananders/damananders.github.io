@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor } from "./games.common.js?v=14";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor } from "./games.common.js?v=15";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -60,7 +60,7 @@ async function render() {
 
   const card = el("article", { class: "gi-card", "data-c": game.console },
     el("header", { class: "gi-head" },
-      info.a ? el("div", { class: "gi-art" }, boxArt(info.a, title)) : null,
+      info.a || info.sa || info.ra ? el("div", { class: "gi-art" }, boxArt(info, title)) : null,
       el("div", { class: "gi-headtext" },
         el("div", { class: "gi-chips" }, platformLink(game.console), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
         el("h1", { class: "gi-title", text: title }),

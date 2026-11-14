@@ -45,7 +45,8 @@ function tabs() {
   t.append(el("p", { class: "gm-hubrow" }, consoleFilter
     ? el("a", { class: "linkbtn gm-hublink", href: platformUrl(consoleFilter), text: "Open the " + platformName(consoleFilter) + " hub →" })
     : el("a", { class: "linkbtn gm-hublink", href: "/games/platform/" + (famFilter ? "?f=" + famFilter : ""), text: famFilter ? "All " + FAMILY[famFilter].name + " hubs →" : "Platform hubs →" }),
-    el("a", { class: "linkbtn gm-hublink", href: compareUrl(), text: "Compare two games →" })));
+    el("a", { class: "linkbtn gm-hublink", href: compareUrl(), text: "Compare two games →" }),
+    el("a", { class: "linkbtn gm-hublink", href: "/games/lists/", text: "Game lists →" })));
 }
 const filterIds = () => consoleFilter ? [consoleFilter] : famFilter ? PLATFORMS.filter((p) => p.fam === famFilter).map((p) => p.id) : null;
 const filterName = () => consoleFilter ? platformName(consoleFilter) : famFilter ? FAMILY[famFilter].name : "All-time";

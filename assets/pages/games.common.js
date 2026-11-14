@@ -193,6 +193,7 @@ export function authPill(box, opts) {
   if (!me.member && !me.banned) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
     el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
   if (handle) btns.append(el("a", { class: (me.member ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
+  if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
   if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/station/", text: "Operation Station" }));
   btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
   box.append(btns);
@@ -476,9 +477,11 @@ const NOTE_TEXT = {
   reply: (n, who) => n > 1 ? n + " new replies on your thread, latest from " + (who || "someone") : (who || "Someone") + " replied to your thread",
   reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your post",
   review_reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your review",
+  follow: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more followed you" : " followed you"),
+  list_like: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more liked" : " liked") + " your list",
   wall: (n, who) => (who || "Someone") + (n > 1 ? " and others left " + n + " notes" : " signed") + " your guestbook",
 };
-const NOTE_ICON = { reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝" };
+const NOTE_ICON = { reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥" };
 let bellTimer = 0;
 export function bell() {
   const count = el("span", { class: "rop-bell__n", hidden: true });
@@ -544,6 +547,12 @@ export function reportBtn(kind, id, cls) {
 
 /* ---------------- box art (libretro-thumbnails; hidden if the picture doesn't exist) ---------------- */
 export function boxArtUrl(a) {
+  if (a && typeof a === "object") {
+    if (a.a) return boxArtUrl(a.a);
+    if (a.sa) return "https://cdn.cloudflare.steamstatic.com/steam/apps/" + encodeURIComponent(a.sa) + "/library_600x900.jpg";
+    if (a.ra && /^https:\/\/media\.rawg\.io\//.test(a.ra)) return a.ra;
+    return null;
+  }
   if (!a) return null;
   const i = a.indexOf("/"); if (i < 1) return null;
   return "https://thumbnails.libretro.com/" + encodeURIComponent(a.slice(0, i)) + "/Named_Boxarts/" + encodeURIComponent(a.slice(i + 1)) + ".png";
@@ -551,13 +560,17 @@ export function boxArtUrl(a) {
 export function boxArt(a, title, cls) {
   const src = boxArtUrl(a); if (!src) return null;
   const img = el("img", { class: "rop-art " + (cls || ""), src, alt: "Box art: " + (title || ""), loading: "lazy", decoding: "async", referrerpolicy: "no-referrer" });
-  img.addEventListener("error", () => img.remove());
+  img.addEventListener("error", () => {
+    // Steam: not every game has the tall cover; fall back to the wide header once
+    if (/library_600x900\.jpg$/.test(img.src)) { img.src = img.src.replace("library_600x900.jpg", "header.jpg"); img.classList.add("is-wide"); return; }
+    img.remove();
+  });
   img.addEventListener("load", () => img.classList.add("is-in"));
   return img;
 }
 /* fill box art into elements later (cards render first, art arrives with the info shard) */
 export function artSlot(id, title, cls) {
   const slot = el("span", { class: "rop-artslot " + (cls || ""), "aria-hidden": "true" });
-  gameInfo(id).then((x) => { const img = x && x.a ? boxArt(x.a, title) : null; if (img) slot.append(img); else slot.remove(); }, () => slot.remove());
+  gameInfo(id).then((x) => { const img = x && (x.a || x.sa || x.ra) ? boxArt(x, title) : null; if (img) slot.append(img); else slot.remove(); }, () => slot.remove());
   return slot;
 }

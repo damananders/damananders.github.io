@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey } from "./games.common.js?v=14";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey } from "./games.common.js?v=15";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -165,7 +165,8 @@ async function render() {
         status,
         p.motto ? el("p", { class: "pf-motto " + colorClass(p.motto_color), text: "“" + p.motto + "”" }) : (mine ? el("p", { class: "pf-motto pf-motto--none", text: "No motto yet." }) : null)),
       el("div", { class: "pf-actions" },
-        mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : null,
+        mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : followBtn(p),
+        followCounts(p, mine),
         el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") }))),
     el("div", { class: "pf-xp", title: fmt(lv.xp) + " XP · " + fmt(lv.next) + " to level " + (lv.lvl + 1) },
       el("span", { class: "pf-xp__l", text: "Level " + lv.lvl }),
@@ -231,17 +232,25 @@ async function render() {
   /* ---- guestbook ---- */
   const wallBox = plus ? section(p, mine, "wall", "Guestbook", el("p", { class: "gm-empty", text: "Loading…" })) : null;
   /* ---- recent ---- */
+  const listsBox = section(p, mine, "lists", "Lists", el("p", { class: "gm-empty", text: "Loading…" }));
   const postsBox = section(p, mine, "posts", "Recent forum posts", el("p", { class: "gm-empty", text: "Loading…" }));
   const revBox = section(p, mine, "reviews", "Recent reviews", el("p", { class: "gm-empty", text: "Loading…" }));
 
   root.replaceChildren(...[head,
     el("div", { class: "pf-cols pf-cols--top" }, el("div", { class: "pf-col" }, aboutBox, linkBox), el("div", { class: "pf-col" }, nowBox, raBox, statsBox)),
-    showBox, badgeBox, blBox, heartBox, wallBox,
+    showBox, listsBox, badgeBox, blBox, heartBox, wallBox,
     el("div", { class: "pf-cols" }, postsBox, revBox)].filter(Boolean));
   root.querySelectorAll(".pf-col:empty").forEach((c) => c.remove());
   if (mine && params.has("edit")) editor(p);
 
   if (blBox) backlog(p, mine, blBox);
+  if (listsBox) sb.from("public_lists").select("*").eq("handle", p.handle).order("updated_at", { ascending: false }).limit(12).then(({ data, error }) => {
+    listsBox.lastChild.remove();
+    if (error || (!(data || []).length && !mine)) { listsBox.remove(); return; }
+    if (!(data || []).length) return listsBox.append(el("p", { class: "gm-note" }, "No public lists yet. ", el("a", { href: "/games/lists/", text: "Make one →" })));
+    listsBox.append(el("ul", { class: "pf-list" }, ...data.map((l) => el("li", null, el("a", { href: "/games/lists/?id=" + l.id, text: l.title }),
+      el("span", { class: "gm-note", text: " · " + l.games + (l.games === 1 ? " game" : " games") + " · ♥ " + l.likes })))));
+  }, () => listsBox.remove());
   if (wallBox) wall(p, mine, wallBox);
   if (heartBox) sb.from("member_hearts").select("game_id,title,console,created_at").eq("handle", p.handle).order("created_at", { ascending: false }).limit(300).then(({ data, error }) => {
     heartBox.lastChild.remove();
@@ -368,6 +377,37 @@ async function wall(p, mine, box) {
     ta.value = ""; count.textContent = "0 / 300"; sfx("success"); load();
   } });
   box.append(el("div", { class: "pf-wall__write" }, ta, el("div", { class: "gm-write__bar" }, send, count)));
+}
+
+/* ---------------- follow button + follower counts (round 21) ---------------- */
+function followBtn(p) {
+  const b = el("button", { class: "btn gm-btn pf-follow", type: "button", hidden: true });
+  let on = false;
+  const draw = () => { b.textContent = on ? "✓ Following" : "＋ Follow"; b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on)); };
+  sb.rpc("follow_info", { p_handle: p.handle }).then(({ data, error }) => {
+    if (error || !me.user) return;          // database update not run yet, or signed out: no button
+    on = !!(data && data[0] && data[0].i_follow); draw(); b.hidden = false;
+  }, () => {});
+  b.addEventListener("click", async () => {
+    if (!me.member) { toast("Join the Discord to follow members."); return; }
+    b.disabled = true;
+    const { data, error } = await sb.rpc("toggle_follow", { p_handle: p.handle });
+    b.disabled = false;
+    if (error) { toast(error.message, "err"); return; }
+    on = data === true; draw(); sfx(on ? "success" : "tap");
+    document.querySelectorAll(".pf-fcount__n").forEach((x) => { x.textContent = String(Math.max(0, (+x.textContent || 0) + (on ? 1 : -1))); });
+  });
+  return b;
+}
+function followCounts(p, mine) {
+  const box = el("span", { class: "pf-fcount", hidden: true });
+  sb.rpc("follow_info", { p_handle: p.handle }).then(({ data, error }) => {
+    if (error || !data || !data[0]) return;
+    box.replaceChildren(el("b", { class: "pf-fcount__n", text: String(data[0].followers) }), " followers · ", el("b", { text: String(data[0].following) }), " following",
+      mine ? el("a", { class: "linkbtn", href: "/games/feed/", text: " · Feed →" }) : "");
+    box.hidden = false;
+  }, () => {});
+  return box;
 }
 
 /* ---------------- RetroAchievements card ----------------

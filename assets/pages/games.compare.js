@@ -2,7 +2,7 @@
  * Scores, votes, hearts, reviews and backlog counts come live from the database; facts from the static info cards
  * (with the owner's corrections on top). The better number in each row is highlighted.
  */
-import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=14";
+import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=15";
 
 const root = $("cmp-root");
 const qs = new URLSearchParams(location.search);
@@ -89,7 +89,7 @@ function grid(A, B) {
     const d = X.info.d ? (X.info.d.length > 320 ? X.info.d.slice(0, 317).replace(/\s+\S*$/, "") + "…" : X.info.d) : "";
     return el("article", { class: "cmp-card" + (win === k ? " is-win" : "") },
       win === k ? el("span", { class: "cmp-crown", text: "👑 Community favourite" }) : null,
-      X.info.a ? el("div", { class: "cmp-art" }, boxArt(X.info.a, X.g.title)) : null,
+      X.info.a || X.info.sa || X.info.ra ? el("div", { class: "cmp-art" }, boxArt(X.info, X.g.title)) : null,
       el("div", { class: "gi-chips" }, platformLink(X.g.console)),
       el("h2", null, el("a", { href: gameUrl(X.id), text: X.info.t || X.g.title })),
       el("p", { class: "cmp-big" + (mood != null ? " rop-chip--" + mood : "") }, mood != null ? chipSvg(mood) : null, " ", s != null ? s.toFixed(1) : "–", el("small", { class: "gm-note", text: mood != null ? "  " + CHIP_WORD[mood] : "" })),
