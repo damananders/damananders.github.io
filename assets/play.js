@@ -49,6 +49,13 @@
     { id: "forum",     name: "Town Square",       desc: "Dropped by the Rate-O-Pedia forums." },
     { id: "linkout",   name: "Link Hopper",       desc: "Visited a site from Links I Like." },
     { id: "voter",     name: "Have Your Say",     desc: "Voted on a site in Links I Like." },
+    { id: "rop-rate1", name: "First Opinion",     desc: "Rated a game on Rate-O-Pedia." },
+    { id: "rop-rate25", name: "Critic in Training", desc: "Rated 25 games on Rate-O-Pedia." },
+    { id: "rop-rate100", name: "Seasoned Critic",  desc: "Rated 100 games on Rate-O-Pedia." },
+    { id: "rop-rate500", name: "Encyclopedist",    desc: "Rated 500 games on Rate-O-Pedia.", secret: true },
+    { id: "rop-review", name: "Wordsmith",         desc: "Wrote a review on Rate-O-Pedia." },
+    { id: "rop-list",  name: "Curator",           desc: "Made a game list on Rate-O-Pedia." },
+    { id: "rop-follow", name: "Following the Crowd", desc: "Followed a member on Rate-O-Pedia." },
     { id: "classic",   name: "Lighthouse Keeper", desc: "Switched the site to its Classic skin." },
     { id: "seasons",   name: "Four Seasons",      desc: "Tried the fall, winter, spring and summer skins." },
     { id: "access",    name: "Easy Reader",       desc: "Tried an accessibility option." },
@@ -208,6 +215,21 @@
     /* the Rate-O-Pedia pages tell us when the signed-in member really is an Admin */
     Site.on("rop:admin", function (v) { if (v === true || (v && v.detail === true)) award("special"); });
     if (window.ROP_ADMIN === true) setTimeout(function () { award("special"); }, 2000);   /* confirmed before this file loaded */
+    /* the Rate-O-Pedia pages report the signed-in member's rating/review/list/follow tallies */
+    function ropStats(v) {
+      var s = (v && v.detail) || v;
+      if (!s || typeof s !== "object") return;
+      var votes = +s.votes || 0;
+      if (votes >= 1) award("rop-rate1");
+      if (votes >= 25) award("rop-rate25");
+      if (votes >= 100) award("rop-rate100");
+      if (votes >= 500) award("rop-rate500");
+      if ((+s.reviews || 0) >= 1) award("rop-review");
+      if ((+s.lists || 0) >= 1) award("rop-list");
+      if ((+s.following || 0) >= 1) award("rop-follow");
+    }
+    Site.on("rop:stats", ropStats);
+    if (window.ROP_STATS) setTimeout(function () { ropStats(window.ROP_STATS); }, 2000);
     if (Site.page === "404") setTimeout(function () { award("lost"); }, 1200);
     if (Site.page === "vault" || Site.page === "locker") setTimeout(function () { award("key"); }, 1200);
     Site.on("pref:soundscape", function (v) { if (v === true || (v && v.detail === true)) award("dj"); });
