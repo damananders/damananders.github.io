@@ -525,6 +525,7 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
 .ch-srch__kind{flex:none;font:600 .64rem var(--sx-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--sx-muted);padding:3px 7px;border:1px solid var(--sx-line-2);border-radius:6px}
 .ch-srch__item--rop,.ch-srch__item--rop .ch-srch__label{color:var(--sx-accent)}
 .ch-srch__item--rop .ch-srch__kind{color:var(--sx-accent);border-color:currentColor}
+.ch-srch__item--member .ch-srch__kind{color:var(--sx-ok);border-color:color-mix(in srgb,var(--sx-ok) 55%,transparent)}
 .ch-srch__empty{margin:6px 2px;color:var(--sx-muted);font-size:.9rem}
 @media print{.ch-search{display:none}}
 
