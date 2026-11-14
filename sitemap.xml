@@ -10,4 +10,5 @@
   <url><loc>https://damananders.github.io/uses/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://damananders.github.io/stream/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://damananders.github.io/links/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://damananders.github.io/discord/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
 </urlset>

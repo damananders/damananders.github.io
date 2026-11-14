@@ -503,7 +503,8 @@
     ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
     ["games", "/games/", "Rate-O-Pedia"], ["forum", "/games/forum/", "Forums"],
     ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
-    ["arcade", "/arcade/", "Arcade"], ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
+    ["discord", "/discord/", "Discord"], ["arcade", "/arcade/", "Arcade"],
+    ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
   ];
   /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from
      the middle on a ring, each an ordinary link (click or Enter to visit). Animated, colour-accented, and
