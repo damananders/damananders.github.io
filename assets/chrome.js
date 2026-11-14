@@ -504,7 +504,8 @@
     ["games", "/games/", "Rate-O-Pedia", "Rate & review games"], ["forum", "/games/forum/", "Forums", "Talk games & projects"],
     ["links", "/links/", "Links I Like", "Sites I actually use"], ["stream", "/stream/", "Stream", "Watch me live"],
     ["discord", "/discord/", "Discord", "Join the community"], ["arcade", "/arcade/", "Arcade", "Little browser games"],
-    ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"]
+    ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"],
+    ["support", "/support/", "Support", "Keep the projects online"]
   ];
   /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from
      the middle on a ring, each an ordinary link (click or Enter to visit). Animated, colour-accented, and
@@ -763,7 +764,7 @@
     if (feat("supportLine") && /^https:\/\//.test(String(kofi.url || ""))) {
       var sup = el("p", { class: "ch-support" },
         document.createTextNode("These are free fan projects I build for fun. If one made your day, you can "),
-        el("a", { class: "ch-support__link", href: kofi.url, target: "_blank", rel: "noopener" }, "help cover the hosting ☕"),
+        el("a", { class: "ch-support__link", href: "/support/" }, "help cover the hosting ☕"),
         document.createTextNode(" — no pressure, ever."));
       foot.appendChild(sup);
     }
