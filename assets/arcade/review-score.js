@@ -563,6 +563,10 @@
   A.register({
     id: "review-score", name: "Review Score", icon: "🎮", accent: "#f0c23a", W: W, H: H,
     blurb: "Stamp the flying game cases with their Rate-O-Pedia score. Skip the hardware.",
+    sync: DIFF.map(function (d) { return { k: "best." + d.key, s: "case404.best." + d.key, t: "max" }; })
+      .concat(DIFF.map(function (d) { return { k: "won." + d.key, s: "case404.won." + d.key, t: "or" }; }))
+      .concat([{ k: "hr", s: HR_KEY, t: "or" }]),
+    onSync: function (g) { paintBest(g); },
     init: function (g) {
       S.titleBg = makeBg((Math.random() * BG_N) | 0, (Math.random() * 1e9) | 0);
       loadPool().then(function () { seedDrift(); g.paint(); });

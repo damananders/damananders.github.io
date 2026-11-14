@@ -410,6 +410,11 @@
   A.register({
     id: "row-home", name: "Row Home", icon: "🚣", accent: "#7fd3ff", W: W, H: H,
     blurb: "Row through the islands, dodge trouble, grab the lights. Coins buy upgrades in the Boatyard.",
+    sync: [
+      { k: "best", s: "best404", t: "max" },
+      { k: "upg", s: "arcade.row-home.upg", t: "maxmap" }, { k: "skins", s: "arcade.row-home.skins", t: "union" }
+    ],
+    onSync: function (g) { paintBest(g); },
     init: function (g) { paintBest(g); g.debug = function (m) { if (R) { R.dist = m; } }; },
     title: function (g) { titleMenu(g); },
     restart: function (g) { go(g, R ? R.mode : "endless"); },
