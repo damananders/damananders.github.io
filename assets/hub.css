@@ -121,7 +121,11 @@ dialog.features h4{margin:16px 0 4px;font-family:var(--display);color:var(--text
 .hg-input{font:500 1rem var(--sx-body);color:var(--sx-text);background:var(--sx-surface-2);border:1px solid var(--sx-line-2);border-radius:11px;padding:11px 13px;width:100%;box-sizing:border-box;transition:border-color .15s}
 .hg-input:focus-visible{outline:none;border-color:var(--sx-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--sx-accent) 22%,transparent)}
 .hg-honey{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.hg-field--bad .hg-input{border-color:var(--sx-err);box-shadow:0 0 0 3px color-mix(in srgb,var(--sx-err) 20%,transparent)}
+.hg-err{margin:12px 0 0;color:var(--sx-err);font:600 .9rem/1.4 var(--sx-body)}
+.hg-err[hidden]{display:none}
 .hg-actions{display:flex;gap:12px;margin-top:20px}
+.hg-actions--one .hg-btn{flex:1}
 .hg-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 1rem var(--sx-display);letter-spacing:.01em;
   border-radius:12px;padding:13px 14px;cursor:pointer;border:1px solid transparent;transition:transform .15s,background .15s,border-color .15s,opacity .15s}
 .hg-btn:hover{transform:translateY(-1px)}
