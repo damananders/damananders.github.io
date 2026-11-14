@@ -50,8 +50,11 @@
       box.addEventListener("pointerenter", function () { if (!Site.reducedMotion) { try { v.play(); } catch (e) {} } });
       box.addEventListener("pointerleave", function () { try { v.pause(); } catch (e) {} });
     } else if (it.image && okMedia(it.image)) {
-      var img = el("img", { src: it.image, alt: "", loading: "lazy", decoding: "async", width: "640", height: "400" });
-      img.addEventListener("error", function () { box.textContent = ""; box.appendChild(tile(it)); });
+      /* crisp contained image over a blurred fill of itself (see links.css .lk2-shot--img) */
+      box.classList.add("lk2-shot--img");
+      box.style.setProperty("--shot", 'url("' + it.image.replace(/["()\\]/g, "") + '")');
+      var img = el("img", { src: it.image, alt: "", loading: "lazy", decoding: "async" });
+      img.addEventListener("error", function () { box.classList.remove("lk2-shot--img"); box.style.removeProperty("--shot"); box.textContent = ""; box.appendChild(tile(it)); });
       box.appendChild(img);
     } else box.appendChild(tile(it));
     return box;
