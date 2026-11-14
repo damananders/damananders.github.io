@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey } from "./games.common.js?v=15";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged } from "./games.common.js?v=15";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -394,7 +394,7 @@ function followBtn(p) {
     const { data, error } = await sb.rpc("toggle_follow", { p_handle: p.handle });
     b.disabled = false;
     if (error) { toast(error.message, "err"); return; }
-    on = data === true; draw(); sfx(on ? "success" : "tap");
+    on = data === true; draw(); sfx(on ? "success" : "tap"); statsChanged();
     document.querySelectorAll(".pf-fcount__n").forEach((x) => { x.textContent = String(Math.max(0, (+x.textContent || 0) + (on ? 1 : -1))); });
   });
   return b;

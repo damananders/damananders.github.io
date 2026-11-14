@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey } from "./games.common.js?v=14";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged } from "./games.common.js?v=15";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -183,7 +183,7 @@ async function rate(g, stars) {
     ? await sb.from("ratings").delete().eq("user_id", user.id).eq("game_id", g.id)
     : await sb.from("ratings").upsert({ user_id: user.id, game_id: g.id, stars, updated_at: new Date().toISOString() });
   if (res.error) { say("That vote didn't save: " + res.error.message, true); return; }
-  if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
+  if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {} statsChanged();
   load();
   voters();
 }
@@ -271,7 +271,7 @@ async function writeBox(g, box, shown) {
       if (error.code === "23505") { note.textContent = "You've already reviewed this game. Use Edit review to change it."; reviews(g, box); return; }
       note.textContent = "That didn't send: " + error.message; return;
     }
-    if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
+    if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {} statsChanged();
     reviewCounts.set(g.id, (reviewCounts.get(g.id) || 0) + 1);
     reviews(g, box);
   }

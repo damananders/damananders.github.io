@@ -1,0 +1,36 @@
+# Box art for modern games (PS4, PS5, Switch, Xbox, PC...) from Steam via Wikidata, plus RAWG when the
+# RAWG_API_KEY secret is set (free key from https://rawg.io/apidocs). Runs monthly; press "Run workflow" to run now.
+name: Rate-O-Pedia modern box art
+on:
+  workflow_dispatch:
+    inputs:
+      rawg_max:
+        description: "Most RAWG searches this run (free plan allows 20,000 a month)"
+        default: "700"
+  schedule:
+    - cron: "41 4 3 * *"
+permissions:
+  contents: write
+concurrency:
+  group: rop-art-modern
+  cancel-in-progress: false
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/rop-art/steam.mjs
+        env:
+          RAWG_API_KEY: ${{ secrets.RAWG_API_KEY }}
+          RAWG_MAX: ${{ github.event.inputs.rawg_max || '700' }}
+      - run: |
+          git config user.name "rop-art bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A assets/data/gameinfo
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -qm "Rate-O-Pedia: modern box art (Steam/RAWG)"
+          for i in 1 2 3 4; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 10; done

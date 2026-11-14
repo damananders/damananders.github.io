@@ -3,7 +3,7 @@
  * (save_list, delete_list, toggle_list_like) that checks the member and the limits, so nothing here is trusted.
  */
 import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, nameLink, ago, share, sfx, toast, INVITE,
-  consoleChip, gameUrl, artSlot, hasSearchKey, titleSearch, scoreCols, scorePair } from "./games.common.js?v=15";
+  consoleChip, gameUrl, artSlot, hasSearchKey, titleSearch, scoreCols, scorePair , statsChanged } from "./games.common.js?v=15";
 
 const root = $("ls-root");
 const qs = new URLSearchParams(location.search);
@@ -154,7 +154,7 @@ function editor(l, rows, games) {
       p_items: items.map((it) => ({ game_id: it.id, note: it.note.trim() })) });
     save.disabled = false;
     if (error) { note.textContent = notReady(error) ? "Lists switch on after the owner runs the database update." : error.message; sfx("error"); return; }
-    sfx("success"); toast(l ? "List saved" : "List created", "ok"); close();
+    sfx("success"); statsChanged(); toast(l ? "List saved" : "List created", "ok"); close();
     if (!l) location.href = "/games/lists/?id=" + data; else view();
   } });
   d.append(

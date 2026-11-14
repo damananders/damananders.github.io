@@ -82,6 +82,36 @@ export function takeReturn() {
 export const me = { user: null, profile: null, member: false, banned: false, ready: false, admin: false, staff: false, verify: null };
 let staffSent = false, trophiesSent = -1;
 // The site's trophies live in this browser; copy the count to the profile so others can see it (best effort).
+/* Rating milestones for the site's Trophy Cabinet: the pages announce your counts as "rop:stats"
+ * ({ votes, reviews, lists, following, member }) and the trophy code decides what they earn. Visitors count the
+ * games this browser has rated. Also left on window.ROP_STATS for code that loads later. */
+let statsSent = false;
+const VRATED = "rop.vrated";
+function visitorRated() { try { return JSON.parse(localStorage.getItem(VRATED) || "[]"); } catch (e) { return []; } }
+function sendStats(st) {
+  window.ROP_STATS = st;
+  try { if (window.Site && Site.emit) Site.emit("rop:stats", st); } catch (e) {}
+}
+async function emitStats(force) {
+  if (statsSent && !force) return; statsSent = true;
+  const st = { votes: visitorRated().length, reviews: 0, lists: 0, following: 0, member: !!me.member };
+  const h = me.profile && me.profile.handle;
+  if (me.member && h) {
+    try {
+      const [mp, ls, fi] = await Promise.all([
+        sb.from("member_profiles").select("votes,reviews").eq("handle", h).maybeSingle(),
+        sb.from("public_lists").select("id", { count: "exact", head: true }).eq("handle", h),
+        sb.rpc("follow_info", { p_handle: h })]);
+      if (mp.data) { st.votes = Math.max(st.votes, mp.data.votes || 0); st.reviews = mp.data.reviews || 0; }
+      if (!ls.error) st.lists = ls.count || 0;
+      if (!fi.error && fi.data && fi.data[0]) st.following = fi.data[0].following || 0;
+    } catch (e) {}
+  }
+  sendStats(st);
+}
+/* pages call this after a rating, review, list or follow so a milestone lands straight away */
+export function statsChanged() { emitStats(true); }
+
 function syncTrophies() {
   let n = 0;
   try { const got = (window.Site && Site.store && Site.store.get("trophies", {})) || {}; n = Object.keys(got).filter((k) => got[k]).length; } catch (e) { return; }
@@ -132,7 +162,7 @@ const listeners = [];
 const FULL = "is_member,name,avatar,handle,display_name,custom_avatar,motto,motto_color,fav_games,banned,created_at";
 export async function loadMe(session, skipVerify) {
   me.user = session ? session.user : null; me.profile = null; me.member = false; me.banned = false; me.admin = false; me.staff = false;
-  if (!me.user) return me;
+  if (!me.user) { emitStats(); return me; }
   if (session.provider_token && !skipVerify) await verify(session.provider_token, false);   // ask the server to check server membership
   let r = await sb.from("profiles").select(FULL).eq("id", me.user.id).maybeSingle();
   me.ready = !r.error;
@@ -144,6 +174,7 @@ export async function loadMe(session, skipVerify) {
   // Admin bubble (set server-side from the Discord role); tells the site trophies about it once per page load
   if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
   if (me.ready && !me.banned) syncTrophies();
+  if (!me.banned) emitStats();
   if (me.staff && !staffSent) { staffSent = true; window.ROP_ADMIN = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
   return me;
 }
@@ -445,6 +476,8 @@ export async function guestRate(id, stars) {
   if (!k) throw new Error("Your browser is blocking storage, so visitor ratings can't be saved.");
   const { error } = await sb.rpc("guest_rate", { p_game: id, p_stars: stars, p_key: k });
   if (error) throw new Error(/guest_rate|function|schema cache/i.test(error.message) ? "Visitor ratings switch on with the next site update." : error.message);
+  try { const v = new Set(visitorRated()); if (stars == null) v.delete(id); else v.add(id); localStorage.setItem(VRATED, JSON.stringify([...v].slice(-5000))); } catch (e) {}
+  if (!me.member) emitStats(true);
 }
 export const VISITOR_NOTE = "Visitor vote: counts toward the Open-Vote score. Join the Discord to make it Verified.";
 

@@ -1046,3 +1046,4 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .ls-mosaic:empty{background:linear-gradient(135deg,rgba(205,66,87,.35),rgba(80,60,160,.25))}
 .ls-mosaic:empty::after{content:"📋";grid-column:1/-1;align-self:center;justify-self:center;font-size:2.2rem;opacity:.7}
 .fd-stars{justify-self:start}
+.gi-credit{display:block;margin-top:4px;font-size:.72rem;opacity:.7;text-align:center}
