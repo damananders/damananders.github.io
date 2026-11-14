@@ -32,7 +32,15 @@
       "opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}" +
     ".ht-card.is-in{opacity:1;transform:none}" +
     ":root[data-motion=reduce] .ht-card{transition:opacity .2s}" +
+    ".ht-x{position:absolute;top:9px;right:9px;width:30px;height:30px;display:grid;place-items:center;border-radius:9px;cursor:pointer;" +
+      "border:0;background:none;color:var(--sx-muted,#a8abb3);font-size:1.3rem;line-height:1;padding:0}" +
+    ".ht-x:hover{background:var(--sx-surface-2,rgba(255,255,255,.08));color:var(--sx-text,#e8e8ea)}" +
+    ".ht-x:focus-visible{outline:2px solid var(--sx-accent,#cd4257);outline-offset:2px}" +
     ".ht-card__k{font:600 .66rem var(--sx-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--sx-muted,#a8abb3)}" +
+    ".ht-card__h{padding-right:26px}" +
+    ".ht-hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:1;font:600 .78rem var(--sx-display,system-ui);" +
+      "color:var(--sx-muted,#cfd3da);background:var(--sx-surface,#12161c);border:1px solid var(--sx-line-2,rgba(255,255,255,.18));" +
+      "border-radius:999px;padding:7px 14px;box-shadow:0 10px 30px -12px rgba(0,0,0,.7);pointer-events:none;opacity:.92}" +
     ".ht-card__h{margin:3px 0 6px;font:700 1.12rem var(--sx-display,system-ui);color:var(--sx-text,#e8e8ea)}" +
     ".ht-card__t{margin:0;font-size:.94rem;line-height:1.5;color:var(--sx-text,#dfe2e7)}" +
     ".ht-card__row{display:flex;align-items:center;gap:10px;margin-top:14px}" +
@@ -98,14 +106,19 @@
     kEl = el("span", { class: "ht-card__k" }); hEl = el("h2", { class: "ht-card__h" }); tEl = el("p", { class: "ht-card__t" });
     dots = el("div", { class: "ht-dots" });
     steps.forEach(function () { dots.appendChild(el("span", { class: "ht-dot" })); });
-    var skip = el("button", { type: "button", class: "ht-skip", text: "Skip" });
+    var skip = el("button", { type: "button", class: "ht-skip", text: "Skip tour" });
     var go = el("button", { type: "button", class: "ht-next", text: "Next" });
-    skip.addEventListener("click", function () { try { Site.sfx("close"); } catch (e) {} finish(); });
+    var x = el("button", { type: "button", class: "ht-x", "aria-label": "Close tour", title: "Close tour", html: "&times;" });
+    function quit() { try { Site.sfx("close"); } catch (e) {} finish(); }
+    skip.addEventListener("click", quit);
+    x.addEventListener("click", quit);
     go.addEventListener("click", next);
-    card = el("div", { class: "ht-card", role: "dialog", "aria-label": "Site tour" }, kEl, hEl, tEl,
+    card = el("div", { class: "ht-card", role: "dialog", "aria-label": "Site tour" }, x, kEl, hEl, tEl,
       el("div", { class: "ht-card__row" }, dots, skip, go));
-    ov = el("div", { class: "ht-ov" }, hole, card);
-    ov.addEventListener("click", function (e) { if (e.target === ov) { /* clicks on the dim do nothing */ } });
+    var hint = el("div", { class: "ht-hint", text: "Click anywhere or press Esc to skip" });
+    ov = el("div", { class: "ht-ov" }, hole, card, hint);
+    /* click anywhere outside the card closes it — makes the whole thing easy to dismiss */
+    ov.addEventListener("click", function (e) { if (!card.contains(e.target)) quit(); });
     (doc.body || doc.documentElement).appendChild(ov);
     window.addEventListener("resize", place); window.addEventListener("scroll", place, { passive: true });
     doc.addEventListener("keydown", onKey, true);
