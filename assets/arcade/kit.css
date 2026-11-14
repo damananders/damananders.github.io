@@ -1,0 +1,87 @@
+/* arcade/kit.css — the shared game shell (picker, stage, full-window overlay, menus, toasts). Prefix ak-. */
+
+.ak{margin:30px auto 0;max-width:min(980px,100%);text-align:left}
+.ak-pick{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.ak-pick__b{font:600 .95rem var(--display);color:var(--muted);background:var(--sx-glass);border:1px solid var(--line-2);
+  border-radius:999px;padding:9px 16px;min-height:42px;cursor:pointer;transition:color .15s,border-color .15s,box-shadow .15s}
+.ak-pick__b:hover{color:var(--text)}
+.ak-pick__b.is-active{color:var(--text);border-color:var(--sx-accent);box-shadow:0 0 0 1px var(--sx-accent)}
+.ak-pick__b:focus-visible{outline:2px solid var(--sx-accent);outline-offset:3px}
+
+.ak-card{padding:14px;border-radius:18px;background:var(--sx-glass);border:1px solid var(--line-2);backdrop-filter:blur(8px)}
+.ak-card__head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 4px 10px}
+.ak-card__head h2{font:600 1.1rem var(--display);margin:0}
+.ak-card__best{font:500 .82rem var(--mono);color:var(--muted)}
+.ak-card__blurb{margin:10px 4px 0;font-size:.9rem;color:var(--muted)}
+
+/* ---- the stage: in the page it keeps the game's aspect; full-window it fills the screen ---- */
+.ak-stage{position:relative;width:100%;aspect-ratio:var(--ak-ar,16/9);border-radius:12px;overflow:hidden;background:#04070b;
+  border:1px solid var(--line);container-type:size;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.ak-cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:0}
+.ak-stage[data-state="play"] .ak-cv{cursor:crosshair}
+
+.ak-full{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex}
+.ak-full[hidden]{display:none}
+.ak-stage.is-full{width:100vw;height:100vh;height:100dvh;aspect-ratio:auto;border:0;border-radius:0}
+:root.ak-lock,:root.ak-lock body{overflow:hidden}
+
+/* ---- corner buttons ---- */
+.ak-hbs{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:4}
+.ak-stage[data-state="play"] .ak-hbs{top:auto;bottom:8px}
+.ak-hb{width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(8,12,18,.62);color:#eef0f3;
+  font:700 15px/1 var(--display);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(4px);opacity:.75;transition:opacity .15s,border-color .15s}
+.ak-hb:hover,.ak-hb:focus-visible{opacity:1;border-color:var(--ak-accent)}
+.ak-hb:focus-visible{outline:2px solid var(--ak-accent);outline-offset:2px}
+.ak-hb[hidden]{display:none}
+.ak-stage.is-full .ak-hb{width:44px;height:44px;font-size:18px}
+
+/* ---- menus ---- */
+.ak-menu{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:3cqh 3cqw;background:rgba(4,8,14,.55);
+  backdrop-filter:blur(3px);overflow:auto;font-size:clamp(12px,2.4cqh,22px)}
+.ak-menu[hidden]{display:none}
+.ak-panel{width:min(32em,100%);max-height:100%;overflow:auto;padding:1.1em 1.2em 1.2em;border-radius:1em;color:#eef0f3;text-align:center;
+  background:linear-gradient(180deg,rgba(18,24,34,.92),rgba(10,14,22,.94));border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 1.2em 3em -1em rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.4)}
+.ak-panel.is-wide{width:min(44em,100%)}
+.ak-panel__kicker{font:600 .7em var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ak-accent)}
+.ak-panel__title{margin:.15em 0 .2em;font:700 2em/1.05 var(--display);letter-spacing:-.01em}
+.ak-panel.is-hero .ak-panel__title{font-size:2.8em;background:linear-gradient(180deg,#fff,#ffd9a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ak-panel__sub,.ak-panel__body,.ak-panel__foot{margin:.2em auto .6em;max-width:30em;font-size:.82em;line-height:1.5;color:#b9c2cd}
+.ak-panel__foot{margin:.8em auto 0;font-size:.7em;opacity:.85}
+.ak-panel__items{display:flex;flex-direction:column;gap:.45em;margin-top:.7em}
+.ak-panel__items.is-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(9em,1fr))}
+.ak-btn{display:flex;flex-direction:column;align-items:center;gap:.1em;padding:.6em .9em;min-height:2.6em;border-radius:.7em;cursor:pointer;
+  color:#eef0f3;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);font:inherit;transition:background .12s,border-color .12s,transform .08s}
+.ak-btn b{font:600 1em var(--display)}
+.ak-btn span{font:500 .68em var(--mono);color:#9aa6b4}
+.ak-btn:hover,.ak-btn.is-sel{background:rgba(255,255,255,.12);border-color:var(--ak-accent);box-shadow:0 0 0 1px var(--ak-accent)}
+.ak-btn:focus-visible{outline:2px solid var(--ak-accent);outline-offset:2px}
+.ak-btn:active{transform:translateY(1px)}
+.ak-btn[disabled]{opacity:.4;cursor:default}
+.ak-btn.is-gold{border-color:#f0c23a}.ak-btn.is-gold b{color:#f0c23a}
+.ak-btn.is-primary{background:color-mix(in srgb,var(--ak-accent) 32%,transparent)}
+.ak-panel table{width:100%;border-collapse:collapse;font-size:.8em;margin:.4em 0}
+.ak-panel th,.ak-panel td{padding:.35em .5em;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+.ak-panel th{font:600 .8em var(--mono);color:#9aa6b4;text-transform:uppercase;letter-spacing:.06em}
+.ak-panel td.n{text-align:right;font-family:var(--mono)}
+.ak-kv{display:grid;grid-template-columns:auto 1fr;gap:.25em 1.2em;text-align:left;font-size:.82em;margin:.5em auto;max-width:28em}
+.ak-kv>span{white-space:nowrap;color:#b9c2cd}
+.ak-kv b{font:600 1em var(--mono);text-align:right}
+.ak-howto{text-align:left;font-size:.8em;line-height:1.55;color:#c9d1db;margin:.3em 0}
+.ak-howto li{margin:.2em 0}
+.ak-howto kbd{font:600 .85em var(--mono);padding:.05em .4em;border-radius:.3em;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+.ak-win{color:#7ee6a6}.ak-lose{color:#ffb0a0}
+
+/* ---- toasts ---- */
+.ak-toasts{position:absolute;left:50%;top:13cqh;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.35em;
+  pointer-events:none;font-size:clamp(12px,2.6cqh,24px)}
+.ak-toast{padding:.35em .8em;border-radius:999px;font:700 1em var(--display);color:#fff;background:rgba(10,14,20,.82);border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 .4em 1.2em -.3em rgba(0,0,0,.7);animation:ak-pop .18s ease-out;transition:opacity .35s,transform .35s;white-space:nowrap}
+.ak-toast.is-bad{background:rgba(120,20,32,.9);border-color:#ff6b7c}
+.ak-toast.is-good{background:rgba(20,92,54,.9);border-color:#7ee6a6}
+.ak-toast.is-gold{background:rgba(110,82,8,.92);border-color:#f0c23a}
+.ak-toast.is-out{opacity:0;transform:translateY(-.6em)}
+@keyframes ak-pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+:root[data-motion="reduce"] .ak-toast{animation:none}
+
+@media (max-width:560px){.ak-card{padding:8px}.ak-menu{font-size:12px}}

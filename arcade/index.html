@@ -4,10 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Arcade</title>
-<meta name="description" content="Two little browser games — Row home and Review Score — playable any time, with trophies to earn." />
+<meta name="description" content="Three browser games: Row home, Review Score and Supreme Lobbing. Play any time and earn trophies." />
 <meta name="theme-color" content="#07090b" />
 <meta property="og:title" content="Arcade" />
-<meta property="og:description" content="Row home and Review Score — two small games on damananders.github.io." />
+<meta property="og:description" content="Row home, Review Score and Supreme Lobbing: three games on damananders.github.io." />
 <meta property="og:url" content="https://damananders.github.io/arcade/" />
 <meta property="og:image" content="https://damananders.github.io/assets/og/hub.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -26,8 +26,9 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/404.css?v=4" />
-<link rel="stylesheet" href="/assets/pages/arcade.css?v=1" />
+<link rel="stylesheet" href="/assets/pages/404.css?v=5" />
+<link rel="stylesheet" href="/assets/arcade/kit.css?v=1" />
+<link rel="stylesheet" href="/assets/pages/arcade.css?v=2" />
 <!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/hub-bg.webp')">
@@ -43,15 +44,16 @@
 
   <header class="hero ac-arc-hero">
     <div class="eyebrow">Arcade</div>
-    <h1>Two little games</h1>
-    <p class="lead">A couple of quick browser games to mess around with. Pick one, beat your best score, and keep an eye out — a few of the site's trophies hide in here.</p>
+    <h1>Three games</h1>
+    <p class="lead">Pick a game and beat your best score. Playing takes over the window, and you can shrink it back into the page whenever you want. A few of the site's trophies are hidden in here too.</p>
   </header>
 
   <main id="main">
     <div class="nf-arcade" aria-label="Games"></div>
     <div class="ac-arc-tips">
-      <span><b>🚣 Row home</b> — steer the boat, dodge the rocks, grab the lights.</span>
-      <span><b>🎮 Review Score</b> — stamp the game cases, skip the hardware, beat the goal before time's up.</span>
+      <span><b>🚣 Row home</b>: row through the islands, dodge trouble, grab the lights.</span>
+      <span><b>🎮 Review Score</b>: stamp the game cases, skip the hardware.</span>
+      <span><b>🎯 Supreme Lobbing</b>: lob things at enemy rafts and upgrade yours.</span>
     </div>
   </main>
 
@@ -65,8 +67,10 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/404-game.js?v=3"></script>
-<script defer src="/assets/pages/404-case-game.js?v=4"></script>
+<script defer src="/assets/arcade/kit.js?v=1"></script>
+<script defer src="/assets/arcade/row-home.js?v=1"></script>
+<script defer src="/assets/arcade/review-score.js?v=1"></script>
+<script defer src="/assets/arcade/supreme-lobbing.js?v=1"></script>
 <!-- /site:scripts -->
 </body>
 </html>

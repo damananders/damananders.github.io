@@ -1,0 +1,33 @@
+# Rebuilds the "Review Score" arcade case pool (assets/data/rop-cases.json): covered games from the Rate-O-Pedia
+# info cards, ranked by Wikidata popularity. Runs when the builder changes, monthly, or by hand.
+name: Arcade case pool
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 6 3 * *"
+  push:
+    branches: ["arcade/**"]
+    paths: ["tools/arcade/build-cases.mjs", ".github/workflows/arcade-cases.yml"]
+permissions:
+  contents: write
+concurrency:
+  group: arcade-cases-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/arcade/build-cases.mjs
+      - run: |
+          git config user.name "arcade bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/rop-cases.json
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -qm "Arcade: refresh the Review Score case pool"
+          BR="${GITHUB_REF_NAME}"
+          for i in 1 2 3; do git pull --rebase -q origin "$BR" && git push -q origin "HEAD:$BR" && break; sleep 5; done
