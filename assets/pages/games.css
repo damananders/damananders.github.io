@@ -1051,3 +1051,8 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .pf-supporter--monthly{color:#fff;background:linear-gradient(90deg,#d6336c,#cd4257);border-color:transparent}
 :root[data-theme="light"] .pf-supporter{color:#b0255a}
 :root[data-theme="light"] .pf-supporter--monthly{color:#fff}
+.gm-alts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 6px}
+.gm-alts__l{font-size:.78rem;opacity:.7}
+.gm-alts__b{padding:2px 9px;border-radius:999px;border:1px solid var(--sx-line,rgba(255,255,255,.18));background:transparent;color:inherit;font:600 .74rem var(--sx-mono,monospace);cursor:pointer}
+.gm-alts__b:hover{border-color:var(--sx-accent,#cd4257)}
+.gm-alts__b.is-on{background:var(--sx-accent,#cd4257);border-color:transparent;color:#fff}

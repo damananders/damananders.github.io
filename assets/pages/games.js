@@ -60,7 +60,23 @@ function ratingRow(g) {
   }
   return chipRow(my, (v) => rate(g, v), "Your rating for " + g.title);
 }
-function card(g, rank) {
+/* search results: the same title on several platforms (PC, Mac, Linux...) shows once, with chips to switch */
+const sameKey = (t) => String(t || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+function groupSame(rows) {
+  const out = [], at = new Map();
+  for (const g of rows) {
+    const k = sameKey(g.title), i = at.get(k);
+    if (i === undefined) { at.set(k, out.length); out.push([g]); } else out[i].push(g);
+  }
+  return out;
+}
+function altRow(group, cur, swap) {
+  if (group.length < 2) return null;
+  return el("div", { class: "gm-alts", role: "group", "aria-label": "Platforms" }, el("span", { class: "gm-alts__l", text: "On:" }),
+    ...group.map((x) => el("button", { class: "gm-alts__b" + (x === cur ? " is-on" : ""), type: "button", "aria-pressed": String(x === cur), title: platformName(x.console) + (x.votes ? " · " + x.votes + (x.votes === 1 ? " vote" : " votes") : ""),
+      text: x.console, onclick: () => { if (x !== cur) swap(x); } })));
+}
+function card(g, rank, group) {
   const score = g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated yet";
   const more = el("div", { class: "gm-more", hidden: true });
   const n = reviewCounts.get(g.id) || 0;
@@ -86,6 +102,7 @@ function card(g, rank) {
       g.open_votes === undefined ? mood : null, g.open_votes === undefined ? el("span", { class: "gm-score", text: score }) : null,
       g.open_votes === undefined ? el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" }) : null),
     g.open_votes === undefined ? null : el("div", { class: "gm-card__scores" }, mood, scorePair(g)),
+    altRow(group || [g], g, (x) => c.replaceWith(card(x, rank, group))),
     ratingRow(g), toggle, more);
   c.dataset.id = g.id;
   return c;
@@ -100,7 +117,7 @@ async function load() {
   let req = sb.from("game_scores").select(cols);
   const ids = filterIds();
   if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
-  if (q.length >= 2) { await hasSearchKey(); req = titleSearch(req, q).order("votes", { ascending: false }).order("title").limit(40); head.textContent = "Results for “" + q + "”"; }
+  if (q.length >= 2) { await hasSearchKey(); req = titleSearch(req, q).order("votes", { ascending: false }).order("title").limit(90); head.textContent = "Results for “" + q + "”"; }
   else if (open) { req = req.gt("open_votes", 0).order("open_average", { ascending: false }).order("open_votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated · Open-Vote"; }
   else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated" + (cols.includes("open_votes") ? " · Verified" : ""); }
   rankSwitch(q.length < 2 && cols.includes("open_votes"));
@@ -125,7 +142,8 @@ async function load() {
   }
   mine = myMap; reviewCounts = counts;               // publish both only once this load is the live one
   const ranked = q.length < 2;   // the top-rated list (not search results) gets medals and Must Play! flair
-  list.replaceChildren(...data.map((g, i) => card(g, ranked ? i + 1 : 0)));
+  if (ranked) list.replaceChildren(...data.map((g, i) => card(g, i + 1)));
+  else list.replaceChildren(...groupSame(data).slice(0, 40).map((grp) => card(grp[0], 0, grp)));
   if (!data.length) list.append(el("p", { class: "gm-empty", text: q.length >= 2 ? "No game by that name in the list yet." : "No ratings here yet. Search for a game and be the first." }));
   addBox(q, data);
   browse(q);
