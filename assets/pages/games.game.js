@@ -29,6 +29,10 @@ async function render() {
     staticInfo(),
     sb.from("game_info_fix").select("data").eq("game_id", id).maybeSingle()]);
   game = g.data;
+  if (!game) {   // merged duplicate? follow it to the copy that was kept
+    const a = await sb.from("game_aliases").select("new_id").eq("old_id", id).maybeSingle();
+    if (a.data && a.data.new_id) { location.replace("/games/game/?id=" + encodeURIComponent(a.data.new_id)); return; }
+  }
   if (!game) { root.replaceChildren(el("section", { class: "pf-card pf-notice" }, el("h2", { text: "Game not found" }), el("a", { class: "linkbtn", href: "/games/", text: "← Back to Rate-O-Pedia" }))); return; }
   info = Object.assign({}, base, (fix.data && fix.data.data) || {});
   const title = info.t || game.title, sub = info.st || "";

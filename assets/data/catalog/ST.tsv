@@ -1,5 +1,5 @@
 ST:nam-1965-1975	'Nam 1965-1975
-ST:1-2-3-v1-10	1 2 3 v1.10
+ST:1-2-3-v1-10	1 2 3
 ST:100-4-1	100 4 1
 ST:10th-frame	10th Frame
 ST:180	180
@@ -11,7 +11,6 @@ ST:20000-leagues-under-sea	20000 Leagues Under The Sea
 ST:20000-lieues-sous-les-mers	20000 Lieues Sous Les Mers
 ST:20000-meilen-unter-dem-meer	20000 Meilen Unter Dem Meer
 ST:221b-baker-street	221B Baker Street
-ST:3-d-break-thru	3-D Break Thru
 ST:3d	3D
 ST:3d-asteroids	3D aSTeroids
 ST:3d-break-thru	3D Break-Thru
@@ -22,13 +21,13 @@ ST:3d-construction-kit-r01-1000	3D Construction Kit r01.1000
 ST:3d-construction-kit-r01-2000	3D Construction Kit r01.2000
 ST:3d-maze	3D Maze
 ST:3d-pool	3D Pool
-ST:3d-ski-v1-02f	3D Ski v1.02f
-ST:3d-lab-v0-1	3D-Lab v0.1
-ST:4-7-11-v1-04	4-7-11 v1.04
+ST:3d-ski-v1-02f	3D Ski
+ST:3d-lab-v0-1	3D-Lab
+ST:4-7-11-v1-04	4-7-11
 ST:4d-sports-boxing	4D Sports Boxing
 ST:500cc-grand-prix	500cc Grand Prix
 ST:5th-gear	5th Gear
-ST:6-49-lotto-picker-v1-0	6-49 Lotto Picker v1.0
+ST:6-49-lotto-picker-v1-0	6-49 Lotto Picker
 ST:8-ball	8 Ball
 ST:89-la-revolution-francaise	89: La Revolution Francaise
 ST:9-lives	9 Lives
@@ -38,8 +37,7 @@ ST:froggy-day-in-london-town	A Froggy Day in London Town
 ST:mind-forever-voyaging	A Mind Forever Voyaging
 ST:prehistoric-tale	A Prehistoric Tale
 ST:question-of-sport	A Question of Sport
-ST:f-l-pro-football-v1-01	A.F.L. Pro Football v1.01
-ST:f-l-pro-football-v1-02	A.F.L. Pro Football v1.02
+ST:f-l-pro-football-v1-01	A.F.L. Pro Football
 ST:m-c-astro-marine-corps	A.M.C.: Astro Marine Corps
 ST:p-b-all-points-bulletin	A.P.B.: All Points Bulletin
 ST:a1rl0ck	A1RL0CK
@@ -53,10 +51,9 @@ ST:abenteurer-die-weltraum-odyssee	Abenteurer: Die Weltraum Odyssee
 ST:abombinaball	Abombinaball
 ST:academy	Academy
 ST:academy-tau-ceti-2	Academy: Tau Ceti II
-ST:acc-tris-v1-6-4-054-r7	Acc-Tris v1.6.4.054 r7
+ST:acc-tris-v1-6-4-054-r7	Acc-Tris v1.6.4.054
 ST:action-fighter	Action Fighter
 ST:action-service	Action Service
-ST:addicta-ball	Addicta Ball
 ST:addictaball	Addictaball
 ST:adidas-championship-tie-break	Adidas Championship Tie Break
 ST:adrenalynn	Adrenalynn
@@ -80,20 +77,13 @@ ST:age	Age
 ST:agi-quest-i-computer-game	Agi Quest I: The Computer Game
 ST:agitation	Agitation
 ST:air-bucks	Air Bucks
-ST:air-bucks-v1-00	Air Bucks v1.00
-ST:air-strike-usa	Air Strike USA
 ST:air-supply	Air Supply
 ST:air-support	Air Support
-ST:air-warrior-v1-1a	Air Warrior v1.1a
-ST:air-warrior-v1-2e	Air Warrior v1.2e
-ST:air-warrior-v2-0b	Air Warrior v2.0b
-ST:air-warrior-v2-0e	Air Warrior v2.0e
+ST:air-warrior-v1-1a	Air Warrior
 ST:airball	Airball
 ST:airborne-ranger	Airborne Ranger
-ST:airline-manager-v1-03	Airline Manager v1.03
-ST:airline-manager-v1-04	Airline Manager v1.04
-ST:airline-st-v1-0	Airline ST v1.0
-ST:airline-st-v2-0	Airline ST v2.0
+ST:airline-manager-v1-03	Airline Manager
+ST:airline-st-v1-0	Airline ST
 ST:airstrike-usa	Airstrike USA
 ST:albedo	Albedo
 ST:albion	Albion
@@ -118,17 +108,14 @@ ST:alpine-games	Alpine Games
 ST:altair	Altair
 ST:altered-beast	Altered Beast
 ST:alternate-reality-city	Alternate Reality: The City
-ST:alternate-reality-city-v1-2	Alternate Reality: The City v1.2
-ST:alternate-reality-city-v2-0	Alternate Reality: The City v2.0
 ST:amaze	Amaze
-ST:amaze-v1-0	Amaze v1.0
 ST:amazon	Amazon
 ST:amberstar	Amberstar
 ST:amberstar-v1-94e-trainer-patch	Amberstar v1.94E Trainer Patch
 ST:ammotrack	Ammotrack
 ST:amnesia-95	Amnesia 95
 ST:amoeba-wars	Amoeba Wars
-ST:anarcho-ride-v1-04	Anarcho Ride v1.04
+ST:anarcho-ride-v1-04	Anarcho Ride
 ST:anarchy	Anarchy
 ST:ancient-battles	Ancient Battles
 ST:ancient-games	Ancient Games
@@ -137,8 +124,8 @@ ST:angel-nieto-pole-500	Angel Nieto Pole 500
 ST:annals-of-rome	Annals Of Rome
 ST:annihilator	Annihilator
 ST:anno-domini-1700	Anno Domini 1700
-ST:anoraks-of-doom-untramielled-adventures-v1-01	Anoraks of Doom: Untramielled Adventures v1.01
-ST:another-tetris-program-v1-2	Another Tetris Program v1.2
+ST:anoraks-of-doom-untramielled-adventures-v1-01	Anoraks of Doom: Untramielled Adventures
+ST:another-tetris-program-v1-2	Another Tetris Program
 ST:another-world	Another World
 ST:antago	Antago
 ST:apache-flight	Apache Flight
@@ -154,7 +141,6 @@ ST:archer-maclean-billard-americain	Archer MacLean: Billard Americain
 ST:archer-macleans-pool	Archer MacLean's Pool
 ST:archipel	Archipel
 ST:archipelagos	Archipelagos
-ST:arctic-fox	Arctic Fox
 ST:arctic-moves	Arctic Moves
 ST:arcticfox	Arcticfox
 ST:arena	Arena
@@ -179,12 +165,10 @@ ST:asterix-im-morgenland	Asterix Im Morgenland
 ST:asterix-in-dungeons-of-doom	Asterix in the Dungeons of Doom
 ST:asterix-und-operation-hinkelstein	Asterix und Operation Hinkelstein
 ST:asterix-operation-getafix	Asterix: Operation Getafix
-ST:asteroid-controller-v1-0	Asteroid Controller v1.0
+ST:asteroid-controller-v1-0	Asteroid Controller
 ST:asteroidia	Asteroidia
 ST:asteroids-deluxe	Asteroids Deluxe
-ST:asteroids-v1-0	Asteroids v1.0
-ST:asteroids-v1-1	Asteroids v1.1
-ST:asteroids-v1-2	Asteroids v1.2
+ST:asteroids-v1-0	Asteroids
 ST:astro-2000	Astro 2000
 ST:astro-marine-corporation	Astro Marine Corporation
 ST:astro-panic	Astro Panic
@@ -226,7 +210,6 @@ ST:back-to-golden-age	Back to the golden Age
 ST:backgammon	Backgammon
 ST:backgammon-royal	Backgammon Royal
 ST:backgammon-royale	Backgammon Royale
-ST:backgammon-v1-0e	Backgammon v1.0e
 ST:backlash	Backlash
 ST:bad-cat	Bad Cat
 ST:bad-company	Bad Company
@@ -235,18 +218,16 @@ ST:badlands	Badlands
 ST:badlands-pete	Badlands Pete
 ST:baker-street-detective	Baker Street Detective
 ST:balance-of-power	Balance of Power
-ST:balance-of-power-v1-03	Balance of Power v1.03
 ST:balance-of-power-1990-edition	Balance of Power: The 1990 Edition
 ST:ball	Ball
 ST:ball-zone	Ball Zone
 ST:balls-quest	Ball's Quest
 ST:ballblazer	Ballblazer
 ST:ballerburg	Ballerburg
-ST:ballistic-v2-4	Ballistic v2.4
+ST:ballistic-v2-4	Ballistic
 ST:ballistix	Ballistix
 ST:balls	Balls
 ST:ballyhoo	Ballyhoo
-ST:ballyhoo-r97	Ballyhoo r97
 ST:bang-and-blastman-explosive-fun	Bang and Blastman: Explosive Fun
 ST:bank-buster	Bank Buster
 ST:bank-it	Bank-It
@@ -264,15 +245,11 @@ ST:batman-movie	Batman: The Movie
 ST:battle-bound	Battle Bound
 ST:battle-chess	Battle Chess
 ST:battle-command	Battle Command
-ST:battle-hawks-1942	Battle Hawks 1942
-ST:battle-hawks-1942-v1-0	Battle Hawks 1942 v1.0
-ST:battle-master	Battle Master
 ST:battle-of-atlantic-ocean-lifeline	Battle of the Atlantic: The Ocean Lifeline
 ST:battle-of-atlantic-ocean-lifeline-v4-0p	Battle of the Atlantic: The Ocean Lifeline v4.0P
 ST:battle-of-planets	Battle of the Planets
 ST:battle-probe	Battle Probe
 ST:battle-tech	Battle Tech
-ST:battle-zone	Battle Zone
 ST:battlehawks-1942	Battlehawks 1942
 ST:battlemaster	Battlemaster
 ST:battleships	Battleships
@@ -282,7 +259,6 @@ ST:bauernkampf	Bauernkampf
 ST:beach-volley	Beach Volley
 ST:beam	Beam
 ST:beast-buster	Beast Buster
-ST:beast-lord	Beast Lord
 ST:beastlord	Beastlord
 ST:bellum-internecinum	Bellum Internecinum
 ST:belote	Belote
@@ -296,11 +272,11 @@ ST:better-dead-than-alien	Better Dead Than Alien
 ST:beverly-hills-cop	Beverly Hills Cop
 ST:beyond	Beyond
 ST:beyond-ice-palace	Beyond the Ice Palace
-ST:beyond-tesseract-v2-0p	Beyond the Tesseract v2.0p
+ST:beyond-tesseract-v2-0p	Beyond the Tesseract
 ST:beyond-titanic-2	Beyond the Titanic 2
 ST:beyond-zork	Beyond Zork
 ST:beyond-zork-coconut-of-quendor	Beyond Zork: The Coconut of Quendor
-ST:bibos-casino-v1-2	Bibo's Casino v1.2
+ST:bibos-casino-v1-2	Bibo's Casino
 ST:big-business	Big Business
 ST:big-fishing-game	Big Fishing Game
 ST:big-nose	Big Nose
@@ -308,17 +284,17 @@ ST:big-nose-caveman	Big Nose the Caveman
 ST:big-run	Big Run
 ST:bill-palmer	Bill Palmer
 ST:bills-tomato-game	Bill's Tomato Game
-ST:billard-simulation-v1-7	Billard Simulation v1.7
+ST:billard-simulation-v1-7	Billard Simulation
 ST:billiards-simulator	Billiards Simulator
 ST:billiards-simulator-2	Billiards Simulator II
 ST:billy-bounce	Billy Bounce
 ST:billy-boy	Billy Boy
 ST:bio-challenge	Bio Challenge
-ST:bio-hazzard-v1-1	Bio Hazzard v1.1
+ST:bio-hazzard-v1-1	Bio Hazzard
 ST:biohazard-2	Biohazard 2
 ST:bionic-commando	Bionic Commando
 ST:bismarck	Bismarck
-ST:bits-v1-1	Bits v1.1
+ST:bits-v1-1	Bits
 ST:bivouac	Bivouac
 ST:black-and-mortimer-la-marque-jaune	Black & Mortimer: La Marque Jaune
 ST:black-dawn	Black Dawn
@@ -328,17 +304,16 @@ ST:black-jack-plus-3	Black Jack Plus III
 ST:black-lamp	Black Lamp
 ST:black-sect	Black Sect
 ST:black-tiger	Black Tiger
-ST:blackjack-v1-2	Blackjack v1.2
+ST:blackjack-v1-2	Blackjack
 ST:blackscar-mountain	Blackscar Mountain
 ST:blast	Blast
-ST:blast-it-v1-0	Blast It v1.0
+ST:blast-it-v1-0	Blast It
 ST:blastaball	Blastaball
 ST:blasteroids	Blasteroids
 ST:blazing-thunder	Blazing Thunder
 ST:blinkys-scary-school	Blinky's Scary School
 ST:blitzkrieg-may-1940	Blitzkrieg: May 1940
 ST:blob-race	Blob Race
-ST:block-out	Block Out
 ST:blockbuster	Blockbuster
 ST:blockout	Blockout
 ST:blood-money	Blood Money
@@ -361,14 +336,12 @@ ST:bobbles	Bobbles
 ST:bobo	Bobo
 ST:boersenfieber	Boersenfieber
 ST:boing	Boing
-ST:bold-v1-0b	Bold v1.0b
-ST:bold-v1-1b	Bold v1.1b
+ST:bold-v1-0b	Bold
 ST:bolo	Bolo
 ST:bolo-werkstatt	Bolo Werkstatt
 ST:bolo-public-domain-version	Bolo: Public Domain Version
 ST:bomb-disposal	Bomb Disposal
 ST:bomb-fusion	Bomb Fusion
-ST:bomb-jack	Bomb Jack
 ST:bombx	Bomb'X
 ST:bomber-command	Bomber Command
 ST:bomberman	Bomberman
@@ -380,7 +353,6 @@ ST:bonanza-bros	Bonanza Bros.
 ST:booly	Booly
 ST:bootiful-babe	Bootiful Babe
 ST:border-zone	Border Zone
-ST:borderzone-r9	Borderzone r9
 ST:borodino	Borodino
 ST:borrowed-time	Borrowed Time
 ST:boston-bomb-club	Boston Bomb Club
@@ -393,33 +365,28 @@ ST:brad-stallion-in-sex-olympics	Brad Stallion in Sex Olympics
 ST:brat	Brat
 ST:brataccas	Brataccas
 ST:breach	Breach
-ST:breach-2-v1-0	Breach 2 v1.0
-ST:breach-2-v2-1	Breach 2 v2.1
-ST:breach-v1-0	Breach v1.0
-ST:breach-v1-0e	Breach v1.0e
+ST:breach-2-v1-0	Breach 2
 ST:breakers	Breakers
-ST:breakout-v1-00	Breakout v1.00
-ST:breakout-v1-11	Breakout v1.11
+ST:breakout-v1-00	Breakout
 ST:brian-cloughs-football-fortunes	Brian Clough's Football Fortunes
 ST:brian-cloughs-fussball-manger	Brian Clough's Fussball Manger
 ST:brick-works	Brick Works
-ST:brick-yard-v070887b	Brick Yard v070887b
+ST:brick-yard-v070887b	Brick Yard
 ST:bride-of-robot	Bride of the Robot
 ST:brides-of-dracula	Brides of Dracula
 ST:bridge	Bridge
 ST:bridge-master	Bridge Master
 ST:bridge-player-2000-with-tutor	Bridge Player 2000 with Tutor
-ST:bridge-it-v1-1	Bridge-It v1.1
+ST:bridge-it-v1-1	Bridge-It
 ST:brimestone-dream-of-gawain	Brimestone: The Dream of Gawain
 ST:bss-jane-seymour	BSS Jane Seymour
 ST:bubble	Bubble +
 ST:bubble-bobble	Bubble Bobble
 ST:bubble-dizzy	Bubble Dizzy
-ST:bubble-dizzy-v1-01	Bubble Dizzy v1.01
 ST:bubble-ghost	Bubble Ghost
 ST:bubble-trouble	Bubble Trouble
 ST:bubbles-mcgee	Bubbles McGee
-ST:bubbles-v1-4	Bubbles v1.4
+ST:bubbles-v1-4	Bubbles
 ST:buffalo-bills-wild-west-show	Buffalo Bill's Wild West Show
 ST:bug	Bug
 ST:bug-bash	Bug Bash
@@ -428,15 +395,13 @@ ST:builderland-story-of-melba	Builderland: The Story of Melba
 ST:bullet-train	Bullet Train
 ST:bullys-sporting-darts	Bully's Sporting Darts
 ST:bumerang	Bumerang
-ST:bumerang-v2-11	Bumerang v2.11
 ST:bumpy	Bumpy
 ST:bumpys-arcade-fantasy	Bumpy's Arcade Fantasy
-ST:bundesliga-adventure-v1-4	Bundesliga Adventure v1.4
+ST:bundesliga-adventure-v1-4	Bundesliga Adventure
 ST:bundesliga-manager-professional	Bundesliga Manager Professional
-ST:bundesliga-manager-v1-3	Bundesliga Manager v1.3
+ST:bundesliga-manager-v1-3	Bundesliga Manager
 ST:bunny-bricks	Bunny Bricks
 ST:bureaucracy	Bureaucracy
-ST:bureaucracy-r116	Bureaucracy r116
 ST:burger-man	Burger Man
 ST:burger-time	Burger Time
 ST:butcher-hill	Butcher Hill
@@ -447,7 +412,7 @@ ST:cadaver-pay-off	Cadaver: The Pay Off
 ST:caesar	Caesar
 ST:california-games	California Games
 ST:california-games-2	California Games II
-ST:california-goldrush-v1-01	California Goldrush v1.01
+ST:california-goldrush-v1-01	California Goldrush
 ST:campaign	Campaign
 ST:candyman	Candyman
 ST:cannon-fodder	Cannon Fodder
@@ -459,25 +424,20 @@ ST:captain-fizz	Captain Fizz
 ST:captain-fizz-meets-blaster-trons	Captain Fizz Meets the Blaster-Trons
 ST:captain-planet-and-planeteers	Captain Planet and the Planeteers
 ST:captive	Captive
-ST:captive-v1-2	Captive v1.2
-ST:cards-v2-0	Cards v2.0
+ST:cards-v2-0	Cards
 ST:carlos	Carlos
 ST:carrier-command	Carrier Command
 ST:cars	Cars
 ST:cartoon-capers	Cartoon Capers
 ST:carvup	CarVup
-ST:casar-v1-1	Casar v1.1
-ST:casar-v1-1d	Casar v1.1d
-ST:casar-v1-3d	Casar v1.3d
-ST:casar-v1-5x	Casar v1.5x
+ST:casar-v1-1	Casar
 ST:casino-craps	Casino Craps
-ST:casino-craps-v1-0	Casino Craps v1.0
 ST:castle-master	Castle Master
 ST:castle-master-2-crypt	Castle Master II: The Crypt
 ST:castle-warrior	Castle Warrior
 ST:castles	Castles
 ST:catch-23	Catch 23
-ST:cbzone-v0-2	Cbzone v0.2
+ST:cbzone-v0-2	Cbzone
 ST:celica-gt-rally	Celica GT Rally
 ST:centerfold-squares	Centerfold Squares
 ST:centipede	Centipede
@@ -489,23 +449,19 @@ ST:champion-of-raj	Champion of the Raj
 ST:championship-baseball	Championship Baseball
 ST:championship-cricket	Championship Cricket
 ST:championship-manager	Championship Manager
-ST:championship-manager-93-includes-94-data-v4-03	Championship Manager '93 includes 94' Data v4.03
-ST:championship-manager-93-v1-11	Championship Manager '93 v1.11
+ST:championship-manager-93-includes-94-data-v4-03	Championship Manager '93 includes 94' Data
+ST:championship-manager-93-v1-11	Championship Manager '93
 ST:championship-manager-end-of-season-1994	Championship Manager End of Season 1994
 ST:championship-manager-italia	Championship Manager Italia
 ST:championship-run	Championship Run
 ST:championship-water-skiing	Championship Water-Skiing
 ST:championship-wrestling	Championship Wrestling
 ST:chaos-strikes-back	Chaos Strikes Back
-ST:chaos-strikes-back-v2-0	Chaos Strikes Back v2.0
-ST:chaos-strikes-back-v2-1	Chaos Strikes Back v2.1
-ST:chaos-v1-0	Chaos v1.0
+ST:chaos-v1-0	Chaos
 ST:chaos-v1-0-1-2-meg-version	Chaos v1.0: 1-2 Meg Version
-ST:chaos-v1-1	Chaos v1.1
 ST:charge-of-light-brigade	Charge of the Light Brigade
 ST:chariots-of-wrath	Chariots of Wrath
 ST:chase	Chase
-ST:chase-h-q	Chase H.Q.
 ST:chase-hq	Chase HQ
 ST:chase-hq-2	Chase HQ II
 ST:chess-champion-2175	Chess Champion 2175
@@ -521,11 +477,9 @@ ST:chipgame	Chipgame
 ST:chopper-10	Chopper-X
 ST:chrono-quest	Chrono Quest
 ST:chrono-quest-2	Chrono Quest II
-ST:chronos-v1-54	Chronos v1.54
-ST:chu-chu-rocket-lite-v1-0	Chu Chu Rocket Lite v1.0
-ST:chu-chu-rocket-v1-0	Chu Chu Rocket v1.0
-ST:chu-chu-rocket-v1-17	Chu Chu Rocket v1.17
-ST:chu-chu-rocket-v1-18	Chu Chu Rocket v1.18
+ST:chronos-v1-54	Chronos
+ST:chu-chu-rocket-lite-v1-0	Chu Chu Rocket Lite
+ST:chu-chu-rocket-v1-0	Chu Chu Rocket
 ST:chubby-christle	Chubby Christle
 ST:chuck-rock	Chuck Rock
 ST:chuck-yeagers-advanced-flight-trainer	Chuck Yeager's Advanced Flight Trainer
@@ -549,16 +503,14 @@ ST:club-backgammon	Club Backgammon
 ST:clue-master-detective	Clue: Master Detective
 ST:cobra-2	Cobra II
 ST:cobra-strike	Cobra Strike
-ST:coco-coq-dans-la-base-de-grostesteing-v1-0-2	Coco Coq dans la Base de Grostesteing v1.0.2
-ST:coco-coq-in-grostesteings-base-v1-0-3	Coco Coq in Grostesteing's Base v1.0.3
+ST:coco-coq-dans-la-base-de-grostesteing-v1-0-2	Coco Coq dans la Base de Grostesteing
+ST:coco-coq-in-grostesteings-base-v1-0-3	Coco Coq in Grostesteing's Base
 ST:cococopo	CoCoCoPo
-ST:codename-iceman-v1-041	Codename Iceman v1.041
 ST:codename-iceman	Codename: ICEMAN
 ST:cohort-fighting-for-rome	Cohort: Fighting for Rome
-ST:colonial-conquest-v1-0	Colonial Conquest v1.0
-ST:colonial-conquest-v1-1	Colonial Conquest v1.1
+ST:colonial-conquest-v1-0	Colonial Conquest
 ST:colorado	Colorado
-ST:colorspace-v1-1	Colorspace v1.1
+ST:colorspace-v1-1	Colorspace
 ST:colossus-chess-10	Colossus Chess X
 ST:colossus-10-chess	Colossus X Chess
 ST:columns	Columns
@@ -570,9 +522,8 @@ ST:computer-third-reich	Computer Third Reich
 ST:conflict-europe	Conflict Europe
 ST:conflict-middle-east-political-simulator	Conflict: Middle East Political Simulator
 ST:conqueror	Conqueror
-ST:conquests-of-camelot-v1-019-000	Conquests of Camelot v1.019.000
+ST:conquests-of-camelot-v1-019-000	Conquests of Camelot
 ST:conquests-of-camelot-search-for-grail	Conquests of Camelot: The Search for the Grail
-ST:conquests-of-camelot-search-for-grail-v1-019	Conquests of Camelot: The Search for the Grail v1.019
 ST:continental-circus	Continental Circus
 ST:cool-croc-twins	Cool Croc Twins
 ST:cool-world	Cool World
@@ -580,17 +531,13 @@ ST:cops-and-robbers	Cops and Robbers
 ST:cops-and-robbers-chess	Cops and Robbers Chess
 ST:cops-and-robbers-too	Cops and Robbers Too!
 ST:core-wars	Core Wars
-ST:core-wars-v1-0	Core Wars v1.0
-ST:core-wars-v1-00	Core Wars v1.00
-ST:core-wars-v2-1e	Core Wars v2.1e
 ST:corruption	Corruption
 ST:cortizone	Cortizone
 ST:cosmic-pirate	Cosmic Pirate
-ST:cosmos-chronicles-v1-02	Cosmos Chronicles v1.02
+ST:cosmos-chronicles-v1-02	Cosmos Chronicles
 ST:cougar-force	Cougar Force
 ST:count-duckula	Count Duckula
 ST:count-duckula-2	Count Duckula 2
-ST:crack-down	Crack Down
 ST:cracked	Crack'ed
 ST:crackdown	Crackdown
 ST:crafton-and-xunk	Crafton & Xunk
@@ -625,10 +572,8 @@ ST:crystal-castles	Crystal Castles
 ST:crystal-kingdom-dizzy	Crystal Kingdom Dizzy
 ST:crystals-of-arborea	Crystals of Arborea
 ST:curse-of-azure-bonds	Curse of the Azure Bonds
-ST:curse-of-azure-bonds-v1-0	Curse of the Azure Bonds v1.0
 ST:custodian	Custodian
 ST:cutthroats	Cutthroats
-ST:cutthroats-r23	Cutthroats r23
 ST:cyber-assault	Cyber Assault
 ST:cyber-cop	Cyber Cop
 ST:cyber-empires	Cyber Empires
@@ -647,19 +592,17 @@ ST:d-day	D-Day
 ST:d-day-patch-language-option	D-Day Patch Language Option
 ST:d-fission-an-exploding-board-game	D-Fission: An Exploding Board Game
 ST:d-generation	D-Generation
-ST:d-r-c-2	D.A.R.C. 2
 ST:d-r-c-defensive-alien-remoting-command	D.A.R.C.: Defensive Alien Remoting Command
 ST:daily-double-horse-racing	Daily Double Horse Racing
 ST:dakar-das-kleine-autorennen	DakAr: Das kleine Autorennen
 ST:dalx	Dal'X
 ST:dalx-new-level-1	Dal'X New Level 1
 ST:dalek-attack	Dalek Attack
-ST:daleks-v1-0	Daleks v1.0
+ST:daleks-v1-0	Daleks
 ST:daley-thompsons-olympic-challenge	Daley Thompson's Olympic Challenge
 ST:dallas	Dallas
-ST:dam-v1-1	Dam v1.1
+ST:dam-v1-1	Dam
 ST:dame	Dame
-ST:dame-v1-00	Dame v1.00
 ST:dames-grand-maitre	Dames Grand-Maitre
 ST:dames-simulator	Dames Simulator
 ST:damocles-mission-disk-1	Damocles Mission disk 1
@@ -671,7 +614,6 @@ ST:darc	Darc
 ST:darc-2	Darc II
 ST:darius	Darius+
 ST:dark-castle	Dark Castle
-ST:dark-castle-v1-0	Dark Castle, The v1.0
 ST:dark-century	Dark Century
 ST:dark-fusion	Dark Fusion
 ST:dark-pearl	Dark Pearl
@@ -686,28 +628,25 @@ ST:das-grab-von-manuleos-tomb-of-manuleos	Das Grab von Manuleos: Tomb of Manuleo
 ST:das-magazin	Das Magazin
 ST:das-singende-schwert	Das Singende Schwert
 ST:das-taschentuch	Das Taschentuch
-ST:datachess-2-v4-0	Datachess II v4.0
+ST:datachess-2-v4-0	Datachess II
 ST:datequest	Datequest
 ST:davy-jones-locker	Davy Jones Locker
-ST:day-at-races-v1-2	Day at the Races, A v1.2
 ST:day-of-viper	Day of the Viper
 ST:days-of-thunder	Days of Thunder
-ST:dc-click-me-v1-0	DC Click me v1.0
+ST:dc-click-me-v1-0	DC Click me
 ST:dead-or-alive	Dead or Alive
 ST:deadland	Deadland
 ST:deadline	Deadline
-ST:deadline-r27	Deadline r27
-ST:death-bringer	Death Bringer
 ST:death-camp	Death Camp
 ST:death-sword	Death Sword
 ST:death-trap	Death Trap
 ST:deathbringer	Deathbringer
 ST:deathbringer-sword-of-abaddon	Deathbringer: The Sword of Abaddon
 ST:deathstrike	Deathstrike
-ST:debut-v1-05	Debut v1.05
-ST:decoder-v1-0	Decoder v1.0
+ST:debut-v1-05	Debut
+ST:decoder-v1-0	Decoder
 ST:deep-lair	Deep Lair
-ST:deep-space-v1-00a	Deep Space v1.00a
+ST:deep-space-v1-00a	Deep Space
 ST:deep-thought-extended	Deep Thought: Extended
 ST:defend-earth-2	Defend the Earth 2
 ST:defender-2	Defender II
@@ -722,9 +661,8 @@ ST:deliverance	Deliverance
 ST:delta-patrol	Delta Patrol
 ST:demenage-man	Demenage Man
 ST:demolition-man	Demolition Man
-ST:demolition-man-v2-0	Demolition Man v2.0
 ST:demon-blue	Demon Blue
-ST:demons-tomb-awakening-v1-00	Demon's Tomb: The Awakening v1.00
+ST:demons-tomb-awakening-v1-00	Demon's Tomb: The Awakening
 ST:demons-winter	Demon's Winter
 ST:demoniak	Demoniak
 ST:demox	Demox
@@ -737,24 +675,22 @@ ST:der-zaubertrank	Der Zaubertrank
 ST:desolator	Desolator
 ST:destruction-imminent	Destruction Imminent
 ST:detonator	Detonator
-ST:detonator-v1-0-2	Detonator v1.0.2
 ST:deuce	Deuce
 ST:deuteros	Deuteros
-ST:deuteros-v1-0	Deuteros v1.0
 ST:devious-designs	Devious Designs
 ST:devon-aire-hidden-diamond-caper	Devon Aire: The Hidden Diamond Caper
 ST:diamond-ice	Diamond Ice
-ST:dice-v0-9	Dice v0.9
+ST:dice-v0-9	Dice
 ST:dick-tracy	Dick Tracy
 ST:die-alien-blob	Die Alien Blob
 ST:die-dachkammer	Die Dachkammer
 ST:die-drachen-von-laas	Die Drachen von Laas
 ST:die-fugger	Die Fugger
-ST:die-grosse-flut-v1-01	Die Grosse Flut v1.01
+ST:die-grosse-flut-v1-01	Die Grosse Flut
 ST:die-hard-2	Die Hard 2
 ST:die-wiederkehr-des-zauberer	Die Wiederkehr des Zauberer
 ST:digger	Digger
-ST:dinkum-v2-13	Dinkum v2.13
+ST:dinkum-v2-13	Dinkum
 ST:dino-dinis-goal	Dino Dini's Goal
 ST:diosa-de-cozumel	Diosa de Cozumel
 ST:diplomacy	Diplomacy
@@ -777,22 +713,16 @@ ST:dizzys-fun-time-disk-2	Dizzy's Fun Time Disk 2
 ST:do-run-run	Do! Run Run
 ST:doctor-dooms-revenge	Doctor Doom's Revenge
 ST:doctor-who-dalek-attack	Doctor Who: Dalek Attack
-ST:dodgem-2-v1-0	Dodg'em 2 v1.0
-ST:dodgem-2-v2-0	Dodg'em 2 v2.0
+ST:dodgem-2-v1-0	Dodg'em 2
 ST:dogfight	Dogfight
-ST:dogfight-v1-0	Dogfight v1.0
-ST:dogfight-v1-1	Dogfight v1.1
-ST:dogfight-v1-10	Dogfight v1.10
 ST:dogs-of-war	Dogs of War
 ST:domination	Domination
 ST:dominator	Dominator
 ST:dominium	Dominium
-ST:domino-v1-2	Domino v1.2
-ST:domino-v1-4	Domino v1.4
+ST:domino-v1-2	Domino
 ST:dominoes	Dominoes
-ST:dont-bank-on-it-v1-0	Don't bank on it v1.0
-ST:dont-worry-be-happy-v1-02	Don't Worry Be Happy v1.02
-ST:dont-worry-be-happy-v2-0	Don't worry, be happy v2.0
+ST:dont-bank-on-it-v1-0	Don't bank on it
+ST:dont-worry-be-happy-v2-0	Don't worry, be happy
 ST:donald-ducks-playground	Donald Duck's Playground
 ST:donkey-island	Donkey Island
 ST:donkey-kong-jr	Donkey Kong Jr.
@@ -802,7 +732,6 @@ ST:doppy-and-prus-summer-holiday	Doppy & Pru's Summer Holiday
 ST:double-dragon	Double Dragon
 ST:double-dragon-3-rosetta-stone	Double Dragon 3: The Rosetta Stone
 ST:double-dragon-2-revenge	Double Dragon II: The Revenge
-ST:double-dragon-2-revenge-v1-2	Double Dragon II: The Revenge v1.2
 ST:double-juggle-vegatabobble	Double Juggle Vegatabobble
 ST:double-take	Double Take
 ST:douglas-rockmoor	Douglas Rockmoor
@@ -811,10 +740,8 @@ ST:down-fall	Down Fall
 ST:downhill-challenge	Downhill Challenge
 ST:dozer	Dozer
 ST:dragon-breed	Dragon Breed
-ST:dragon-lord	Dragon Lord
-ST:dragon-maze-v1-02	Dragon Maze v1.02
+ST:dragon-maze-v1-02	Dragon Maze
 ST:dragon-ninja	Dragon Ninja
-ST:dragon-scape	Dragon Scape
 ST:dragon-spirit	Dragon Spirit
 ST:dragon-wars	Dragon Wars
 ST:dragons-lair	Dragon's Lair
@@ -828,10 +755,7 @@ ST:dragons-breath	Dragons Breath
 ST:dragons-of-flame	Dragons of Flame
 ST:dragonscape	Dragonscape
 ST:drakkhen	Drakkhen
-ST:drakkhen-v1-0	Drakkhen v1.0
-ST:drakkhen-v1-1	Drakkhen v1.1
-ST:draw-poker-v2-01	Draw Poker v2.01
-ST:draw-poker-v2-5	Draw Poker v2.5
+ST:draw-poker-v2-5	Draw Poker
 ST:dreadnoughts	Dreadnoughts
 ST:dream-zone	Dream Zone
 ST:dreissig	Dreissig
@@ -844,7 +768,6 @@ ST:droidz	Droidz
 ST:drops	Drops
 ST:duck-dash	Duck Dash
 ST:duck-rogers-of-20th-century	Duck Rogers of the 20th Century
-ST:duck-tales-quest-for-gold	Duck Tales: The Quest for Gold
 ST:ducktales-quest-for-gold	DuckTales: The Quest for Gold
 ST:duckula-2	Duckula II
 ST:dugger	Dugger
@@ -852,20 +775,16 @@ ST:dungeon	Dungeon
 ST:dungeon-adventure	Dungeon Adventure
 ST:dungeon-lord	Dungeon Lord
 ST:dungeon-master	Dungeon Master
-ST:dungeon-master-v1-0	Dungeon Master v1.0
-ST:dungeon-master-v1-1	Dungeon Master v1.1
 ST:dungeon-master-v1-1-data-disk-1-kids-dungeon	Dungeon Master v1.1 Data Disk 1: Kids Dungeon
 ST:dungeon-master-v1-1-data-disk-2-tomb-of-king-hissssa	Dungeon Master v1.1 Data Disk 2: The Tomb of King Hissssa
 ST:dungeon-master-v1-1-data-disk-3-beastmaster	Dungeon Master v1.1 Data Disk 3: Beastmaster
-ST:dungeon-master-v1-1-data-disk-6-conflux-v1-11	Dungeon Master v1.1 Data Disk 6: Conflux v1.11
+ST:dungeon-master-v1-1-data-disk-6-conflux-v1-11	Dungeon Master v1.1 Data Disk 6: Conflux
 ST:dungeon-master-v1-1-data-disk-dungeon-master-2-legend-of-skulldeep	Dungeon Master v1.1 Data Disk: Dungeon Master 2 - Legend of Skulldeep
 ST:dungeon-master-v1-1-data-disk-return-of-chaos	Dungeon Master v1.1 Data Disk: Return of Chaos
 ST:dungeon-master-v1-1-data-disk-team-dungeon	Dungeon Master v1.1 Data Disk: Team Dungeon
 ST:dungeon-master-v1-1-data-disk-grave-of-king-millias	Dungeon Master v1.1 Data Disk: The Grave of King Millias
 ST:dungeon-master-v1-1-data-disk-tomb-of-firestaff	Dungeon Master v1.1 Data Disk: The Tomb of the Firestaff
 ST:dungeon-master-v1-1-data-disk-tower-of-chaos	Dungeon Master v1.1 Data Disk: Tower of Chaos
-ST:dungeon-master-v1-2	Dungeon Master v1.2
-ST:dungeon-master-v1-3	Dungeon Master v1.3
 ST:dungeonz	Dungeonz
 ST:dynablaster	Dynablaster
 ST:dynabusters	Dynabusters +
@@ -885,7 +804,7 @@ ST:eco-phantoms	Eco Phantoms
 ST:edd-duck	Edd the Duck!
 ST:eden-blues	Eden Blues
 ST:ego	EGO
-ST:eight-feet-under-hibernated-1-addon-r6	Eight Feet Under: A Hibernated 1 Addon r6
+ST:eight-feet-under-hibernated-1-addon-r6	Eight Feet Under: A Hibernated 1 Addon
 ST:eine-fast-wahre-geschichte	Eine Fast Wahre Geschichte
 ST:einstein	Einstein
 ST:einstein-3	Einstein 3
@@ -901,14 +820,12 @@ ST:emlyn-hughes-arcade-quiz	Emlyn Hughes Arcade Quiz
 ST:emlyn-hughes-international-soccer	Emlyn Hughes International Soccer
 ST:emmanuelle	Emmanuelle
 ST:emperor	Emperor
-ST:emperor-v1-03	Emperor v1.03
 ST:empire	Empire
-ST:empire-war-game-of-century-v2-00	Empire: War Game of the Century v2.00
+ST:empire-war-game-of-century-v2-00	Empire: War Game of the Century
 ST:empire-war-game-of-century-v2-03c	Empire: War Game of the Century v2.03C
 ST:empire-war-game-of-century-v2-05c	Empire: War Game of the Century v2.05C
 ST:enchanted-land	Enchanted Land
 ST:enchanter	Enchanter
-ST:enchanter-r29	Enchanter r29
 ST:encounter-st	Encounter ST
 ST:end-day-2240	End Day 2240
 ST:endurance	Endurance
@@ -916,7 +833,7 @@ ST:enduro-racer	Enduro Racer
 ST:enemy-war	Enemy War
 ST:england-championship-special	England Championship Special
 ST:england-team-manager	England Team Manager
-ST:english-sixteen-puzzle-v1-1	English Sixteen Puzzle v1.1
+ST:english-sixteen-puzzle-v1-1	English Sixteen Puzzle
 ST:enterprise	Enterprise
 ST:entombed	Entombed
 ST:epic	Epic
@@ -941,8 +858,7 @@ ST:european-football-champ	European Football Champ
 ST:european-soccer-challenge	European Soccer Challenge
 ST:european-space-simulator	European Space Simulator
 ST:eurosoccer-88	Eurosoccer '88
-ST:evader-v1-1	Evader v1.1
-ST:evader-v1-3	Evader v1.3
+ST:evader-v1-1	Evader
 ST:evasion	Evasion
 ST:evasion-2	Evasion 2
 ST:evolution-dino-dudes	Evolution Dino Dudes
@@ -955,7 +871,6 @@ ST:explora-3-sous-le-signe-du-serpent	Explora III: Sous le Signe du Serpent
 ST:explora-time-run	Explora: Time run
 ST:extase	Extase
 ST:extensor	Extensor
-ST:extensor-v3-3	Extensor v3.3
 ST:exterminator	Exterminator
 ST:eye	Eye
 ST:eye-of-horus	Eye of Horus
@@ -963,12 +878,8 @@ ST:eyestrain	Eyestrain!
 ST:f-16	F 16
 ST:f-15-strike-eagle	F-15 Strike Eagle
 ST:f-15-strike-eagle-2	F-15 Strike Eagle 2
-ST:f-15-strike-eagle-v703-01	F-15 Strike Eagle v703.01
 ST:f-16-combat-pilot	F-16 Combat Pilot
 ST:f-19-stealth-fighter	F-19 Stealth Fighter
-ST:f-19-stealth-fighter-v1-01	F-19 Stealth Fighter v1.01
-ST:f-19-stealth-fighter-v1-02	F-19 Stealth Fighter v1.02
-ST:f-29-retaliator	F-29 Retaliator
 ST:f-29-retaliator-mission-disk-epic	F-29 Retaliator: Mission Disk Epic
 ST:f1	F1
 ST:f1-g-p-circuits	F1 G.P. Circuits
@@ -980,26 +891,20 @@ ST:face-off-ice-hockey	Face-Off Ice Hockey
 ST:fahrenheit-451	Fahrenheit 451
 ST:falcon	Falcon
 ST:falcon-mission-disk-volume-i	Falcon Mission Disk Volume I
-ST:falcon-mission-disk-volume-i-v1-1	Falcon Mission Disk Volume I v1.1
-ST:falcon-mission-disk-volume-2-v1-3	Falcon Mission Disk Volume II v1.3
-ST:falcon-v1-00	Falcon v1.00
-ST:falcon-v1-20	Falcon v1.20
+ST:falcon-mission-disk-volume-2-v1-3	Falcon Mission Disk Volume II
 ST:fallen-angel	Fallen Angel
 ST:fallers	Fallers
 ST:falling-to-pieces	Falling to Pieces
 ST:fantastic-world	Fantastic World
-ST:fantastic-world-2-v4	Fantastic World 2 v4
+ST:fantastic-world-2-v4	Fantastic World 2
 ST:fantasy-world-dizzy	Fantasy World Dizzy
 ST:fanwor-legend-of-gemda	Fanwor: The Legend of Gemda
-ST:fanwor-legend-of-gemda-v1-01	Fanwor: The Legend of Gemda v1.01
 ST:fascination	Fascination
 ST:fast-food	Fast Food!
 ST:fast-lane-spice-engineering-challenge	Fast Lane!: The Spice Engineering Challenge
 ST:fastlife	Fastlife
 ST:fate-master	Fate Master
 ST:fate-gates-of-dawn	Fate: Gates of Dawn
-ST:fate-gates-of-dawn-v1-0	Fate: Gates of Dawn v1.0
-ST:fate-gates-of-dawn-v1-1	Fate: Gates of Dawn v1.1
 ST:federation-of-free-traders	Federation of free Traders
 ST:federation-quest-1-b-s-s-jane-seymour	Federation Quest 1: B.S.S. Jane Seymour
 ST:federation-quest-i-b-s-s-jane-seymour	Federation Quest I: B.S.S. Jane Seymour
@@ -1016,7 +921,7 @@ ST:final-blow	Final Blow
 ST:final-command	Final Command
 ST:final-fight	Final Fight
 ST:final-legacy	Final Legacy
-ST:find-50-v0-3	Find 50 v0.3
+ST:find-50-v0-3	Find 50
 ST:fire	Fire
 ST:fire-and-forget-2	Fire & Forget II
 ST:fire-and-brimstones	Fire and Brimstones
@@ -1024,11 +929,10 @@ ST:fire-and-forget	Fire and Forget
 ST:fire-and-forget-2-death-convoy	Fire and Forget II: The Death Convoy
 ST:fire-and-ice	Fire and Ice
 ST:fire-ball	Fire Ball
-ST:fire-blaster	Fire Blaster
 ST:fire-force	Fire Force
 ST:fire-rescue	Fire Rescue
 ST:fire-snare	Fire Snare
-ST:fire-brigade-v1-11	Fire-Brigade v1.11
+ST:fire-brigade-v1-11	Fire-Brigade
 ST:fireblaster	Fireblaster
 ST:firegame	Firegame
 ST:firehawk	Firehawk
@@ -1038,13 +942,10 @@ ST:firezone	Firezone
 ST:first-contact	First Contact
 ST:first-person-pinball	First Person Pinball
 ST:fish	Fish!
-ST:fish-v1-00	Fish! v1.00
 ST:flames-of-freedom	Flames of Freedom
 ST:flappy-bird	Flappy Bird
 ST:flight-of-intruder	Flight of the Intruder
 ST:flight-simulator-2	Flight Simulator II
-ST:flight-simulator-2-v1-0	Flight Simulator II v1.0
-ST:flight-simulator-2-v1-1	Flight Simulator II v1.1
 ST:flight-simulator-2-v1-10	Flight Simulator II v1.x
 ST:flight-simulator-2-scenery-disk-7	Flight Simulator II: Scenery Disk 7
 ST:flight-simulator-2-scenery-disk-japan	Flight Simulator II: Scenery Disk Japan
@@ -1053,19 +954,17 @@ ST:flight-simulator-2-scenery-disk-western-europe	Flight Simulator II: Scenery D
 ST:flimbos-quest	Flimbo's Quest
 ST:flip-flop	Flip-Flop
 ST:flip-it-and-magnose-water-carriers-from-mars	Flip-It and Magnose: Water Carriers from Mars
-ST:flipside-v1-0	Flipside v1.0
-ST:flipside-v1-1	Flipside v1.1
+ST:flipside-v1-0	Flipside
 ST:flood	Flood
 ST:flood-2	Flood II
 ST:floyd-droid-on-run	Floyd the Droid: On The Run
 ST:flugsimulator-2	Flugsimulator II
-ST:flugsimulator-2-v1-1	Flugsimulator II v1.1
 ST:flying-shark	Flying Shark
 ST:food-fight	Food Fight
 ST:football	Football
 ST:football-champ	Football Champ
-ST:football-crazy-v1-07	Football Crazy v1.07
-ST:football-director-2-v2	Football Director II v2
+ST:football-crazy-v1-07	Football Crazy
+ST:football-director-2-v2	Football Director II
 ST:football-genius	Football Genius
 ST:football-magic	Football Magic
 ST:football-manager	Football Manager
@@ -1073,8 +972,8 @@ ST:football-manager-2	Football Manager 2
 ST:football-manager-2-expansion-kit	Football Manager 2: Expansion Kit
 ST:football-manager-world-cup-edition	Football Manager: World Cup Edition
 ST:football-simulator	Football Simulator
-ST:football-tactician-division-1-v1-10	Football Tactician: Division 1 v1.10
-ST:football-tactician-premier-league-1992-93-v1-13	Football Tactician: The Premier League 1992-93 v1.13
+ST:football-tactician-division-1-v1-10	Football Tactician: Division 1
+ST:football-tactician-premier-league-1992-93-v1-13	Football Tactician: The Premier League 1992-93
 ST:footballer-of-year-2	Footballer of the Year 2
 ST:forgotten-worlds	Forgotten Worlds
 ST:formel-1-manager	Formel 1: Manager
@@ -1086,8 +985,7 @@ ST:foundations-waste	Foundation's Waste
 ST:four-f	Four-F
 ST:fourfit	Fourfit
 ST:frankenstein	Frankenstein
-ST:frantick-v1-0	Frantick v1.0
-ST:frantick-v1-1	Frantick v1.1
+ST:frantick-v1-0	Frantick
 ST:freaked-out	Freaked Out
 ST:fred	Fred
 ST:fred-feuerstein	Fred Feuerstein
@@ -1099,9 +997,7 @@ ST:freedom-les-guerriers-de-lombre	Freedom: Les Guerriers de l'Ombre
 ST:freedom-rebels-in-darkness	Freedom: Rebels in the Darkness
 ST:frenetic	Frenetic
 ST:frogger	Frogger
-ST:frogs-v1-08-1	Frogs v1.08.1
-ST:frogs-v1-1	Frogs v1.1
-ST:frogs-v1-2a	Frogs v1.2a
+ST:frogs-v1-1	Frogs
 ST:from-little-acorns	From Little Acorns...
 ST:frontier-elite-2	Frontier: Elite II
 ST:frontline	Frontline
@@ -1112,10 +1008,7 @@ ST:full-metal-planet	Full Metal Planet
 ST:full-metal-planete	Full Metal Planete
 ST:fusion	Fusion
 ST:fussball-manager	Fussball Manager
-ST:fussball-st-plus-v1-4	Fussball-ST plus v1.4
-ST:fussball-st-plus-v1-61	Fussball-ST plus v1.61
-ST:fussball-st-plus-v1-70	Fussball-ST plus v1.70
-ST:fussball-st-plus-v1-8	Fussball-ST plus v1.8
+ST:fussball-st-plus-v1-4	Fussball-ST plus
 ST:future-basketball	Future Basketball
 ST:future-bike-simulator	Future Bike Simulator
 ST:future-sport	Future Sport
@@ -1127,15 +1020,14 @@ ST:g-loc-air-battle	G-LOC: Air Battle
 ST:gaia-die-befreiung	Gaia: Die Befreiung
 ST:galactic-conqueror	Galactic Conqueror
 ST:galactic-empire	Galactic Empire
-ST:galactic-empires-v1-02	Galactic Empires v1.02
+ST:galactic-empires-v1-02	Galactic Empires
 ST:galactic-ranger	Galactic Ranger
-ST:galactic-wariors-v1-0	Galactic Wariors v1.0
+ST:galactic-wariors-v1-0	Galactic Wariors
 ST:galactica	Galactica
 ST:galaxian	Galaxian
 ST:galaxy-force-2	Galaxy Force II
 ST:game-on	Game On
 ST:game-over-2	Game Over II
-ST:garfield-winterstail	Garfield Winter'sTail
 ST:garfield-big-fat-hairy-deal	Garfield: Big, Fat, Hairy Deal
 ST:garfield-winters-tail	Garfield: Winter's Tail
 ST:garfield-winters-tale	Garfield: Winter's Tale
@@ -1155,15 +1047,15 @@ ST:gemx	Gem'X
 ST:gemini-wing	Gemini Wing
 ST:gemini-wings	Gemini Wings
 ST:gemstone-legend	Gemstone Legend
-ST:gemtrek-v1-1	Gemtrek v1.1
+ST:gemtrek-v1-1	Gemtrek
 ST:general	General
-ST:geo-monde-v1-41	Geo_Monde v1.41
-ST:germ-crazy-v1-5	Germ Crazy v1.5
-ST:geschicklichkeitsflitzer-v2-0	Geschicklichkeitsflitzer v2.0
-ST:gess-v1b	Gess v1b
+ST:geo-monde-v1-41	Geo_Monde
+ST:germ-crazy-v1-5	Germ Crazy
+ST:geschicklichkeitsflitzer-v2-0	Geschicklichkeitsflitzer
+ST:gess-v1b	Gess
 ST:get-dexter	Get Dexter
 ST:get-dexter-2	Get Dexter 2
-ST:get-it-there-v0-3	Get it there v0.3
+ST:get-it-there-v0-3	Get it there
 ST:get-slide	Get Slide
 ST:gettysburg	Gettysburg
 ST:gfl-championship-football	GFL Championship Football
@@ -1171,8 +1063,7 @@ ST:ghost-battle	Ghost Battle
 ST:ghost-mine	Ghost Mine
 ST:ghost-town	Ghost Town
 ST:ghostbusters-2	Ghostbusters II
-ST:ghosts-n-goblins	Ghosts 'n' Goblins
-ST:ghosts-of-blackwood-manor-r13	Ghosts of Blackwood Manor, The r13
+ST:ghosts-of-blackwood-manor-r13	The Ghosts of Blackwood Manor
 ST:ghostsn-goblins	Ghosts'n Goblins
 ST:ghouls-n-ghosts	Ghouls 'n' Ghosts
 ST:gilbert-escape-from-drill	Gilbert: Escape from Drill
@@ -1182,21 +1073,17 @@ ST:gladiators	Gladiators
 ST:global-commander	Global Commander
 ST:gluecksrad	Gluecksrad
 ST:gluecksrad-st	Gluecksrad ST
-ST:gmines-v1-0	Gmines v1.0
+ST:gmines-v1-0	Gmines
 ST:gncipher-challenges-from-crypto	GNCipher: Challenges from the Crypto
-ST:gnu-chess-v3-1	GNU Chess v3.1
-ST:gnu-chess-v3-5	GNU Chess v3.5
-ST:gnu-go-v1-1	GNU Go v1.1
-ST:go-board-v4-0	Go Board v4.0
+ST:gnu-chess-v3-1	GNU Chess
+ST:gnu-go-v1-1	GNU Go
+ST:go-board-v4-0	Go Board
 ST:go-moku	Go-Moku
 ST:go-moku-renju	Go-Moku / Renju
-ST:go-up-v0-0	Go-Up v0.0
-ST:go-up-v1-0	Go-Up v1.0
+ST:go-up-v0-0	Go-Up
 ST:goal	Goal!
 ST:gobliiins	Gobliiins
 ST:gobliiins-2	Gobliiins II
-ST:gobliiins-2-v1-0	Gobliiins II v1.0
-ST:gobliiins-2-v1-02	Gobliiins II v1.02
 ST:godpey	Godpey
 ST:gods	Gods
 ST:goin-down-with-captain	Goin' Down with the Captain
@@ -1205,14 +1092,14 @@ ST:gold-of-americas-conquest-of-new-world	Gold of the Americas: The Conquest of 
 ST:gold-of-aztecs	Gold of the Aztecs,The
 ST:gold-of-realm	Gold of the Realm
 ST:gold-rush	Gold Rush
-ST:gold-seeker-v2-0	Gold Seeker v2.0
+ST:gold-seeker-v2-0	Gold Seeker
 ST:golden-axe	Golden Axe
 ST:golden-path	Golden Path
 ST:goldrunner	Goldrunner
 ST:goldrunner-2	Goldrunner II
 ST:gomoku-and-renju	Gomoku and Renju
-ST:gorfs-laby-v1-0	Gorf's Laby v1.0
-ST:gppd-v1-0	GPPD v1.0
+ST:gorfs-laby-v1-0	Gorf's Laby
+ST:gppd-v1-0	GPPD
 ST:graeme-souness-soccer-manager	Graeme Souness: Soccer Manager
 ST:graham-gooch-world-class-cricket	Graham Gooch World Class Cricket
 ST:graham-goochs-second-innings	Graham Gooch's Second Innings
@@ -1225,16 +1112,14 @@ ST:grand-prix-500-2	Grand Prix 500 2
 ST:grand-prix-500cc	Grand Prix 500cc
 ST:grand-prix-master	Grand Prix Master
 ST:grandad-2-in-search-of-sandwiches	Grandad 2: In Search of Sandwiches
-ST:grandad-2-in-search-of-sandwiches-v1-0	Grandad 2: In Search of Sandwiches v1.0
 ST:grandad-and-quest-for-holey-vest	Grandad and The Quest for The Holey Vest
 ST:grandad-and-quest-for-holey-vest-cheat-program	Grandad and The Quest for The Holey Vest Cheat Program
-ST:grandad-and-quest-for-holey-vest-v1-3	Grandad and The Quest for The Holey Vest v1.3
 ST:grannies-garden	Grannies Garden
 ST:grav-2	Grav 2
 ST:gravity	Gravity
 ST:gravity-force	Gravity Force
 ST:greame-souness-soccer-manager	Greame Souness Soccer Manager
-ST:great-battles-1789-1865-v1-1	Great Battles 1789-1865 v1.1
+ST:great-battles-1789-1865-v1-1	Great Battles 1789-1865
 ST:great-courts	Great Courts
 ST:great-courts-2	Great Courts 2
 ST:great-napoleonic-battles	Great Napoleonic Battles
@@ -1246,17 +1131,15 @@ ST:grey-seas-grey-skies	Grey Seas, Grey Skies
 ST:gridcross	Gridcross
 ST:gridiron	Gridiron
 ST:grimblood	Grimblood
-ST:grosse-flut-die-v1-01	Grosse Flut, Die v1.01
+ST:grosse-flut-die-v1-01	Grosse Flut, Die
 ST:growth	Growth
-ST:gthor-v2	GThor v2
+ST:gthor-v2	GThor
 ST:guardian-angel	Guardian Angel
 ST:guardians	Guardians
 ST:guerrilla-war	Guerrilla War
 ST:guess-sketch	Guess-A-Sketch
-ST:guild-of-thieves-v1-0	Guild of Thieves, The v1.0
 ST:guillotine-man	Guillotine Man
 ST:gunship	Gunship
-ST:gunship-v729-01	Gunship v729.01
 ST:guy-spy	Guy Spy
 ST:guyroux-manager-planete-foot	GuyRoux Manager: Planete Foot
 ST:h-mec	H-MEC
@@ -1264,19 +1147,16 @@ ST:h-mec-93	H-MEC '93
 ST:h-mec-2	H-MEC 2
 ST:h-t-e-hostile-all-terrain-encounter	H.A.T.E.: Hostile All Terrain Encounter
 ST:h-e-r-o-human-extraction-and-rescue-operation	H.E.R.O.: Human Extraction & Rescue Operation
-ST:hac-man-2-v1-1	Hac Man II v1.1
-ST:hac-man-2-v1-14	Hac Man II v1.14
+ST:hac-man-2-v1-1	Hac Man II
 ST:hacker	Hacker
 ST:hacker-2	Hacker 2
 ST:hacker-2-doomsday-papers	Hacker II: The Doomsday Papers
 ST:hades-nebula	Hades Nebula
-ST:halma-v1-0	Halma v1.0
+ST:halma-v1-0	Halma
 ST:hamlet	Hamlet
 ST:hammer-boy	Hammer Boy
 ST:hammerfist	Hammerfist
 ST:hang-man	Hang Man
-ST:hangman-v2-0	Hangman v2.0
-ST:hangman-v3-05	Hangman v3.05
 ST:hanks-quest-victim-of-society	Hank's Quest: Victim Of Society
 ST:hanse	Hanse
 ST:hard-n-heavy	Hard 'n' Heavy
@@ -1292,24 +1172,22 @@ ST:harrier-combat-simulator	Harrier Combat Simulator
 ST:harrier-strike-mission	Harrier Strike Mission
 ST:hat-trick-hero	Hat Trick Hero
 ST:hawkeye	Hawkeye
-ST:head-coach-v3	Head Coach v3
+ST:head-coach-v3	Head Coach
 ST:head-long	Head Long
 ST:head-over-heels	Head Over Heels
-ST:head-power-v1-3	Head Power v1.3
-ST:hearbell-v3	Hearbell v3
+ST:head-power-v1-3	Head Power
+ST:hearbell-v3	Hearbell
 ST:heartland	Heartland
 ST:heartland-2000	Heartland 2000
 ST:heat-wave	Heat Wave
-ST:heavy-bunch-v1-03	Heavy Bunch, The v1.03
+ST:heavy-bunch-v1-03	The Heavy Bunch
 ST:heavy-metal	Heavy Metal
 ST:heavy-metal-heroes	Heavy Metal Heroes
 ST:hector-vs-mutant-vampire-tomatoes-from-hell	Hector vs. the mutant Vampire Tomatoes from Hell
 ST:heimdall	Heimdall
-ST:hell-bent	Hell Bent
 ST:hellbent	Hellbent
 ST:hellfire	Hellfire
 ST:hellowoon-das-geheimnis-des-zauberstabs	Hellowoon: Das Geheimnis des Zauberstabs
-ST:hellowoon-das-geheimnis-des-zauberstabs-v0-4	Hellowoon: Das Geheimnis des Zauberstabs v0.4
 ST:hellraider	Hellraider
 ST:hellraiser	Hellraiser
 ST:helter-skelter	Helter Skelter
@@ -1317,29 +1195,19 @@ ST:here-with-clues	Here with the Clues
 ST:herman	Herman
 ST:hero-quest	Hero Quest
 ST:hero	Hero!
-ST:hero-v1-0	Hero! v1.0
-ST:hero-v1-04	Hero! v1.04
-ST:heros-quest-v1-137	Hero's Quest v1.137
-ST:heroes-of-lance-v1-0	Heroes of the Lance v1.0
-ST:heroes-of-lance-v1-1	Heroes of the Lance v1.1
+ST:heros-quest-v1-137	Hero's Quest
+ST:heroes-of-lance-v1-0	Heroes of the Lance
 ST:hex	Hex
 ST:hexagon	Hexagon
 ST:hextris	Hextris
-ST:hibernated-1-directors-cut-r10	Hibernated 1 Director's Cut r10
-ST:hibernated-1-directors-cut-r13	Hibernated 1 Director's Cut r13
-ST:hibernated-1-directors-cut-r9	Hibernated 1 Director's Cut r9
-ST:hibernated-1-this-place-is-death-r15	Hibernated 1: This Place is Death r15
-ST:hibernated-1-this-place-is-death-r17	Hibernated 1: This Place is Death r17
+ST:hibernated-1-directors-cut-r9	Hibernated 1 Director's Cut
+ST:hibernated-1-this-place-is-death-r15	Hibernated 1: This Place is Death
 ST:high-roller	High Roller
 ST:high-steel	High Steel
 ST:highway-patrol-2	Highway Patrol II
 ST:hill-street-blues	Hill Street Blues
-ST:hill-street-blues-v1-11	Hill Street Blues v1.11
 ST:hillsfar	Hillsfar
-ST:hillsfar-v1-0	Hillsfar v1.0
-ST:hippo-backgammon-v1-0	Hippo Backgammon v1.0
-ST:hitchhikers-guide-to-galaxy-r56	Hitchhiker's Guide to the Galaxy, The r56
-ST:hitchhikers-guide-to-galaxy-r59	Hitchhiker's Guide to the Galaxy, The r59
+ST:hippo-backgammon-v1-0	Hippo Backgammon
 ST:hlava-kasandry	Hlava Kasandry
 ST:hlipa	Hlipa
 ST:hms-cobra-convoi-pour-mourmansk	HMS Cobra: Convoi pour Mourmansk
@@ -1364,13 +1232,10 @@ ST:hot-rubber	Hot Rubber
 ST:hot-wheels	Hot Wheels
 ST:hotball	Hotball
 ST:hotshot	Hotshot
-ST:hotshot-checkers-v1-2	Hotshot Checkers v1.2
-ST:hotshot-checkers-v1-6	Hotshot Checkers v1.6
-ST:hotshot-checkers-v1-8	Hotshot Checkers v1.8
+ST:hotshot-checkers-v1-2	Hotshot Checkers
 ST:hover-sprint	Hover Sprint
-ST:hoyles-book-of-games-volume-1-v1-000-104	Hoyle's Book of Games: Volume 1 v1.000.104
-ST:hoyles-book-of-games-volume-1-v1-000-108	Hoyle's Book of Games: Volume 1 v1.000.108
-ST:hoyles-book-of-games-volume-2-solitaire-v1-001-017	Hoyle's Book of Games: Volume 2 - Solitaire v1.001.017
+ST:hoyles-book-of-games-volume-1-v1-000-104	Hoyle's Book of Games: Volume 1
+ST:hoyles-book-of-games-volume-2-solitaire-v1-001-017	Hoyle's Book of Games: Volume 2 - Solitaire
 ST:huckleberry-hound-in-hollywood-capers	Huckleberry Hound in Hollywood Capers
 ST:hudson-hawk	Hudson Hawk
 ST:human-killing-machine	Human Killing Machine
@@ -1381,7 +1246,6 @@ ST:hunchy-2010-extended-mix	Hunchy 2010: The Extended Mix
 ST:hunt-for-grey-november	Hunt for Grey November
 ST:hunter	Hunter
 ST:hunter-killer	Hunter Killer
-ST:hunter-killer-v1-01	Hunter Killer v1.01
 ST:hydra	Hydra
 ST:hyper-force	Hyper Force
 ST:hyperbowl	Hyperbowl
@@ -1413,8 +1277,6 @@ ST:indiana-jones-and-fate-of-atlantis-action-game	Indiana Jones and the Fate of 
 ST:indiana-jones-and-last-crusade-arcade-game	Indiana Jones and the Last Crusade: Arcade Game
 ST:indiana-jones-and-last-crusade-action-game	Indiana Jones and the Last Crusade: The Action Game
 ST:indiana-jones-and-last-crusade-graphic-adventure	Indiana Jones and the Last Crusade: The Graphic Adventure
-ST:indiana-jones-and-last-crusade-graphic-adventure-v1-3	Indiana Jones and the Last Crusade: The Graphic Adventure v1.3
-ST:indiana-jones-and-last-crusade-graphic-adventure-v1-4	Indiana Jones and the Last Crusade: The Graphic Adventure v1.4
 ST:indiana-jones-and-temple-of-doom	Indiana Jones and the Temple of Doom
 ST:indianapolis-500	Indianapolis 500
 ST:indigo	Indigo
@@ -1424,22 +1286,21 @@ ST:indy-heat	Indy Heat
 ST:inferno	Inferno
 ST:infestation	Infestation
 ST:infidel	Infidel
-ST:infidel-r22	Infidel r22
-ST:infiltration-v1-0	Infiltration v1.0
+ST:infiltration-v1-0	Infiltration
 ST:infinity-one	Infinity One
 ST:ingrids-back	Ingrid's Back
-ST:inkaust-v5-0	Inkaust v5.0
+ST:inkaust-v5-0	Inkaust
 ST:insanity-fight	Insanity Fight
 ST:insect-in-space	Insect in Space
 ST:insecticide	Insecticide
-ST:insectroid-v1-0	Insectroid v1.0
-ST:insel-die-v1-0	Insel, Die v1.0
+ST:insectroid-v1-0	Insectroid
+ST:insel-die-v1-0	Insel, Die
 ST:inspektor-griffu-ein-toter-hat-heimweh	Inspektor Griffu: Ein Toter hat Heimweh
 ST:interchange	Interchange
 ST:international-3d-tennis	International 3D Tennis
 ST:international-champion-athletics	International Champion Athletics
-ST:international-cricket-v2-0	International Cricket v2.0
-ST:international-formel-1-manager-v2-0	International Formel 1 Manager v2.0
+ST:international-cricket-v2-0	International Cricket
+ST:international-formel-1-manager-v2-0	International Formel 1 Manager
 ST:international-ice-hockey	International Ice Hockey
 ST:international-karate	International Karate
 ST:international-motor-sport	International Motor Sport
@@ -1447,19 +1308,18 @@ ST:international-ninja-rabbits	International Ninja Rabbits
 ST:international-rugby-challenge	International Rugby Challenge
 ST:international-soccer	International Soccer
 ST:international-soccer-challenge	International Soccer Challenge
-ST:international-soccer-challenge-v1-00	International Soccer Challenge v1.00
 ST:international-sports-challenge	International Sports Challenge
 ST:international-truck-racing	International Truck Racing
 ST:interphase	Interphase
 ST:into-eagles-nest	Into the Eagle's Nest
 ST:into-mystic	Into the Mystic
 ST:intrigue-la-renaissance	Intrigue a la Renaissance
-ST:intuition-v1-21	Intuition v1.21
+ST:intuition-v1-21	Intuition
 ST:invaders	Invaders
 ST:invasion	Invasion
 ST:invasion-of-mutant-caterpillars	Invasion of the Mutant Caterpillars
 ST:invasion-story-so-far	Invasion: The Story so Far
-ST:invers-v1-0	Invers v1.0
+ST:invers-v1-0	Invers
 ST:invest	Invest
 ST:investigation	Investigation
 ST:iraky	Iraky
@@ -1482,26 +1342,25 @@ ST:iznogoud	Iznogoud
 ST:jabato-vs-imperio	Jabato vs Imperio
 ST:jack-nicklaus-course-disk-i	Jack Nicklaus Course Disk I
 ST:jack-nicklaus-greatest-18-holes-of-major-championship-golf	Jack Nicklaus Greatest 18 Holes of Major Championship Golf
-ST:jackpot-v0-6	Jackpot v0.6
+ST:jackpot-v0-6	Jackpot
 ST:jagd-auf-roter-october	Jagd auf Roter October
 ST:jahangir-khans-world-championship-squash	Jahangir Khan's World Championship Squash
 ST:james-pond-2-codename-robocod	James Pond II: Codename RoboCod
 ST:james-pond-underwater-agent	James Pond: Underwater Agent
 ST:japlish-assualt-razor	Japlish Assualt Razor
 ST:jaws	Jaws
-ST:jay-minesweeper-v2-2	Jay Minesweeper v2.2
-ST:jay-zebuland-v1-30	Jay Zebuland v1.30
+ST:jay-minesweeper-v2-2	Jay Minesweeper
+ST:jay-zebuland-v1-30	Jay Zebuland
 ST:je-repare-ma-voiture	Je repare ma Voiture
 ST:jeanne-darc	Jeanne d'Arc
-ST:jeopardy-v1-0	Jeopardy v1.0
-ST:jet-v1-0	Jet v1.0
-ST:jet-v1-01	Jet v1.01
+ST:jeopardy-v1-0	Jeopardy
+ST:jet-v1-0	Jet
 ST:jet-set-willy	Jet-Set Willy
-ST:jetpac-v1-3	Jetpac v1.3
+ST:jetpac-v1-3	Jetpac
 ST:jetsons	Jetsons
 ST:jeux-de-dada	Jeux de Dada
 ST:jiggers	Jiggers
-ST:jiggsy-v1-0	Jiggsy v1.0
+ST:jiggsy-v1-0	Jiggsy
 ST:jim-power-mutant-planet	Jim Power: Mutant Planet
 ST:jimmy-connors-pro-tennis-tour	Jimmy Connors Pro Tennis Tour
 ST:jimmy-whites-whirlwind-snooker	Jimmy White's Whirlwind Snooker
@@ -1529,15 +1388,12 @@ ST:jupiter-probe	Jupiter Probe
 ST:jupiters-masterdrive	Jupiter's Masterdrive
 ST:juppy	Juppy
 ST:just-another-war-in-space	Just Another War in Space
-ST:just-another-war-in-space-v1-0	Just Another War in Space v1.0
 ST:k240	K240
 ST:kaiser	Kaiser
 ST:kakanoid	Kakanoid
-ST:kalah-v1-0	Kalah v1.0
-ST:kalah-v2-3	Kalah v2.3
+ST:kalah-v1-0	Kalah
 ST:kalahari	Kalahari
-ST:kalawaum-2-v1-0	Kalawaum II v1.0
-ST:kalawaum-2-v2-1c	Kalawaum II v2.1c
+ST:kalawaum-2-v1-0	Kalawaum II
 ST:kamikaze	Kamikaze
 ST:kampf-um-die-krone	Kampf um die Krone
 ST:karate-champion	Karate Champion
@@ -1551,28 +1407,20 @@ ST:kelly-10	Kelly X
 ST:kennedy-approach	Kennedy Approach
 ST:kenny-dalglish-soccer-manager	Kenny Dalglish Soccer Manager
 ST:kenny-dalglish-soccer-match	Kenny Dalglish Soccer Match
-ST:kensington-v1-1	Kensington v1.1
-ST:kensington-v1-2	Kensington v1.2
+ST:kensington-v1-1	Kensington
 ST:kerovna	Kerovna
 ST:khalaan	Khalaan
 ST:khan	Khan
 ST:kick-off	Kick Off
 ST:kick-off-2	Kick Off 2
-ST:kick-off-2-v1-2e	Kick Off 2 v1.2e
-ST:kick-off-2-v1-2f	Kick Off 2 v1.2f
-ST:kick-off-2-v1-2g	Kick Off 2 v1.2g
-ST:kick-off-2-v1-3e	Kick Off 2 v1.3e
-ST:kick-off-2-final-whistle-v2-0e	Kick Off 2: Final Whistle v2.0e
-ST:kick-off-2-final-whistle-v2-1	Kick Off 2: Final Whistle v2.1
-ST:kick-off-2-player-editor-v4-19p	Kick Off 2: Player Editor v4.19p
+ST:kick-off-2-final-whistle-v2-1	Kick Off 2: Final Whistle
+ST:kick-off-2-player-editor-v4-19p	Kick Off 2: Player Editor
 ST:kick-off-2-return-to-europe	Kick Off 2: Return to Europe
-ST:kick-off-2-return-to-europe-v2-1e	Kick Off 2: Return to Europe v2.1e
 ST:kick-off-2-final-whistle	Kick Off 2: The Final Whistle
 ST:kick-off-2-winning-tactics	Kick Off 2: Winning Tactics
 ST:kick-off-extra-time	Kick Off: Extra Time
-ST:kicker-v1-82	Kicker v1.82
-ST:kicker-v1-82c	Kicker v1.82c
-ST:kicker-die-etwas-andere-fussballsimulation-v1-82c	Kicker: Die etwas andere Fussballsimulation v1.82c
+ST:kicker-v1-82	Kicker
+ST:kicker-die-etwas-andere-fussballsimulation-v1-82c	Kicker: Die etwas andere Fussballsimulation
 ST:kid-gloves	Kid Gloves
 ST:kid-gloves-2	Kid Gloves II
 ST:kid-gp	Kid GP
@@ -1580,38 +1428,33 @@ ST:kid-kong	Kid Kong
 ST:kiktris-2d-and-3d	Kiktris 2D & 3D
 ST:killdozers	Killdozers
 ST:killer-chess	Killer Chess
-ST:killer-v1-2	Killer v1.2
+ST:killer-v1-2	Killer
 ST:killerball	Killerball
 ST:killing-machine	Killing Machine
-ST:killthings-v0-8e	KillThings v0.8e
+ST:killthings-v0-8e	KillThings
 ST:kings-quest	King's Quest
 ST:kings-quest-2-romancing-throne	King's Quest 2: Romancing the Throne
 ST:kings-quest-i	King's Quest I
 ST:kings-quest-2	King's Quest II
-ST:kings-quest-2-romancing-throne-v1-0	King's Quest II: Romancing The Throne v1.0
 ST:kings-quest-3	King's Quest III
 ST:kings-quest-3-to-heir-is-human	King's Quest III: To Heir is Human
-ST:kings-quest-3-to-heir-is-human-v1-02	King's Quest III: To Heir is Human v1.02
 ST:kings-quest-4	King's Quest IV
-ST:kings-quest-4-perils-of-rosella-v1-003-006	King's Quest IV: The Perils of Rosella v1.003.006
+ST:kings-quest-4-perils-of-rosella-v1-003-006	King's Quest IV: The Perils of Rosella
 ST:kingmaker	Kingmaker
 ST:klatrix	Klatrix
-ST:klaverjassen-v3-1a	Klaverjassen v3.1a
+ST:klaverjassen-v3-1a	Klaverjassen
 ST:klax	Klax
 ST:klettern	Klettern
-ST:klo-manager-v1-0	Klo-Manager v1.0
-ST:knack-den-tresor-v1-5	Knack Den Tresor v1.5
-ST:knack-den-tresor-v1-9	Knack Den Tresor v1.9
+ST:klo-manager-v1-0	Klo-Manager
+ST:knack-den-tresor-v1-5	Knack Den Tresor
 ST:kniffel	Kniffel
-ST:kniffel-v1-2	Kniffel v1.2
-ST:kniffel-v2-0	Kniffel v2.0
 ST:knight-force	Knight Force
 ST:knight-orc	Knight Orc
 ST:knightmare	Knightmare
 ST:knights-of-sky	Knights of the Sky
 ST:kokoi	Kokoi
-ST:krabat-echecs-v1-0b	Krabat Echecs v1.0b
-ST:krabat-schach-v0-0a	Krabat-Schach v0.0a
+ST:krabat-echecs-v1-0b	Krabat Echecs
+ST:krabat-schach-v0-0a	Krabat-Schach
 ST:krull	Krull
 ST:krypton-egg	Krypton Egg
 ST:kubes	Kubes
@@ -1630,30 +1473,24 @@ ST:la-legende-des-dynasties	La Legende des Dynasties
 ST:la-quete-de-loiseau-du-temps	La Quete de l'Oiseau du Temps
 ST:la-secte-noire	La Secte Noire
 ST:labyrinth	Labyrinth
-ST:labyrinth-der-medusa-v2-04	Labyrinth der Medusa v2.04
-ST:labyrinth-v2-0	Labyrinth v2.0
+ST:labyrinth-der-medusa-v2-04	Labyrinth der Medusa
 ST:lady	Lady
 ST:lamborghini-american-challenge	Lamborghini American Challenge
 ST:lancaster	Lancaster
 ST:lancelot	Lancelot
-ST:lancelot-v1-2	Lancelot v1.2
-ST:landmine-v1-0	Landmine v1.0
+ST:landmine-v1-0	Landmine
 ST:lands-of-havoc	Lands of Havoc
-ST:lap-of-gods-v1-0	Lap of the Gods v1.0
-ST:lap-of-gods-v1-1	Lap of the Gods v1.1
+ST:lap-of-gods-v1-0	Lap of the Gods
 ST:larn	Larn
 ST:las-vegas	Las Vegas
-ST:laser-ball-2014-v1-4a	Laser Ball 2014 v1.4a
-ST:laser-ball-2014-v1-4d	Laser Ball 2014 v1.4d
-ST:laser-ball-2014-v1-4e	Laser Ball 2014 v1.4e
-ST:laser-ball-2015	Laser Ball 2015
+ST:laser-ball-2014-v1-4a	Laser Ball 2014
 ST:laser-squad	Laser Squad
 ST:laserball-2015	Laserball 2015
 ST:laserchase-2000	Laserchase 2000
 ST:last-duel	Last Duel
 ST:last-ninja-2	Last Ninja 2
 ST:last-ninja-3	Last Ninja 3
-ST:lazer-ball-v1-0	Lazer Ball v1.0
+ST:lazer-ball-v1-0	Lazer Ball
 ST:le-fetiche-maya	Le Fetiche Maya
 ST:le-manoir-de-mortevielle	Le Manoir de Mortevielle
 ST:le-manoir-du-comte-frozarda	Le Manoir du Comte Frozarda
@@ -1667,9 +1504,8 @@ ST:leader-board-tournament	Leader Board Tournament
 ST:league-challenge	League Challenge
 ST:league-soccer	League Soccer
 ST:leander	Leander
-ST:learn-my-numbers-v1-0	Learn my Numbers v1.0
+ST:learn-my-numbers-v1-0	Learn my Numbers
 ST:leather-goddesses-of-phobos	Leather Goddesses of Phobos
-ST:leather-goddesses-of-phobos-r59	Leather Goddesses of Phobos r59
 ST:leatherneck	Leatherneck
 ST:leavin-teramis	Leavin' Teramis
 ST:led-storm	Led Storm
@@ -1689,7 +1525,6 @@ ST:leisure-suit-larry-2-leisure-suit-larry-goes-looking-for-love-in-several-wron
 ST:leisure-suit-larry-3-passionate-patti-in-persuit-of-pulsating-pectorals	Leisure Suit Larry 3: Passionate Patti in Persuit of the Pulsating Pectorals
 ST:leisure-suit-larry-goes-looking-for-love	Leisure Suit Larry Goes Looking for Love (in Several Wrong Places)
 ST:leisure-suit-larry-3-passionate-patti-in-pursuit-of-pulsating-pectorals	Leisure Suit Larry III: Passionate Patti in Pursuit of the Pulsating Pectorals
-ST:leisure-suit-larry-in-land-of-lounge-lizards-v1-04	Leisure Suit Larry in The Land of the Lounge Lizards v1.04
 ST:leisure-suit-larry-in-land-of-lounge-lizards	Leisure Suit Larry in: The Land of the Lounge Lizards
 ST:lektvar	Lektvar
 ST:lemmings	Lemmings
@@ -1703,7 +1538,7 @@ ST:les-passagers-du-vent-2	Les Passagers du Vent II
 ST:les-portes-du-temps	Les Portes du Temps
 ST:les-ripoux	Les Ripoux
 ST:les-voyageurs-du-temps	Les Voyageurs du Temps
-ST:lets-go-memo-v1-5g	Let's go Memo! v1.5g
+ST:lets-go-memo-v1-5g	Let's go Memo!
 ST:lethal-weapon	Lethal Weapon
 ST:lethal-xcess	Lethal Xcess
 ST:lethal-xcess-wings-of-death	Lethal Xcess: Wings of Death
@@ -1715,15 +1550,14 @@ ST:lichton	Lichton
 ST:life-and-death	Life and Death
 ST:lifeboat	Lifeboat
 ST:light-cycles	Light Cycles
-ST:light-cycles-v3-5	Light Cycles v3.5
 ST:light-out	Light Out
 ST:lightflight-2	Lightflight 2
 ST:limbo-of-lost	Limbo of the Lost
 ST:lin-wus-challenge	Lin Wu's Challenge
 ST:line-crash	Line Crash
 ST:line-of-fire	Line of Fire
-ST:line-raiders-v0-1	Line Raiders v0.1
-ST:little-15-v2-0	Little 15 v2.0
+ST:line-raiders-v0-1	Line Raiders
+ST:little-15-v2-0	Little 15
 ST:little-computer-people	Little Computer People
 ST:little-puff-in-dragonland	Little Puff in Dragonland
 ST:live-and-let-die	Live and Let Die
@@ -1733,7 +1567,6 @@ ST:living-jigsaw	Living Jigsaw
 ST:livingstone-2	Livingstone 2
 ST:livingstone-i-presume	Livingstone I Presume
 ST:llamatron	Llamatron
-ST:llamatron-v1-0	Llamatron v1.0
 ST:lock-on	Lock-On
 ST:locomotion	Locomotion
 ST:lode-runner	Lode Runner
@@ -1751,40 +1584,34 @@ ST:lords-of-chaos	Lords of Chaos
 ST:lords-of-chaos-escape-from-zol	Lords of Chaos: Escape from Zol
 ST:lords-of-conquest	Lords of Conquest
 ST:lords-of-doom	Lords of Doom
-ST:lords-of-fate-v2-01	Lords of Fate, The v2.01
+ST:lords-of-fate-v2-01	The Lords of Fate
 ST:lords-of-time	Lords of Time
 ST:lorna	Lorna
 ST:los-templos-sagrados	Los Templos Sagrados
 ST:lost-civilisation	Lost Civilisation
 ST:lost-dutchman-mine	Lost Dutchman Mine
-ST:lost-dutchman-mine-v1-00	Lost Dutchman Mine v1.00
-ST:lost-dutchman-mine-v1-01	Lost Dutchman Mine v1.01
-ST:lost-treasure-v1-0	Lost Treasure v1.0
+ST:lost-treasure-v1-0	Lost Treasure
 ST:lotus-esprit-turbo-challenge	Lotus Esprit Turbo Challenge
 ST:lotus-3-ultimate-challenge	Lotus III: The Ultimate Challenge
 ST:lotus-turbo-challenge-2	Lotus Turbo Challenge II
 ST:lucid-knight	Lucid Knight
 ST:lucky-luke-la-mascotte	Lucky Luke: La Mascotte
 ST:lucky-luke-nitroglycerine	Lucky Luke: Nitroglycerine
-ST:lunacy-v3-0	Lunacy! v3.0
-ST:lunacy-v3-1	Lunacy! v3.1
+ST:lunacy-v3-0	Lunacy!
 ST:lunar-lander	Lunar Lander
 ST:lure-of-temptress	Lure of the Temptress
-ST:lurking-horror-r203	Lurking Horror, The r203
-ST:lurking-horror-r221	Lurking Horror, The r221
 ST:luxor	Luxor
 ST:m-c-kids	M.C. Kids
-ST:m1-tank-platoom-v749-01	M1 Tank Platoom v749.01
+ST:m1-tank-platoom-v749-01	M1 Tank Platoom
 ST:m1-tank-platoon	M1 Tank Platoon
-ST:mac-pan-v1-0	Mac Pan v1.0
-ST:mac-pan-v1-24	Mac Pan v1.24
+ST:mac-pan-v1-0	Mac Pan
 ST:macadam-bumper	Macadam Bumper
 ST:macdonald-land	MacDonald Land
 ST:mach-3	Mach 3
 ST:machtkampf	Machtkampf
-ST:macro-war-v1-01	Macro War v1.01
-ST:mad-cow-v2-3	Mad Cow v2.3
-ST:mad-gun-v0-2	Mad Gun v0.2
+ST:macro-war-v1-01	Macro War
+ST:mad-cow-v2-3	Mad Cow
+ST:mad-gun-v0-2	Mad Gun
 ST:mad-professor-mariarti	Mad Professor Mariarti
 ST:mad-show	Mad Show
 ST:maelstrom	Maelstrom
@@ -1797,16 +1624,14 @@ ST:magic-lines	Magic Lines
 ST:magic-pocket	Magic Pocket
 ST:magic-pockets	Magic Pockets
 ST:magic-spell	Magic Spell
-ST:magic-stones-v1-04	Magic Stones v1.04
-ST:magic-stones-v1-05	Magic Stones v1.05
+ST:magic-stones-v1-04	Magic Stones
 ST:magic-story-book	Magic Story Book
 ST:magic-tomb	Magic Tomb
 ST:magic-tower-darkstone-ritual	Magic Tower: Darkstone Ritual
 ST:magicalpha	Magicalpha
 ST:magicland-dizzy	Magicland Dizzy
-ST:magisches-quadrat-v1-0	Magisches Quadrat v1.0
-ST:magnetic-scrolls-collection-v1-02	Magnetic Scrolls Collection, The v1.02
-ST:magnetic-scrolls-compilation-v1-02	Magnetic Scrolls Compilation, The v1.02
+ST:magisches-quadrat-v1-0	Magisches Quadrat
+ST:magnetic-scrolls-compilation-v1-02	The Magnetic Scrolls Compilation
 ST:magnetik-tank	Magnetik Tank
 ST:magno-ball	Magno-Ball
 ST:major-motion	Major Motion
@@ -1817,27 +1642,24 @@ ST:manchester-united-official-computer-game	Manchester United: The Official Comp
 ST:manciola	Manciola
 ST:manhattan-dealers	Manhattan Dealers
 ST:manhunter-2-san-francisco	Manhunter 2: San Francisco
-ST:manhunter-2-san-francisco-v1-0	Manhunter 2: San Francisco v1.0
 ST:manhunter-new-york	Manhunter: New York
-ST:manhunter-new-york-crack-v1-03	Manhunter: New York Crack v1.03
-ST:manhunter-new-york-v1-03	Manhunter: New York v1.03
+ST:manhunter-new-york-crack-v1-03	Manhunter: New York Crack
 ST:maniac-mansion	Maniac Mansion
-ST:manic-minefield-v1-0	Manic Minefield v1.0
+ST:manic-minefield-v1-0	Manic Minefield
 ST:manical-drop	Manical Drop
 ST:manix	Manix
-ST:manouuvre-v0-3-5	Manouuvre v0.3.5
+ST:manouuvre-v0-3-5	Manouuvre
 ST:marble-islands	Marble Islands
 ST:marble-madness	Marble Madness
-ST:marbles-v0-9	Marbles v0.9
+ST:marbles-v0-9	Marbles
 ST:marche-lombre	Marche a l'Ombre
-ST:mariant-v1-0	Mariant v1.0
+ST:mariant-v1-0	Mariant
 ST:marios-quest	Mario's Quest
 ST:marlowe	Marlowe
-ST:marmelada-v1-1	Marmelada v1.1
+ST:marmelada-v1-1	Marmelada
 ST:masken	Masken
 ST:masque-que-la-fete-commence	Masque: Que la Fete commence
 ST:massacre-dans-la-520e-dimension	Massacre dans la 520e Dimension
-ST:master-mind	Master Mind
 ST:masterblazer	Masterblazer
 ST:mastermind	Mastermind
 ST:masters-of-chaos	Masters of Chaos
@@ -1847,19 +1669,18 @@ ST:mata-hari	Mata Hari
 ST:match-maker	Match Maker
 ST:match-of-day	Match of the Day
 ST:match-it	Match-It !
-ST:match-up-v1-1	Match-up! v1.1
+ST:match-up-v1-1	Match-up!
 ST:matrix-marauders	Matrix Marauders
-ST:mau-mau-v4-3	Mau-Mau v4.3
+ST:mau-mau-v4-3	Mau-Mau
 ST:maupiti-island	Maupiti Island
 ST:max	Max
 ST:maxi-bourse-international	Maxi Bourse International
 ST:mayday-squad	Mayday Squad
-ST:maz-v2-1	Maz v2.1
+ST:maz-v2-1	Maz
 ST:maze-combat	Maze Combat
 ST:mazewar-st	Mazewar ST
 ST:mc-donald-land	Mc Donald Land
-ST:mcminos-v0-815	McMinos v0.815
-ST:mcminos-v2-0	McMinos v2.0
+ST:mcminos-v2-0	McMinos
 ST:mean-18	Mean 18
 ST:mean-machine	Mean Machine
 ST:mean-streets	Mean Streets
@@ -1872,11 +1693,11 @@ ST:megaline	MegaLine
 ST:megamaze	MegaMaze
 ST:megamix	Megamix
 ST:megamix-2-brainstorm	Megamix 2: Brainstorm
-ST:megapede-v1-0	Megapede v1.0
+ST:megapede-v1-0	Megapede
 ST:megaroids	Megaroids
 ST:megatraveller	Megatraveller
 ST:megatrix	Megatrix
-ST:meister-der-dimensionen-v2-2	Meister der Dimensionen v2.2
+ST:meister-der-dimensionen-v2-2	Meister der Dimensionen
 ST:mem	Mem
 ST:memorix	Memorix
 ST:memorized	Memorized
@@ -1909,10 +1730,7 @@ ST:microprose-soccer	Microprose Soccer
 ST:midi-maze	Midi Maze
 ST:midi-maze-3-third-generation-v0-9beta	Midi Maze 3: The third Generation v0.9beta
 ST:midi-maze-2	Midi Maze II
-ST:midi-wiz-v1-0c	Midi Wiz v1.0c
-ST:midi-wiz-v1-1a	Midi Wiz v1.1a
-ST:midi-wiz-v1-1f	Midi Wiz v1.1f
-ST:midi-wiz-v1-1i	Midi Wiz v1.1i
+ST:midi-wiz-v1-0c	Midi Wiz
 ST:midi-zap	Midi Zap
 ST:midibattle	Midibattle
 ST:midnight-resistance	Midnight Resistance
@@ -1926,34 +1744,22 @@ ST:mighty-bomb-jack	Mighty Bomb Jack
 ST:mile-stone	Mile Stone
 ST:millenium-2-2	Millenium 2.2
 ST:millennium-2-2	Millennium 2.2
-ST:mind-forever-voyaging-r77	Mind Forever Voyaging, A r77
-ST:mind-forever-voyaging-r79	Mind Forever Voyaging, A r79
-ST:mind-sweeper-v1-1	Mind Sweeper v1.1
+ST:mind-sweeper-v1-1	Mind Sweeper
 ST:mindshadow	Mindshadow
 ST:mindwheel	Mindwheel
 ST:mine-and-markt	Mine & Markt
-ST:mine-and-markt-v2-3	Mine & Markt v2.3
-ST:mine-field	Mine Field
-ST:mine-sweeper	Mine Sweeper
-ST:mine-sweeper-v1-3	Mine Sweeper v1.3
-ST:mine-sweeper-v2-132	Mine Sweeper v2.132
-ST:mine-sweeper-v2-210	Mine Sweeper v2.210
 ST:mine-sweeper-directors-cut	Mine Sweeper: The Directors Cut
 ST:minefield	Minefield
-ST:minenfeld-v1-2	Minenfeld v1.2
+ST:minenfeld-v1-2	Minenfeld
 ST:mines	Mines
 ST:mines-of-lithiad	Mines of Lithiad
 ST:minesweeper	Minesweeper
-ST:minesweeper-v1-0	Minesweeper v1.0
-ST:mini-golf	Mini Golf
 ST:minigolf	Minigolf
 ST:miniskat	Miniskat
 ST:minos	Minos
-ST:miser-mind-v1-0	Miser Mind v1.0
+ST:miser-mind-v1-0	Miser Mind
 ST:missile-alert	Missile Alert!
 ST:missile-command	Missile Command
-ST:missile-command-v1-0	Missile Command v1.0
-ST:missile-command-v1-2	Missile Command v1.2
 ST:missing-one-droid	Missing: One Droid
 ST:mission	Mission
 ST:mission-deadzone	Mission Deadzone
@@ -1963,25 +1769,20 @@ ST:mission-genocide	Mission Genocide
 ST:mission-10	Mission X
 ST:mobsters-city	Mobster's City
 ST:moebius	Moebius
-ST:mole-mayhem-v1-1	Mole Mayhem v1.1
-ST:molecule-another-relaxing-game-v1-0	Molecule: Another Relaxing Game v1.0
-ST:molecule-another-relaxing-game-v2-0	Molecule: Another Relaxing Game v2.0
-ST:molecule-another-relaxing-game-v3-0	Molecule: Another Relaxing Game v3.0
-ST:money-spinner-v1-2	Money Spinner v1.2
-ST:monopoly-v1-0	Monopoly v1.0
+ST:mole-mayhem-v1-1	Mole Mayhem
+ST:molecule-another-relaxing-game-v1-0	Molecule: Another Relaxing Game
+ST:money-spinner-v1-2	Money Spinner
+ST:monopoly-v1-0	Monopoly
 ST:monster-business	Monster Business
 ST:monty-pythons-flying-circus	Monty Python's Flying Circus
-ST:moon-base	Moon Base
 ST:moon-blaster	Moon Blaster
 ST:moon-patrol	Moon Patrol
 ST:moonbase	Moonbase
 ST:moonfall	Moonfall
 ST:moonmist	Moonmist
-ST:moonmist-r4	Moonmist r4
-ST:moonmist-r9	Moonmist r9
 ST:moonshine-racer	Moonshine Racer
 ST:moonwalker	Moonwalker
-ST:morpion-3d-v1-10	Morpion 3D v1.10
+ST:morpion-3d-v1-10	Morpion 3D
 ST:mortville-manor	Mortville Manor
 ST:motor-massacre	Motor Massacre
 ST:motorcycle	Motorcycle
@@ -1990,23 +1791,20 @@ ST:mouse-trap	Mouse Trap
 ST:mouth-trap	Mouth Trap
 ST:move-it	Move It
 ST:move-it-2	Move It 2
-ST:moveit-v2-0	MoveIt v2.0
-ST:moveit-v2-1	MoveIt v2.1
 ST:moving-puzzle	Moving Puzzle
 ST:mozaic	Mozaic
-ST:mr-boomer-v1-24	Mr. Boomer v1.24
+ST:mr-boomer-v1-24	Mr. Boomer
 ST:mr-boomer-v1-10	Mr. Boomer v1.x
 ST:mr-dash	Mr. Dash
 ST:mr-dice	Mr. Dice
 ST:mr-heli	Mr. Heli
-ST:mrs-munchie-v1-10b	Mrs. Munchie v1.10b
+ST:mrs-munchie-v1-10b	Mrs. Munchie
 ST:mrs-munchie-v1-21-sw	Mrs. Munchie v1.21-SW
 ST:mrs-munchie-v1-40-sw	Mrs. Munchie v1.40-SW
 ST:mudpies	Mudpies
 ST:multi-pakman	Multi Pakman
-ST:multrix-v1-02	Multrix v1.02
-ST:multrix-v1-50	Multrix v1.50
-ST:mummies-playtime-v1-03	Mummies Playtime v1.03
+ST:multrix-v1-02	Multrix
+ST:mummies-playtime-v1-03	Mummies Playtime
 ST:murder	Murder
 ST:murder-in-space	Murder in Space
 ST:murder-on-atlantic	Murder on the Atlantic
@@ -2020,15 +1818,13 @@ ST:mystery-of-mummy	Mystery of the Mummy
 ST:mystic-realm	Mystic Realm
 ST:mystical	Mystical
 ST:myth	Myth
-ST:myth-v1-0	Myth v1.0
 ST:n-o-b-i-brainstorm	N.o.B.I.: Brainstorm
 ST:n-o-b-i-racing	N.o.B.I.: Racing
 ST:naarjek-2	Naarjek 2
 ST:naarjek-4	Naarjek 4
-ST:nanjing-v1-1	Nanjing v1.1
-ST:nanjing-v2-0	Nanjing v2.0
+ST:nanjing-v1-1	Nanjing
 ST:nano-cave	Nano Cave
-ST:napalm-quest-v0-5	Napalm Quest v0.5
+ST:napalm-quest-v0-5	Napalm Quest
 ST:napoleon-i	Napoleon I
 ST:napoleon-i-campaigns-1805-1814	Napoleon I: The Campaigns 1805-1814
 ST:narc	Narc
@@ -2046,10 +1842,6 @@ ST:netherworld	Netherworld
 ST:never-mind	Never Mind
 ST:new-arrival	New Arrival
 ST:newtris	Newtris
-ST:newtris-v1-5	Newtris v1.5
-ST:newtris-v1-8	Newtris v1.8
-ST:newtris-v2-0	Newtris v2.0
-ST:newtris-v2-2	Newtris v2.2
 ST:nibe	Nibe
 ST:nicky-boom	Nicky Boom
 ST:nicky-2	Nicky II
@@ -2059,7 +1851,7 @@ ST:nigel-mansells-world-championship-racing	Nigel Mansell's World Championship R
 ST:night-breed	Night Breed
 ST:night-breed-action-game	Night Breed: The Action Game
 ST:night-breed-interactive-movie	Night Breed: The Interactive Movie
-ST:night-crawlers-v1-0	Night Crawlers v1.0
+ST:night-crawlers-v1-0	Night Crawlers
 ST:night-raider	Night Raider
 ST:night-shift	Night Shift
 ST:night-walk	Night Walk
@@ -2081,7 +1873,7 @@ ST:no-name-game	No Name: The Game
 ST:no-prisoners-taken	No Prisoners Taken
 ST:no-second-prize	No Second Prize
 ST:nord-and-bert-couldnt-make-head-or-tail-of-it	Nord and Bert Couldn't Make Head or Tail of It
-ST:nord-and-bert-r19	Nord and Bert r19
+ST:nord-and-bert-r19	Nord and Bert
 ST:north-and-south	North and South
 ST:north-star	North Star
 ST:norwood-castle	Norwood Castle
@@ -2092,12 +1884,12 @@ ST:obsession	Obsession
 ST:ocean-beach-volley	Ocean Beach Volley
 ST:oekopoly-v1-0d	Oekopoly v1.0D
 ST:off-shore-warrior	Off Shore Warrior
-ST:ogre-v1-06	Ogre v1.06
+ST:ogre-v1-06	Ogre
 ST:oh-no-more-lemmings	Oh-no ! More Lemmings
 ST:oids	Oids
-ST:oil-imperium-v2-0	Oil Imperium v2.0
+ST:oil-imperium-v2-0	Oil Imperium
 ST:oilmania	Oilmania
-ST:old-towers-v0-38	Old Towers v0.38
+ST:old-towers-v0-38	Old Towers
 ST:oliver-and-company	Oliver and Company
 ST:olympus	Olympus
 ST:omar-sharif-on-bridge	Omar Sharif on Bridge
@@ -2105,9 +1897,9 @@ ST:omar-sharifs-bridge	Omar Sharif's Bridge
 ST:omega	Omega
 ST:omnicron-conspiracy	Omnicron Conspiracy
 ST:on-road	On the Road
-ST:once-king-v2	Once a King v2
+ST:once-king-v2	Once a King
 ST:one-step-beyond	One Step Beyond
-ST:online-back-gammon-v1-7	Online Back Gammon v1.7
+ST:online-back-gammon-v1-7	Online Back Gammon
 ST:only-valency	Only! Valency
 ST:onslaught	Onslaught
 ST:onyx	Onyx
@@ -2115,58 +1907,51 @@ ST:oo-topos	Oo-Topos
 ST:ooze	Ooze
 ST:ooze-v1-2e	Ooze v1.2E
 ST:operation-angelica	Operation Angelica
-ST:operation-ble-sunrise-v3-00	Operation Ble Sunrise v3.00
+ST:operation-ble-sunrise-v3-00	Operation Ble Sunrise
 ST:operation-garfield	Operation Garfield
 ST:operation-harrier	Operation Harrier
 ST:operation-hormuz	Operation Hormuz
 ST:operation-jupiter	Operation Jupiter
 ST:operation-neptune	Operation Neptune
 ST:operation-stealth	Operation Stealth
-ST:operation-stealth-v3-7	Operation Stealth v3.7
 ST:operation-thunderbolt	Operation Thunderbolt
 ST:operation-wolf	Operation Wolf
 ST:operation-cleanstreets	Operation- Cleanstreets
-ST:orb-v0-1-5	Orb v0.1.5
+ST:orb-v0-1-5	Orb
 ST:orbit-2000	Orbit 2000
 ST:orbiter	Orbiter
-ST:orbiter-v1-01	Orbiter v1.01
 ST:oriental-games	Oriental Games
-ST:original-v2-10	Original, The v2.10
-ST:original-v2-35	Original, The v2.35
-ST:orions-run-v1-2	Orion's Run v1.2
+ST:original-v2-10	The Original
+ST:orions-run-v1-2	Orion's Run
 ST:ork	Ork
 ST:othello	Othello
 ST:othello-killer	Othello Killer
-ST:othello-v1-02	Othello v1.02
-ST:other-place-v1-2	Other Place v1.2
+ST:other-place-v1-2	Other Place
 ST:out-board	Out Board
 ST:out-of-this-world	Out of this World
 ST:out-run	Out Run
 ST:out-run-europa	Out Run Europa
 ST:outcast	Outcast
 ST:outer-limits	Outer Limits
-ST:outguard-v1-1	Outguard v1.1
+ST:outguard-v1-1	Outguard
 ST:outlands	Outlands
 ST:outworld	Outworld
 ST:outzone	Outzone
 ST:overdrive	Overdrive
 ST:overlander	Overlander
-ST:overlander-v1-9	Overlander v1.9
 ST:overscan-invaders	Overscan Invaders
 ST:oxyd	Oxyd
 ST:oxyd-2	Oxyd 2
-ST:oxyd-color-v3	Oxyd Color v3
+ST:oxyd-color-v3	Oxyd Color
 ST:oxyd-flc030-version	Oxyd FLC030 Version
 ST:oxyd-magnum	Oxyd Magnum
-ST:oxyd-v3	Oxyd v3
 ST:ozone	Ozone
 ST:p-47	P-47
 ST:p-47-freedom-fighter	P-47: The Freedom Fighter
 ST:pac-land	Pac-land
-ST:pac-mania	Pac-Mania
 ST:pacific-island-team-yankee-2	Pacific Island: Team Yankee II
 ST:pacman	Pacman
-ST:pacman-for-gem-v0-2-5	Pacman for Gem v0.2.5
+ST:pacman-for-gem-v0-2-5	Pacman for Gem
 ST:pacman-on-es	Pacman on E's
 ST:pacmania	Pacmania
 ST:pacmania-atari-ste-verson	Pacmania: Atari STE Verson
@@ -2175,7 +1960,6 @@ ST:paintz	Paintz
 ST:paki-bash-starring-super-commando	Paki Bash: Starring Super Commando
 ST:paladin	Paladin
 ST:paladin-2	Paladin II
-ST:paladin-v1-0	Paladin v1.0
 ST:pandora	Pandora
 ST:pang	Pang
 ST:panza-kick-boxing	Panza Kick Boxing
@@ -2188,17 +1972,16 @@ ST:parasol-stars	Parasol Stars
 ST:paris-dakar-1990	Paris Dakar 1990
 ST:passengers-on-wind-2	Passengers on the Wind 2
 ST:passing-shot	Passing Shot
-ST:pawn-v2-1	Pawn, The v2.1
-ST:pbm-chess-v1-1	PBM Chess v1.1
+ST:pbm-chess-v1-1	PBM Chess
 ST:pegasus	Pegasus
 ST:peggammon	Peggammon
 ST:penguin	Penguin
 ST:pengy	Pengy
 ST:penta	Penta
 ST:pentacle	Pentacle
-ST:pentimo-v1-10	Pentimo v1.10
+ST:pentimo-v1-10	Pentimo
 ST:pentominoes	Pentominoes
-ST:perfect-match-v2-0	Perfect Match v2.0
+ST:perfect-match-v2-0	Perfect Match
 ST:perils-of-penfold	Perils of Penfold
 ST:perry-mason-case-of-mandarin-murder	Perry Mason- The Case of the Mandarin Murder
 ST:personal-nightmare	Personal Nightmare
@@ -2207,10 +1990,8 @@ ST:peter-beardsleys-international-football	Peter Beardsley's International Footb
 ST:peter-pan	Peter Pan
 ST:phantasie	Phantasie
 ST:phantasie-2	Phantasie II
-ST:phantasie-2-v1-0	Phantasie II v1.0
 ST:phantasie-3	Phantasie III
 ST:phantasie-3-wrath-of-nikademus	Phantasie III: The Wrath of Nikademus
-ST:phantasie-v2-0	Phantasie v2.0
 ST:phantasm	Phantasm
 ST:phantom-slayer	Phantom Slayer
 ST:pharaoh	Pharaoh
@@ -2226,7 +2007,6 @@ ST:pictionary-game-of-quick-draw	Pictionary: The Game of Quick Draw
 ST:pigeon-post	Pigeon Post
 ST:pinball-dreams	Pinball Dreams
 ST:pinball-factory	Pinball Factory
-ST:pinball-factory-v1-1	Pinball Factory v1.1
 ST:pinball-magic	Pinball Magic
 ST:pinball-wizard	Pinball Wizard
 ST:pinguin	Pinguin
@@ -2237,7 +2017,6 @@ ST:pipeline	Pipeline
 ST:pipetris	Pipetris
 ST:pirates	Pirates
 ST:pirates-of-barbary-coast	Pirates of the Barbary Coast
-ST:pit-fighter	Pit-Fighter
 ST:pitfighter	Pitfighter
 ST:pixie-and-dixie	Pixie and Dixie
 ST:place50	Place50
@@ -2255,7 +2034,7 @@ ST:plutos	Plutos
 ST:police-quest-2	Police Quest II
 ST:police-quest-2-vengeance	Police Quest II: The Vengeance
 ST:police-quest-in-pursuit-of-death-angel-v2-0g	Police Quest In Pursuit of the Death Angel v2.0G
-ST:police-quest-v2-0g	Police Quest v2.0g
+ST:police-quest-v2-0g	Police Quest
 ST:police-quest-in-pursuit-of-death-angel	Police Quest: In Pursuit of the Death Angel
 ST:pong-1993	Pong 1993
 ST:pool	Pool
@@ -2269,7 +2048,7 @@ ST:populous-and-populous-promised-lands	Populous & Populous: The promised Lands
 ST:populous-2	Populous II
 ST:populous-2-trials-of-olympian-gods	Populous II: Trials of the Olympian Gods
 ST:populous-promised-lands	Populous: The Promised Lands
-ST:pork-i-great-underground-sewer-system-v4-26	Pork I- The Great Underground Sewer System v4.26
+ST:pork-i-great-underground-sewer-system-v4-26	Pork I- The Great Underground Sewer System
 ST:pork-2	Pork II
 ST:pothole-2	Pothole II
 ST:potsworth-and-co	Potsworth and Co.
@@ -2288,7 +2067,7 @@ ST:premier-manager	Premier Manager
 ST:premier-manager-2	Premier Manager 2
 ST:premium-mah-jongg-2	Premium Mah Jongg II
 ST:prensorium	Prensorium
-ST:primitive-spiel-das-v1-0	Primitive Spiel, Das v1.0
+ST:primitive-spiel-das-v1-0	Primitive Spiel, Das
 ST:prince	Prince
 ST:prince-of-persia	Prince of Persia
 ST:prinsequest-1	PrinseQuest 1
@@ -2298,7 +2077,7 @@ ST:pro-powerboat-simulator	Pro Powerboat Simulator
 ST:pro-tennis-simulator	Pro Tennis Simulator
 ST:pro-tennis-tour	Pro Tennis Tour
 ST:pro-tennis-tour-2	Pro Tennis Tour 2
-ST:professional-football-masters-v4-07	Professional Football Masters v4.07
+ST:professional-football-masters-v4-07	Professional Football Masters
 ST:professional-ski-simulator	Professional Ski Simulator
 ST:prohibition	Prohibition
 ST:project-neptune	Project Neptune
@@ -2307,15 +2086,14 @@ ST:projekt-prometheus	Projekt Prometheus
 ST:projekt-terra	Projekt Terra
 ST:prophecy-i-viking-child	Prophecy I: The Viking Child
 ST:protector	Protector
-ST:psion-chess-v2-00	Psion Chess v2.00
-ST:psion-chess-v2-01	Psion Chess v2.01
+ST:psion-chess-v2-00	Psion Chess
 ST:psyborg	Psyborg
 ST:psycho	Psycho
 ST:psycho-pigs-2	Psycho Pigs 2
 ST:pub-trivia-simulator	Pub Trivia Simulator
 ST:puffys-saga	Puffy's Saga
 ST:punssi	Punssi
-ST:pure-logic-v1-1	Pure Logic v1.1
+ST:pure-logic-v1-1	Pure Logic
 ST:purple-saturn-day	Purple Saturn Day
 ST:push-n-shove	Push 'n' Shove
 ST:push-over	Push Over
@@ -2328,47 +2106,43 @@ ST:qball	QBall
 ST:qin	Qin
 ST:quadralien	Quadralien
 ST:quadrel	Quadrel
-ST:quadrel-v1-0	Quadrel v1.0
 ST:quartz	Quartz
 ST:quasar	Quasar
 ST:queboid	Queboid
 ST:quest	Quest
 ST:quest-for-glory-so-you-want-to-be-hero	Quest for Glory: So You Want to Be a Hero
-ST:quest-v1-51	Quest v1.51
 ST:questron-2	Questron II
-ST:questron-2-v1-1	Questron II v1.1
 ST:quink	Quink
-ST:quinzaine-v1-0	Quinzaine v1.0
-ST:quix-v2-0	Quix v2.0
-ST:quiz-construction-kit-v1-2	Quiz Construction Kit v1.2
+ST:quinzaine-v1-0	Quinzaine
+ST:quix-v2-0	Quix
+ST:quiz-construction-kit-v1-2	Quiz Construction Kit
 ST:quizzy-quiz	Quizzy Quiz
 ST:r-type	R-Type
 ST:r-type-2	R-Type II
 ST:r-b-i-2-baseball	R.B.I. 2 Baseball
-ST:r-b-i-baseball-2	R.B.I. Baseball 2
 ST:r0x	r0x
 ST:race-driver	Race Driver
 ST:race-drivin	Race Drivin'
-ST:race-v2-0	Race v2.0
+ST:race-v2-0	Race
 ST:radio-controlled-car	Radio Controlled Car
 ST:raffles	Raffles
 ST:raiders	Raiders
-ST:railroad-tycoon-v755-01	Railroad Tycoon v755.01
+ST:railroad-tycoon-v755-01	Railroad Tycoon
 ST:rainbow-islands	Rainbow Islands
 ST:rainbow-warriors	Rainbow Warriors
 ST:rally-cross-challenge	Rally Cross Challenge
 ST:rambo-3	Rambo III
 ST:rampage	Rampage
 ST:rampart	Rampart
-ST:ramses-v1-0	Ramses v1.0
+ST:ramses-v1-0	Ramses
 ST:ranarama	Ranarama
-ST:randomazer-v1-02	RandoMaZer v1.02
+ST:randomazer-v1-02	RandoMaZer
 ST:randominer-v1-3-sv2023-edition	Randominer v1.3 SV2023 Edition
 ST:ranx	Ranx
 ST:ravoid	Ravoid
 ST:rbi-baseball-2	RBI Baseball 2
 ST:reach-for-skies	Reach for the Skies
-ST:realistic-video-poker-v2-2	Realistic Video Poker v2.2
+ST:realistic-video-poker-v2-2	Realistic Video Poker
 ST:realms	Realms
 ST:realms-of-arkania-blade-of-destiny	Realms of Arkania: Blade of Destiny
 ST:rebellion	Rebellion
@@ -2384,11 +2158,10 @@ ST:red-cat-rummy-500	Red Cat Rummy 500+
 ST:red-heat	Red Heat
 ST:red-lightning	Red Lightning
 ST:red-storm-rising	Red Storm Rising
-ST:red-storm-rising-v743-01	Red Storm Rising v743.01
-ST:reflection-v3-2	Reflection v3.2
+ST:reflection-v3-2	Reflection
 ST:reisende-im-wind	Reisende im Wind
 ST:reisende-im-wind-2	Reisende im Wind II
-ST:rekursi-v1-24	Rekursi v1.24
+ST:rekursi-v1-24	Rekursi
 ST:renegade	Renegade
 ST:resolution-101	Resolution 101
 ST:restart	Restart
@@ -2396,7 +2169,7 @@ ST:return-of-jedi	Return of the Jedi
 ST:return-to-eden	Return to Eden
 ST:return-to-genesis	Return to Genesis
 ST:revenge-2-revenge-of-mutant-camels-2	Revenge II: Revenge of the Mutant Camels II
-ST:reversi-brain-v1-3	Reversi Brain v1.3
+ST:reversi-brain-v1-3	Reversi Brain
 ST:rick-dangerous	Rick Dangerous
 ST:rick-dangerous-2	Rick Dangerous II
 ST:rings-of-medusa	Rings of Medusa
@@ -2405,21 +2178,19 @@ ST:rings-of-zilfin	Rings of Zilfin
 ST:ringside	Ringside
 ST:ripcord	Ripcord
 ST:risiko	Risiko
-ST:risk-v1-9	Risk v1.9
+ST:risk-v1-9	Risk
 ST:riskant	Riskant
-ST:risky-v1-5	Risky v1.5
+ST:risky-v1-5	Risky
 ST:risky-v1-5e	Risky v1.5E
 ST:risky-wood	Risky Wood
-ST:road-blasters	Road Blasters
 ST:road-runner	Road Runner
-ST:road-wars	Road Wars
 ST:roadblasters	RoadBlasters
 ST:roadkill	Roadkill
 ST:roadkill-2	Roadkill 2
 ST:roadwar-2000	Roadwar 2000
 ST:roadwar-europa	Roadwar Europa
 ST:roadwars	Roadwars
-ST:robert-in-fire-factory-v1-10	Robert in the Fire Factory v1.10
+ST:robert-in-fire-factory-v1-10	Robert in the Fire Factory
 ST:robinsons-requiem	Robinson's Requiem
 ST:robocop	RoboCop
 ST:robocop-2	Robocop 2
@@ -2427,23 +2198,19 @@ ST:robocop-3	Robocop 3
 ST:robotron-2084	Robotron: 2084
 ST:robozone	Robozone
 ST:robozone-intro-disk	Robozone: Intro Disk
-ST:rock-n-roll	Rock 'n' Roll
 ST:rock-star	Rock Star
-ST:rock-star-ate-my-hamster	Rock Star Ate My Hamster
 ST:rockn-roll	Rock'n Roll
 ST:rocknroll-clams	Rock'n'Roll Clams
 ST:rocket-defense	Rocket Defense
 ST:rocket-ranger	Rocket Ranger
 ST:rocketball-st	Rocketball ST
 ST:rockfall	Rockfall
-ST:rockfall-2-perils-of-spud-v2-14	Rockfall II: The Perils of Spud v2.14
+ST:rockfall-2-perils-of-spud-v2-14	Rockfall II: The Perils of Spud
 ST:rockfall-3-rock-hard	Rockfall III: Rock Hard
 ST:rockfall-special-edition	Rockfall: Special Edition
 ST:rockford	Rockford
 ST:rockstar-ate-my-hamster	Rockstar Ate my Hamster
-ST:rod-land	Rod Land
 ST:rodland	Rodland
-ST:rodland-v1-32	Rodland v1.32
 ST:rody-and-mastico	Rody & Mastico
 ST:rody-and-mastico-3	Rody & Mastico III
 ST:rody-and-mastico-4-rody-noel	Rody & Mastico IV: Rody Noel
@@ -2465,7 +2232,6 @@ ST:rotox	Rotox
 ST:round-bend	Round the Bend
 ST:rubicon	Rubicon
 ST:rugby-coach	Rugby Coach
-ST:rugby-world-cup	Rugby: The World Cup
 ST:rugby-worldcup	Rugby: The Worldcup
 ST:rumble	Rumble
 ST:rumbo	Rumbo
@@ -2473,7 +2239,6 @@ ST:russian-roulette	Russian Roulette
 ST:rvf-honda	RVF Honda
 ST:s-d-i	S.D.I.
 ST:s-t-f-f-10-29	S.T.A.F.F. X-29
-ST:s-t-u-n-runner	S.T.U.N. Runner
 ST:sabotage	Sabotage
 ST:sabre-team	Sabre Team
 ST:saddam-shoot	Saddam Shoot!
@@ -2481,10 +2246,10 @@ ST:saint-dragon	Saint Dragon
 ST:sam-in-monsters-garden	Sam in Monster's Garden
 ST:sam-in-monsters-land	Sam in Monster's Land
 ST:sams-voyage	Sam's Voyage
-ST:samurai-way-of-warrior-v1-0	Samurai: The Way of the Warrior v1.0
+ST:samurai-way-of-warrior-v1-0	Samurai: The Way of the Warrior
 ST:sandor	Sandor
 ST:sandor-2-kotalan-und-die-drei-schwestern	Sandor II: Kotalan und die drei Schwestern
-ST:santa-run-v1-2	Santa Run v1.2
+ST:santa-run-v1-2	Santa Run
 ST:santafly	Santafly
 ST:sapiens	Sapiens
 ST:sarakon	Sarakon
@@ -2506,9 +2271,8 @@ ST:seastalker	Seastalker
 ST:seconds-out	Seconds Out
 ST:secret-agent	Secret Agent
 ST:sensible-soccer	Sensible Soccer
-ST:sensible-soccer-international-edition-v1-2	Sensible Soccer International Edition v1.2
-ST:sensible-soccer-v1-1	Sensible Soccer v1.1
-ST:sensitive-st-v1-1	Sensitive ST v1.1
+ST:sensible-soccer-international-edition-v1-2	Sensible Soccer International Edition
+ST:sensitive-st-v1-1	Sensitive ST
 ST:sequencer	Sequencer
 ST:serendipity	Serendipity
 ST:seven-little-horrors	Seven Little Horrors
@@ -2527,12 +2291,10 @@ ST:shadowgate	Shadowgate
 ST:shadowlands	Shadowlands
 ST:shadoworlds	Shadoworlds
 ST:shanghai	Shanghai
-ST:shanghai-v2-0	Shanghai v2.0
-ST:shanghai-revenge-of-dragon-v1-22	Shanghai: Revenge of the Dragon v1.22
-ST:shanghai-revenge-of-dragon-v1-25	Shanghai: Revenge of the Dragon v1.25
+ST:shanghai-revenge-of-dragon-v1-22	Shanghai: Revenge of the Dragon
 ST:she-fox	She-Fox
 ST:sheer-agony	Sheer Agony
-ST:sherlock-holmes-v2-0	Sherlock Holmes v2.0
+ST:sherlock-holmes-v2-0	Sherlock Holmes
 ST:sherlock-riddle-of-crown-jewels	Sherlock: The Riddle of the Crown Jewels
 ST:sherman-m4	Sherman M4
 ST:shifty	Shifty
@@ -2548,16 +2310,14 @@ ST:silent-service	Silent Service
 ST:silent-service-2	Silent Service II
 ST:silent-service-submarine-simulation	Silent Service: The Submarine Simulation
 ST:silicon-dreams	Silicon Dreams
-ST:silk-worm	Silk Worm
 ST:silkworm	Silkworm
 ST:silly-invaders	Silly Invaders
-ST:sim-city	Sim City
 ST:sim-city-terrain-editor	Sim City: Terrain Editor
 ST:simcity	SimCity
 ST:simulcra	Simulcra
 ST:sinbad-and-throne-of-falcon	Sinbad and the Throne of the Falcon
 ST:sinbads-last-voyage	Sinbad's Last Voyage
-ST:skat-2000-v1-0	Skat 2000 v1.0
+ST:skat-2000-v1-0	Skat 2000
 ST:skate-ball	Skate Ball
 ST:skidoo	Skidoo
 ST:skidz	Skidz
@@ -2587,8 +2347,7 @@ ST:snacman	Snacman
 ST:snoopy	Snoopy
 ST:snoopy-and-peanuts	Snoopy and Peanuts
 ST:snow-strike	Snow Strike
-ST:snowball-fight-v1-0	Snowball Fight v1.0
-ST:snowball-fight-v1-1	Snowball Fight v1.1
+ST:snowball-fight-v1-0	Snowball Fight
 ST:snowhell	Snowhell
 ST:soccer-king	Soccer King
 ST:soko	Soko
@@ -2609,7 +2368,7 @@ ST:space-1889	Space 1889
 ST:space-ace	Space Ace
 ST:space-baller	Space Baller
 ST:space-battle	Space Battle
-ST:space-cavern-blaster-v0-13h	Space Cavern Blaster v0.13h
+ST:space-cavern-blaster-v0-13h	Space Cavern Blaster
 ST:space-crusade	Space Crusade
 ST:space-crusade-2	Space Crusade II
 ST:space-cutter	Space Cutter
@@ -2625,26 +2384,24 @@ ST:space-pilot	Space Pilot
 ST:space-quest-i	Space Quest I
 ST:space-quest-2	Space Quest II
 ST:space-quest-2-vohauls-revenge	Space Quest II: Vohaul's Revenge
-ST:space-quest-2-vohauls-revenge-v2-0c	Space Quest II: Vohaul's Revenge v2.0c
 ST:space-quest-3	Space Quest III
-ST:space-quest-3-pirates-of-pestulon-v1-0q	Space Quest III: The Pirates of Pestulon v1.0q
-ST:space-quest-sarien-encounter-v1-1a	Space Quest: The Sarien Encounter v1.1a
-ST:space-quest-serien-encounter-v1-1a	Space Quest: The Serien Encounter v1.1a
+ST:space-quest-3-pirates-of-pestulon-v1-0q	Space Quest III: The Pirates of Pestulon
+ST:space-quest-sarien-encounter-v1-1a	Space Quest: The Sarien Encounter
+ST:space-quest-serien-encounter-v1-1a	Space Quest: The Serien Encounter
 ST:space-racer	Space Racer
 ST:space-rogue	Space Rogue
 ST:space-station-oblivion	Space Station Oblivion
 ST:space-station-part-1	Space Station Part 1
 ST:space-station-part-i	Space Station Part I
-ST:space-wars-2000-v1-1	Space Wars 2000 v1.1
+ST:space-wars-2000-v1-1	Space Wars 2000
 ST:spaceball	Spaceball
 ST:spaceball-2-zunos-game	Spaceball II: Zuno's Game
-ST:spacebar-game-v1-00	SPACEBAR: The Game v1.00
+ST:spacebar-game-v1-00	SPACEBAR: The Game
 ST:spacola	Spacola
 ST:special-criminal-investigation	Special Criminal Investigation
 ST:special-forces	Special Forces
 ST:speedball	Speedball
 ST:speedball-2-brutal-deluxe	Speedball 2: Brutal Deluxe
-ST:speedball-v1-05	Speedball v1.05
 ST:speedboat-assassin	Speedboat Assassin
 ST:speedy-joe	Speedy Joe
 ST:spell-bound	Spell Bound
@@ -2659,7 +2416,7 @@ ST:spitfire-40	Spitfire 40
 ST:spitting-image	Spitting Image
 ST:splatter	Splatter
 ST:spook	Spook
-ST:sporttabellen-verwaltung-v3-1	Sporttabellen: Verwaltung v3.1
+ST:sporttabellen-verwaltung-v3-1	Sporttabellen: Verwaltung
 ST:spot	Spot
 ST:spot-difference	Spot The Difference
 ST:spy-vs-spy	Spy vs Spy
@@ -2667,29 +2424,28 @@ ST:spy-vs-spy-2-island-caper	Spy vs Spy II: The Island Caper
 ST:spysnatcher	SpySnatcher
 ST:square-off	Square Off
 ST:squish	Squish
-ST:st-blackjack-v1-0	ST Blackjack v1.0
+ST:st-blackjack-v1-0	ST Blackjack
 ST:st-karate	ST Karate
 ST:st-protector	ST Protector
-ST:st-sorry-v4-0	ST Sorry v4.0
-ST:st-shuffleboard-v1-1	ST-Shuffleboard v1.1
-ST:stable-masters-2-v3-1	Stable Masters II v3.1
+ST:st-sorry-v4-0	ST Sorry
+ST:st-shuffleboard-v1-1	ST-Shuffleboard
+ST:stable-masters-2-v3-1	Stable Masters II
 ST:stack-up	Stack Up
-ST:stalone-v1-0	STalone v1.0
+ST:stalone-v1-0	STalone
 ST:star-command	Star Command
-ST:star-fleet-i-battle-begins-v2-1	Star Fleet I: The Battle begins v2.1
+ST:star-fleet-i-battle-begins-v2-1	Star Fleet I: The Battle begins
 ST:star-raiders	Star Raiders
 ST:star-trap	Star Trap
 ST:star-trek	Star Trek
 ST:star-trek-klingon-war	Star Trek: The Klingon War
 ST:star-trek-rebel-universe	Star Trek: The Rebel Universe
 ST:star-troopers	Star Troopers
-ST:star-voyage-v1-1	Star Voyage v1.1
+ST:star-voyage-v1-1	Star Voyage
 ST:star-wars	Star Wars
 ST:star-wars-return-of-jedi	Star Wars: Return of the Jedi
 ST:star-wars-empire-strikes-back	Star Wars: The Empire Strikes Back
 ST:star-wrek	Star Wrek
-ST:starball-v1-10	Starball v1.10
-ST:starball-v1-61	Starball v1.61
+ST:starball-v1-10	Starball
 ST:starblade	Starblade
 ST:starblaze	Starblaze
 ST:starbox	Starbox
@@ -2715,7 +2471,7 @@ ST:stello-2-1	Stello 2.1
 ST:stetris	Stetris
 ST:steve-davis-world-snooker	Steve Davis World Snooker
 ST:steve-mcqueen-westphaser	Steve McQueen Westphaser
-ST:stocks-and-bonds-v3-0	Stocks & Bonds v3.0
+ST:stocks-and-bonds-v3-0	Stocks & Bonds
 ST:stomp	Stomp
 ST:stone-age	Stone Age
 ST:stone-breaker	Stone-Breaker
@@ -2727,7 +2483,6 @@ ST:strabble	Strabble
 ST:stradegy	Stradegy
 ST:strange-war	Strange War
 ST:stratagem	StrataGEM
-ST:stratagem-v1-80	StrataGem v1.80
 ST:stratego	Stratego
 ST:street-fighter	Street Fighter
 ST:street-fighter-2	Street Fighter 2
@@ -2756,7 +2511,6 @@ ST:summer-games-2	Summer Games II
 ST:summer-olympiad	Summer Olympiad
 ST:sun-shine-on-sunny-side-of-life	Sun Shine: On the sunny Side of Life
 ST:sundog-frozen-legacy	Sundog: Frozen Legacy
-ST:sundog-frozen-legacy-v3-0	Sundog: Frozen Legacy v3.0
 ST:supaplex	Supaplex
 ST:super-break-out	Super Break-Out
 ST:super-cars	Super Cars
@@ -2794,11 +2548,10 @@ ST:switchblade	Switchblade
 ST:switchblade-2	Switchblade II
 ST:swithblade-2	Swithblade 2
 ST:swiv	SWIV
-ST:swiv-v1-0	SWIV v1.0
 ST:sword-of-kadash	Sword Of Kadash
 ST:tactical-manager	Tactical Manager
 ST:tai-pan	Tai-Pan
-ST:taipan-2-v1-14	Taipan II v1.14
+ST:taipan-2-v1-14	Taipan II
 ST:take-it	Take It
 ST:talespin	Talespin
 ST:talisman	Talisman
@@ -2806,7 +2559,7 @@ ST:tanglewood	Tanglewood
 ST:tangram	Tangram
 ST:tank	Tank
 ST:targhan	Targhan
-ST:tarot-v2-1	Tarot v2.1
+ST:tarot-v2-1	Tarot
 ST:tass-times-in-tonetown	Tass Times in Tonetown
 ST:tau-ceti	Tau Ceti
 ST:tau-ceti-3	Tau Ceti III
@@ -2835,9 +2588,7 @@ ST:test-drive	Test Drive
 ST:test-drive-2-duel	Test Drive 2: The Duel
 ST:test-drive-2-duel-scenery-disk	Test Drive 2: The Duel Scenery Disk
 ST:tetris	Tetris
-ST:tetris-v1-2	Tetris v1.2
-ST:tetris-v1-3	Tetris v1.3
-ST:tetris-10-v2-3	Tetris X v2.3
+ST:tetris-10-v2-3	Tetris X
 ST:tex-mcphilip-quest-for-papacy	Tex McPhilip: Quest for the Papacy
 ST:tex-mcphilip-road-to-divinity	Tex McPhilip: Road to Divinity
 ST:thai-boxing	Thai Boxing
@@ -2845,7 +2596,6 @@ ST:addams-family	The Addams Family
 ST:adventures-of-maddog-williams-dungeons-of-duridian	The Adventures of Maddog Williams: The Dungeons of Duridian
 ST:adventures-of-quik-and-silva	The Adventures of Quik & Silva
 ST:adventures-of-robin-hood	The Adventures of Robin Hood
-ST:amazing-spider-man	The Amazing Spider-Man
 ST:amazing-spider-man-and-captain-america-in-doctor-dooms-revenge	The Amazing Spider-Man and Captain America in Doctor Doom's Revenge
 ST:amazing-spider-man-and-captain-america-in-dr-dooms-revenge	The Amazing Spider-Man and Captain America in Dr. Doom's Revenge!
 ST:amazing-spiderman	The Amazing Spiderman
@@ -2891,7 +2641,7 @@ ST:game-of-harmony	The Game of Harmony
 ST:games-92-espana	The Games '92: España
 ST:games-summer-edition	The Games: Summer Edition
 ST:games-winter-edition	The Games: Winter Edition
-ST:glass-buttog-of-targ-v1-0	The Glass Buttog of Targ v1.0
+ST:glass-buttog-of-targ-v1-0	The Glass Buttog of Targ
 ST:godfather	The Godfather
 ST:good-hangman-acc	The Good Hangman Acc
 ST:grail	The Grail
@@ -2901,8 +2651,8 @@ ST:hammer-of-grimmold	The Hammer of Grimmold
 ST:hitchhikers-guide-to-galaxy	The Hitchhiker's Guide to the Galaxy
 ST:hound-of-shadow	The Hound of Shadow
 ST:house-of-rising-sun	The House of the Rising Sun
-ST:house-quest-2-revenge-of-mutant-killer-tomatoes-v1-01	The House Quest II: The Revenge of the Mutant Killer Tomatoes v1.01
-ST:house-quest-search-for-lost-amtmann-v2-03	The House Quest: The Search for the lost Amtmann v2.03
+ST:house-quest-2-revenge-of-mutant-killer-tomatoes-v1-01	The House Quest II: The Revenge of the Mutant Killer Tomatoes
+ST:house-quest-search-for-lost-amtmann-v2-03	The House Quest: The Search for the lost Amtmann
 ST:humans	The Humans
 ST:hunt-for-red-october	The Hunt for Red October
 ST:hut	The Hut
@@ -2929,7 +2679,6 @@ ST:magnetic-scrolls-collection	The Magnetic Scrolls Collection
 ST:maze	The Maze
 ST:munsters	The Munsters
 ST:mystic-well	The Mystic Well
-ST:new-zealand-story	The New Zealand Story
 ST:newzealand-story	The NewZealand Story
 ST:ninja-warriors	The Ninja Warriors
 ST:north-sea-inferno	The North Sea Inferno
@@ -2979,12 +2728,11 @@ ST:their-finest-hour-battle-of-britain-datadisk	Their finest Hour: The Battle of
 ST:theme-park-mystery	Theme Park Mystery
 ST:think-2	Think 2
 ST:think-cross	Think Cross
-ST:think-st-v1-1	Think ST v1.1
+ST:think-st-v1-1	Think ST
 ST:third-reich	Third Reich
 ST:thomas-tank-engine-2	Thomas: The Tank Engine 2
 ST:thrust	Thrust
 ST:thunder-burner	Thunder Burner
-ST:thunder-cats	Thunder Cats
 ST:thunder-jaws	Thunder Jaws
 ST:thunderblade	Thunderblade
 ST:thundercats	ThunderCats
@@ -2993,15 +2741,13 @@ ST:thunderhawk-ah-73m	Thunderhawk AH-73M
 ST:thunderstrike	Thunderstrike
 ST:thunderwing	ThunderWing
 ST:thurg-n-murg	Thurg N Murg
-ST:tictactoe-v1-01	Tictactoe v1.01
+ST:tictactoe-v1-01	Tictactoe
 ST:tie-brake	Tie Brake
 ST:tie-break	Tie Break
 ST:tiger-road	Tiger Road
 ST:tim-und-struppi-auf-dem-mond	Tim und Struppi auf dem Mond
 ST:time-and-magik	Time and Magik
 ST:time-bandit	Time Bandit
-ST:time-bandit-v0-96	Time Bandit v0.96
-ST:time-bandit-v2-1	Time Bandit v2.1
 ST:time-machine	Time Machine
 ST:time-runner	Time Runner
 ST:time-scanner	Time Scanner
@@ -3029,7 +2775,7 @@ ST:toop	Toop
 ST:top-banana	Top Banana
 ST:top-cat-starring-in-beverly-hills-cats	Top Cat Starring in Beverly Hills Cats
 ST:torp	Torp!
-ST:torus-v0-5	Torus v0.5
+ST:torus-v0-5	Torus
 ST:torvak-warrior	Torvak the Warrior
 ST:total-apathy	Total Apathy
 ST:total-eclipse	Total Eclipse
@@ -3047,7 +2793,6 @@ ST:tracksuit-manager	Tracksuit Manager
 ST:traders	Traders
 ST:trail-blazers	Trail Blazers
 ST:trailblazer	Trailblazer
-ST:trans-world	Trans World
 ST:transarctica	Transarctica
 ST:transartica	Transartica
 ST:transworld	Transworld
@@ -3083,7 +2828,6 @@ ST:turrican-2	Turrican II
 ST:turrican-2-final-fight	Turrican II: The Final Fight
 ST:tusker	Tusker
 ST:tuzzle	Tuzzle
-ST:tuzzle-v2-1	Tuzzle v2.1
 ST:tv-sports-football	TV Sports Football
 ST:twiinz	Twiinz
 ST:twilights-ransom	Twilight's Ransom
@@ -3095,7 +2839,6 @@ ST:typhoon	Typhoon
 ST:typhoon-thompson	Typhoon Thompson
 ST:typhoon-thompson-in-search-for-sea-child	Typhoon Thompson in Search for the Sea Child
 ST:u-boot	U-Boot
-ST:u-n-squadron	U.N. Squadron
 ST:ultima-2	Ultima II
 ST:ultima-2-revenge-of-enchantress	Ultima II: The Revenge of the Enchantress
 ST:ultima-3-exodus	Ultima III: Exodus
@@ -3104,20 +2847,16 @@ ST:ultima-5-warriors-of-destiny	Ultima V: Warriors of Destiny
 ST:ultima-6-false-prophet	Ultima VI: The False Prophet
 ST:ums	UMS
 ST:ums-2-nations-at-war	UMS 2: Nations at War
-ST:ums-2-nations-at-war-v1-1	UMS 2: Nations at War v1.1
 ST:ums-universal-military-simulator	UMS: The Universal Military Simulator
 ST:un-squadron	UN Squadron
 ST:under-ice	Under the Ice
 ST:universe-3	Universe 3
-ST:universe-3-v1-0	Universe 3 v1.0
 ST:unreal	Unreal
 ST:upndown	Up'n'down
 ST:uridium	Uridium
 ST:utopia	Utopia
 ST:utopia-creation-of-nation	Utopia: The Creation of a Nation
-ST:utopos-v1-50	Utopos v1.50
-ST:utopos-v1-55	Utopos v1.55
-ST:utopos-v1-61	Utopos v1.61
+ST:utopos-v1-50	Utopos
 ST:valgus-2	Valgus 2
 ST:vampires-empire	Vampire's Empire
 ST:vaxine	Vaxine
@@ -3127,14 +2866,13 @@ ST:vegas-gambler	Vegas Gambler
 ST:vengeance-of-excalibur	Vengeance of Excalibur
 ST:venus-flytrap	Venus: The Flytrap
 ST:verminator	Verminator
-ST:verrueckte-labyrinth-das-v1-1	Verrueckte Labyrinth, Das v1.1
+ST:verrueckte-labyrinth-das-v1-1	Verrueckte Labyrinth, Das
 ST:vers-linconnu	Vers l'Inconnu
 ST:veteran	Veteran
 ST:victory	Victory
 ST:victory-road	Victory Road
 ST:video-kid	Video Kid
 ST:vidigrid	Vidigrid
-ST:vidigrid-v2	Vidigrid v2
 ST:viking-child	Viking Child
 ST:vindicators	Vindicators
 ST:violence	Violence
@@ -3160,7 +2898,7 @@ ST:wall-street-wizard-scenario-editor	Wall Street Wizard: Scenario Editor
 ST:wall-treet	Wall$treet
 ST:walls-of-illusion	Walls of Illusion
 ST:walls-of-illusion-savegame	Walls of Illusion Savegame
-ST:walz-v2-01	Walz v2.01
+ST:walz-v2-01	Walz
 ST:wanderer	Wanderer
 ST:wanderer-3d	Wanderer 3D
 ST:wanted	Wanted
@@ -3186,8 +2924,7 @@ ST:werlan	Werlan
 ST:werner-st	Werner ST
 ST:western-games	Western Games
 ST:westphaser	Westphaser
-ST:wheel-of-fortune-v1-8	Wheel of Fortune v1.8
-ST:wheel-of-fortune-v2-0	Wheel of Fortune v2.0
+ST:wheel-of-fortune-v1-8	Wheel of Fortune
 ST:where-time-stood-still	Where Time Stood Still
 ST:whiplash-and-wagonwheel	Whiplash & Wagonwheel
 ST:whirligig	Whirligig
@@ -3195,7 +2932,7 @@ ST:who-framed-roger-rabbit	Who framed Roger Rabbit
 ST:wicked	Wicked
 ST:wild-streets	Wild Streets
 ST:wild-wheels	Wild Wheels
-ST:wiliness-3-v1-0b	Wiliness 3 v1.0b
+ST:wiliness-3-v1-0b	Wiliness 3
 ST:willow	Willow
 ST:wind-walker	Wind Walker
 ST:windsurf-willy	Windsurf Willy
@@ -3216,20 +2953,13 @@ ST:wizmo	Wizmo
 ST:wizz	Wizz
 ST:wolfchild	Wolfchild
 ST:wolfenstein-3d	Wolfenstein 3D
-ST:wolfenstein-3d-alpha-engine-v1-0	Wolfenstein 3D Alpha Engine v1.0
-ST:wolfenstein-3d-beta-engine-v0-1	Wolfenstein 3D Beta Engine v0.1
-ST:wolfenstein-3d-beta-engine-v0-1a	Wolfenstein 3D Beta Engine v0.1a
-ST:wolfenstein-3d-beta-engine-v0-2	Wolfenstein 3D Beta Engine v0.2
-ST:wolfenstein-3d-beta-engine-v0-3	Wolfenstein 3D Beta Engine v0.3
-ST:wolfenstein-3d-beta-engine-v0-4	Wolfenstein 3D Beta Engine v0.4
-ST:wolfenstein-3d-beta-engine-v0-5	Wolfenstein 3D Beta Engine v0.5
+ST:wolfenstein-3d-alpha-engine-v1-0	Wolfenstein 3D Alpha Engine
+ST:wolfenstein-3d-beta-engine-v0-1	Wolfenstein 3D Beta Engine
 ST:wolfpack	Wolfpack
-ST:wonder-boy-in-monster-land	Wonder Boy in Monster Land
 ST:wonderboy-in-monsterland	Wonderboy in Monsterland
 ST:wonderland	Wonderland
 ST:wonderland-dizzy	Wonderland Dizzy
-ST:wonderland-v1-27	Wonderland v1.27
-ST:word-quest-v3-10	Word Quest v3.10
+ST:word-quest-v3-10	Word Quest
 ST:works-team-rally	Works Team Rally
 ST:world-championship-boxing-manager	World Championship Boxing Manager
 ST:world-championship-soccer	World Championship Soccer
@@ -3237,7 +2967,7 @@ ST:world-class-leader-board	World Class Leader Board
 ST:world-class-rugby	World Class Rugby
 ST:world-class-rugby-5-nations-edition	World Class Rugby: 5 Nations Edition
 ST:world-class-rugby-five-nations-edition	World Class Rugby: Five Nations Edition
-ST:world-conquest-v0-91	World Conquest v0.91
+ST:world-conquest-v0-91	World Conquest
 ST:world-cricket	World Cricket
 ST:world-cup-soccer-italia-90	World Cup Soccer: Italia '90
 ST:world-cup-soccer-italy-90	World Cup Soccer: Italy '90
@@ -3251,8 +2981,8 @@ ST:worm-race	Worm Race
 ST:wrangler	Wrangler
 ST:wrath-of-demon	Wrath of the Demon
 ST:wreckers	Wreckers
-ST:wusel-das-v1-01	Wusel, Das v1.01
-ST:wuzzlers-v4-1	Wuzzlers v4.1
+ST:wusel-das-v1-01	Wusel, Das
+ST:wuzzlers-v4-1	Wuzzlers
 ST:wwf	WWF
 ST:wwf-european-rampage-tour	WWF European Rampage Tour
 ST:wwf-wrestlemania	WWF Wrestlemania
@@ -3272,7 +3002,7 @@ ST:xybots	Xybots
 ST:yacoo	Yacoo
 ST:yamicroc	YamicroC
 ST:ynis-witrin	Ynis Witrin
-ST:yog-v2-10	Yog v2.10
+ST:yog-v2-10	Yog
 ST:yogis-big-clean-up	Yogi's Big Clean Up
 ST:yogis-great-escape	Yogi's Great Escape
 ST:yolanda	Yolanda
@@ -3289,21 +3019,16 @@ ST:zaptastic	Zaptastic
 ST:zedonoid	Zedonoid
 ST:zehntausend	Zehntausend
 ST:zero-5	Zero 5
-ST:zero-5-v1-05	Zero 5 v1.05
 ST:zombi	Zombi
 ST:zombie-apocalypse	Zombie Apocalypse
 ST:zone-warrior	Zone Warrior
 ST:zool	Zool
 ST:zork-i	Zork I
-ST:zork-i-great-underground-empire	Zork I- The Great Underground Empire
-ST:zork-i-great-underground-empire-r88	Zork I: The Great Underground Empire r88
+ST:zork-i-great-underground-empire-r88	Zork I: The Great Underground Empire
 ST:zork-2	Zork II
-ST:zork-2-wizard-of-frobozz	Zork II- The Wizard of Frobozz
-ST:zork-2-wizard-of-frobozz-r48	Zork II: The Wizard of Frobozz r48
+ST:zork-2-wizard-of-frobozz-r48	Zork II: The Wizard of Frobozz
 ST:zork-3	Zork III
-ST:zork-3-dungeon-master	Zork III- The Dungeon Master
-ST:zork-3-dungeon-master-r17	Zork III: The Dungeon Master r17
+ST:zork-3-dungeon-master-r17	Zork III: The Dungeon Master
 ST:zork-undiscovered-underground	Zork: The Undiscovered Underground
-ST:zork-undiscovered-underground-r16	Zork: The Undiscovered Underground r16
 ST:zyklop	Zyklop
 ST:zynaps	Zynaps

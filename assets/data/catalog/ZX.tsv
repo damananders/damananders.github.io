@@ -82,7 +82,6 @@ ZX:15-os	15 OS
 ZX:15-os-betu-puzzle	15 OS Betu Puzzle
 ZX:15-puzzle	15 Puzzle
 ZX:15s	15's
-ZX:15s-v1-0	15's v1.0
 ZX:16-basisprogrammas-voor-de-zx-spectrum	16 Basisprogramma's voor de ZX Spectrum
 ZX:16-os-puzzle	16-OS Puzzle
 ZX:16k-life	16K Life
@@ -173,7 +172,6 @@ ZX:2x1-space-harrier-super-trux	2x1: Space Harrier + Super Trux
 ZX:2x2	2x2=
 ZX:3-reyes-magos	3 Reyes Magos
 ZX:3-2-1	3-2-1
-ZX:3-d-maze	3-D Maze
 ZX:3-d-mazeman	3-D Mazeman
 ZX:3-d-monster-chase	3-D Monster Chase
 ZX:3-deep-space	3-Deep Space
@@ -304,9 +302,7 @@ ZX:4-most-warzone-19-part-1-boot-camp-river-rescue	4 Most Warzone: 19 Part 1 - B
 ZX:4-most-warzone-army-moves-w-r	4 Most Warzone: Army Moves + W.A.R.
 ZX:4-most-world-sport-championship-baseball-grid-iron-2	4 Most World Sport: Championship Baseball + Grid Iron 2
 ZX:4-most-world-sport-uchi-mata-gba-championship-basketball	4 Most World Sport: Uchi Mata + GBA Championship Basketball
-ZX:4-on-row-v2-0a	4 on a Row v2.0a
-ZX:4-on-row-v3-0c	4 on a Row v3.0c
-ZX:4-on-row-v3-0d	4 on a Row v3.0d
+ZX:4-on-row-v2-0a	4 on a Row
 ZX:4-rowz	4 Rowz
 ZX:4-soccer-simulators	4 Soccer Simulators
 ZX:4-soccer-simulators-11-side-soccer	4 Soccer Simulators: 11-a-Side Soccer
@@ -330,7 +326,7 @@ ZX:48k-matrix	48K-matrix
 ZX:4d-time-gate	4D Time-Gate
 ZX:4d-time-gate-manual	4D Time-Gate: Manual
 ZX:4k-race	4K Race
-ZX:4k-race-refueled-v2-01	4K Race Refueled v2.01
+ZX:4k-race-refueled-v2-01	4K Race Refueled
 ZX:4k-race-refueled	4K Race Refueled+
 ZX:4k-tap-n-join	4k Tap-N-Join
 ZX:4nyero	4NYERO
@@ -469,13 +465,11 @@ ZX:whole-new-ball-game	A Whole New Ball Game
 ZX:world-of-one-way	A World of One-Way
 ZX:yankee-in-iraq	A Yankee in Iraq
 ZX:yankee-in-iraq-2017	A Yankee in Iraq: 2017
-ZX:yankee-in-iraq-2017-v1-3-2	A Yankee in Iraq: 2017 - v1.3.2
 ZX:yankee-in-iraq-2017-v1-3-2-turbo-loader	A Yankee in Iraq: 2017 - v1.3.2 Turbo Loader
-ZX:yankee-in-iraq-2017-v1-0-5	A Yankee in Iraq: 2017 v1.0.5
 ZX:10-thunderbolt	A-10 Thunderbolt
 ZX:jax	A-Jax
 ZX:remics-4-pack	A. Remic's 4 Pack
-ZX:i-tic-tac-toe-v1-0	A.I. Tic Tac Toe v1.0
+ZX:i-tic-tac-toe-v1-0	A.I. Tic Tac Toe
 ZX:m-c-astro-marine-corps	A.M.C.: Astro Marine Corps
 ZX:r-c-o-s	A.R.C.O.S.
 ZX:r-s-e-advanced-rover-space-exploration	A.R.S.E.: Advanced Rover Space Exploration
@@ -526,7 +520,6 @@ ZX:ack-ack	Ack Ack
 ZX:ack-ack-attack	Ack Ack Attack
 ZX:acorn-court-an-interactive-text-adventure-zxzvm	Acorn Court: An Interactive Text Adventure - ZxZvm
 ZX:acorns-quest	Acorn's Quest
-ZX:acro-jet	Acro Jet
 ZX:acro-jet-advanced-flight-simulator	Acro Jet: The Advanced Flight Simulator
 ZX:acrojet	Acrojet
 ZX:across-ravine	Across the Ravine
@@ -553,8 +546,7 @@ ZX:action-replay-n-e-10-o-r-2112-ad-halls-of-things	Action Replay: N.E.X.O.R. + 
 ZX:action-replay-return-of-things-invaders-spectacle-1-spectacle-2	Action Replay: Return of the Things + Invaders + Spectacle 1 + Spectacle 2
 ZX:ad-astra	Ad Astra
 ZX:ad-lunam-plus	Ad Lunam Plus
-ZX:ad-lunam-plus-v1-2	Ad Lunam Plus v1.2
-ZX:ad-lunam-v1-2	Ad Lunam v1.2
+ZX:ad-lunam-v1-2	Ad Lunam
 ZX:adatallomany	Adatallomany
 ZX:add	Add
 ZX:addaladda	Addaladda
@@ -657,7 +649,6 @@ ZX:adventure-4	Adventure 4
 ZX:adventure-planet-of-death	Adventure A: Planet of Death
 ZX:adventure-b-inca-curse	Adventure B: Inca Curse
 ZX:adventure-c-ship-of-doom	Adventure C: Ship of Doom
-ZX:adventure-c-ship-of-doom-v2	Adventure C: Ship of Doom v2
 ZX:adventure-d-espionage-island	Adventure D- Espionage Island
 ZX:adventure-e-golden-apple	Adventure E: Golden Apple
 ZX:adventure-f-eye-of-bain	Adventure F: Eye of Bain
@@ -669,8 +660,6 @@ ZX:adventure-island	Adventure Island
 ZX:adventure-island-munchman-outline	Adventure Island + Munchman + Outline
 ZX:adventure-playground	Adventure Playground
 ZX:adventure-quest	Adventure Quest
-ZX:adventure-quest-v1	Adventure Quest v1
-ZX:adventure-quest-v2	Adventure Quest v2
 ZX:adventure-tape-1	Adventure Tape 1
 ZX:adventure-interactive-original-zxzvm	Adventure: The Interactive Original - ZxZvm
 ZX:adventureland	Adventureland
@@ -724,9 +713,6 @@ ZX:ahhh	Ahhh!!!
 ZX:ai-made-me-do-it-awful-adventures-of	AI Made Me Do It: The Awful Adventures of
 ZX:aim-demolution-spectors-school	Aim: Demolution + Spectors School
 ZX:air-apparent	Air Apparent
-ZX:air-apparent-v0-4	Air Apparent v0.4
-ZX:air-apparent-v1-0	Air Apparent v1.0
-ZX:air-apparent-v1-1	Air Apparent v1.1
 ZX:air-defence	Air Defence
 ZX:air-drop	Air Drop
 ZX:air-force-moves	Air Force Moves
@@ -767,7 +753,6 @@ ZX:al-and-attributes-2	Al and the Attributes 2
 ZX:al-and-attributes-3	Al and the Attributes 3
 ZX:al-ladron	Al Ladron
 ZX:al-toro	Al Toro!
-ZX:al-strad	Al-strad
 ZX:als-double-bill	Al's Double Bill
 ZX:ala-bala-mutari	Ala-Bala_Mutari
 ZX:aladdin	Aladdin
@@ -836,14 +821,11 @@ ZX:alien-storm	Alien Storm
 ZX:alien-swarm	Alien Swarm
 ZX:alien-swarm-arena	Alien Swarm + Arena!
 ZX:alien-syndrome	Alien Syndrome
-ZX:alien-v1-7	Alien v1.7
 ZX:alien-b	Alien-B
 ZX:aliengun	Aliengun
 ZX:aliens	Aliens
 ZX:aliens-3	Aliens 3
-ZX:aliens-v3	Aliens v3
 ZX:aliens-neoplasma	Aliens: Neoplasma
-ZX:aliens-neoplasma-v1-2	Aliens: Neoplasma v1.2
 ZX:aliens-computer-game	Aliens: The Computer Game (UK Version)
 ZX:aliens-us-version	Aliens: US Version
 ZX:aliquid-simplex	Aliquid Simplex
@@ -886,10 +868,8 @@ ZX:alternative-world-games	Alternative World Games
 ZX:alunagem	Alunagem
 ZX:amantes	Amantes
 ZX:amaurote	Amaurote
-ZX:amaurote-v1	Amaurote v1
 ZX:amaz1ng	Amaz1ng
 ZX:amaze	Amaze
-ZX:amazing-rocketeer-v1-5	Amazing Rocketeer, The v1.5
 ZX:amazing-voyage	Amazing Voyage
 ZX:amazing-willy	AmAZiNG WiLLY
 ZX:amazing	Amazing!
@@ -907,7 +887,6 @@ ZX:amidar	Amidar
 ZX:amitys-vile	Amity's Vile
 ZX:ammytris	Ammytris
 ZX:amnesia	Amnesia
-ZX:amnesia-v1-02	Amnesia v1.02
 ZX:amo-del-mundo	Amo del Mundo
 ZX:amoeba	Amoeba
 ZX:among-bad	Among Bad
@@ -941,7 +920,6 @@ ZX:android-one-reactor-run-intro	Android One: The Reactor Run - Intro
 ZX:android-pit-rescue	Android Pit Rescue
 ZX:android-pit-rescue-iceberg	Android Pit Rescue + Iceberg
 ZX:android-two	Android Two
-ZX:android-two-v2	Android Two v2
 ZX:androide	Androide
 ZX:androide-cero	Androide Cero
 ZX:androids	Androids
@@ -1007,7 +985,6 @@ ZX:apaches	Apaches
 ZX:apage-satanas	Apage Satanas
 ZX:apartment-209-an-interactive-pigsty-zxzvm	Apartment 209: An Interactive Pigsty - ZxZvm
 ZX:apb	APB
-ZX:apb-v2	APB v2
 ZX:ape-escape	Ape Escape
 ZX:apenaos-avatar-enter-world	Apenao's Avatar: Enter the World
 ZX:apfel-kobold	Apfel-Kobold
@@ -1042,15 +1019,11 @@ ZX:aprendiendo-informatica-con-el-zx-spectrum-5-2-circulos	Aprendiendo Informati
 ZX:aprendiendo-informatica-con-el-zx-spectrum-5-2-color	Aprendiendo Informatica con el ZX Spectrum V.2: Color
 ZX:aprendiendo-informatica-con-el-zx-spectrum-5-2-dado	Aprendiendo Informatica con el ZX Spectrum V.2: Dado
 ZX:april-7th	April 7th
-ZX:apulija-13-v1-1	Apulija 13 V1.1
-ZX:apulija-13-v1-2	Apulija 13 v1.2
-ZX:apulija-13-v2-0	Apulija 13 V2.0
 ZX:apulija-13-v2-01-128k	Apulija 13 v2.01: 128K
 ZX:apulija-13-v2-01-48k	Apulija 13 v2.01: 48K
 ZX:apulija-13	Apulija-13
 ZX:aqua-battle	Aqua Battle
 ZX:aquanoids	Aquanoids
-ZX:aquanoids-v1-2	Aquanoids v1.2
 ZX:aquaplane	Aquaplane
 ZX:aquarius	Aquarius
 ZX:aquashark	Aquashark
@@ -1136,7 +1109,6 @@ ZX:archon-2-adept	Archon II: Adept
 ZX:archon-light-and-dark	Archon: The Light and the Dark
 ZX:arco-iris	Arco-Iris
 ZX:arctic-antics	Arctic Antics
-ZX:arctic-fox	Arctic Fox
 ZX:arcticfox	Arcticfox
 ZX:arcturus	Arcturus
 ZX:ardennes	Ardennes
@@ -1216,8 +1188,6 @@ ZX:astro-1	Astro 1
 ZX:astro-2008	Astro 2008
 ZX:astro-battle	Astro Battle
 ZX:astro-blasta	Astro Blasta
-ZX:astro-blaster	Astro Blaster
-ZX:astro-blaster-v2	Astro Blaster v2
 ZX:astro-marine-corps	Astro Marine Corps
 ZX:astro-phobos	Astro Phobos
 ZX:astro-scramble	Astro-Scramble
@@ -1255,8 +1225,7 @@ ZX:atlantis	Atlantis
 ZX:atlantis-adventure	Atlantis Adventure
 ZX:atom-ant	Atom Ant
 ZX:atomic	Atomic
-ZX:atomic-laser-space-octopus-v51b	Atomic Laser Space Octopus v51b
-ZX:atomic-laser-space-octopus-v54	Atomic Laser Space Octopus v54
+ZX:atomic-laser-space-octopus-v54	Atomic Laser Space Octopus
 ZX:atomic-robo-kid	Atomic Robo-Kid
 ZX:atomicat	AtomiCat
 ZX:atomix	Atomix
@@ -1316,7 +1285,6 @@ ZX:automonopoli	Automonopoli
 ZX:autorennen	Autorennen
 ZX:autos-locos	Autos Locos
 ZX:autostopista-galactico	Autostopista Galactico
-ZX:autostopista-galactico-v2	Autostopista Galactico v2
 ZX:avalanche	Avalanche
 ZX:avalon	Avalon
 ZX:avarija-na-lune	Avarija na Lune
@@ -1336,7 +1304,7 @@ ZX:avon	Avon
 ZX:avon-tawe	Avon: Tawe
 ZX:avtoralli	Avtoralli
 ZX:avventura-in-spectralia	Avventura in Spectralia
-ZX:awaken-v0-2	Awaken v0.2
+ZX:awaken-v0-2	Awaken
 ZX:awari	Awari
 ZX:awari-game	Awari Game
 ZX:axe-tale-of-carthelion	Axe: A Tale of Carthelion
@@ -1350,15 +1318,14 @@ ZX:aztec	Aztec
 ZX:aztec-assault	Aztec Assault
 ZX:aztec-hunt-for-sun-god	Aztec: Hunt for the Sun-God
 ZX:azzurra	Azzurra
-ZX:azzurro-8-bit-jam-v1-1	Azzurro 8-Bit Jam v1.1
-ZX:b-elite-v1-1	B-ELITE v1.1
+ZX:azzurro-8-bit-jam-v1-1	Azzurro 8-Bit Jam
+ZX:b-elite-v1-1	B-ELITE
 ZX:b-mup	B-Mup
 ZX:b-squared	B-Squared
 ZX:b-d	B.A.D.
 ZX:b-r-f	B.A.R.F.
 ZX:b-c-bill	B.C. Bill
 ZX:b-c-2-grogs-revenge	B.C. II: Grog's Revenge
-ZX:b-c-s-quest-for-tires	B.C.'s Quest for Tires
 ZX:b1n4ry	b1n4ry!
 ZX:babaliba	Babaliba
 ZX:babszem-jatek	Babszem Jatek
@@ -1386,7 +1353,6 @@ ZX:backpackers-guide-to-universe	Backpackers Guide to the Universe
 ZX:backpackers-guide-to-universe-part-1	Backpackers Guide to the Universe Part 1
 ZX:bad-dream	Bad Dream
 ZX:bad-dream-compilation	Bad Dream Compilation
-ZX:bad-dudes-vs-dragon-ninja	Bad Dudes vs. Dragon Ninja
 ZX:bad-dudes-vs-dragonninja	Bad Dudes Vs. DragonNinja
 ZX:bad-night	Bad Night
 ZX:badlands	Badlands
@@ -1450,7 +1416,7 @@ ZX:barbut-lucky-dice	Barbut Lucky Dice
 ZX:barchou	Barchou
 ZX:barcode-hangman	Barcode Hangman
 ZX:bardic-rite-dragon-quest	Bardic Rite, The + Dragon-Quest
-ZX:bares-v1-0	Bares v1.0
+ZX:bares-v1-0	Bares
 ZX:bargain-basement	Bargain Basement!!!
 ZX:bargain-buckets	Bargain Buckets
 ZX:barman	Barman
@@ -1487,8 +1453,6 @@ ZX:bastilude	Bastilude
 ZX:bastris-2	Bastris 2
 ZX:basurero	Basurero
 ZX:bat-attack-3d	Bat Attack, 3D
-ZX:bat-man	Bat Man
-ZX:bat-man-caped-crusader	Bat Man- The Caped Crusader
 ZX:batalha-de-inglaterra	Batalha de Inglaterra
 ZX:batalha-naval	Batalha Naval
 ZX:batalha-naval-avlisoft	Batalha Naval: Avlisoft
@@ -1511,11 +1475,10 @@ ZX:battaglia-navale	Battaglia Navale
 ZX:batterys-not-precluded	Battery's Not Precluded
 ZX:battle	Battle
 ZX:battle-1917	Battle 1917
-ZX:battle-1917-v2	Battle 1917 v2
 ZX:battle-1917-intro	Battle 1917: Intro
 ZX:battle-at-traitors-castle	Battle at Traitor's Castle
 ZX:battle-city	Battle City
-ZX:battle-city-4-v4-1	Battle City 4 v4.1
+ZX:battle-city-4-v4-1	Battle City 4
 ZX:battle-command	Battle Command
 ZX:battle-cows	Battle Cows
 ZX:battle-fields	Battle Fields
@@ -1528,11 +1491,9 @@ ZX:battle-of-kulikovo	Battle of Kulikovo
 ZX:battle-of-planets	Battle of the Planets
 ZX:battle-of-toothpaste-tubes	Battle of the Toothpaste Tubes
 ZX:battle-on-hoth	Battle on Hoth
-ZX:battle-ships	Battle Ships
 ZX:battle-stations	Battle Stations
 ZX:battle-tank-3d-and-some-crazy-aliens	Battle Tank 3D and some Crazy Aliens
 ZX:battle-valley	Battle Valley
-ZX:battle-field	Battle-Field
 ZX:battlecar-marauder	Battlecar Marauder
 ZX:battlecars	Battlecars
 ZX:battlecars-designer	Battlecars: Designer
@@ -1757,10 +1718,6 @@ ZX:black-raven-2-animations-1	Black Raven 2: Animations 1
 ZX:black-raven-2-animations-2	Black Raven 2: Animations 2
 ZX:black-raven-2-animations-3	Black Raven 2: Animations 3
 ZX:black-raven-2-animations-4	Black Raven 2: Animations 4
-ZX:black-raven-v0-02	Black Raven v0.02
-ZX:black-raven-v0-04	Black Raven v0.04
-ZX:black-raven-v0-05	Black Raven v0.05
-ZX:black-raven-v1-02	Black Raven v1.02
 ZX:black-raven-gfx	Black Raven: GFX
 ZX:black-raven-new-missions	Black Raven: New Missions
 ZX:black-raven-saves	Black Raven: Saves
@@ -1808,7 +1765,6 @@ ZX:block-blaster	Block Blaster
 ZX:block-blitz	Block Blitz
 ZX:block-dude	Block Dude
 ZX:block-paint	Block Paint
-ZX:block-buster	Block-Buster
 ZX:block-buster-questions-tape	Block-Buster: Questions Tape
 ZX:block-dizzy	Block-Dizzy
 ZX:blockade-runner	Blockade Runner
@@ -1825,7 +1781,7 @@ ZX:blockus	Blockus
 ZX:blockz	BlockZ
 ZX:bloco-magico	Bloco Magico
 ZX:blokman	Blokman
-ZX:bloktris-v1-03	Bloktris v1.03
+ZX:bloktris-v1-03	Bloktris
 ZX:blood-n-guts	Blood 'n' Guts
 ZX:blood-brothers	Blood Brothers
 ZX:blood-valley	Blood Valley
@@ -1865,8 +1821,7 @@ ZX:boat-run	Boat Run
 ZX:boats	Boats
 ZX:bob-esponja-la-aventura	Bob Esponja -La Aventura-
 ZX:bob-blob	Bob the Blob
-ZX:bob-space-janitor-v1	Bob the Space Janitor v1
-ZX:bob-space-janitor-v2	Bob the Space Janitor v2
+ZX:bob-space-janitor-v1	Bob the Space Janitor
 ZX:bobs-full-house	Bob's Full House
 ZX:bobs-new-kidney	Bob's New Kidney
 ZX:bobby-bearing	Bobby Bearing
@@ -1888,7 +1843,6 @@ ZX:bogies-pick-4-smudge-and-moonees-desert-burner	Bogie's Pick 4: Smudge & the M
 ZX:bogmole-2-zogans-revenge	Bogmole II: Zogan's Revenge
 ZX:bogmole-3-wizards-skull	Bogmole III: The Wizards Skull
 ZX:boid	Boid
-ZX:boiler-house	Boiler House
 ZX:boilerhouse	Boilerhouse
 ZX:boinae	Boinae
 ZX:boing-plop	Boing... Plop
@@ -1905,9 +1859,7 @@ ZX:bomb-bomb-buster	Bomb Bomb Buster
 ZX:bomb-ed	Bomb Ed
 ZX:bomb-jack-2	Bomb Jack II
 ZX:bomb-jack	Bomb Jack+
-ZX:bomb-munchies	Bomb Munchies
-ZX:bomb-munchies-v2310	Bomb Munchies v2310
-ZX:bomb-munchies-v2-060	Bomb Munchies: v2.060
+ZX:bomb-munchies-v2-060	Bomb Munchies:
 ZX:bombarder	Bombarder
 ZX:bombardero	Bombardero
 ZX:bombare	Bombare
@@ -1917,7 +1869,6 @@ ZX:bomber-fruit-machine	Bomber + Fruit Machine
 ZX:bomber-birds	Bomber Birds
 ZX:bomber-bob-in-pentagon-capers	Bomber Bob in Pentagon Capers
 ZX:bomber-boris	Bomber Boris
-ZX:bomber-man	Bomber Man
 ZX:bomber-night-atack	Bomber Night Atack
 ZX:bomber-pengo	Bomber Pengo
 ZX:bomber-raid	Bomber Raid
@@ -1935,7 +1886,6 @@ ZX:bonkers	Bonkers
 ZX:bonnie-and-clyde	Bonnie and Clyde
 ZX:bonoloto	Bonoloto
 ZX:bonus-game-or-dasher	Bonus Game or Dasher
-ZX:bonus-game-or-dasher-v1-00	Bonus Game or Dasher v1.00
 ZX:bony-klid-po-slovensky	Bony a klid po slovensky
 ZX:boo	Boo!
 ZX:boofy-3	Boofy 3
@@ -1960,9 +1910,6 @@ ZX:border-harrier	Border Harrier
 ZX:border-harrier-warlord-golden-cobra	Border Harrier + Warlord + The Golden Cobra
 ZX:border-zone-game-of-intrigue-zxzvm	Border Zone: A Game of Intrigue - ZxZvm
 ZX:bored-of-rings	Bored of the Rings
-ZX:bored-of-rings-v1	Bored of the Rings v1
-ZX:bored-of-rings-v2	Bored of the Rings v2
-ZX:bored-of-rings-v3	Bored of the Rings v3
 ZX:borsa	Borsa
 ZX:borsch	BORSCH
 ZX:borzak	Borzak
@@ -2004,7 +1951,7 @@ ZX:bouncing-bomb-redux	Bouncing Bomb: Redux
 ZX:bouncing-bug	Bouncing Bug
 ZX:bounder	Bounder
 ZX:bounty-bob-strikes-back	Bounty Bob Strikes Back!
-ZX:bounty-search-for-frooge-v1-0	Bounty: The Search for Frooge v1.0
+ZX:bounty-search-for-frooge-v1-0	Bounty: The Search for Frooge
 ZX:bounzai	Bounzai
 ZX:bowling-2000	Bowling 2000
 ZX:bowling-green	Bowling Green
@@ -2031,7 +1978,6 @@ ZX:brain	Brain
 ZX:brain-8	Brain 8
 ZX:brain-damage	Brain Damage
 ZX:brain-sport	Brain Sport
-ZX:brain-storm	Brain Storm
 ZX:brainache	Brainache
 ZX:brainkrush	Brainkrush
 ZX:brainstorm	Brainstorm
@@ -2046,18 +1992,13 @@ ZX:bravestarr	BraveStarr
 ZX:braxx-bluff	Braxx Bluff
 ZX:break-neck	Break Neck
 ZX:break-point-general-knowledge-edition	Break Point: General Knowledge Edition
-ZX:break-away	Break-Away
-ZX:break-out	Break-Out
-ZX:break-space-v1-1	Break-Space v1.1
-ZX:break-space-v1-8	Break-Space v1.8
 ZX:breakanoid	Breakanoid
 ZX:breakaway	Breakaway
 ZX:breakhouse	Breakhouse
 ZX:breaking-ice	Breaking the Ice
 ZX:breakout	Breakout
 ZX:breaks-out	Breaks Out!
-ZX:breakspace-v1-6	BreakSpace v1.6
-ZX:breakspace-v1-7	BreakSpace v1.7
+ZX:breakspace-v1-6	BreakSpace
 ZX:breakthru	Breakthru
 ZX:bredy-3	Bredy 3
 ZX:brewery	Brewery
@@ -2106,7 +2047,6 @@ ZX:british-super-league	British Super League
 ZX:british-telecom-switchboards	British Telecom Switchboards
 ZX:brojke-i-slova	Brojke i Slova
 ZX:broke-out	Broke Out
-ZX:broken-friend-v1-0	Broken Friend, A v1.0
 ZX:broken-heart	Broken Heart
 ZX:bronx	Bronx
 ZX:bronx-street-cop	Bronx Street Cop
@@ -2236,7 +2176,6 @@ ZX:buzzz	Buzzz!
 ZX:by-fair-means-or-foul	By Fair Means...or Foul
 ZX:by-right-of-birth	By Right of Birth
 ZX:bye-v3nom	Bye, V3nom!
-ZX:bye-v3nom-v2	Bye, V3nom! v2
 ZX:byrd	Byrd
 ZX:byte	Byte
 ZX:byte-bitten	Byte Bitten
@@ -2258,7 +2197,7 @@ ZX:cactuar-racing	Cactuar Racing
 ZX:cactuar-racing-3	Cactuar Racing 3
 ZX:cactuar-racing-extreme	Cactuar Racing Extreme
 ZX:cadaverion	Cadaverion
-ZX:cafe-turco-com-os-ex-jugoslavos-v0-90	Cafe Turco com os Ex-Jugoslavos v0.90
+ZX:cafe-turco-com-os-ex-jugoslavos-v0-90	Cafe Turco com os Ex-Jugoslavos
 ZX:cagara	Cagara
 ZX:cage-match	Cage Match
 ZX:caley-hoose	Caley Hoose
@@ -2288,19 +2227,15 @@ ZX:canguru	Canguru
 ZX:cannibal-island	Cannibal Island
 ZX:cannibal-island-2	Cannibal Island 2
 ZX:cannibals-from-outer-space	Cannibals from Outer Space
-ZX:cannon-ball	Cannon Ball
 ZX:cannon-bubble	Cannon Bubble
 ZX:cansino-pac	Cansino Pac
 ZX:cantona-football	Cantona Football
 ZX:canute	Canute
 ZX:canyon-warrior	Canyon Warrior
 ZX:capn-rescue	Cap'n Rescue
-ZX:capn-rescue-2-escape-v3-3	Cap'n Rescue 2: The Escape v3.3
-ZX:capn-rescue-2-escape-v3-4	Cap'n Rescue 2: The Escape v3.4
-ZX:capn-rescue-2-escape-v3-5	Cap'n Rescue 2: The Escape v3.5
+ZX:capn-rescue-2-escape-v3-3	Cap'n Rescue 2: The Escape
 ZX:capn-rescue-3	Cap'n Rescue 3
 ZX:capn-rescue-3-reprisal	Cap'n Rescue 3: Reprisal
-ZX:capn-rescue-v3-0	Cap'n Rescue v3.0
 ZX:capa	Capa
 ZX:capcom-collection	Capcom Collection
 ZX:capicua	Capicua
@@ -2366,14 +2301,12 @@ ZX:carrier-command	Carrier Command
 ZX:carrots-from-space	Carrots from Space
 ZX:cars	Cars
 ZX:cars-out	Cars Out!
-ZX:cars-out-v2006	Cars Out! v2006
 ZX:cars-remix	Cars: The Remix
 ZX:cartoon-capers-disk-3	Cartoon Capers Disk 3
 ZX:casanova	Casanova
 ZX:cascade	Cascade
 ZX:cascamuelas	Cascamuelas
 ZX:casey-jones	Casey Jones
-ZX:cash-flow	Cash-Flow
 ZX:cashcade	Cashcade
 ZX:cashflow	Cashflow
 ZX:casino-1	Casino 1
@@ -2397,7 +2330,7 @@ ZX:castelbasic	Castelbasic
 ZX:castillo-maldito	Castillo Maldito
 ZX:castle-adventure	Castle Adventure
 ZX:castle-blackstar	Castle Blackstar
-ZX:castle-capers-v2	Castle Capers v2
+ZX:castle-capers-v2	Castle Capers
 ZX:castle-colditz	Castle Colditz
 ZX:castle-colditz-battle-of-toothpaste-tubes	Castle Colditz + Battle of the Toothpaste Tubes
 ZX:castle-eerie	Castle Eerie
@@ -2418,8 +2351,6 @@ ZX:castle-warlock	Castle Warlock
 ZX:castlemaze-adventure	Castlemaze Adventure
 ZX:castles-of-oktogonia	Castles of Oktogonia
 ZX:castlevania-spectral-interlude	Castlevania: Spectral Interlude
-ZX:castlevania-spectral-interlude-v1-1	Castlevania: Spectral Interlude v1.1
-ZX:cat-n-mouse-v2-0	Cat 'n Mouse v2.0
 ZX:cat-n-mouse	Cat 'n' Mouse
 ZX:cat-mouse	Cat + Mouse
 ZX:catacombs-of-balachor	Catacombs of Balachor
@@ -2496,7 +2427,6 @@ ZX:centi-bug	Centi-Bug
 ZX:centimunch	Centimunch
 ZX:centipede	Centipede
 ZX:centipede-painter	Centipede + Painter
-ZX:centipede-v2	Centipede v2
 ZX:centipedes	Centipedes
 ZX:centipod	Centipod
 ZX:central-nuclear-atom	Central Nuclear Atom
@@ -2596,7 +2526,7 @@ ZX:chemistry-test	Chemistry Test
 ZX:chequered-flag	Chequered Flag
 ZX:cheril-of-bosque	Cheril of the Bosque
 ZX:cheril-perils	Cheril Perils
-ZX:cheril-goddess-v2-0	Cheril the Goddess v2.0
+ZX:cheril-goddess-v2-0	Cheril the Goddess
 ZX:chernobil	Chernobil
 ZX:cherry-challenge	Cherry Challenge
 ZX:cherry-clearings	Cherry Clearings
@@ -2612,17 +2542,14 @@ ZX:chess-master	Chess Master
 ZX:chess-tutor	Chess Tutor
 ZX:chess-tutor-1	Chess Tutor 1
 ZX:chess-turk	Chess: The Turk
-ZX:chess-turk-v1-3	Chess: The Turk v1.3
 ZX:chessboard-attack	Chessboard Attack
-ZX:chessboard-attack-v1-1	Chessboard Attack v1.1
-ZX:chessboard-attack-v1-2	Chessboard Attack v1.2
 ZX:chesskelet-full	ChesSkelet: Full
 ZX:chesskelet-mid	ChesSkelet: Mid
 ZX:chesskelet-small	ChesSkelet: Small
 ZX:chevy-chase	Chevy Chase
 ZX:chewingum	Chewingum
 ZX:chi-day-story	Chi Day Story
-ZX:chibi-akumas-v1-666	Chibi Akuma's v1.666
+ZX:chibi-akumas-v1-666	Chibi Akuma's
 ZX:chibi-akumas-v1-666-disk-1	Chibi Akuma's v1.666: disk 1
 ZX:chibi-akumas-v1-666-disk-2	Chibi Akuma's v1.666: disk 2
 ZX:chicago	Chicago
@@ -2662,8 +2589,6 @@ ZX:choplifter	Choplifter
 ZX:chopper-attack	Chopper Attack
 ZX:chopper-chase	Chopper Chase
 ZX:chopper-drop	Chopper Drop
-ZX:chopper-drop-v1	Chopper Drop v1
-ZX:chopper-drop-v2	Chopper Drop v2
 ZX:chopper-duel	Chopper Duel
 ZX:chopper-mission	Chopper Mission
 ZX:chopper-rescue	Chopper Rescue
@@ -2673,8 +2598,6 @@ ZX:choppers-death-match	Choppers Death Match
 ZX:choppy-bird	Choppy Bird
 ZX:chostembustes-2-5-2	Chostembustes II v.2
 ZX:chostembustes-3	Chostembustes III
-ZX:chostembustes-3-v1	Chostembustes III v1
-ZX:chostembustes-3-v2	Chostembustes III v2
 ZX:choy-lee-fut-kung-fu-warrior	Choy-Lee-Fut Kung-Fu Warrior
 ZX:chrimblast	Chrimblast!
 ZX:chrismagic-dot	CHRISMAGIC DOT
@@ -2684,7 +2607,7 @@ ZX:christmas-collection-uridium-eliminator-cybernoid-2-revenge	Christmas Collect
 ZX:christmas-cracker	Christmas Cracker
 ZX:christmas-cracker-simulator	Christmas Cracker Simulator
 ZX:christmas-crapmas	Christmas Crapmas
-ZX:christmas-gift-hunt-v2-0	Christmas Gift Hunt v2.0
+ZX:christmas-gift-hunt-v2-0	Christmas Gift Hunt
 ZX:christmas-gift-hunt-beta	Christmas Gift Hunt: Beta
 ZX:christmas-magazine-hunt	Christmas Magazine Hunt
 ZX:christmas-puddings-attack	Christmas Puddings Attack
@@ -2705,7 +2628,7 @@ ZX:chuckie-egg-designer	Chuckie Egg: Designer
 ZX:chuckle-brothers-golf	Chuckle Brothers Golf
 ZX:chuckman	Chuckman
 ZX:chunk-zone	Chunk Zone
-ZX:chunky-graphics-compressor-v1-5	Chunky Graphics Compressor v1.5
+ZX:chunky-graphics-compressor-v1-5	Chunky Graphics Compressor
 ZX:chuntey-disruptor-simulator	Chuntey Disruptor Simulator
 ZX:chuntey-force-2	Chuntey Force 2
 ZX:church-of-death	Church of Death
@@ -2733,7 +2656,6 @@ ZX:city-bomber	City Bomber
 ZX:city-connection	City Connection
 ZX:city-defence	City Defence
 ZX:city-defender	City Defender
-ZX:city-fighter	City Fighter
 ZX:city-lander	City Lander
 ZX:city-of-death	City of Death
 ZX:city-oh-city	City oh City
@@ -2761,7 +2683,6 @@ ZX:classic-arcadia-triple-decker-4-classic-invaders-classic-muncher-classic-axie
 ZX:classic-axiens	Classic Axiens
 ZX:classic-collection-1-stainless-steel-pyjamarama	Classic Collection 1: Stainless Steel + Pyjamarama
 ZX:classic-games-2	Classic Games 2
-ZX:classic-games-2-v3-5	Classic Games 2 v3.5
 ZX:classic-games-2-backgammon	Classic Games 2: Backgammon
 ZX:classic-games-2-super-chess-3	Classic Games 2: Super Chess III
 ZX:classic-games-4	Classic Games 4
@@ -2771,7 +2692,6 @@ ZX:classic-games-4-draughts-master	Classic Games 4: Draughts Master
 ZX:classic-games-4-super-chess-3	Classic Games 4: Super Chess III
 ZX:classic-japanese-monster-castle	Classic Japanese Monster Castle
 ZX:classic-japanese-monster-castle-2	Classic Japanese Monster Castle 2
-ZX:classic-japanese-monster-castle-v2	Classic Japanese Monster Castle v2
 ZX:classic-muncher	Classic Muncher
 ZX:classic-punter	Classic Punter
 ZX:classic-racing	Classic Racing
@@ -2787,7 +2707,6 @@ ZX:clerics-quest	Clerics Quest
 ZX:clerky	Clerky
 ZX:clever-and-smart	Clever & Smart
 ZX:clickmania	Clickmania
-ZX:cliff-hanger	Cliff Hanger
 ZX:cliffhanger	Cliffhanger
 ZX:clifftop-view	Clifftop View
 ZX:climbingman	ClimbingMan
@@ -2809,7 +2728,6 @@ ZX:cloud-hopper	Cloud Hopper
 ZX:clovece-nehnevaj-sa	Clovece, nehnevaj sa
 ZX:clovek-nehnevaj-sa	Clovek, nehnevaj sa
 ZX:clown-highwire	Clown + Highwire
-ZX:clues-o	CLUE'S 'O'
 ZX:cluedo	Cluedo
 ZX:clueso	Clues'o'
 ZX:coal-collector	Coal Collector
@@ -2826,7 +2744,7 @@ ZX:coconuts	Coconuts
 ZX:cocozoi-2	Cocozoi 2
 ZX:code-name-matt	Code Name MATT
 ZX:code-setter-code-breaker	Code Setter: Code Breaker
-ZX:code-zero-v1-1	Code Zero v1.1
+ZX:code-zero-v1-1	Code Zero
 ZX:code-112	CODE-112
 ZX:code-woord	Code-Woord
 ZX:codebook-caper	Codebook Caper
@@ -2885,8 +2803,6 @@ ZX:color-tower	Color Tower
 ZX:coloris	Coloris
 ZX:coloristic	Coloristic
 ZX:colossal-adventure	Colossal Adventure
-ZX:colossal-adventure-v1	Colossal Adventure v1
-ZX:colossal-adventure-v2	Colossal Adventure v2
 ZX:colossal-cave-adventure	Colossal Cave Adventure
 ZX:colossal-caves	Colossal Caves
 ZX:colosseum	Colosseum
@@ -2983,7 +2899,6 @@ ZX:computing-videoteca-4	Computing Videoteca 4
 ZX:computing-videoteca-5	Computing Videoteca 5
 ZX:computing-videoteca-6	Computing Videoteca 6
 ZX:computing-videoteca-7	Computing Videoteca 7
-ZX:con-quest	Con-Quest
 ZX:conan-1-magicke-diamanty	Conan 1: A magicke diamanty
 ZX:conan-and-magic-diamond	Conan and the Magic Diamond
 ZX:conan-spotkanie-w-krypcie	Conan: Spotkanie w krypcie
@@ -3012,7 +2927,6 @@ ZX:confuzion	Confuzion
 ZX:congratulations-zxzvm	Congratulations!: ZxZvm
 ZX:conman-barbaric	Conman the Barbaric
 ZX:connect-3	Connect 3
-ZX:connect-4	Connect 4!
 ZX:connect-four	Connect-Four
 ZX:connect4	Connect4
 ZX:conquering-everest	Conquering Everest
@@ -3062,7 +2976,6 @@ ZX:corridors-of-genon	Corridors of Genon
 ZX:corridors-of-power	Corridors of Power
 ZX:corrupt	Corrupt
 ZX:corruption	Corruption
-ZX:corruption-v1-11	Corruption v1.11
 ZX:corsarios	Corsarios
 ZX:corya-warrior-sage	Corya the Warrior-Sage
 ZX:corya-warrior-sage-i-dragon	Corya the Warrior-Sage I: Dragon
@@ -3082,8 +2995,6 @@ ZX:cosmic-jailbreak	Cosmic Jailbreak
 ZX:cosmic-payback	Cosmic Payback
 ZX:cosmic-pirate	Cosmic Pirate
 ZX:cosmic-raiders	Cosmic Raiders
-ZX:cosmic-raiders-v1	Cosmic Raiders v1
-ZX:cosmic-raiders-v2	Cosmic Raiders v2
 ZX:cosmic-sheriff	Cosmic Sheriff
 ZX:cosmic-shock-absorber	Cosmic Shock Absorber
 ZX:cosmic-swarm	Cosmic Swarm
@@ -3121,7 +3032,6 @@ ZX:covidians	Covidians
 ZX:cowboy	COWBOY
 ZX:cowboy-duel	Cowboy Duel
 ZX:cowboy-kidz	Cowboy Kidz
-ZX:cowboy-shoot-out	Cowboy Shoot Out
 ZX:cowboy-shootout	Cowboy Shootout
 ZX:cowboys-2	Cowboys 2
 ZX:cowboys-and-indians	Cowboys and Indians
@@ -3157,7 +3067,6 @@ ZX:crap-total-eclipse	Crap Total Eclipse
 ZX:crap-tapir-slippers	Crap, Tapir, Slippers
 ZX:crapbot	CrapBot
 ZX:crapendium	Crapendium
-ZX:crapendium-v0-2	Crapendium v0.2
 ZX:crapic-attack	Crapic Attack
 ZX:crappy-crates	Crappy Crates
 ZX:craps	Craps
@@ -3258,7 +3167,6 @@ ZX:crossnumber-1	Crossnumber 1
 ZX:crossnumber-2	Crossnumber 2
 ZX:crosswize	Crosswize
 ZX:crossword	Crossword
-ZX:crossword-v1-01a	Crossword v1.01a
 ZX:crotabin	Crotabin
 ZX:crown-jackpot	Crown Jackpot
 ZX:crown-of-ramhotep-prospector	Crown of Ramhotep, The + The Prospector
@@ -3283,7 +3191,6 @@ ZX:crystal-cubes-3	Crystal Cubes 3
 ZX:crystal-dream-members-in-east-ukrainian-state-university	Crystal Dream Members in East Ukrainian State University
 ZX:crystal-kingdom-dizzy	Crystal Kingdom Dizzy
 ZX:crystal-kingdom-dizzy-2017	Crystal Kingdom Dizzy 2017
-ZX:crystal-kingdom-dizzy-2017-v1-0-4	Crystal Kingdom Dizzy 2017 v1.0.4
 ZX:crystal-quest	Crystal Quest
 ZX:crystals	Crystals
 ZX:crystals-of-doom	Crystals of Doom
@@ -3385,9 +3292,6 @@ ZX:daley-thompsons-decathlon	Daley Thompson's Decathlon
 ZX:daley-thompsons-decathlon-day-1	Daley Thompson's Decathlon: Day 1
 ZX:daley-thompsons-decathlon-day-2	Daley Thompson's Decathlon: Day 2
 ZX:daley-thompsons-olympic-challenge	Daley Thompson's Olympic Challenge
-ZX:daley-thompsons-super-test	Daley Thompson's Super-Test
-ZX:daley-thompsons-super-test-day-1	Daley Thompson's Super-Test: Day 1
-ZX:daley-thompsons-super-test-day-2	Daley Thompson's Super-Test: Day 2
 ZX:daley-thompsons-supertest	Daley Thompson's Supertest
 ZX:daley-thompsons-supertest-day-1	Daley Thompson's Supertest: Day 1
 ZX:daley-thompsons-supertest-day-2	Daley Thompson's Supertest: Day 2
@@ -3450,7 +3354,6 @@ ZX:dark-room-simulator-3d	Dark Room Simulator 3D
 ZX:dark-sceptre	Dark Sceptre
 ZX:dark-side	Dark Side
 ZX:dark-sky-over-paradise	Dark Sky over Paradise
-ZX:dark-sky-over-paradise-v1-1	Dark Sky over Paradise v1.1
 ZX:dark-star	Dark Star
 ZX:dark-storm	Dark Storm
 ZX:dark-storm-virus	Dark Storm + Virus
@@ -3487,19 +3390,16 @@ ZX:day-of-match	Day of the Match
 ZX:daylight-robbery	Daylight Robbery
 ZX:days-of-thunder	Days of Thunder
 ZX:daytona-usa-zx	Daytona USA ZX
-ZX:de-fusion	De-Fusion
 ZX:dea-tenebrarum	Dea Tenebrarum
 ZX:deactivators	Deactivators
 ZX:dead-by-dawn	Dead by Dawn
-ZX:dead-end-v3-00	Dead End v3.00
 ZX:dead-end	Dead End_
 ZX:dead-eyed-dick	Dead Eyed Dick
-ZX:dead-flesh-boy-v2	Dead Flesh Boy v2
+ZX:dead-flesh-boy-v2	Dead Flesh Boy
 ZX:dead-hour	Dead Hour
 ZX:dead-london	Dead London
 ZX:dead-meat	Dead Meat
 ZX:dead-or-alive	Dead or Alive
-ZX:dead-ringer	Dead Ringer
 ZX:dead-space	Dead Space
 ZX:dead-zone-check-point	Dead Zone: Check Point
 ZX:dead-zone-punto-de-control	Dead Zone: Punto de Control
@@ -3609,9 +3509,8 @@ ZX:delta-wing-1-player	Delta Wing: 1 Player
 ZX:delta-wing-2-players	Delta Wing: 2 Players
 ZX:deltic-fleet-manager	Deltic Fleet Manager
 ZX:delusions-an-interactive-self-discovery-zxzvm	Delusions: An Interactive Self Discovery - ZxZvm
-ZX:deluxe-greyhound-racing-simulator-v1-01	Deluxe Greyhound Racing Simulator v1.01
-ZX:deluxe-horse-racing-simulator-v1-17	Deluxe Horse Racing Simulator v1.17
-ZX:demi-god	Demi-God
+ZX:deluxe-greyhound-racing-simulator-v1-01	Deluxe Greyhound Racing Simulator
+ZX:deluxe-horse-racing-simulator-v1-17	Deluxe Horse Racing Simulator
 ZX:demi-god-micro-drivin	Demi-God + Micro Drivin'
 ZX:demigod	Demigod
 ZX:demo-cartridge	Demo Cartridge
@@ -3654,7 +3553,6 @@ ZX:dervish	Dervish
 ZX:desafio-total	Desafio Total
 ZX:desant	Desant
 ZX:descending-dungeons	Descending Dungeons
-ZX:descending-dungeons-v1-5	Descending Dungeons v1.5
 ZX:descent	Descent
 ZX:desdobramento-do-totoloto	Desdobramento do Totoloto
 ZX:desert-burner	Desert Burner
@@ -3669,8 +3567,6 @@ ZX:desierto	Desierto
 ZX:desmond-and-gertrude	Desmond and Gertrude
 ZX:desmond-and-gertrude-aunt-velma-is-coming-to-tea	Desmond and Gertrude + Aunt Velma Is Coming to Tea
 ZX:desmond-and-gertrude-aunt-velma-is-coming-to-tea-aunt-velmas-coming-to-tea	Desmond and Gertrude + Aunt Velma Is Coming to Tea + Aunt Velma's Coming to Tea!
-ZX:desmond-and-gertrude-aunt-velma-is-coming-to-tea-v1	Desmond and Gertrude + Aunt Velma Is Coming to Tea v1
-ZX:desmond-and-gertrude-aunt-velma-is-coming-to-tea-v2	Desmond and Gertrude + Aunt Velma Is Coming to Tea v2
 ZX:desolate	Desolate
 ZX:desolator	Desolator
 ZX:desperado	Desperado
@@ -3769,7 +3665,6 @@ ZX:digitalis-ora-orajatek-masodik-harmadik-resze	Digitalis ora orajatek masodik,
 ZX:diktator-2	Diktator 2
 ZX:dildo-and-dark-lord	Dildo and the Dark Lord
 ZX:dillons-cap-caper	Dillon's Cap Caper
-ZX:dillons-cap-caper-v1	Dillon's Cap Caper v1
 ZX:dimension-destructors	Dimension Destructors
 ZX:dimensione-sconosciuta	Dimensione Sconosciuta
 ZX:dimka-in-underground	Dimka in Underground
@@ -3788,7 +3683,6 @@ ZX:dinamic-5-aniversario-phantis-abu-simbel-profanation-dustin-west-bank	Dinamic
 ZX:dinamic-5-aniversario-rocky	Dinamic 5 Aniversario: Rocky
 ZX:dinamic-5-aniversario-west-bank	Dinamic 5 Aniversario: West Bank
 ZX:dingo	Dingo
-ZX:dingo-v1-3	Dingo v1.3
 ZX:dining	Dining
 ZX:dinky-digger	Dinky Digger
 ZX:dino	Dino
@@ -3798,7 +3692,6 @@ ZX:dirt-track-racer	Dirt Track Racer
 ZX:dirty-bristow-game	Dirty Bristow: The Game
 ZX:dirty-dozer	Dirty Dozer
 ZX:disappear-balls	Disappear Balls
-ZX:disappear-balls-v1-2	Disappear Balls v1.2
 ZX:disappearance	Disappearance!
 ZX:disc-dizzy	Disc Dizzy
 ZX:disco-dan	Disco Dan
@@ -3850,7 +3743,6 @@ ZX:dizzy-r-in-rainbow	Dizzy R: In Rainbow
 ZX:dizzy-warehouse	Dizzy Warehouse
 ZX:dizzy-10-journey-to-russia	Dizzy X: Journey to Russia
 ZX:dizzy-12-underground	Dizzy XII: Underground
-ZX:dizzy-12-underground-v1-1	Dizzy XII: Underground v1.1
 ZX:dizzy-y-return-to-russia	Dizzy Y: Return to Russia
 ZX:dizzy-extended-edition-2021	Dizzy: Extended Edition 2021
 ZX:dizzy-magic-island	Dizzy: Magic Island
@@ -3955,7 +3847,6 @@ ZX:doombase	Doombase
 ZX:doomdarks-revenge	Doomdark's Revenge
 ZX:doomsday	Doomsday
 ZX:doomsday-castle	Doomsday Castle
-ZX:doomsday-papers-v5	Doomsday Papers, The v5
 ZX:doomskulle	Doomskulle
 ZX:doomwatch	Doomwatch
 ZX:doors-of-doom	Doors of Doom
@@ -3984,9 +3875,9 @@ ZX:double-dragon-3-rosetta-stone	Double Dragon III: The Rosetta Stone
 ZX:double-miner	Double Miner
 ZX:double-play-adventure-01-hidden-city	Double Play Adventure 01: Hidden City
 ZX:double-play-adventure-01-sealed-city	Double Play Adventure 01: The Sealed City
-ZX:double-play-adventure-02-v3	Double Play Adventure 02 v3
+ZX:double-play-adventure-02-v3	Double Play Adventure 02
 ZX:double-play-adventure-02-rifts-of-time	Double Play Adventure 02: The Rifts of Time
-ZX:double-play-adventure-02-traveller-v3	Double Play Adventure 02: The Traveller v3
+ZX:double-play-adventure-02-traveller-v3	Double Play Adventure 02: The Traveller
 ZX:double-play-adventure-03-crystal-quest	Double Play Adventure 03: Crystal Quest
 ZX:double-play-adventure-03-time-quest	Double Play Adventure 03: Time Quest
 ZX:double-play-adventure-04-golden-rose	Double Play Adventure 04: The Golden Rose
@@ -4013,7 +3904,6 @@ ZX:double-tetris	Double Tetris
 ZX:double-trouble	Double Trouble
 ZX:double-value-cassette	Double Value Cassette
 ZX:double-xinox	Double Xinox
-ZX:double-v2	Double, The v2
 ZX:doughnut-heist	Doughnut Heist
 ZX:douglas-perkins-ghost-city	Douglas Perkins: Ghost City
 ZX:down-to-earth	Down to Earth
@@ -4072,7 +3962,6 @@ ZX:dragonsbane	Dragonsbane
 ZX:dragontorc	Dragontorc
 ZX:dragonul-gabita-dragne	Dragonul Gabita Dragne
 ZX:drainpipes	Drainpipes
-ZX:drak-maze	Drak-Maze
 ZX:drakes-return	Drake's Return
 ZX:drakkar	Drakkar
 ZX:drakmaze	Drakmaze
@@ -4080,7 +3969,6 @@ ZX:drama-en-el-barrio-la-jota-ko	Drama en el Barrio la Jota: Ko!
 ZX:draughts	Draughts
 ZX:draughts-genius	Draughts Genius
 ZX:draughts-master	Draughts Master
-ZX:draughts-v2	Draughts v2
 ZX:draw-poker	Draw Poker
 ZX:draw	Draw!!
 ZX:drawlander	Drawlander
@@ -4091,8 +3979,7 @@ ZX:dream-adventure	Dream Adventure
 ZX:dream-walker	Dream Walker
 ZX:dream-warrior	Dream Warrior
 ZX:dreamare	Dreamare
-ZX:dreamwalker-alter-ego-2-v1-0	DreamWalker: Alter Ego 2 v1.0
-ZX:dreamwalker-alter-ego-2-v1-1	DreamWalker: Alter Ego 2 v1.1
+ZX:dreamwalker-alter-ego-2-v1-0	DreamWalker: Alter Ego 2
 ZX:dredd-over-eels	Dredd Over Eels
 ZX:drift	Drift!
 ZX:drift-2k22	DRIFT! 2K22
@@ -4109,7 +3996,6 @@ ZX:droid-wars	Droid Wars
 ZX:droids	Droids
 ZX:droidz	Droidz
 ZX:drop-four	Drop Four
-ZX:drop-out	Drop Out
 ZX:dropout	Dropout
 ZX:drug-watch	Drug Watch
 ZX:drugsy	Drugsy
@@ -4144,7 +4030,6 @@ ZX:dundees-european-challenge	Dundee's European Challenge
 ZX:dundley-2-story-of-family	Dundley 2: The Story of a Family
 ZX:dundley-and-sliding-plates	Dundley and the Sliding Plates
 ZX:dune-2-battle-for-arrakis	Dune II: Battle for Arrakis
-ZX:dung-darach	Dung Darach
 ZX:dungdarach	DungDarach
 ZX:dungeon-astrospy	Dungeon + Astrospy
 ZX:dungeon-16k	Dungeon 16K
@@ -4153,8 +4038,6 @@ ZX:dungeon-and-souls	Dungeon and Souls
 ZX:dungeon-danny	Dungeon Danny
 ZX:dungeon-dare	Dungeon Dare
 ZX:dungeon-dare-classroom-chaos	Dungeon Dare + Classroom Chaos
-ZX:dungeon-master-v1	Dungeon Master, The v1
-ZX:dungeon-master-v2	Dungeon Master, The v2
 ZX:dungeon-of-death	Dungeon of Death
 ZX:dungeon-of-despair	Dungeon of Despair
 ZX:dungeon-of-torgar	Dungeon of Torgar
@@ -4213,7 +4096,7 @@ ZX:earth-invasion	Earth Invasion
 ZX:earth-shaker	Earth Shaker
 ZX:earthbound	Earthbound
 ZX:earthlight	Earthlight
-ZX:earthraid-v1-1	Earthraid v1.1
+ZX:earthraid-v1-1	Earthraid
 ZX:earthshock	Earthshock
 ZX:east-front	East Front
 ZX:east-front-tactical-warfare-russia-1941-1945	East Front: Tactical Warfare Russia 1941-1945
@@ -4229,7 +4112,6 @@ ZX:eddie-edwards-super-ski	Eddie Edwards' Super Ski
 ZX:eddie-kidd-jump-challenge	Eddie Kidd Jump Challenge
 ZX:edge-grinder	Edge Grinder
 ZX:edifice-an-interactive-allegory-zxzvm	Edifice: The An Interactive Allegory - ZxZvm
-ZX:edinburgh-power-box	Edinburgh Power Box
 ZX:edinburgh-powerbox	Edinburgh Powerbox
 ZX:editeur-de-manoir	Editeur de Manoir
 ZX:edition-one	Edition One
@@ -4237,10 +4119,8 @@ ZX:effugit	Effugit
 ZX:efmb-endless-forms-most-beautiful	EFMB: Endless Forms Most Beautiful
 ZX:egbert	Egbert
 ZX:egg-farm	Egg Farm
-ZX:egg-head	Egg Head
 ZX:egg-saver	Egg Saver
 ZX:egg-saviour	Egg Saviour
-ZX:egg-v2-1	Egg v2.1
 ZX:egghead	Egghead
 ZX:egghead-4-egghead-entertains	Egghead 4: Egghead Entertains
 ZX:egghead-4-egghead-entertains-ula-snow-fixed	Egghead 4: Egghead Entertains - ULA snow fixed
@@ -4254,7 +4134,7 @@ ZX:ego	Ego
 ZX:egypt	Egypt
 ZX:egysorban-negy-nyero	Egysorban negy a nyero
 ZX:eifory	Eifory
-ZX:eight-feet-under-hibernated-1-addon-r6	Eight Feet Under: A Hibernated 1 Addon r6
+ZX:eight-feet-under-hibernated-1-addon-r6	Eight Feet Under: A Hibernated 1 Addon
 ZX:eights	Eights
 ZX:einstein	Einstein
 ZX:el-acorazado	El Acorazado
@@ -4418,7 +4298,6 @@ ZX:encyclopedia-of-war-ancient-battles	Encyclopedia of War: Ancient Battles
 ZX:encyclopedia-of-war-ancient-battles-ancient-battles-designer	Encyclopedia of War: Ancient Battles - Ancient Battles - Designer
 ZX:encyclopedia-of-war-ancient-battles-ancient-battles-scenarios	Encyclopedia of War: Ancient Battles - Ancient Battles - Scenarios
 ZX:end-of-world-simulator	End of the World Simulator
-ZX:end-zone	End Zone
 ZX:endeavour	Endeavour
 ZX:endurance	Endurance
 ZX:enduro	Enduro
@@ -4477,8 +4356,7 @@ ZX:erotika-1	Erotika 1
 ZX:erotika-2	Erotika 2
 ZX:error-report-roulette	Error Report Roulette
 ZX:erudit	Erudit
-ZX:erudit-v1-1	Erudit v1.1
-ZX:erudite-v1-1	Erudite v1.1
+ZX:erudite-v1-1	Erudite
 ZX:escalado	Escalado
 ZX:escapade	Escapade
 ZX:escape-from-alderon	Escape from Alderon
@@ -4521,7 +4399,6 @@ ZX:escape-into-space	Escape into Space
 ZX:escape-of-snails	Escape of the Snails
 ZX:escape-room	Escape the Room
 ZX:escape-to-kharkhan	Escape to Kharkhan
-ZX:escape-v1-0	Escape v1.0
 ZX:escape-mcp	Escape-MCP
 ZX:eskimo-capers	Eskimo Capers
 ZX:eskimo-eddie	Eskimo Eddie
@@ -4561,8 +4438,6 @@ ZX:european-sandwich-hunt	European Sandwich Hunt
 ZX:european-soccer-challenge	European Soccer Challenge
 ZX:european-superleague	European Superleague
 ZX:european-trophy	European Trophy
-ZX:european-trophy-v1	European Trophy v1
-ZX:european-trophy-v2	European Trophy v2
 ZX:eurorun	Eurorun
 ZX:eurostriker	Eurostriker
 ZX:evacuator	Evacuator
@@ -4615,16 +4490,16 @@ ZX:explorer	Explorer
 ZX:explorer-2	Explorer 2
 ZX:explorer-xxxi	Explorer XXXI
 ZX:explosion	Explosion
-ZX:explosive-v1-1	Explosive v1.1
+ZX:explosive-v1-1	Explosive
 ZX:express-raider	Express Raider
 ZX:external-device	External Device
 ZX:extra-cocoteca	Extra Cocoteca
 ZX:extra-cocoteca-2	Extra Cocoteca 2
-ZX:extraordinarios-casos-del-dr-van-halen-caso-1-misterio-en-la-catedral-los-v2-0	Extraordinarios Casos del Dr. Van Halen Caso 1: Misterio en la Catedral, Los V2.0
-ZX:extraordinarios-casos-del-dr-van-halen-caso-2-el-cuervo-de-la-tormenta-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 2: El Cuervo de la Tormenta, Los v1.0
-ZX:extraordinarios-casos-del-dr-van-halen-caso-3-cantos-de-anubis-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 3: Cantos de Anubis, Los v1.0
-ZX:extraordinarios-casos-del-dr-van-halen-caso-4-tristes-alas-del-destino-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 4: Tristes Alas del Destino, Los v1.0
-ZX:extraordinarios-casos-del-dr-van-halen-caso-5-ultimo-acto-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 5: Ultimo Acto, Los v1.0
+ZX:extraordinarios-casos-del-dr-van-halen-caso-1-misterio-en-la-catedral-los-v2-0	Extraordinarios Casos del Dr. Van Halen Caso 1: Misterio en la Catedral, Los
+ZX:extraordinarios-casos-del-dr-van-halen-caso-2-el-cuervo-de-la-tormenta-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 2: El Cuervo de la Tormenta, Los
+ZX:extraordinarios-casos-del-dr-van-halen-caso-3-cantos-de-anubis-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 3: Cantos de Anubis, Los
+ZX:extraordinarios-casos-del-dr-van-halen-caso-4-tristes-alas-del-destino-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 4: Tristes Alas del Destino, Los
+ZX:extraordinarios-casos-del-dr-van-halen-caso-5-ultimo-acto-los-v1-0	Extraordinarios Casos del Dr. Van Halen Caso 5: Ultimo Acto, Los
 ZX:extraordinarios-casos-del-dr-van-halen-volumen-2-relato-i-los-las-calles-del-mie	Extraordinarios Casos del Dr. Van Halen Volumen 2 Relato I: Los Las Calles del Miedo
 ZX:extraordinarios-casos-del-dr-van-halen-volumen-2-relato-2-los-las-ruedas-de-ezeq	Extraordinarios Casos del Dr. Van Halen Volumen 2 Relato II: Los Las Ruedas de Ezequiel
 ZX:extraordinarios-casos-del-dr-van-halen-volumen-2-relato-3-los-el-hijo-del-crepus	Extraordinarios Casos del Dr. Van Halen Volumen 2 Relato III: Los El Hijo del Crepusculo
@@ -4680,7 +4555,7 @@ ZX:falling-down	Falling Down
 ZX:fallout-zx	Fallout ZX
 ZX:false-gold	False Gold
 ZX:faltoro-jatek	Faltoro jatek
-ZX:family-legacy-an-interactive-ghost-story-zxzvm-v1-1	Family Legacy: The An Interactive Ghost Story - ZxZvm v1.1
+ZX:family-legacy-an-interactive-ghost-story-zxzvm-v1-1	Family Legacy: The An Interactive Ghost Story - ZxZvm
 ZX:family-pack	Family Pack
 ZX:family-quiz	Family Quiz
 ZX:famous-five	Famous Five
@@ -4730,7 +4605,6 @@ ZX:fear-an-interactive-nightmare-zxzvm	Fear: An Interactive Nightmare - ZxZvm
 ZX:fearless-frank	Fearless Frank
 ZX:feasibility-experiment	Feasibility Experiment
 ZX:federation	Federation
-ZX:federation-v2	Federation v2
 ZX:federation-z	Federation Z
 ZX:federation-underwater-legend-of-three-trololo-kings	Federation: Underwater. The legend of the Three Trololo Kings
 ZX:federico-jones	Federico Jones
@@ -4769,7 +4643,6 @@ ZX:fillers	Fillers
 ZX:fillomania	FilloMania
 ZX:film-film-film	Film-Film-Film
 ZX:final-assault	Final Assault
-ZX:final-chorus-v4	Final Chorus, The v4
 ZX:final-circuit	Final Circuit
 ZX:final-fight	Final Fight
 ZX:final-frog	Final Frog
@@ -4787,7 +4660,6 @@ ZX:fire-gear	Fire Gear
 ZX:fire-hawks	Fire Hawks
 ZX:fire-kracker	Fire Kracker
 ZX:fire-on-water	Fire on the Water
-ZX:fire-trap	Fire Trap
 ZX:fireball	Fireball
 ZX:firebirds	Firebirds
 ZX:firefight	Firefight
@@ -4800,7 +4672,6 @@ ZX:firelord	Firelord
 ZX:fireman	Fireman
 ZX:fireman-fred	Fireman Fred
 ZX:fireman-sam-hero-next-door	Fireman Sam: The Hero Next Door
-ZX:fireman-v2008	Fireman v2008
 ZX:fires	Fires
 ZX:firesnake	Firesnake
 ZX:firestarter-gift-13	Firestarter Gift 13
@@ -4817,7 +4688,6 @@ ZX:fischen	Fischen
 ZX:fish-and-chips	Fish & Chips
 ZX:fish-man	Fish Man
 ZX:fish	Fish!
-ZX:fish-v1-03	Fish! v1.03
 ZX:fisher	Fisher
 ZX:fishermans-friend	Fisherman's Friend
 ZX:fishermans-passions	Fisherman's Passions
@@ -4921,7 +4791,7 @@ ZX:flying-scotsman	Flying Scotsman
 ZX:flying-shark	Flying Shark
 ZX:flying-train	Flying Train
 ZX:flying-witches	Flying Witches
-ZX:flynns-adventure-in-bombland-v1	Flynn's Adventure in Bombland v1
+ZX:flynns-adventure-in-bombland-v1	Flynn's Adventure in Bombland
 ZX:flype	Flype
 ZX:foggys-quest-to-narg-and-back-again	Foggy's Quest: To Narg and Back Again!
 ZX:foguetao	Foguetao
@@ -4932,7 +4802,6 @@ ZX:football	Football
 ZX:football-champions	Football Champions
 ZX:football-champions-intro	Football Champions: Intro
 ZX:football-club	Football Club
-ZX:football-club-v2	Football Club v2
 ZX:football-director	Football Director
 ZX:football-director-2	Football Director II
 ZX:football-director-2-player-super-league	Football Director- 2 Player Super League
@@ -4958,7 +4827,6 @@ ZX:for-petes-sake	For Pete's Sake
 ZX:for-your-thighs-only	For Your Thighs Only
 ZX:forbidden-lands	Forbidden Lands
 ZX:forbidden-planet	Forbidden Planet
-ZX:forbidden-planet-v2	Forbidden Planet v2
 ZX:force-fighter	Force Fighter
 ZX:forest-of-long-shadows	Forest of Long Shadows
 ZX:forest-raider-cherry	Forest Raider Cherry
@@ -5010,7 +4878,7 @@ ZX:fox-hunt	Fox Hunt
 ZX:fox-hunting	Fox Hunting
 ZX:foxx-fights-back	Foxx Fights Back
 ZX:fracas	Fracas
-ZX:fractal-collection-v1-0	Fractal Collection, The v1.0
+ZX:fractal-collection-v1-0	The Fractal Collection
 ZX:fraction-fever	Fraction Fever
 ZX:fractions	Fractions
 ZX:frank-brunos-big-box	Frank Bruno's Big Box
@@ -5043,7 +4911,6 @@ ZX:fredi-makneford-2	Fredi Makneford 2
 ZX:fredie	Fredie
 ZX:fredy-mcneford	Fredy McNeford
 ZX:fredy-mcneford-2	Fredy McNeford 2
-ZX:free-cell	Free Cell
 ZX:free-climbing	Free Climbing
 ZX:free-sample-programs	Free Sample Programs
 ZX:freecell	Freecell
@@ -5081,13 +4948,11 @@ ZX:frogger-81	Frogger 81
 ZX:froggy	Froggy
 ZX:froggy-zman	Froggy + 'Z'Man
 ZX:froggy-2	Froggy 2
-ZX:froggy-v2	Froggy v2
 ZX:frolics-of-chucklebutty	Frolics of a Chucklebutty
 ZX:from-out-of-dark-night-sky	From Out of a Dark Night Sky
 ZX:from-out-of-dark-night-sky-second-night	From Out of a Dark Night Sky: The Second Night
 ZX:from-out-of-snow	From Out Of The Snow
 ZX:from-depths-of-time	From the Depths of Time
-ZX:front-line	Front-Line
 ZX:frontier-of-warriors-mayday-call	Frontier of Warriors: The Mayday Call
 ZX:frontiers	Frontiers
 ZX:frontline	Frontline
@@ -5095,7 +4960,6 @@ ZX:fronton	Fronton
 ZX:froot-loop	Froot Loop
 ZX:frost-byte	Frost Byte
 ZX:frosya-cat	Frosya the Cat
-ZX:frosya-cat-v2	Frosya the Cat v2
 ZX:frozen-penguin	Frozen Penguin
 ZX:frozen-night-at-lab-zxzvm	Frozen: A Night at the Lab - ZxZvm
 ZX:fruit	Fruit
@@ -5131,7 +4995,6 @@ ZX:funhouse	Funhouse
 ZX:funky-fungus	Funky Fungus
 ZX:funky-fungus-reloaded	Funky Fungus Reloaded
 ZX:funky-punky	Funky Punky
-ZX:funky-punky-v2	Funky Punky v2
 ZX:furax	Furax
 ZX:furto-col-computer	Furto Col Computer
 ZX:fuseman	Fuseman
@@ -5162,7 +5025,6 @@ ZX:gaggles-of-george-brian-novice-barbarian-fistful-of-necronomicons	Gaggles of 
 ZX:gaggles-of-george-trouble-with-trolls-emerald-elf	Gaggles of George: Trouble with Trolls + The Emerald Elf
 ZX:galactians	Galactians
 ZX:galactic-abductors	Galactic Abductors
-ZX:galactic-abductors-v2	Galactic Abductors v2
 ZX:galactic-attack-in-stereo-3d	Galactic Attack in Stereo 3D
 ZX:galactic-empire	Galactic Empire
 ZX:galactic-gambler	Galactic Gambler!
@@ -5178,7 +5040,6 @@ ZX:galactron	Galactron
 ZX:galagor	Galagor
 ZX:galaktron	Galaktron
 ZX:galakzions	Galakzions
-ZX:galakzions-v2	Galakzions v2
 ZX:galaxia-20-compiled	Galaxia 20: Compiled
 ZX:galaxia-20-normal	Galaxia 20: Normal
 ZX:galaxian	Galaxian
@@ -5207,7 +5068,6 @@ ZX:gallipoli	Gallipoli
 ZX:gallows	Gallows
 ZX:gamao	Gamao
 ZX:gambit	Gambit
-ZX:gambit-v2-2	Gambit v2.2
 ZX:gambler-editor	Gambler, The + Editor
 ZX:gamblers-compendium	Gambler's Compendium
 ZX:gambling-tape	Gambling Tape
@@ -5362,8 +5222,6 @@ ZX:games-tape-2-night-fighter-defender-missile-command	Games Tape 2: Night Fight
 ZX:games-tape-2-poker-dice	Games Tape 2: Poker Dice
 ZX:games-tape-2-reversi	Games Tape 2: Reversi
 ZX:games-tape-3	Games Tape 3
-ZX:games-tape-3-v1	Games Tape 3 v1
-ZX:games-tape-3-v2	Games Tape 3 v2
 ZX:games-tape-3-3-d-noughts-and-crosses-tower-of-brahma-wipe-out	Games Tape 3: 3-D Noughts and Crosses + Tower of Brahma + Wipe-Out
 ZX:games-tape-3-astro-wars	Games Tape 3: Astro-Wars
 ZX:games-tape-3-tasks	Games Tape 3: Tasks
@@ -5378,12 +5236,11 @@ ZX:gamma-strike	Gamma Strike
 ZX:gandalf-deluxe	Gandalf Deluxe
 ZX:gandalf-deluxe-pentagon	Gandalf Deluxe Pentagon
 ZX:gandalf-deluxe-zx7	Gandalf Deluxe ZX7
-ZX:gandalf-v1-03	Gandalf v1.03
+ZX:gandalf-v1-03	Gandalf
 ZX:gang	GANG
 ZX:gangplank	Gangplank
 ZX:gangsta-city	Gangsta City
 ZX:gangsters	Gangsters!
-ZX:gangsters-v2-3	Gangsters! v2.3
 ZX:ganimedes	Ganimedes
 ZX:ganyemede-2	Ganyemede II
 ZX:garden	Garden
@@ -5401,8 +5258,6 @@ ZX:gary-lineker-collection-gary-linekers-super-skills	Gary Lineker Collection: G
 ZX:gary-lineker-collection-gary-linekers-super-star-soccer	Gary Lineker Collection: Gary Lineker's Super Star Soccer
 ZX:gary-lineker-collection-italy-1990	Gary Lineker Collection: Italy 1990
 ZX:gary-linekers-hot-shot	Gary Lineker's Hot-Shot!
-ZX:gary-linekers-super-skills	Gary Lineker's Super Skills
-ZX:gary-linekers-super-star-soccer	Gary Lineker's Super Star Soccer
 ZX:gary-linekers-superskills	Gary Lineker's Superskills
 ZX:gary-linekers-superstar-soccer	Gary Lineker's Superstar Soccer
 ZX:gas-car	Gas Car
@@ -5424,7 +5279,6 @@ ZX:gazzas-super-soccer	Gazza's Super Soccer
 ZX:gba-championship-basketball	GBA Championship Basketball
 ZX:gba-championship-basketball-two-on-two	GBA Championship Basketball: Two-on-Two
 ZX:gecko	Gecko
-ZX:gee-bee-air-rally	Gee Bee Air Rally
 ZX:geebee-air-rally	GeeBee Air Rally
 ZX:gehen-sie-in-das-gefangnis	Gehen Sie in das Gefangnis
 ZX:geister-fahrer	Geister Fahrer
@@ -5496,7 +5350,7 @@ ZX:ghostly-grange	Ghostly Grange
 ZX:ghosts	Ghosts
 ZX:ghosts-n-goblins	Ghosts 'n Goblins
 ZX:ghosts-n-goblins-2-in-1-ghosts-n-goblins	Ghosts 'n Goblins: 2 In 1 - Ghosts 'n' Goblins
-ZX:ghosts-of-blackwood-manor-r13	Ghosts of Blackwood Manor, The r13
+ZX:ghosts-of-blackwood-manor-r13	The Ghosts of Blackwood Manor
 ZX:ghosty	Ghosty
 ZX:ghoti	Ghoti
 ZX:ghoul-manor	Ghoul Manor
@@ -5519,7 +5373,6 @@ ZX:giliszta	Giliszta
 ZX:gillespie	Gillespie
 ZX:gilligans-gold	Gilligan's Gold
 ZX:gimme-bright	Gimme Bright
-ZX:gimme-bright-v2-0	Gimme Bright v2.0
 ZX:gimmick-yumetaro-odyssey	Gimmick! Yumetaro Odyssey
 ZX:gin-rummy	Gin Rummy
 ZX:ginormous-collection	Ginormous Collection
@@ -5566,7 +5419,6 @@ ZX:gnarly-simon	Gnarly Simon
 ZX:gnash-man-party	Gnash-Man Party!
 ZX:gnasher	Gnasher
 ZX:gnasher-spectipede	Gnasher + Spectipede
-ZX:gnasher-v1	Gnasher v1
 ZX:gnashers	Gnashers
 ZX:gnome-ranger	Gnome Ranger
 ZX:gnoni	Gnoni
@@ -5601,14 +5453,9 @@ ZX:god-save-punk	God Save the Punk
 ZX:gods-lab	God's Lab
 ZX:godkiller-2-exile	Godkiller 2: Exile
 ZX:godkiller-2-exile-exile-intro	Godkiller 2: Exile - Exile - Intro
-ZX:godkiller-2-exile-v1-4	Godkiller 2: Exile v1.4
-ZX:godkiller-v1-3-4	Godkiller v1.3.4
-ZX:godkiller-v1-5	Godkiller v1.5
+ZX:godkiller-v1-5	Godkiller
 ZX:godkiller-new-timeline-edition	Godkiller: New Timeline Edition
 ZX:gods	Gods
-ZX:gods-of-war-v1	Gods of War, The v1
-ZX:gods-of-war-v2	Gods of War, The v2
-ZX:gods-of-war-v3	Gods of War, The v3
 ZX:godzilla-and-martians	Godzilla and the Martians
 ZX:godzilla-atomar-nightmare	Godzilla: The Atomar Nightmare
 ZX:going-critical	Going Critical
@@ -5620,7 +5467,6 @@ ZX:gold-mine	Gold Mine
 ZX:gold-mine-48k-remix	Gold Mine: 48k Remix
 ZX:gold-mine-prospectors-demo	Gold Mine: Prospectors Demo
 ZX:gold-rush	Gold Rush
-ZX:gold-seeker	Gold Seeker
 ZX:gold-stadt	Gold Stadt
 ZX:gold-truck	Gold Truck
 ZX:gold-silver-bronze	Gold, Silver, Bronze
@@ -5645,7 +5491,7 @@ ZX:golfing-world	Golfing World
 ZX:golfo-persico	Golfo Persico
 ZX:golpe-en-la-pequena-china	Golpe en la Pequena China
 ZX:gombfoci	Gombfoci
-ZX:gommy-defensor-medieval-v21	Gommy, Defensor Medieval v21
+ZX:gommy-defensor-medieval-v21	Gommy, Defensor Medieval
 ZX:gomoku	Gomoku
 ZX:gomoku2	GOMOKU2
 ZX:gomuku	Gomuku
@@ -5727,9 +5573,6 @@ ZX:gravibots	GraviBots
 ZX:gravity-wars	Gravity Wars
 ZX:grazers	Grazers
 ZX:great-britain-ltd	Great Britain Ltd
-ZX:great-britain-ltd-v1	Great Britain Ltd v1
-ZX:great-britain-ltd-v2	Great Britain Ltd v2
-ZX:great-britain-ltd-v3	Great Britain Ltd v3
 ZX:great-gurianos	Great Gurianos
 ZX:grebit	Grebit
 ZX:greed	Greed
@@ -5768,9 +5611,6 @@ ZX:gridz	Gridz
 ZX:grimwolds-big-adventure	Grimwold's Big Adventure
 ZX:grope-choir-boy	Grope the Choir Boy
 ZX:ground-attack	Ground Attack
-ZX:ground-attack-v1	Ground Attack v1
-ZX:ground-attack-v2	Ground Attack v2
-ZX:ground-attack-v3	Ground Attack v3
 ZX:ground-force-zero	Ground Force Zero
 ZX:ground-strike	Ground Strike
 ZX:groundforce	Groundforce
@@ -5810,14 +5650,12 @@ ZX:gumshoe-an-interactive-investigation-zxzvm	Gumshoe: An Interactive Investigat
 ZX:gun-combat	Gun Combat
 ZX:gun-fight	Gun Fight
 ZX:gun-law	Gun Law
-ZX:gun-smoke	Gun.Smoke
 ZX:gunboat	Gunboat
 ZX:gunfighter	Gunfighter
 ZX:gunfright	Gunfright
 ZX:gunfright-returns-reloaded	Gunfright Returns: Reloaded
 ZX:gunhed	Gunhed
 ZX:gunman	Gunman
-ZX:gunman-v1-1	Gunman v1.1
 ZX:gunpowder-treason-and-plot	Gunpowder, Treason and Plot
 ZX:gunrunner	Gunrunner
 ZX:gunship	Gunship
@@ -5850,12 +5688,9 @@ ZX:h-bomb-harry	H-Bomb Harry
 ZX:h-r-d	H.A.R.D.
 ZX:h-t-e	H.A.T.E.
 ZX:h-t-e-hostile-all-terrain-encounter	H.A.T.E. Hostile All Terrain Encounter
-ZX:h-e-r-o	H.E.R.O.
 ZX:h-e-r-o-returns	H.E.R.O. Returns
 ZX:h-r-h	H.R.H.
 ZX:h-r-h-cuddles	H.R.H. + Cuddles
-ZX:h-r-h-v1	H.R.H. v1
-ZX:h-r-h-v2	H.R.H. v2
 ZX:h2o	H2O
 ZX:h7n9	H7N9
 ZX:habilit	Habilit
@@ -5880,7 +5715,6 @@ ZX:hammer-boy	Hammer Boy
 ZX:hammer-of-grimmold-mutant	Hammer of Grimmold, The + Mutant
 ZX:hammer-of-grimmold-mutant-quest	Hammer of Grimmold, The + Mutant: The Quest
 ZX:hammer-of-grimmold-v1-developed-using-quill	Hammer of Grimmold, The V1: developed using The Quill
-ZX:hammer-of-grimmold-v2	Hammer of Grimmold, The v2
 ZX:hammer-of-grimmold-v2-developed-using-p-w	Hammer of Grimmold, The V2: developed using P.A.W.
 ZX:hammer-head	Hammer-Head
 ZX:hammerfist	Hammerfist
@@ -5890,8 +5724,6 @@ ZX:hamon-4	Hamon IV
 ZX:hamon-4-return-to-home-from-deathmanland	Hamon IV: Return to Home from Deathmanland
 ZX:hampa-1930	Hampa 1930
 ZX:hampstead	Hampstead
-ZX:hampstead-v1	Hampstead v1
-ZX:hampstead-v2	Hampstead v2
 ZX:hamptons-caught	Hampton's Caught!
 ZX:hamster	Hamster
 ZX:hamte-damte	Hamte Damte
@@ -5902,8 +5734,6 @@ ZX:handy-andy	Handy Andy
 ZX:hang-glider	Hang Glider
 ZX:hang-man	Hang-Man
 ZX:hangman-for-idiots	Hangman for Idiots
-ZX:hangman-v1	Hangman v1
-ZX:hangman-v2	Hangman v2
 ZX:hanoi	Hanoi
 ZX:hanoi-king	Hanoi King
 ZX:hanoi-torony	Hanoi torony
@@ -5933,7 +5763,7 @@ ZX:harry-hares-lair	Harry Hare's Lair
 ZX:harry-hedgehog-1k	Harry Hedgehog 1k
 ZX:harry-lhippy	Harry L'Hippy
 ZX:harry-ohara-spectral-house	Harry O'Hara: Spectral House
-ZX:harry-potter-adventure-v1-1	Harry Potter Adventure v1.1
+ZX:harry-potter-adventure-v1-1	Harry Potter Adventure
 ZX:harry-baby-saves-world-with-his-amazing-water-pistol	Harry the Baby Saves the World With His Amazing Water Pistol
 ZX:harry-hippy	Harry the Hippy
 ZX:harry-magical	Harry the Magical
@@ -5949,13 +5779,10 @@ ZX:havoc	Havoc
 ZX:hawk-storm	Hawk Storm
 ZX:hawks	Hawks
 ZX:he-had-such-big-head-that-if-he-were-cat-he-would-have-to-toss-mice-from-under-b	He Had Such A Big Head That If He Were A Cat He Would Have To Toss The Mice From Under The Bed With
-ZX:head-coach	Head Coach
 ZX:head-over-heels	Head over Heels
 ZX:head-ball	Head the Ball
 ZX:head-banger	Head-Banger
 ZX:headbangers-heaven	Headbangers Heaven
-ZX:headbangers-heaven-v1	Headbangers Heaven v1
-ZX:headbangers-heaven-v2	Headbangers Heaven v2
 ZX:headcoach	Headcoach
 ZX:headline	Headline
 ZX:headstart	Headstart
@@ -6024,12 +5851,10 @@ ZX:heri	Heri
 ZX:heritage	Heritage
 ZX:herman-tissies-1d-golf	Herman Tissies 1D Golf
 ZX:hermit	Hermit
-ZX:hermitage-v2	Hermitage, The v2
 ZX:hernyo	HERNYO
 ZX:hero	Hero
 ZX:hero-parte-1-il-superstite	Hero Parte 1: Il Superstite
 ZX:hero-parte-2-il-piano-dattacco	Hero Parte 2: Il Piano d'Attacco
-ZX:hero-quest	Hero Quest
 ZX:hero-quest-twin-pack	Hero Quest Twin Pack
 ZX:hero-quest-return-of-witch-lord	Hero Quest: Return of the Witch Lord
 ZX:hero-quest-2d	Hero-Quest 2D
@@ -6050,8 +5875,8 @@ ZX:heroic-hubert	Heroic Hubert
 ZX:heroquest	HeroQuest
 ZX:hetfokozatos-matrix	Hetfokozatos matrix
 ZX:hetty	Hetty
-ZX:hex-2-v2-0-0	Hex 2 v2.0.0
-ZX:hex-v1-1-0	Hex v1.1.0
+ZX:hex-2-v2-0-0	Hex 2
+ZX:hex-v1-1-0	Hex
 ZX:hexagon-2	Hexagon 2
 ZX:hexagonal-filler	Hexagonal Filler
 ZX:hexagonia	Hexagonia
@@ -6060,7 +5885,7 @@ ZX:hexipede	Hexipede
 ZX:hexxagon	Hexxagon
 ZX:hi-q-quiz	Hi Q Quiz
 ZX:hi-rize	Hi-Rize
-ZX:hibernated-1-directors-cut-r13	Hibernated 1 Director's Cut r13
+ZX:hibernated-1-directors-cut-r13	Hibernated 1 Director's Cut
 ZX:hibernatus	Hibernatus
 ZX:hic-game	Hic Game
 ZX:hicksted-mathsted	Hicksted-Mathsted
@@ -6117,9 +5942,7 @@ ZX:hledac-cesta-za-zlatem-mayu	Hledac: Cesta za zlatem Mayu
 ZX:hobs-hoard	Hob's Hoard
 ZX:hobbit-128	Hobbit 128
 ZX:hobbit-128-128k-edition	Hobbit 128: 128K Edition
-ZX:hobbit-el-v1-02	Hobbit, El v1.02
-ZX:hobbit-v1-0	Hobbit, The v1.0
-ZX:hobbit-v1-2	Hobbit, The v1.2
+ZX:hobbit-el-v1-02	Hobbit, El
 ZX:hobgoblin	Hobgoblin
 ZX:hobohemia	Hobohemia
 ZX:hockey	Hockey
@@ -6128,7 +5951,6 @@ ZX:holdmentes	Holdmentes
 ZX:holdraszallas	Holdraszallas
 ZX:holiday-in-sumaria	Holiday in Sumaria
 ZX:holidays-in-amsterdam	Holidays in Amsterdam
-ZX:hollow-v2	Hollow, The v2
 ZX:holly	Holly
 ZX:holly-2	Holly 2
 ZX:hollywood-collection	Hollywood Collection
@@ -6160,8 +5982,6 @@ ZX:hong-kong-phooey-no1-super-guy	Hong Kong Phooey: No1 Super Guy
 ZX:hoop-la	Hoop-La
 ZX:hooper	Hooper
 ZX:hop-n-chop	Hop 'n' Chop
-ZX:hop-n-chop-v1	Hop 'n' Chop v1
-ZX:hop-n-chop-v2	Hop 'n' Chop v2
 ZX:hop-hop	Hop Hop
 ZX:hopnfrog	Hop'n'Frog
 ZX:hopper	Hopper
@@ -6226,7 +6046,6 @@ ZX:hot-speed-championship	Hot Speed Championship
 ZX:hot-tyre	Hot Tyre
 ZX:hot-k	HOT-K
 ZX:hot-rod	Hot-Rod
-ZX:hot-shot	Hot-Shot
 ZX:hotfoot	Hotfoot
 ZX:hotline-quiz	Hotline Quiz
 ZX:hotshot	Hotshot
@@ -6326,7 +6145,7 @@ ZX:i-need-speed	I Need Speed
 ZX:i-run	I Run
 ZX:i-shaw-light	I Shaw the Light
 ZX:i-will-survive	I Will Survive!
-ZX:i-0-jailbait-on-interstate-zero-zxzvm-v1-21	I-0: Jailbait on Interstate Zero - ZxZvm v1.21
+ZX:i-0-jailbait-on-interstate-zero-zxzvm-v1-21	I-0: Jailbait on Interstate Zero - ZxZvm
 ZX:i-ball	I, Ball
 ZX:i-fly	I, Fly
 ZX:i-of-mask	I, of the Mask
@@ -6346,9 +6165,6 @@ ZX:ice-man	Ice Man
 ZX:ice-princess-an-interactive-fairy-tale-zxzvm	Ice Princess: The An Interactive Fairy-Tale - ZxZvm
 ZX:ice-slider-z	Ice Slider Z
 ZX:ice-station-zero	Ice Station Zero
-ZX:ice-station-zero-v1	Ice Station Zero v1
-ZX:ice-station-zero-v2	Ice Station Zero v2
-ZX:ice-station-zero-v3	Ice Station Zero v3
 ZX:ice-breaker	Ice-Breaker
 ZX:iceberg	Iceberg
 ZX:icecream-factory	Icecream Factory
@@ -6388,7 +6204,6 @@ ZX:imperator	Imperator
 ZX:imperia-2000	Imperia 2000
 ZX:imperia-2-dune	Imperia II: Dune
 ZX:imperia-3	Imperia III
-ZX:imperia-3-v2-1	Imperia III v2.1
 ZX:impetus	Impetus
 ZX:implosion	Implosion
 ZX:impossaball	Impossaball
@@ -6408,8 +6223,6 @@ ZX:impulse	Impulse
 ZX:in-deep	In Deep
 ZX:in-nihilum-reverteris	In Nihilum Reverteris
 ZX:in-search-of-angels	In Search of Angels
-ZX:in-search-of-angels-v1	In Search of Angels v1
-ZX:in-search-of-angels-v2	In Search of Angels v2
 ZX:in-search-of-holy-grant-cheque	In Search of the Holy Grant Cheque
 ZX:in-search-of-lost-valley	In Search of the Lost Valley
 ZX:in-search-of-orb	In Search of the Orb
@@ -6458,8 +6271,6 @@ ZX:informatory-not-very-interactive-pastiche-with-tutorial-pretensions-zxzvm	Inf
 ZX:infrinja	Infrinja
 ZX:ingrids-back	Ingrid's Back
 ZX:inheritance	Inheritance
-ZX:inheritance-v1	Inheritance v1
-ZX:inheritance-v2	Inheritance v2
 ZX:inheritance-panic-in-las-vegas	Inheritance: The Panic in Las Vegas
 ZX:ini-rip	Ini-Rip
 ZX:ink-fall	Ink Fall
@@ -6526,8 +6337,6 @@ ZX:intro	Intro
 ZX:introduksjonskassett	Introduksjonskassett
 ZX:intruder-alert	Intruder Alert
 ZX:intruder-alert-invaders-from-planet-10	Intruder Alert + Invaders from Planet X
-ZX:intruder-alert-v2	Intruder Alert v2
-ZX:intruder-alert-v3	Intruder Alert v3
 ZX:intruder-interactive-fiction-burglary-zxzvm	Intruder: Interactive Fiction - A Burglary - ZxZvm
 ZX:invad3s	Invad3s
 ZX:invadas	Invadas
@@ -6619,7 +6428,6 @@ ZX:j4-fourth-remix-four-remix	J4: The Fourth Remix - The Four Remix
 ZX:jabato-vs-imperio-libertad	Jabato vs Imperio: Libertad
 ZX:jack-and-beanstalk	Jack and the Beanstalk
 ZX:jack-charltons-match-fishing	Jack Charlton's Match Fishing
-ZX:jack-pot	Jack Pot
 ZX:jack-nipper	Jack the Nipper
 ZX:jack-nipper-2-in-coconut-capers	Jack the Nipper II: In Coconut Capers
 ZX:jack-ripper	Jack the Ripper
@@ -6637,7 +6445,6 @@ ZX:jade-necklace-v1-1-developed-using-quill	Jade Necklace, The V1.1: developed u
 ZX:jade-necklace-v2-developed-using-p-w	Jade Necklace, The V2: developed using P.A.W.
 ZX:jade-stone-v2-part-1-nulon-to-vibran	Jade Stone, The v2: Part 1 - Nulon to Vibran
 ZX:jade-stone-v2-part-2-vibran-to-kradoom	Jade Stone, The v2: Part 2 - Vibran to Kradoom
-ZX:jade-stone-v3	Jade Stone, The v3
 ZX:jagd	Jagd
 ZX:jahangir-khans-world-championship-squash	Jahangir Khan's World Championship Squash
 ZX:jahangir-khans-world-championship-squash-club-game	Jahangir Khan's World Championship Squash: Club Game
@@ -6696,7 +6503,6 @@ ZX:jet-bike-simulator-expert	Jet Bike Simulator: Expert
 ZX:jet-bike-simulator-standard	Jet Bike Simulator: Standard
 ZX:jet-cat-frosya	Jet Cat Frosya
 ZX:jet-fighters	Jet Fighters
-ZX:jet-pac	Jet Pac
 ZX:jet-pac-john	Jet Pac John
 ZX:jet-pack-bob	Jet Pack Bob
 ZX:jet-pack-bob-agdeditor	Jet Pack Bob: AGDEditor
@@ -6715,27 +6521,21 @@ ZX:jet-set-mini	Jet Set Mini
 ZX:jet-set-mixup	Jet Set Mixup
 ZX:jet-set-willy	Jet Set Willy
 ZX:jet-set-willy-128k	Jet Set Willy 128K
-ZX:jet-set-willy-128k-v0-00	Jet Set Willy 128K v0.00
-ZX:jet-set-willy-128k-v0-03	Jet Set Willy 128K v0.03
-ZX:jet-set-willy-128k-v0-04	Jet Set Willy 128K v0.04
 ZX:jet-set-willy-16k	Jet Set Willy 16K
 ZX:jet-set-willy-2-super-pre-school-edition	Jet Set Willy 2: Super Pre-School Edition
 ZX:jet-set-willy-25-100	Jet Set Willy 25-100
 ZX:jet-set-willy-5-zx-heroes	Jet Set Willy 5: ZX Heroes
-ZX:jet-set-willy-64-v0-01	Jet Set Willy 64 v0.01
+ZX:jet-set-willy-64-v0-01	Jet Set Willy 64
 ZX:jet-set-willy-64-dragon	Jet Set Willy 64: Dragon
 ZX:jet-set-willy-64-flash-manic-miner	Jet Set Willy 64: Flash Manic Miner
 ZX:jet-set-willy-64-manic-miner	Jet Set Willy 64: Manic Miner
 ZX:jet-set-willy-64-manic-miner-dragon	Jet Set Willy 64: Manic Miner - Dragon
 ZX:jet-set-willy-64-manic-miner-james-bond	Jet Set Willy 64: Manic Miner - James Bond
-ZX:jet-set-willy-64-manic-miner-james-bond-v1-0	Jet Set Willy 64: Manic Miner - James Bond v1.0
-ZX:jet-set-willy-64-manic-miner-james-bond-v1-1	Jet Set Willy 64: Manic Miner - James Bond v1.1
 ZX:jet-set-willy-2-final-frontier	Jet Set Willy II: The Final Frontier
 ZX:jet-set-willy-2	Jet Set Willy II+
-ZX:jet-set-willy-in-paris-v4-0	Jet Set Willy in Paris v4.0
+ZX:jet-set-willy-in-paris-v4-0	Jet Set Willy in Paris
 ZX:jet-set-willy-meets-colossal-cave	Jet Set Willy Meets Colossal Cave
-ZX:jet-set-willy-v1-0-v1-0	Jet Set Willy v1.0 v1.0
-ZX:jet-set-willy-v5-0	Jet Set Willy v5.0
+ZX:jet-set-willy-v1-0-v1-0	Jet Set Willy v1.0
 ZX:jet-set-willy-10	Jet Set Willy X
 ZX:jet-set-willy-12-room-minigame	Jet Set Willy: 12 room minigame
 ZX:jet-set-willy-again	Jet Set Willy: again
@@ -6750,8 +6550,6 @@ ZX:jet-set-willy-jj	Jet Set Willy: JJ
 ZX:jet-set-willy-lord-of-rings-easy	Jet Set Willy: Lord of the Rings - Easy
 ZX:jet-set-willy-lord-of-rings-hard	Jet Set Willy: Lord of the Rings - Hard
 ZX:jet-set-willy-manic-miner	Jet Set Willy: Manic Miner
-ZX:jet-set-willy-manic-miner-v1	Jet Set Willy: Manic Miner v1
-ZX:jet-set-willy-manic-miner-v2	Jet Set Willy: Manic Miner v2
 ZX:jet-set-willy-mark-woodmasss-version-fast-version	Jet Set Willy: Mark Woodmass's version - Fast Version
 ZX:jet-set-willy-mind-control	Jet Set Willy: Mind Control
 ZX:jet-set-willy-mono-plus	Jet Set Willy: Mono Plus
@@ -6773,7 +6571,7 @@ ZX:jet-set-willy-willys-flashback	Jet Set Willy: Willy's Flashback
 ZX:jet-set-willy-willys-new-hat	Jet Set Willy: Willy's New Hat
 ZX:jet-set-willy-willys-underground-passage	Jet Set Willy: Willy's Underground Passage
 ZX:jet-man-silly	Jet-Man Silly
-ZX:jet-power-jack-v0-173	Jet-Power Jack v0.173
+ZX:jet-power-jack-v0-173	Jet-Power Jack
 ZX:jet-set-willy-in-space	Jet-Set Willy in Space
 ZX:jet-set-willy-ivy	Jet-Set Willy Ivy
 ZX:jet-story	Jet-Story
@@ -6817,7 +6615,6 @@ ZX:joe-blade	Joe Blade
 ZX:joe-blade-2	Joe Blade II
 ZX:joe-blade-3	Joe Blade III
 ZX:joe-blade-4	Joe Blade IV
-ZX:joe-blade-v2	Joe Blade v2
 ZX:joe-blob	Joe Blob
 ZX:joe-sgraffigna	Joe Sgraffigna
 ZX:jogger	Jogger
@@ -6915,8 +6712,6 @@ ZX:jumpy-snake-blues-honky-tonk	Jumpy Snake Blues + Honky Tonk
 ZX:jungle	Jungle
 ZX:jungle-adventure	Jungle Adventure
 ZX:jungle-fever	Jungle Fever
-ZX:jungle-fever-v1	Jungle Fever v1
-ZX:jungle-fever-v2	Jungle Fever v2
 ZX:jungle-jie	Jungle Jie
 ZX:jungle-job	Jungle Job
 ZX:jungle-king	Jungle King
@@ -7001,8 +6796,7 @@ ZX:kewin-2-treasure-hunter	Kewin 2: Treasure Hunter
 ZX:kewin-i-tibet-temple	Kewin I: Tibet Temple
 ZX:kewin-2-hladac-pokladov	Kewin II: Hladac pokladov
 ZX:key-fighter	Key Fighter
-ZX:key-for-exit-v1-0	Key for Exit v1.0
-ZX:key-for-exit-v2-0	Key for Exit v2.0
+ZX:key-for-exit-v1-0	Key for Exit
 ZX:keyboard-konundrum	Keyboard Konundrum
 ZX:keyboard-simulator	Keyboard Simulator
 ZX:keycode	Keycode
@@ -7108,13 +6902,11 @@ ZX:kljuc	Kljuc
 ZX:klondike	Klondike
 ZX:klondike-bill	Klondike Bill
 ZX:klondike-solitaire	Klondike Solitaire
-ZX:klondike-v1-04	Klondike v1.04
 ZX:klox	Klox
 ZX:knife-stone-paper	Knife, Stone, Paper
 ZX:kniffel	Kniffel
 ZX:kniga-mertvyh-poterjannye-dushi	Kniga Mertvyh: Poterjannye Dushi
 ZX:knight-driver	Knight Driver
-ZX:knight-fall	Knight Fall
 ZX:knight-fight	Knight Fight
 ZX:knight-force	Knight Force
 ZX:knight-ghost	Knight Ghost
@@ -7124,7 +6916,6 @@ ZX:knight-life-quest-for-holey-socks	Knight Life: The Quest for the Holey Socks
 ZX:knight-lore	Knight Lore
 ZX:knight-lore-2	Knight Lore 2
 ZX:knight-orc	Knight Orc
-ZX:knight-orc-v2	Knight Orc v2
 ZX:knight-orc-kind-of-magic	Knight Orc: A Kind of Magic
 ZX:knight-orc-hordes-of-mountain-king	Knight Orc: Hordes of the Mountain King
 ZX:knight-orc-loosed-orc	Knight Orc: Loosed Orc
@@ -7138,7 +6929,7 @@ ZX:knights	Knights
 ZX:knights-and-demons	Knights & Demons
 ZX:knights-and-demons-dx	Knights & Demons DX
 ZX:knights-and-demons-2	Knights and Demons 2
-ZX:knockabout-v109	Knockabout v109
+ZX:knockabout-v109	Knockabout
 ZX:knockout	Knockout
 ZX:knockout-whist	Knockout Whist
 ZX:knot-in-2d	Knot in 2D
@@ -7270,8 +7061,7 @@ ZX:kwik-snax	Kwik Snax
 ZX:kybertorba	KyberTorba
 ZX:kyd-cadet-3-eyeburx-plee	Kyd Cadet 3: The Eyeburx Plee
 ZX:kyd-cadet-2-rescue-of-pobbleflu	Kyd Cadet II: The Rescue of Pobbleflu
-ZX:kyd-cadet-v1-1	Kyd Cadet v1.1
-ZX:kyd-cadet-v1-2	Kyd Cadet v1.2
+ZX:kyd-cadet-v1-1	Kyd Cadet
 ZX:l-game-mastermind-and-pontoon	L-Game, Mastermind and Pontoon
 ZX:l-s-d	L.s.d.
 ZX:labbaye-des-morts	L'Abbaye des Morts
@@ -7378,13 +7168,10 @@ ZX:labirint-chuvak-1-2-3-4	Labirint Chuvak 1,2,3,4
 ZX:labirinto-da-morte	Labirinto da Morte
 ZX:labirintus	Labirintus
 ZX:labirintus-jatek	Labirintus jatek
-ZX:labirynt-v2	Labirynt v2
+ZX:labirynt-v2	Labirynt
 ZX:labour-pains	Labour Pains
 ZX:labyrinth	Labyrinth
 ZX:labyrinth-2	Labyrinth 2
-ZX:labyrinth-2-v2-0	Labyrinth 2 v2.0
-ZX:labyrinth-2-v2-1	Labyrinth 2 v2.1
-ZX:labyrinth-2-v2-2	Labyrinth 2 v2.2
 ZX:labyrinth-intro	Labyrinth: Intro
 ZX:labyrinthion	Labyrinthion
 ZX:labyrinths-of-death	Labyrinths of Death
@@ -7392,7 +7179,7 @@ ZX:labyrman	Labyrman
 ZX:lack-of-vision-an-eye-opening-demo-zxzvm	Lack of Vision: An Eye Opening Demo - ZxZvm
 ZX:ladatologato-jatek	Ladatologato Jatek
 ZX:ladders	Ladders
-ZX:ladeks-v1-0	Ladeks v1.0
+ZX:ladeks-v1-0	Ladeks
 ZX:ladrillazo	Ladrillazo
 ZX:laegge-til-traekke-fra	Laegge Til Traekke Fra
 ZX:laetitia	Laetitia
@@ -7406,7 +7193,6 @@ ZX:lancer-lords	Lancer Lords
 ZX:land-lord	Land Lord
 ZX:land-of-dark-v0-26dm	Land of Dark, The v0.26dm+
 ZX:land-of-mire-mare	Land of Mire Mare
-ZX:land-of-mire-mare-v1-06	Land of Mire Mare v1.06
 ZX:land-of-myths	Land of Myths
 ZX:land-of-sagan	Land of Sagan
 ZX:land-of-dead	Land of the Dead
@@ -7456,14 +7242,12 @@ ZX:laserfight-in-ok-space-zone	Laserfight in the OK Space Zone
 ZX:laserkanon	Laserkanon
 ZX:laserstraal	Laserstraal
 ZX:laserwarp	Laserwarp
-ZX:laserwarp-v2	Laserwarp v2
 ZX:laska-pije-activie	LASKA Pije Activie
 ZX:laskars-crystals	Laskar's Crystals
 ZX:laskars-return	Laskar's Return
 ZX:last-adventure	Last Adventure
 ZX:last-battle	Last Battle
 ZX:last-christmas-ever	Last Christmas Ever
-ZX:last-courier-v1-4	Last Courier, The v1.4
 ZX:last-duel	Last Duel
 ZX:last-night-in-office	Last Night in the Office
 ZX:last-ninja-2	Last Ninja 2
@@ -7518,10 +7302,7 @@ ZX:lee-enfield-space-ace	Lee Enfield Space Ace
 ZX:lee-numeros	Lee Numeros
 ZX:leeds-powerbox	Leeds Powerbox
 ZX:left-behind-escape-from-mars	Left Behind: Escape from Mars
-ZX:legacy-for-alaric-v2	Legacy for Alaric, A v2
-ZX:legacy-for-alaric-v3	Legacy for Alaric, A v3
 ZX:legend	Legend
-ZX:legend-of-craldons-creek-v1-2	Legend of Craldons Creek, The v1.2
 ZX:legend-of-amazon-women	Legend of the Amazon Women
 ZX:legend-of-burgle	Legend of the Burgle!
 ZX:legend-siege	Legend: the Siege
@@ -7575,10 +7356,8 @@ ZX:lifeline	Lifeline
 ZX:lift	Lift
 ZX:lift-off-with-space-shuttle	Lift Off with Space Shuttle
 ZX:lifter	Lifter
-ZX:light-cycle	Light Cycle
 ZX:light-cycle-2	Light Cycle II
 ZX:light-cycles	Light Cycles
-ZX:light-force	Light Force
 ZX:light-conk	Light the Conk!
 ZX:lightbulb	Lightbulb
 ZX:lightcycle	Lightcycle
@@ -7683,7 +7462,6 @@ ZX:locospotter	Locospotter
 ZX:lode-ranger	Lode Ranger
 ZX:lode-runner	Lode Runner
 ZX:lode-runner-3	Lode Runner 3
-ZX:lode-runner-v2	Lode Runner v2
 ZX:lodicky	Lodicky
 ZX:log-cabin-dizzy	Log Cabin Dizzy
 ZX:log-hop	Log Hop
@@ -7735,8 +7513,6 @@ ZX:lords-of-chaos-world-4-islands-of-iris	Lords of Chaos: World 4 - The Islands 
 ZX:lords-of-chaos-world-5-tombs-of-undead	Lords of Chaos: World 5 - The Tombs of the Undead
 ZX:lords-of-magic	Lords of Magic
 ZX:lords-of-time	Lords of Time
-ZX:lords-of-time-v1	Lords of Time v1
-ZX:lords-of-time-v2	Lords of Time v2
 ZX:lorigon	Lorigon
 ZX:lorna	Lorna
 ZX:los-40-principales-vol-1-batman-thanatos	Los 40 Principales Vol. 1: Batman + Thanatos
@@ -7791,11 +7567,8 @@ ZX:lost-caves-and-tomb-of-doom	Lost Caves and the Tomb of Doom
 ZX:lost-comic-book	Lost Comic Book
 ZX:lost-in-maze	Lost in Maze
 ZX:lost-in-my-spectrum	Lost in My Spectrum
-ZX:lost-in-my-spectrum-v1-2	Lost in My Spectrum v1.2
-ZX:lost-in-my-spectrum-v2-0	Lost in My Spectrum v2.0
 ZX:lost-in-my-spectrum-v2-0-128k	Lost in My Spectrum v2.0: 128K
 ZX:lost-in-my-spectrum-v2-0-48k	Lost in My Spectrum v2.0: 48K
-ZX:lost-in-my-spectrum-v2-1	Lost in My Spectrum v2.1
 ZX:lost-in-space	Lost in Space
 ZX:lost-in-amazon	Lost in the Amazon
 ZX:lost-in-jungle	Lost in the Jungle
@@ -7857,7 +7630,6 @@ ZX:lynchmob	Lynchmob
 ZX:m-text	M-Text
 ZX:m-m-6-zije	M. M. 6 zije
 ZX:m-d-n	M.A.D.N.
-ZX:m-o-5-i-e	M.O.V.I.E.
 ZX:m4	M4
 ZX:m6-simulator-1950s-beatnik-edition	M6 Simulator 1950's Beatnik Edition
 ZX:ma-jolie	Ma jolie
@@ -7868,7 +7640,6 @@ ZX:macadam-bumper	Macadam Bumper
 ZX:macaroids	Macaroids
 ZX:macgyver-la-aventura	MacGyver: La Aventura
 ZX:mach-3	Mach 3
-ZX:mad-balls	Mad Balls
 ZX:mad-cars	Mad Cars
 ZX:mad-caverns	Mad Caverns
 ZX:mad-drivers	Mad Drivers
@@ -7878,8 +7649,6 @@ ZX:mad-in-cashcais	Mad in Cashcais
 ZX:mad-jumper	Mad Jumper
 ZX:mad-martha	Mad Martha
 ZX:mad-martha-2	Mad Martha II
-ZX:mad-martha-v1	Mad Martha v1
-ZX:mad-martha-v2	Mad Martha v2
 ZX:mad-max	Mad Max
 ZX:mad-mix-2-en-el-castillo-de-los-fantasmas	Mad Mix 2: en el Castillo de los Fantasmas
 ZX:mad-mix-game	Mad Mix Game
@@ -7891,7 +7660,6 @@ ZX:madam-blavskjas-carnival-macabre-48k	Madam Blavskja's Carnival Macabre 48K
 ZX:madam-im-adam	Madam I'm Adam
 ZX:madballs	Madballs
 ZX:madcap-manor	Madcap Manor
-ZX:madcap-manor-v2	Madcap Manor v2
 ZX:made-in-spain-5-estrellas	Made in Spain 5 Estrellas
 ZX:madgus-zone	Madgus Zone
 ZX:madhatter	Madhatter
@@ -7900,7 +7668,6 @@ ZX:madness-schach	Madness Schach
 ZX:mafia-contract	Mafia Contract
 ZX:mafia-contract-2-sequel	Mafia Contract II: The Sequel
 ZX:mafie-pomsta-cerne-kocky	Mafie: Pomsta cerne kocky
-ZX:mag-max	Mag Max
 ZX:mag-max-robo-centurion	Mag Max: Robo Centurion
 ZX:mag-magician	Mag the Magician
 ZX:mage-cage	Mage Cage
@@ -7915,8 +7682,6 @@ ZX:magic	Magic
 ZX:magic-block	Magic Block
 ZX:magic-carpet	Magic Carpet
 ZX:magic-castle	Magic Castle
-ZX:magic-castle-v1	Magic Castle v1
-ZX:magic-castle-v2	Magic Castle v2
 ZX:magic-caves	Magic Caves
 ZX:magic-dice	Magic Dice
 ZX:magic-fields	Magic Fields
@@ -7937,7 +7702,6 @@ ZX:magic-story-dedication-of-falkoris	Magic Story: Dedication of Falkoris
 ZX:magic-stripes	Magic Stripes
 ZX:magic-sword-micro-adventures-of-princess-poppy-and-frog-prince	Magic Sword: The The Micro Adventures of Princess Poppy & The Frog Prince
 ZX:magic-tokens	Magic Tokens
-ZX:magic-tokens-v1-1	Magic Tokens v1.1
 ZX:magic-toyshop-fun-game-for-all-family-zxzvm	Magic Toyshop: The A Fun Game for all the Family - ZxZvm
 ZX:magic-treasure-adventure	Magic Treasure Adventure
 ZX:magic-words	Magic Words
@@ -7965,7 +7729,6 @@ ZX:mah-jong	Mah Jong
 ZX:mah-jongg	Mah Jongg
 ZX:mah-jongg-compilation	Mah Jongg Compilation
 ZX:mahjong-solitaire	Mahjong Solitaire
-ZX:mahjong-v1-16	Mahjong v1.16
 ZX:mai-psychic-girl	Mai, the Psychic Girl
 ZX:mailstrom	Mailstrom
 ZX:main-course	Main Course
@@ -7983,7 +7746,6 @@ ZX:mam-plan	Mam Plan
 ZX:mambo	Mambo
 ZX:man	MAN
 ZX:man-about-house	Man About the House
-ZX:man-hunt	Man Hunt
 ZX:man-with-golden-joystick-featuring-retrohitch	Man with the Golden Joystick: The featuring RetroHitch
 ZX:man-trap	Man-Trap
 ZX:manchester-piccadilly-powerbox	Manchester Piccadilly Powerbox
@@ -8043,7 +7805,6 @@ ZX:manic-miner-hobbit-hard	Manic Miner: The Hobbit - Hard
 ZX:manic-mining-robots-day-out	Manic Mining Robot's Day Out
 ZX:manic-mixup	Manic Mixup
 ZX:manic-mower	Manic Mower
-ZX:manic-mower-v1-1	Manic Mower v1.1
 ZX:manic-mower-24th-anniversary-edition	Manic Mower: 24th Anniversary Edition
 ZX:manic-mulholland	Manic Mulholland
 ZX:manic-muslim	Manic Muslim
@@ -8121,24 +7882,17 @@ ZX:master-and-servant	Master and Servant
 ZX:master-beeper	Master Beeper
 ZX:master-blaster	Master Blaster
 ZX:master-brain	Master Brain
-ZX:master-chess	Master Chess
 ZX:master-code	Master Code
 ZX:master-cutler	Master Cutler
 ZX:master-mariner	Master Mariner
-ZX:master-mind	Master Mind
 ZX:master-mind-1	Master Mind: 1
 ZX:master-of-evil	Master of Evil
 ZX:master-of-orion	Master of Orion
 ZX:master-of-world	Master of World
 ZX:master-word	Master Word
-ZX:master-v1-35	Master, The v1.35
 ZX:master-v2-0m	Master, The v2.0M
-ZX:master-v3-0	Master, The v3.0
 ZX:masterchess	Masterchess
 ZX:masterchess-2	Masterchess 2
-ZX:masterchess-v1	Masterchess v1
-ZX:masterchess-v2	Masterchess v2
-ZX:masterchess-v3	Masterchess v3
 ZX:masterclass	Masterclass
 ZX:mastermi	MASTERMI
 ZX:mastermind	Mastermind
@@ -8147,7 +7901,6 @@ ZX:masters-of-universe-arcade-game	Masters of the Universe: The Arcade Game
 ZX:masters-of-universe-movie	Masters of the Universe: The Movie
 ZX:masters-of-universe-super-adventure	Masters of the Universe: The Super Adventure
 ZX:masterwank	Masterwank
-ZX:match-3	Match 3
 ZX:match-day	Match Day
 ZX:match-day-2	Match Day II
 ZX:match-fishing	Match Fishing
@@ -8204,13 +7957,10 @@ ZX:maze-of-darkness	Maze of Darkness
 ZX:maze-of-terror	Maze of Terror
 ZX:maze-runner	Maze Runner
 ZX:maze-walls	Maze Walls
-ZX:maze-man	Maze-Man
 ZX:mazeball	Mazeball
 ZX:mazecube	Mazecube
 ZX:mazegame	MazeGame
 ZX:mazeman	Mazeman
-ZX:mazeman-v1	Mazeman v1
-ZX:mazeman-v2	Mazeman v2
 ZX:mazeract	Mazeract
 ZX:mazezam	MazezaM
 ZX:maziacs	Maziacs
@@ -8249,7 +7999,6 @@ ZX:mega-phoenix	Mega Phoenix
 ZX:mega-rally	Mega Rally
 ZX:mega-sports	Mega Sports
 ZX:mega-tetris-2000	Mega Tetris 2000
-ZX:mega-tron	Mega Tron
 ZX:mega-xonix	Mega Xonix
 ZX:mega-apocalypse	Mega-Apocalypse
 ZX:mega-bert	Mega-Bert
@@ -8307,7 +8056,6 @@ ZX:merlock-mede-pilgrimage-deeds-of-glengarry-hall	Merlock the Mede Pilgrimage: 
 ZX:mermaid-madness	Mermaid Madness
 ZX:merry-christmas	Merry Christmas
 ZX:merry-christmas-from-horace	Merry Christmas From Horace
-ZX:merry-christmas-from-horace-v2016e	Merry Christmas From Horace v2016e
 ZX:merry-go-round	Merry Go Round
 ZX:merry-man	Merry Man
 ZX:merry-xmas-santa	Merry Xmas Santa
@@ -8373,8 +8121,6 @@ ZX:micro-inc	Micro INC
 ZX:micro-iq	Micro IQ
 ZX:micro-man-2-o-zone	Micro Man II: The O Zone
 ZX:micro-man-2-o-zone-intruder-alert	Micro Man II: The O Zone + Intruder Alert
-ZX:micro-maze	Micro Maze
-ZX:micro-mouse-goes-de-bugging	Micro Mouse Goes De-bugging
 ZX:micro-mouse-goes-debugging	Micro Mouse Goes Debugging
 ZX:micro-olympics	Micro Olympics
 ZX:micro-profanation	Micro Profanation
@@ -8427,8 +8173,6 @@ ZX:micromega-roulette	Micromega Roulette
 ZX:micronaut-one	Micronaut One
 ZX:micronauts	Micronauts
 ZX:microprose-soccer	MicroProse Soccer
-ZX:microprose-soccer-v1	MicroProse Soccer v1
-ZX:microprose-soccer-v2	MicroProse Soccer v2
 ZX:microsoft-flight-simulator-al-qaeda-edition	Microsoft Flight Simulator: Al Qaeda Edition
 ZX:microtrap	Microtrap
 ZX:microvalue-6-pack-colin-cleaner-mutations-ian-bothams-test-match	Microvalue 6 Pack: Colin the Cleaner + Mutations + Ian Botham's Test Match
@@ -8443,7 +8187,6 @@ ZX:midsummers-eve	Midsummer's Eve
 ZX:mig-busters	MiG Busters
 ZX:mig-29-soviet-fighter	MiG-29: Soviet Fighter
 ZX:mighty-final-fight	Mighty Final Fight
-ZX:mighty-final-fight-v1-1	Mighty Final Fight v1.1
 ZX:mighty-missile	Mighty Missile
 ZX:mike-gunner	Mike Gunner
 ZX:mike-reads-pop-quiz	Mike Read's Pop Quiz
@@ -8470,7 +8213,7 @@ ZX:millipede	Millipede
 ZX:millypede	Millypede
 ZX:min-ciam-pai	Min Ciam Pai
 ZX:minas-morgul	Minas Morgul
-ZX:minas-perdidas-las-v2	Minas Perdidas, Las v2
+ZX:minas-perdidas-las-v2	Minas Perdidas, Las
 ZX:mind-cross-war	Mind Cross War
 ZX:mind-electric-an-interactive-vision-zxzvm	Mind Electric: The An Interactive Vision - ZxZvm
 ZX:mind-game	Mind Game
@@ -8511,7 +8254,6 @@ ZX:mines-of-saturn	Mines of Saturn
 ZX:mines-of-saturn-return-to-earth	Mines of Saturn + Return to Earth
 ZX:minesweeper	Minesweeper
 ZX:minesweeper-16-48	Minesweeper 16-48
-ZX:minesweeper-v1-03	Minesweeper v1.03
 ZX:minesweeper-zx	Minesweeper ZX
 ZX:mineur-2001	Mineur 2001
 ZX:mini-adventure	Mini Adventure
@@ -8524,8 +8266,7 @@ ZX:mini-game-compo-simulator	Mini Game Compo Simulator
 ZX:mini-gamezx	Mini GameZX
 ZX:mini-pacman-89	Mini Pacman 89
 ZX:mini-pancho-bros	Mini Pancho Bros
-ZX:mini-piskworks	Mini Piskworks
-ZX:mini-piskworks-v1-1	Mini Piskworks: v1.1
+ZX:mini-piskworks-v1-1	Mini Piskworks:
 ZX:mini-putt	Mini-Putt
 ZX:minichess-table-simulator	Minichess Table Simulator
 ZX:minigame-compo-2001	Minigame Compo 2001
@@ -8553,7 +8294,7 @@ ZX:missile-defence	Missile Defence
 ZX:missile-ground-zero	Missile Ground Zero
 ZX:missile-strike	Missile Strike
 ZX:missile	Missile!
-ZX:missing-world-of-spectrum-v1	Missing: World of Spectrum v1
+ZX:missing-world-of-spectrum-v1	Missing: World of Spectrum
 ZX:mission-1-project-volcano	Mission 1: Project Volcano
 ZX:mission-12	Mission 12
 ZX:mission-2-project-gibraltar	Mission 2: Project Gibraltar
@@ -8587,10 +8328,9 @@ ZX:mmm	MMM
 ZX:mobil-and-gulf	Mobil & Gulf
 ZX:mobile-wars	Mobile Wars
 ZX:mock	Mock
-ZX:mock-v1-1	Mock v1.1
 ZX:mockatetris	Mockatetris
 ZX:mocsarbol	Mocsarbol
-ZX:model-railway-timetable-software-v1-6-12-0524	Model Railway Timetable Software v1.6.12.0524
+ZX:model-railway-timetable-software-v1-6-12-0524	Model Railway Timetable Software
 ZX:modell-hajo-berseng	Modell-hajo berseng
 ZX:moderate-retribution	MODERATE RETRIBUTION
 ZX:modern-day-locospotter	Modern Day Locospotter
@@ -8637,8 +8377,6 @@ ZX:monster-star-reporter	Monster + Star Reporter
 ZX:monster-star-reporter-monster	Monster + Star Reporter: Monster
 ZX:monster-star-reporter-start-reporter	Monster + Star Reporter: Start Reporter
 ZX:monster-mine	Monster Mine
-ZX:monster-mine-v1	Monster Mine v1
-ZX:monster-mine-v2	Monster Mine v2
 ZX:monster-munch	Monster Munch
 ZX:monster-muncher	Monster Muncher
 ZX:monster-pit	Monster Pit
@@ -8685,7 +8423,6 @@ ZX:moon-mission	Moon Mission
 ZX:moon-patrol	Moon Patrol
 ZX:moon-patrol-2021-edition	Moon Patrol 2021 Edition
 ZX:moon-ranger	Moon Ranger
-ZX:moon-ranger-v2	Moon Ranger v2
 ZX:moon-rescue	Moon Rescue
 ZX:moon-strike	Moon Strike
 ZX:moons-fandom-festival	Moon's Fandom Festival
@@ -8696,7 +8433,6 @@ ZX:moonlight-magic	Moonlight Magic
 ZX:moonlighter	Moonlighter
 ZX:moonmist-mystery-story-zxzvm	Moonmist: A Mystery Story - ZxZvm
 ZX:moonquake	Moonquake
-ZX:moonquake-v4	Moonquake v4
 ZX:moonraker	Moonraker
 ZX:moonscape-escape-from-moon	Moonscape: Escape from the Moon
 ZX:moonshade	Moonshade
@@ -8859,10 +8595,7 @@ ZX:multimixx-5-monty-on-run-auf-wiedersehen-monty	Multimixx 5: Monty on the Run 
 ZX:multiplayer-premier-league	Multiplayer Premier League
 ZX:mummy-wheres-my-bra	Mummy, Where's My Bra
 ZX:mummy-mummy	Mummy! Mummy!
-ZX:mummys-crypt-v1-0	Mummy's Crypt, The v1.0
-ZX:mummys-crypt-v2-1	Mummy's Crypt, The v2.1
 ZX:munch	Munch
-ZX:munch-man	Munch-Man
 ZX:munchie-man	Munchie Man
 ZX:munchman	Munchman
 ZX:mundial-de-futbol	Mundial de Futbol
@@ -8943,7 +8676,6 @@ ZX:mythos	Mythos
 ZX:n-e-i-l-android	N.E.I.L. Android
 ZX:n-e-10-o-r	N.E.X.O.R.
 ZX:n-e-10-u-s	N.E.X.U.S.
-ZX:n-o-m-d	N.O.M.A.D.
 ZX:n2-estrada-nacional	N2: Estrada Nacional
 ZX:n3	N3
 ZX:na-balkanu-nista-novo	Na Balkanu Nista Novo
@@ -8963,9 +8695,7 @@ ZX:narc	NARC
 ZX:narco-police	Narco Police
 ZX:nardy	Nardy
 ZX:narnia-1	Narnia-1
-ZX:narnia-1-v2-0	Narnia-1 v2.0
 ZX:narnia-2	Narnia-2
-ZX:narnia-2-v2-0	Narnia-2 v2.0
 ZX:nasty-nasty	Nasty Nasty
 ZX:nat-west-trophy	Nat West Trophy
 ZX:natation	Natation
@@ -9015,7 +8745,6 @@ ZX:nervos-this-position	Nervos This Position
 ZX:nessie	Nessie
 ZX:nessuna-notizia-dal-campo-base	Nessuna Notizia Dal Campo Base
 ZX:nestling	Nestling
-ZX:net-walk	Net Walk
 ZX:nether-earth	Nether Earth
 ZX:nether-earth-zx-edition-98	Nether Earth: ZX Edition '98
 ZX:nether-earth-zx-edition-99	Nether Earth: ZX Edition '99
@@ -9111,7 +8840,6 @@ ZX:ninja-scooter-simulator	Ninja Scooter Simulator
 ZX:ninja-spirit	Ninja Spirit
 ZX:ninja-twins-going-to-zedeaks	Ninja twins: Going to Zedeaks
 ZX:ninjajar	Ninjajar!
-ZX:ninjajar-v1-1	Ninjajar! v1.1
 ZX:ninjakul-2-last-ninja	Ninjakul 2: The Last Ninja
 ZX:ninjakul-in-auic-temple	Ninjakul in the AUIC Temple
 ZX:ninth-wave	Ninth Wave
@@ -9233,7 +8961,7 @@ ZX:o-submarino-u2	O Submarino U2
 ZX:o-zone-intruder-alert	O Zone, The + Intruder Alert
 ZX:o-eyes	O-EYES
 ZX:o-puzz-attack	O-Puzz Attack
-ZX:o-trix-v1-0	O-Trix v1.0
+ZX:o-trix-v1-0	O-Trix
 ZX:o-b-r-rapid-reaction-unit	O.B.R.: Rapid Reaction Unit
 ZX:o-k-yah	O.K. Yah!
 ZX:othelo	O'Thelo
@@ -9245,7 +8973,7 @@ ZX:objetivo-madrid-parte-1	Objetivo: Madrid - Parte 1
 ZX:obliterator	Obliterator
 ZX:oblivion	Oblivion
 ZX:obrazky	Obrazky
-ZX:oc-man-v1-0	OC-Man v1.0
+ZX:oc-man-v1-0	OC-Man
 ZX:occhio-del-condor-l-parte-1-il-museo	Occhio del Condor, L' Parte 1: Il Museo
 ZX:occhio-del-condor-l-parte-2-il-tempio	Occhio del Condor, L' Parte 2: Il Tempio
 ZX:ocean-conqueror	Ocean Conqueror
@@ -9253,7 +8981,7 @@ ZX:ocean-defence	Ocean Defence
 ZX:ocean-racer	Ocean Racer
 ZX:ocean-racer-yacht-race	Ocean Racer: Yacht Race
 ZX:oceans-greatest-hits	Ocean's Greatest Hits
-ZX:oceano-v1-2	Oceano v1.2
+ZX:oceano-v1-2	Oceano
 ZX:ochko	Ochko!
 ZX:octagon	Octagon
 ZX:octan	Octan
@@ -9292,8 +9020,6 @@ ZX:old-tower	Old Tower
 ZX:oldman	Oldman
 ZX:ole-toro	Ole, Toro
 ZX:oligopoly	Oligopoly
-ZX:oligopoly-v1	Oligopoly v1
-ZX:oligopoly-v2	Oligopoly v2
 ZX:olimpiadas-dia-2	Olimpiadas: Dia 2
 ZX:olimpo-en-guerra	Olimpo en Guerra
 ZX:olisa	Olisa
@@ -9345,10 +9071,9 @@ ZX:one-more-big-disk-violator-of-voodoo-amulet-of-darath-taxman-cometh	One More 
 ZX:one-of-our-wombats-is-missing	One of our Wombats is Missing
 ZX:one-on-one	One-on-One
 ZX:oneiroid	Oneiroid
-ZX:oneliners-v1	ONELINERS v1
+ZX:oneliners-v1	ONELINERS
 ZX:oops	Oops
 ZX:ooze	Ooze
-ZX:ooze-v1-5	Ooze v1.5
 ZX:open-championship-golf	Open Championship Golf
 ZX:open-it	Open IT!
 ZX:open-puzzle	Open Puzzle
@@ -9368,7 +9093,6 @@ ZX:operation-hanoi	Operation Hanoi
 ZX:operation-hormuz	Operation Hormuz
 ZX:operation-nightingale	Operation Nightingale
 ZX:operation-red-refrigerator	Operation Red Refrigerator
-ZX:operation-red-refrigerator-v1-01	Operation Red Refrigerator v1.01
 ZX:operation-roman-gaul	Operation Roman Gaul
 ZX:operation-stallion	Operation Stallion
 ZX:operation-thunderbolt	Operation Thunderbolt
@@ -9387,9 +9111,6 @@ ZX:orb-quest	Orb Quest
 ZX:orbit	Orbit
 ZX:orbit-of-doom	Orbit of Doom
 ZX:orbiter	Orbiter
-ZX:orbiter-v1	Orbiter v1
-ZX:orbiter-v2	Orbiter v2
-ZX:orbiter-v3	Orbiter v3
 ZX:orbix-terrorball	Orbix the Terrorball
 ZX:orc-attack	Orc Attack
 ZX:orc-island	Orc Island
@@ -9465,7 +9186,6 @@ ZX:p-n-k	P A N K
 ZX:p-47-thunderbolt	P-47 Thunderbolt
 ZX:p-47-phantom-fighter	P-47: The Phantom Fighter
 ZX:p-h-r-t	P.H.A.R.T.
-ZX:p-h-m-pegasus	P.H.M. Pegasus
 ZX:p-p-s-pixel-perfect-shot	P.P.S.: Pixel Perfect Shot
 ZX:pac-manic-miner-man	Pac Manic Miner Man
 ZX:pac-chian	Pac-Chian
@@ -9512,7 +9232,6 @@ ZX:paintball-2048-2-players-2019	Paintball 2048: 2 Players - 2019
 ZX:painter	Painter
 ZX:pakacuda	Pakacuda
 ZX:palace-hotel	Palace Hotel
-ZX:palace-hotel-v2	Palace Hotel v2
 ZX:paladini	Paladini
 ZX:paleto-jones-y-la-flauta-de-bartolo	Paleto Jones y la Flauta de Bartolo
 ZX:paleto-jones-y-la-tumba-del-tio-ramon	Paleto Jones y la tumba del tio Ramon
@@ -9591,9 +9310,7 @@ ZX:pasion-por-el-water	Pasion por el Water
 ZX:passatempos-1	Passatempos 1
 ZX:passatempos-2	Passatempos 2
 ZX:passiance	Passiance
-ZX:passiance-klondike-v1-1	Passiance Klondike v1.1
-ZX:passiance-klondike-v1-2	Passiance Klondike v1.2
-ZX:passiance-v1-1	Passiance v1.1
+ZX:passiance-klondike-v1-1	Passiance Klondike
 ZX:passiance-help	Passiance: Help
 ZX:passing-shot	Passing Shot
 ZX:paste	Paste
@@ -9617,8 +9334,6 @@ ZX:patrulha-lunar	Patrulha Lunar
 ZX:patterns	Patterns
 ZX:paul-and-lost-chalice	Paul and the Lost Chalice
 ZX:paul-woakes-mercenary-1-compendium	Paul Woakes' Mercenary 1 Compendium
-ZX:pawn-v2-3	Pawn, The v2.3
-ZX:pawn-v2-4	Pawn, The v2.4
 ZX:pawnchess	Pawnchess
 ZX:pawns-of-war	Pawns of War
 ZX:pawns-of-war-infiltrator	Pawns of War: The Infiltrator
@@ -9644,11 +9359,10 @@ ZX:pedro-pomez	Pedro Pomez
 ZX:pedro-5-krajine-pyramid	Pedro v krajine pyramid
 ZX:pedro-5-strasidelnom-zamku	Pedro v strasidelnom zamku
 ZX:pedro-y-las-tortugas	Pedro y las Tortugas
-ZX:peep-show	Peep Show
 ZX:peepshow-2	Peepshow 2
 ZX:pegasus	Pegasus
 ZX:pegasus-bridge	Pegasus Bridge
-ZX:pegged-v1-02	Pegged v1.02
+ZX:pegged-v1-02	Pegged
 ZX:peking	Peking
 ZX:pekleso	Pekleso
 ZX:peklo	Peklo
@@ -9671,7 +9385,6 @@ ZX:penguins-and-polars	Penguins and Polars
 ZX:pengy	Pengy
 ZX:pentac	Pentac
 ZX:pentacorn-quest	Pentacorn Quest
-ZX:pentacorn-quest-v1-1	Pentacorn Quest v1.1
 ZX:pentagon	Pentagon
 ZX:pentagram	Pentagram
 ZX:pentari-an-interactive-prequel-to-mission-zxzvm	Pentari: An Interactive Prequel to The Mission - ZxZvm
@@ -9723,7 +9436,7 @@ ZX:petris	Petris
 ZX:petrol-petrol	Petrol Petrol
 ZX:pets-vs-aliens-prologue	Pets vs Aliens Prologue
 ZX:petter-pacifist-in-mission-to-future	Petter the Pacifist in Mission to the Future
-ZX:petulant-poogslay-powerful-parade-v1-3	Petulant Poogslay Powerful Parade v1.3
+ZX:petulant-poogslay-powerful-parade-v1-3	Petulant Poogslay Powerful Parade
 ZX:pexeso	Pexeso
 ZX:pferderennen	Pferderennen
 ZX:pfui-spinne	Pfui Spinne
@@ -9787,7 +9500,6 @@ ZX:pick-pocket	Pick-Pocket
 ZX:picknmix	Pick'n'Mix
 ZX:pickaxe-pete	Pickaxe Pete
 ZX:pickles-and-pearl	Pickles and Pearl
-ZX:pickles-and-pearl-v40	Pickles and Pearl v40
 ZX:pickup-sticks	Pickup Sticks
 ZX:pictionary	Pictionary
 ZX:pictionary-game-of-quick-draw	Pictionary: The Game of Quick Draw
@@ -9795,11 +9507,10 @@ ZX:picture-pairs	Picture Pairs
 ZX:piece-of-mind-an-interactive-short-story-zxzvm	Piece of Mind: An Interactive Short Story - ZxZvm
 ZX:pieces-of-eight	Pieces of Eight
 ZX:pietro-bros-1-92	Pietro Bros 1.92
-ZX:pietro-bros-v1-00	Pietro Bros v1.00
-ZX:pietro-bros-v1-9	Pietro Bros v1.9
+ZX:pietro-bros-v1-9	Pietro Bros
 ZX:pietro-bros-v1-9-zx7	Pietro Bros v1.9-ZX7
 ZX:pietro-bros-v1-92-zx7	Pietro Bros v1.92 ZX7
-ZX:pietro-bros-short-slide-v1-91	Pietro Bros: Short Slide v1.91
+ZX:pietro-bros-short-slide-v1-91	Pietro Bros: Short Slide
 ZX:pigeon	Pigeon
 ZX:piggy	Piggy
 ZX:piggy-punks	Piggy Punks
@@ -9809,8 +9520,7 @@ ZX:piknik-u-cesty	Piknik u cesty
 ZX:pilgrims-progress	Pilgrim's Progress
 ZX:pillars	Pillars
 ZX:pilot	Pilot
-ZX:pilot-attack-v1-0	Pilot Attack v1.0
-ZX:pilot-attack-v1-1	Pilot Attack v1.1
+ZX:pilot-attack-v1-0	Pilot Attack
 ZX:pilot-wings-48	Pilot Wings 48
 ZX:pimania	Pimania
 ZX:pimeval-man	Pimeval Man
@@ -9829,7 +9539,6 @@ ZX:pinkblue	PinkBlue
 ZX:pioneer	Pioneer
 ZX:pip-pipistrelle	Pip the Pipistrelle
 ZX:pipe-dream	Pipe Dream
-ZX:pipe-line	Pipe Line
 ZX:pipe-mania	Pipe Mania
 ZX:pipeline	Pipeline
 ZX:pipeline-sos	Pipeline + SOS
@@ -9994,8 +9703,6 @@ ZX:poker-de-casino	Poker de Casino
 ZX:poker-dice	Poker Dice
 ZX:poker-dice-simulator	Poker Dice Simulator
 ZX:poker-strip	Poker Strip
-ZX:poker-v1-0	Poker v1.0
-ZX:poker-v3-1	Poker v3.1
 ZX:pokes-tape-1	Pokes Tape 1
 ZX:pokes-y-cargadores-especial-patas-arriba-n-1	Pokes y Cargadores: Especial Patas Arriba n.1
 ZX:pokestripper	Pokestripper
@@ -10008,9 +9715,7 @@ ZX:pokland-2	Pokland 2
 ZX:polaris	Polaris
 ZX:pole-chudes	Pole Chudes
 ZX:pole-position	Pole Position
-ZX:pole-position-v1	Pole Position v1
-ZX:pole-position-v2	Pole Position v2
-ZX:polearn-v1-0	Polearn v1.0
+ZX:polearn-v1-0	Polearn
 ZX:poli-diaz	Poli Diaz
 ZX:poli-diaz-el-potro-de-vallecas	Poli Diaz: El Potro de Vallecas
 ZX:police-patrol-2-interactive-beat-policing-exercise	Police Patrol II: Interactive Beat Policing Exercise
@@ -10033,7 +9738,6 @@ ZX:poojan	Poojan
 ZX:pool	Pool
 ZX:pooper-scooper	Pooper Scooper
 ZX:pooyan	Pooyan
-ZX:pop-corn	Pop Corn
 ZX:pop-quiz-85	Pop Quiz 85
 ZX:pop-stars	Pop Stars
 ZX:popas-si-sania-lui-mos-craciun	Popas Si Sania Lui Mos-Craciun
@@ -10112,8 +9816,6 @@ ZX:preliminary-monty	Preliminary Monty
 ZX:prelude-to-d-day	Prelude to D-Day
 ZX:premier-2	Premier II
 ZX:premier-2-superleague	Premier II: Superleague
-ZX:premier-2-superleague-v1	Premier II: Superleague v1
-ZX:premier-2-superleague-v2	Premier II: Superleague v2
 ZX:premier-league	Premier League
 ZX:premier-league-european-trophy	Premier League + European Trophy
 ZX:premier-league-megatape-15	Premier League: Megatape 15
@@ -10154,9 +9856,6 @@ ZX:prison-blues-magicians-apprentice-magical-apprentice	Prison Blues + Magicians
 ZX:prison-blues-magicians-apprentice-prison-blues	Prison Blues + Magicians Apprentice: Prison Blues
 ZX:prison-camp	Prison Camp
 ZX:prison-riot	Prison Riot
-ZX:prisoner-v1	Prisoner, The v1
-ZX:prisoner-v1-1	Prisoner, The v1.1
-ZX:prisoner-v2	Prisoner, The v2
 ZX:private-detective	Private Detective
 ZX:privateer	Privateer
 ZX:pro-golf	Pro Golf
@@ -10198,7 +9897,6 @@ ZX:project-r-o-b-o	Project R.O.B.O.
 ZX:project-stealth-fighter	Project Stealth Fighter
 ZX:project-vaelius	Project Vaelius
 ZX:project-10	Project X
-ZX:project-10-v2-0	Project X v2.0
 ZX:project-10-micro-man	Project-X: The Micro Man
 ZX:project-10-micro-man-o-zone	Project-X: The The Micro Man + O Zone
 ZX:project-re-ve-la-tion	Project: RE.VE.LA.TION
@@ -10259,7 +9957,6 @@ ZX:public-6	Public 6
 ZX:public-7	Public 7
 ZX:public-8	Public 8
 ZX:public-9	Public 9
-ZX:puc-man	Puc Man
 ZX:pucman	Pucman
 ZX:pud-pud	Pud Pud
 ZX:pud-pud-in-weird-world	Pud Pud in Weird World
@@ -10304,21 +10001,15 @@ ZX:puzzles-alfabeticos	Puzzles Alfabeticos
 ZX:puzznic	Puzznic
 ZX:pxt-beginning	PXT A Beginning
 ZX:pyjamarama	Pyjamarama
-ZX:pyjamarama-v1	Pyjamarama v1
-ZX:pyjamarama-v2	Pyjamarama v2
 ZX:pyracurse	Pyracurse
 ZX:pyramania	Pyramania
 ZX:pyramid-patience	Pyramid Patience
 ZX:pyramid-race	Pyramid Race
 ZX:pyromania-2-chopper-rescue	Pyromania II: Chopper Rescue
 ZX:pyromania-trial-by-fire	PYROMANIA: Trial by fire
-ZX:python	Python
-ZX:python-v1-1	Python: V1.1
-ZX:python-v2-1	Python: V2.1
-ZX:q-bert	Q-Bert
+ZX:python-v1-1	Python:
 ZX:q-burt	Q-Burt
 ZX:q-b-o	Q.B.O.
-ZX:q-i	Q.I.
 ZX:qs-armoury	Q's Armoury
 ZX:q10-tank-buster	Q10 Tank Buster
 ZX:qa1-manor-of-madness	QA1: Manor of Madness
@@ -10345,8 +10036,6 @@ ZX:quake-3-arena	Quake 3 Arena
 ZX:quake-i	Quake I
 ZX:quandary	Quandary
 ZX:quann-tulla	Quann Tulla
-ZX:quann-tulla-v1	Quann Tulla v1
-ZX:quann-tulla-v2	Quann Tulla v2
 ZX:quantum-gardening	Quantum Gardening
 ZX:quarterback	Quarterback
 ZX:quartet	Quartet
@@ -10424,7 +10113,6 @@ ZX:rabbit-shoot	Rabbit Shoot
 ZX:rabid-mower	Rabid Mower
 ZX:race-ace	Race Ace
 ZX:race-fun	Race Fun
-ZX:race-track	Race-Track
 ZX:race-pack-4-pack-4-3d-grand-prix-championship-turbo-skate-fighter	Race: Pack 4 - Pack 4 - 3D Grand Prix Championship + Turbo Skate Fighter
 ZX:race-pack-4-pack-4-full-throttle-deathchase	Race: Pack 4 - Pack 4 - Full Throttle + Deathchase
 ZX:racehorse	Racehorse
@@ -10495,7 +10183,6 @@ ZX:rampage	Rampage
 ZX:ramparts	Ramparts
 ZX:rams-4	RAMS IV
 ZX:ramsbottom-smith-and-quest-for-yellow-spheroid	Ramsbottom Smith and The Quest For The Yellow Spheroid
-ZX:rana-rama	Rana Rama
 ZX:rana-real	Rana-Real
 ZX:ranamirez	Ranamirez
 ZX:ranarama	Ranarama
@@ -10522,7 +10209,7 @@ ZX:ratas-del-desierto	Ratas del Desierto
 ZX:rath-tha	Rath-Tha
 ZX:ratos	Ratos
 ZX:rattler	Rattler
-ZX:ratul-and-zeki-v2	Ratul & Zeki v2
+ZX:ratul-and-zeki-v2	Ratul & Zeki
 ZX:ravina	Ravina
 ZX:ravina-2-0	Ravina 2.0
 ZX:raw-battle	Raw Battle
@@ -10665,7 +10352,6 @@ ZX:resistance-is-futile	Resistance is Futile
 ZX:restless-andre	Restless Andre
 ZX:retarded-creatures-and-caverns	Retarded Creatures and Caverns
 ZX:retarded-creatures-and-caverns-2	Retarded Creatures and Caverns II
-ZX:retarded-creatures-and-caverns-v3	Retarded Creatures and Caverns v3
 ZX:reti-combinatorie-due-livelli	Reti Combinatorie a Due Livelli
 ZX:retro-fighter	Retro Fighter
 ZX:retro-racer	Retro Racer
@@ -10678,7 +10364,7 @@ ZX:retroforce	RetroForce
 ZX:retroinvaders	Retroinvaders
 ZX:retrophenia	Retrophenia
 ZX:retroquest-2-las-torres-de-la-desesperacion	RetroQuest II: Las Torres de la Desesperacion
-ZX:retroquest-los-pergaminos-de-la-sabiduria-v3-11	RetroQuest: Los Pergaminos de la Sabiduria v3.11
+ZX:retroquest-los-pergaminos-de-la-sabiduria-v3-11	RetroQuest: Los Pergaminos de la Sabiduria
 ZX:retrospects-bar-10	Retrospect's BAR-X
 ZX:retuners-game	Retuners: The The Game
 ZX:return-ink-to-move-cat-in-to-bin	RETURN INK TO MOVE CAT IN TO a BIN
@@ -10765,14 +10451,11 @@ ZX:river-rescue	River Rescue
 ZX:rjs-ultimatum	RJ's Ultimatum
 ZX:rm380z-emulator	RM380Z Emulator
 ZX:rms-3	RMS-3
-ZX:road-blasters	Road Blasters
 ZX:road-crosser	Road Crosser
 ZX:road-fusion	Road Fusion
-ZX:road-race	Road Race
 ZX:road-race-soccer	Road Race + Soccer
 ZX:road-race-smash-tape-2	Road Race: Smash Tape 2
 ZX:road-racer	Road Racer
-ZX:road-runner	Road Runner
 ZX:road-runner-and-wile-e-coyote	Road Runner and Wile E. Coyote
 ZX:road-toad	Road Toad
 ZX:road-trippin	Road Trippin'
@@ -10808,8 +10491,7 @@ ZX:robocop-2	RoboCop 2
 ZX:robocop-3	RoboCop 3
 ZX:robon	Robon
 ZX:robon-2	Robon II
-ZX:roboprobe-48-v1-0	Roboprobe-48 v1.0
-ZX:roboprobe-48-v1-6	Roboprobe-48 v1.6
+ZX:roboprobe-48-v1-0	Roboprobe-48
 ZX:robore	Robore
 ZX:roborun	Roborun
 ZX:robospy	Robospy
@@ -10847,12 +10529,10 @@ ZX:robyn-hode	Robyn Hode
 ZX:rocco	Rocco
 ZX:rochn-la-era-de-las-espadas	Rochn, la Era de las Espadas
 ZX:rock-n-lucha	Rock 'n Lucha
-ZX:rock-n-wrestle	Rock 'n Wrestle
 ZX:rock-n-roll	Rock 'n' Roll
 ZX:rock-star-ate-my-hamster	Rock Star Ate My Hamster
 ZX:rock-star-ate-my-hamster-millennium	Rock Star Ate My Hamster: Millennium
 ZX:rock-star-goes-bizarre	Rock Star Goes Bizarre
-ZX:rock-fall	Rock-Fall
 ZX:rock-paper-scrissors-lizard-spock	Rock-Paper-Scrissors-Lizard-Spock
 ZX:rock-paper-scissors-pudding-drop	Rock, Paper, Scissors, Pudding, Drop!
 ZX:rock-scissors-paper	Rock, Scissors, Paper
@@ -10932,7 +10612,7 @@ ZX:roy-norton-terrore-al-castello	Roy Norton: Terrore al Castello
 ZX:roy-of-rovers	Roy of the Rovers
 ZX:royal-birkdale	Royal Birkdale
 ZX:royal-birkdale-championship-golf	Royal Birkdale: Championship Golf
-ZX:royal-game-of-ur-v1-0	Royal Game of UR, The v1.0
+ZX:royal-game-of-ur-v1-0	The Royal Game of UR
 ZX:royal-scot	Royal Scot
 ZX:rpb	RPB
 ZX:rps	RPS
@@ -11001,8 +10681,6 @@ ZX:run-gauntlet	Run the Gauntlet
 ZX:run-bronwynn-run	Run, Bronwynn, Run!
 ZX:run	Run!
 ZX:runaway-city	Runaway City
-ZX:runaway-city-v1	Runaway City v1
-ZX:runaway-city-v2	Runaway City v2
 ZX:runaway-robot	Runaway Robot
 ZX:runer-loader	Runer Loader
 ZX:runestone	Runestone
@@ -11030,12 +10708,9 @@ ZX:s-m-simulator-boda-revenge	S.A.M. Simulator Boda Revenge
 ZX:s-s-assault	S.A.S. Assault
 ZX:s-s-combat-assault	S.A.S. Combat Assault
 ZX:s-s-combat-simulator	S.A.S. Combat Simulator
-ZX:s-d-i	S.D.I.
 ZX:s-e-m-i-s-i-s	S.E.M.I.S.I.S.
 ZX:s-i-p	S.I.P.
 ZX:s-m-s-h-e-d	S.M.A.S.H.E.D.
-ZX:s-o-l-o	S.O.L.O.
-ZX:s-o-s	S.O.S.
 ZX:s-petersburg-fifteen	S.Petersburg Fifteen
 ZX:s-t-i	S.T.I.
 ZX:s-t-u-n-runner	S.T.U.N. Runner
@@ -11074,8 +10749,6 @@ ZX:salte-la-banca	Salte la Banca
 ZX:salto-da-morte	Salto da Morte
 ZX:salvage	Salvage
 ZX:sam-mallard-case-of-missing-swan	Sam Mallard: The Case of the Missing Swan
-ZX:sam-mallard-case-of-missing-swan-v1-1	Sam Mallard: The Case of the Missing Swan v1.1
-ZX:sam-mallard-case-of-missing-swan-v1-11	Sam Mallard: The Case of the Missing Swan v1.11
 ZX:sam-slade-robo-hunter-escape-from-planet-of-robot-robo-hunter-hunters	Sam Slade Robo-Hunter: Escape From The Planet of The Robot Robo-Hunter Hunters
 ZX:sam-spade	Sam Spade
 ZX:sam-stoat-safebreaker	Sam Stoat Safebreaker
@@ -11114,7 +10787,6 @@ ZX:saracen	Saracen
 ZX:sarahs-garden	Sarah's Garden
 ZX:sardonic	Sardonic
 ZX:sarlmoor	Sarlmoor
-ZX:sas-assault	SAS Assault
 ZX:sas-operation-thunderflash	SAS: The Operation Thunderflash!
 ZX:saski	Saski
 ZX:satan	Satan
@@ -11125,8 +10797,6 @@ ZX:satochin	Satochin
 ZX:saturn-lander	Saturn Lander
 ZX:saucer	Saucer
 ZX:saucer-snatch	Saucer Snatch
-ZX:saucer-v1-0	Saucer v1.0
-ZX:saucer-v1-17	Saucer v1.17
 ZX:saucers	Saucers
 ZX:saurian-lo	Saurian-lo
 ZX:savage	Savage
@@ -11151,7 +10821,6 @@ ZX:sbugetti-junction	Sbugetti Junction
 ZX:sc0tb0t	Sc0tb0t
 ZX:scacchi	Scacchi
 ZX:scalesmann-must-die	Scalesmann Must Die
-ZX:scalesmann-must-die-v0-999	Scalesmann Must Die v0.999
 ZX:scalextric	Scalextric
 ZX:scalextric-computer-edition	Scalextric: The Computer Edition
 ZX:scapeghost	Scapeghost
@@ -11189,8 +10858,6 @@ ZX:scott-adams-scoops	Scott Adams Scoops
 ZX:scrabble-deluxe	Scrabble Deluxe
 ZX:scramble	Scramble
 ZX:scramble-spirits	Scramble Spirits
-ZX:scramble-v1	Scramble v1
-ZX:scramble-v2	Scramble v2
 ZX:scrap-yard-scrapes	Scrap Yard Scrapes
 ZX:screaming-demons	Screaming Demons
 ZX:screen-heroes-highlander	Screen Heroes: Highlander
@@ -11222,14 +10889,12 @@ ZX:sea-calmnes	Sea Calmnes
 ZX:sea-dragon	Sea Dragon
 ZX:sea-dragon-side	Sea Dragon: Side A
 ZX:sea-dragon-side-b	Sea Dragon: Side B
-ZX:sea-fight	Sea Fight
 ZX:sea-hunt	Sea Hunt
 ZX:sea-of-zirun	Sea of Zirun
 ZX:sea-quest-part-1-sea-wolf	Sea Quest Part 1: Sea Wolf
 ZX:sea-rescue	Sea Rescue
 ZX:sea-surfer	Sea Surfer
 ZX:sea-war	Sea War
-ZX:sea-wolf	Sea Wolf
 ZX:sea-wars-of-ocean	Sea: The Wars of Ocean
 ZX:seabase-delta	Seabase Delta
 ZX:seafight	Seafight
@@ -11324,7 +10989,6 @@ ZX:sex-poker	Sex Poker
 ZX:sex-poker-dla-niecierpliwych	Sex Poker Dla Niecierpliwych
 ZX:sex-tetris	Sex Tetris
 ZX:sex-tetris-2	Sex Tetris 2
-ZX:sex-tetris-v1-2	Sex Tetris v1.2
 ZX:sex-xonix	Sex Xonix
 ZX:sex-zone	Sex Zone
 ZX:sexeso	Sexeso
@@ -11374,7 +11038,6 @@ ZX:she-vampires	She Vampires
 ZX:shedmaster-bounds-green	Shedmaster Bounds Green
 ZX:shedmaster-finsbury-park	Shedmaster Finsbury Park
 ZX:sheep	Sheep
-ZX:sheep-dog	Sheep Dog
 ZX:sheepdog	Sheepdog
 ZX:sheepdog-champion	Sheepdog Champion
 ZX:sheepdog-trials	Sheepdog Trials
@@ -11389,8 +11052,6 @@ ZX:sherlock-holmes-in-case-of-beheaded-smuggler	Sherlock Holmes in The Case of t
 ZX:sherlock-holmes-matter-of-evil	Sherlock Holmes: A Matter of Evil
 ZX:sherlock-holmes-lamberley-mystery	Sherlock Holmes: The Lamberley Mystery
 ZX:sherlock-holmes-traja-garridebovia	Sherlock Holmes: Traja Garridebovia
-ZX:sherlock-v2	Sherlock v2
-ZX:sherlock-v2-0	Sherlock v2.0
 ZX:sherlock-riddle-of-crown-jewels-zxzvm	Sherlock: The Riddle of the Crown Jewels - ZxZvm
 ZX:sherwood	Sherwood
 ZX:sherwood-forest	Sherwood Forest
@@ -11444,7 +11105,6 @@ ZX:shove-sledge	Shove a Sledge
 ZX:shove-off	Shove Off
 ZX:show-jump	Show Jump
 ZX:show-jumper	Show Jumper
-ZX:show-jumping	Show Jumping
 ZX:showdown	Showdown
 ZX:showdown-in-tombstone-city	Showdown in Tombstone City
 ZX:showjumping	Showjumping
@@ -11464,8 +11124,8 @@ ZX:si-yo-fuera-rico	Si Yo Fuera Rico
 ZX:sibenice	Sibenice
 ZX:sid-spanners	Sid Spanners
 ZX:sid-spanners-2-slackening	Sid Spanners 2: The Slackening
-ZX:sid-spanners-3-nuthouse-v1-2	Sid Spanners 3: The Nuthouse v1.2
-ZX:sid-spanners-4-timeloop-v1-1	Sid Spanners 4: Timeloop v1.1
+ZX:sid-spanners-3-nuthouse-v1-2	Sid Spanners 3: The Nuthouse
+ZX:sid-spanners-4-timeloop-v1-1	Sid Spanners 4: Timeloop
 ZX:side-arms	Side Arms
 ZX:side-face-man	Side Face Man
 ZX:sideral-war	Sideral War
@@ -11496,7 +11156,6 @@ ZX:silicon-dreams-snowball-return-to-eden-worm-in-paradise	Silicon Dreams: Snowb
 ZX:silicon-dreams-worm-in-paradise	Silicon Dreams: The Worm in Paradise
 ZX:silicon-dreams-trilogiya	Silicon Dreams: Trilogiya
 ZX:silk-dust	Silk Dust
-ZX:silk-worm	Silk Worm
 ZX:silkworm	Silkworm
 ZX:silo-raid	Silo Raid
 ZX:silver-gun	Silver Gun
@@ -11504,7 +11163,6 @@ ZX:silverwolf	Silverwolf
 ZX:silverwolf-quest-for-sword	Silverwolf: Quest for the Sword
 ZX:silverwolf-sacred-mountain	Silverwolf: the Sacred Mountain
 ZX:silvestrovska-pecka	Silvestrovska pecka
-ZX:sim-city	Sim City
 ZX:sim-city-text-adventure	Sim City: The Text Adventure
 ZX:simcity	SimCity
 ZX:simeon	Simeon
@@ -11607,9 +11265,9 @@ ZX:ski-run	Ski Run
 ZX:ski-star-2000	Ski Star 2000
 ZX:skiing	Skiing
 ZX:skinhead	Skinhead
-ZX:skint-willy-v0-7	Skint Willy v0.7
+ZX:skint-willy-v0-7	Skint Willy
 ZX:skippys-jump	Skippy's Jump
-ZX:skirmish-v1-3	Skirmish v1.3
+ZX:skirmish-v1-3	Skirmish
 ZX:skittles	Skittles
 ZX:skladacka	Skladacka
 ZX:skladacka-1	Skladacka 1
@@ -11622,7 +11280,6 @@ ZX:skrambly	Skrambly
 ZX:skuldugery	Skuldugery
 ZX:skull	Skull
 ZX:skull-and-crossbones	Skull & Crossbones
-ZX:skull-v2	Skull v2
 ZX:skulls-of-pyramid	Skulls of the Pyramid
 ZX:skurff	Skurff
 ZX:sky-diver	Sky Diver
@@ -11647,7 +11304,6 @@ ZX:slap-dab	Slap Dab
 ZX:slap-fight	Slap Fight
 ZX:slap-me-forum-troll	Slap Me Forum Troll
 ZX:slave-maker	Slave Maker
-ZX:slave-maker-v1-03	Slave Maker v1.03
 ZX:sleepin-again	Sleepin' Again
 ZX:sleepwalker	Sleepwalker
 ZX:sliders	Sliders
@@ -11665,7 +11321,6 @@ ZX:slop-slap	Slop-Slap
 ZX:slot-machine	Slot-Machine
 ZX:slow-cooker-simulator	Slow Cooker Simulator
 ZX:slow-down	Slow Down
-ZX:slow-down-v1-0	Slow Down v1.0
 ZX:slowglass	Slowglass
 ZX:slubberdegullion	Slubberdegullion
 ZX:slug	Slug
@@ -11685,7 +11340,6 @@ ZX:smiler-3-travels-around-blighty	Smiler 3: Travels around Blighty
 ZX:smiler-4-grinner-on-tour	Smiler 4: Grinner on Tour
 ZX:smiler-5-scattered-runes	Smiler 5: The Scattered Runes
 ZX:smiler-in-arrowe-land	Smiler in Arrowe Land
-ZX:smiler-in-arrowe-land-v1-1	Smiler in Arrowe Land v1.1
 ZX:smilers-christmas-sack	Smiler's Christmas Sack
 ZX:smok-wawelski	Smok Wawelski
 ZX:smok-dragon	SMOK: The Dragon
@@ -11796,7 +11450,6 @@ ZX:software-star	Software Star
 ZX:soho-mission	Soho Mission
 ZX:soho-sex-quest	Soho Sex Quest
 ZX:soho-sex-quest-2-herpes-or-bust	Soho Sex Quest II: Herpes or Bust
-ZX:soko-ban	Soko-Ban
 ZX:soko-ban-line	SOKO-BAN LINE
 ZX:soko-ban-editor	Soko-Ban: Editor
 ZX:soko-ban-cosmos	SOKO-BAN+ COSMOS
@@ -11809,7 +11462,6 @@ ZX:sokoban	Sokoban
 ZX:sokoban-csp-edition	Sokoban CSP Edition
 ZX:sokoban-perfect	Sokoban Perfect
 ZX:sokoban-pro	Sokoban Pro
-ZX:sokoban-v1-0	Sokoban v1.0
 ZX:sokomath	Sokomath!
 ZX:sol-negro	Sol Negro
 ZX:sol-negro-special-edition	Sol Negro: Special Edition
@@ -11820,10 +11472,9 @@ ZX:solar-fire	Solar Fire
 ZX:solar-fire-deluxe-version	Solar Fire DeLuxe Version
 ZX:solar-invasion	Solar Invasion
 ZX:solar-ship	Solar Ship
-ZX:solargun-v1-0	SolarGun v1.0
+ZX:solargun-v1-0	SolarGun
 ZX:solaris	Solaris
 ZX:soldier-of-fortune	Soldier of Fortune
-ZX:soldier-of-fortune-v8-88	Soldier of Fortune v8.88
 ZX:soldier-of-light	Soldier of Light
 ZX:soldier-of-future	Soldier of the Future
 ZX:soldier-one	Soldier One
@@ -11891,7 +11542,6 @@ ZX:southrail	Southrail
 ZX:soviet	Soviet
 ZX:soviet-fighter-mig-29	Soviet Fighter MiG 29
 ZX:sp5	SP5
-ZX:spac-man	Spac Man
 ZX:space	Space
 ZX:space-7	Space 7
 ZX:space-ace	Space Ace
@@ -11906,8 +11556,7 @@ ZX:space-crusade	Space Crusade
 ZX:space-crystal	Space Crystal
 ZX:space-defender	Space Defender
 ZX:space-detective	Space Detective
-ZX:space-detective-2-home-run	Space Detective II- Home Run
-ZX:space-detective-2-home-run-v1-2	Space Detective II: Home Run v1.2
+ZX:space-detective-2-home-run-v1-2	Space Detective II: Home Run
 ZX:space-disposal	Space Disposal
 ZX:space-dogfight	Space Dogfight
 ZX:space-duel	Space Duel
@@ -11976,13 +11625,12 @@ ZX:space-whale	Space Whale
 ZX:space-worm	Space Worm
 ZX:space-wreck	Space Wreck
 ZX:space-zombies	Space Zombies
-ZX:space-zombies-v2	Space Zombies v2
 ZX:space-wars-3d	Space-Wars, 3D
 ZX:spaced-out	Spaced Out
 ZX:spacelord	Spacelord
 ZX:spaceman-willy	Spaceman Willy
 ZX:spacemerc-liberation	SpaceMerc Liberation
-ZX:spacemerc-prologue-v1-1	SpaceMerc Prologue v1.1
+ZX:spacemerc-prologue-v1-1	SpaceMerc Prologue
 ZX:spaceship	Spaceship
 ZX:spacestation-beta-1	Spacestation Beta 1
 ZX:spaceway	Spaceway
@@ -11996,17 +11644,12 @@ ZX:sparx	Sparx
 ZX:spatial-mission-1	Spatial Mission 1
 ZX:spatial-mission-2	Spatial Mission 2
 ZX:spawn-of-evil	Spawn of Evil
-ZX:spawn-of-evil-v1	Spawn of Evil v1
-ZX:spawn-of-evil-v2	Spawn of Evil v2
 ZX:spawn-of-evil-intro	Spawn of Evil: Intro
 ZX:spec-kong	Spec Kong
-ZX:spec-man	Spec Man
 ZX:spec-soccer-league-winners-f-cup-superquiz-striker	Spec Soccer: League Winners + F.A. Cup + SuperQuiz + Striker
 ZX:spec-soccer-mexico-86-minileague-superquiz-goalie	Spec Soccer: Mexico '86 + Minileague + SuperQuiz + Goalie
-ZX:spec-trek	Spec Trek
-ZX:spec-venture	Spec-Venture
 ZX:specball	Specball
-ZX:speccies-v1-2	Speccies, The v1.2
+ZX:speccies-v1-2	The Speccies
 ZX:speccy-bros	Speccy Bros
 ZX:speccy-cxp	Speccy CXP
 ZX:speccy-golf	Speccy Golf
@@ -12048,7 +11691,6 @@ ZX:spectranet	Spectranet
 ZX:spectrapede	Spectrapede
 ZX:spectraprobe	Spectraprobe
 ZX:spectraprobe-intro	Spectraprobe: Intro
-ZX:spectre-of-castle-coris-v2	Spectre of Castle Coris, The v2
 ZX:spectrealm	Spectrealm
 ZX:spectrechess	Spectrechess
 ZX:spectrek	Spectrek
@@ -12272,15 +11914,13 @@ ZX:spy-vs-spy-trilogy	Spy vs Spy Trilogy
 ZX:spy-vs-spy-trilogy-spy-vs-spy	Spy vs Spy Trilogy: Spy vs Spy
 ZX:spy-vs-spy-trilogy-spy-vs-spy-2-island-caper	Spy vs Spy Trilogy: Spy vs Spy II - The Island Caper
 ZX:spy-vs-spy-trilogy-spy-vs-spy-3-arctic-antics	Spy vs Spy Trilogy: Spy vs Spy III - Arctic Antics
-ZX:spy-plane	Spy-Plane
-ZX:spy-trek-adventure	Spy-Trek Adventure
 ZX:spys-demise-2	Spy's Demise II
 ZX:spych	Spych
 ZX:spynads	Spynads
 ZX:spyplane	Spyplane
 ZX:spyship-sos	Spyship SOS
 ZX:spytrek-adventure	Spytrek Adventure
-ZX:sqij-2018-v1-0	SQIJ 2018 v1.0
+ZX:sqij-2018-v1-0	SQIJ 2018
 ZX:sqij	SQIJ!
 ZX:sqijd	SQIJ'D!
 ZX:sqrz01	SQRZ01
@@ -12307,7 +11947,6 @@ ZX:stack-light-rifle-grouse-shoot-shooting-gallery	Stack Light Rifle: Grouse Sho
 ZX:stack-light-rifle-high-noon	Stack Light Rifle: High Noon
 ZX:stack-up	Stack Up
 ZX:stadhouder-van-flipflopland	Stadhouder van Flipflopland
-ZX:staff-of-power-v3	Staff of Power, The v3
 ZX:stagecoach	Stagecoach
 ZX:stagger	Stagger
 ZX:stainless-steel	Stainless Steel
@@ -12315,7 +11954,6 @@ ZX:stakeout	StakeOut!
 ZX:staketris	Staketris
 ZX:stalingrad	Stalingrad
 ZX:stalker	Stalker
-ZX:stalker-v1-02	Stalker v1.02
 ZX:stalker-mega-trainer	Stalker: Mega Trainer
 ZX:stamp-quest	Stamp Quest
 ZX:stampabout	Stampabout
@@ -12333,14 +11971,10 @@ ZX:star-crystal	Star Crystal
 ZX:star-crystal-intro	Star Crystal: Intro
 ZX:star-destroyer	Star Destroyer!
 ZX:star-dragon	Star Dragon
-ZX:star-dust	Star Dust
 ZX:star-farce	Star Farce
-ZX:star-fighter	Star Fighter
 ZX:star-firebirds	Star Firebirds
 ZX:star-flaws	Star Flaws
 ZX:star-flaws-raymond-pringles-quest-for-fabled-jar-of-pickled-cabbage	Star Flaws + Raymond Pringle's Quest for the Fabled Jar of Pickled Cabbage
-ZX:star-flaws-raymond-pringles-quest-for-fabled-jar-of-pickled-cabbage-v1	Star Flaws + Raymond Pringle's Quest for the Fabled Jar of Pickled Cabbage v1
-ZX:star-flaws-raymond-pringles-quest-for-fabled-jar-of-pickled-cabbage-v2	Star Flaws + Raymond Pringle's Quest for the Fabled Jar of Pickled Cabbage v2
 ZX:star-games-2-highway-encounter-cyberun-ballblazer	Star Games II: Highway Encounter + Cyberun + Ballblazer
 ZX:star-games-2-trailblazer-avenger-eidolon	Star Games II: Trailblazer + Avenger + The Eidolon
 ZX:star-games-one-barry-mcguigan-world-championship-boxing	Star Games One: Barry McGuigan World Championship Boxing
@@ -12365,7 +11999,6 @@ ZX:star-trade	Star Trade
 ZX:star-trader	Star Trader
 ZX:star-trader-intro	Star Trader: Intro
 ZX:star-traders-luck	Star Trader's Luck
-ZX:star-trek	Star Trek
 ZX:star-trek-2	Star Trek 2
 ZX:star-trek-3000	Star Trek 3000
 ZX:star-trek-3050	Star Trek 3050
@@ -12376,10 +12009,8 @@ ZX:star-trek-next-generation	Star Trek: The Next Generation
 ZX:star-trip	Star Trip
 ZX:star-warrior	Star Warrior
 ZX:star-warriors	Star Warriors
-ZX:star-wars	Star Wars
 ZX:star-wars-droids	Star Wars Droids
 ZX:star-wars-droids-adventures-of-r2-d2-and-c-3po	Star Wars Droids: The Adventures of R2-D2 and C-3PO
-ZX:star-wars-v1	Star Wars v1
 ZX:star-wars-3d	Star Wars, 3D
 ZX:star-wars-return-of-jedi	Star Wars: Return of the Jedi
 ZX:star-wars-return-of-jedi-death-star-battle	Star Wars: Return of the Jedi - Death Star Battle
@@ -12411,9 +12042,6 @@ ZX:stargazer-prologue-an-adventure-in-outfitting-zxzvm	Stargazer: Prologue - An 
 ZX:starglider	StarGlider
 ZX:starglider-2	Starglider 2
 ZX:starglider-2-egrons-strike-back	Starglider 2: The Egrons Strike Back
-ZX:starglider-v1	Starglider v1
-ZX:starglider-v2	Starglider v2
-ZX:starglider-v3	Starglider v3
 ZX:starion	Starion
 ZX:starlife	Starlife
 ZX:starlike	Starlike
@@ -12465,7 +12093,6 @@ ZX:steeplejack	Steeplejack
 ZX:steg	Steg
 ZX:steg-slug	Steg the Slug
 ZX:stek	Stek
-ZX:stek-v1-1	Stek v1.1
 ZX:stela	Stela
 ZX:stela-2	Stela II
 ZX:stelar	Stelar
@@ -12486,7 +12113,7 @@ ZX:steroids-sports-diving-splash	Steroids Sports Diving: Splash
 ZX:steve-davis-snooker	Steve Davis Snooker
 ZX:steve-silver-adventure-1	Steve Silver Adventure 1
 ZX:steve-silver-adventure-2	Steve Silver Adventure 2
-ZX:stevie-dotman-v2-0	Stevie Dotman v2.0
+ZX:stevie-dotman-v2-0	Stevie Dotman
 ZX:stickman	Stickman
 ZX:stickman-olympic-challenge-up-to-100-secs-hurdle	Stickman Olympic Challenge: Up to 100 Secs Hurdle
 ZX:stickman-olympics	Stickman Olympics
@@ -12534,7 +12161,6 @@ ZX:stranded-2-5	Stranded 2.5
 ZX:strange-exhibits	Strange Exhibits
 ZX:strange-kitchen	Strange Kitchen
 ZX:strange-kitchen-beta	Strange Kitchen: Beta
-ZX:strange-loop	Strange Loop
 ZX:strange-odyssey	Strange Odyssey
 ZX:strange-submarine	Strange Submarine
 ZX:strange-tale	Strange Tale
@@ -12641,14 +12267,11 @@ ZX:subterranean-stryker	Subterranean Stryker
 ZX:subway	Subway
 ZX:subway-adventure	Subway Adventure
 ZX:subway-vigilante	Subway Vigilante
-ZX:success-or-failure-v2-0	Success or Failure v2.0
+ZX:success-or-failure-v2-0	Success or Failure
 ZX:sudoko	Sudoko
 ZX:sudoku	Sudoku
-ZX:sudoku-challenge-v3	Sudoku Challenge, The v3
-ZX:sudoku-challenge-v7	Sudoku Challenge, The v7
 ZX:sudoku-challenge-v7-ai-escargot	Sudoku Challenge, The v7: AI Escargot
 ZX:sudoku-helper	Sudoku Helper
-ZX:sudoku-v0-577	Sudoku v0.577
 ZX:suffrage	Suffrage
 ZX:sugarino	Sugarino
 ZX:suicide-bomber	Suicide Bomber
@@ -12760,7 +12383,6 @@ ZX:super-spy	Super Spy
 ZX:super-star-trek	Super Star Trek
 ZX:super-stock-car	Super Stock Car
 ZX:super-story	Super Story
-ZX:super-stunt-man	Super Stunt Man
 ZX:super-stuntman	Super Stuntman
 ZX:super-sudoku-solver	Super Sudoku Solver
 ZX:super-tank-simulator	Super Tank Simulator
@@ -12781,11 +12403,7 @@ ZX:superball	Superball
 ZX:superbike-trans-am	Superbike Trans-Am
 ZX:superchess	Superchess
 ZX:superchess-3	Superchess 3
-ZX:superchess-3-v3-0	Superchess 3 v3.0
-ZX:superchess-3-v3-1	Superchess 3 v3.1
-ZX:superchess-3-v3-5	Superchess 3 v3.5
 ZX:superchess-2	Superchess II
-ZX:superchess-2-v2-1	Superchess II v2.1
 ZX:supercom	SuperCom
 ZX:supercomecocos-ghosts-revenge	Supercomecocos: Ghost's Revenge
 ZX:superdeflex	Superdeflex
@@ -12849,7 +12467,7 @@ ZX:swiss-navy	Swiss Navy
 ZX:switchblade	Switchblade
 ZX:switchboard	Switchboard
 ZX:swiv	SWIV
-ZX:swopper-v1-01	Swopper v1.01
+ZX:swopper-v1-01	Swopper
 ZX:sword-and-shield	Sword and Shield
 ZX:sword-and-fate	Sword and the Fate
 ZX:sword-of-samurai	Sword of the Samurai
@@ -12990,7 +12608,6 @@ ZX:tachyon-command	Tachyon Command
 ZX:taffy-turner	Taffy Turner
 ZX:tah-konom	Tah konom
 ZX:tai-chi-tortoise	Tai Chi Tortoise
-ZX:tai-pan	Tai-Pan
 ZX:taina-egypetskyh-pyramid	Taina Egypetskyh Pyramid
 ZX:tainstvennyj-ostrov	Tainstvennyj Ostrov
 ZX:taipam	Taipam
@@ -13038,7 +12655,6 @@ ZX:tank-duel-3d	Tank Duel, 3D
 ZX:tank-trax	Tank Trax
 ZX:tank-trax-bullseye	Tank Trax + Bullseye
 ZX:tank-war	Tank War
-ZX:tank-war-v1-01	Tank War v1.01
 ZX:tank-1990	TANK-1990
 ZX:tanker	Tanker
 ZX:tankerl	Tankerl
@@ -13357,7 +12973,6 @@ ZX:classic-adventure-into-magical-colossal-cave	The Classic Adventure into the M
 ZX:claws-of-despair	The Claws of Despair!
 ZX:clone-ranger	The Clone Ranger
 ZX:code	The Code
-ZX:code-book-caper	The Code Book Caper
 ZX:code-machine	The Code Machine
 ZX:code-machine-editor-assembler	The Code Machine: Editor-Assembler
 ZX:colditz-story	The Colditz Story
@@ -13403,7 +13018,6 @@ ZX:cursed-trail	The Cursed Trail
 ZX:custard-kid	The Custard Kid
 ZX:cycles	The Cycles
 ZX:cycles-international-grand-prix-racing	The Cycles: International Grand Prix Racing
-ZX:dam-busters	The Dam Busters
 ZX:damned-castle	The Damned Castle
 ZX:damned-forest	The Damned Forest
 ZX:dark	The Dark
@@ -13598,7 +13212,6 @@ ZX:hair-raising-adventures-of-mr-hair	The Hair-Raising Adventures of Mr. Hair
 ZX:half-ashes	The Half Ashes
 ZX:halls-of-doom	The Halls of Doom
 ZX:hammer-of-grimmold	The Hammer of Grimmold
-ZX:hangman	The Hangman
 ZX:hanna-barbera-cartoon-character-collection	The Hanna-Barbera Cartoon Character Collection
 ZX:hanna-barbera-cartoon-character-collection-hong-kong-phooey	The Hanna-Barbera Cartoon Character Collection: Hong Kong Phooey
 ZX:hanna-barbera-cartoon-character-collection-ruff-and-reddy-in-space-adventure	The Hanna-Barbera Cartoon Character Collection: Ruff and Reddy in The Space Adventure
@@ -13829,7 +13442,6 @@ ZX:nest-of-bastards	The Nest of Bastards
 ZX:nether-poppleton-treasure-hunt	The Nether Poppleton Treasure Hunt
 ZX:neverending-story	The NeverEnding Story
 ZX:neverending-story-2	The Neverending Story II
-ZX:new-zealand-story	The New Zealand Story
 ZX:newzealand-story	The NewZealand Story
 ZX:next-hacker	The Next Hacker
 ZX:night-of-vampire-bunnies-zxzvm	The Night of the Vampire Bunnies: ZxZvm
@@ -13856,7 +13468,6 @@ ZX:order-of-sleeping-dragon	The Order of Sleeping Dragon
 ZX:orstalon	The Orstalon
 ZX:owl	The Owl
 ZX:pac-man-trail	The Pac-Man Trail
-ZX:pacman	The Pacman
 ZX:paintcraze-battle-of-broken-bridge-icarus-igginbotham	The Paintcraze! + Battle of Broken Bridge + Icarus Igginbotham
 ZX:paradise-connection	The Paradise Connection
 ZX:paranoia-complex	The Paranoia Complex
@@ -14138,7 +13749,6 @@ ZX:violator-of-voodoo	The Violator of Voodoo
 ZX:virus	The Virus
 ZX:vital-message	The Vital Message
 ZX:void-bringer-backrooms-level-711	The Void Bringer: The Backrooms - Level 711
-ZX:war	The War
 ZX:war-game	The War Game
 ZX:war-of-shires	The War of the Shires
 ZX:war-of-worlds	The War of the Worlds
@@ -14300,9 +13910,7 @@ ZX:thundert	ThunderT
 ZX:thunderturds	Thunderturds
 ZX:thunderturds-2	Thunderturds 2
 ZX:tiburon	Tiburon
-ZX:tic-tac	Tic Tac
 ZX:tic-tac-zac	Tic Tac Zac
-ZX:tic-tac-toe	Tic-Tac-Toe
 ZX:tictac	TICTAC
 ZX:tictactoe	TicTacToe
 ZX:tiddly-drinks	Tiddly Drinks
@@ -14317,7 +13925,6 @@ ZX:tiktaktyka	Tiktaktyka
 ZX:tile-crazy	Tile Crazy
 ZX:tiler	Tiler
 ZX:tiles	Tiles
-ZX:tiles-v2	Tiles v2
 ZX:tiless	Tiless
 ZX:tili-toli	Tili-Toli
 ZX:tilt	Tilt
@@ -14334,26 +13941,20 @@ ZX:time-and-motion-spectacle-1-2112-ad	Time and Motion: Spectacle 1 + 2112 AD
 ZX:time-flies	Time Flies
 ZX:time-flight	Time Flight
 ZX:time-for-action	Time for Action
-ZX:time-hole-v1-1	Time Hole, The v1.1
 ZX:time-killer-1-claustrophobia-zxzvm	Time Killer 1: Claustrophobia - ZxZvm
 ZX:time-out	Time Out
 ZX:time-pacman	Time Pacman
 ZX:time-port-1	Time Port 1
-ZX:time-quest	Time Quest
 ZX:time-sanctuary	Time Sanctuary
 ZX:time-scanner	Time Scanner
 ZX:time-switch	Time Switch
-ZX:time-switch-v2	Time Switch v2
-ZX:time-switch-v3	Time Switch v3
 ZX:time-tunnels	Time Tunnels
 ZX:time-warrior	Time Warrior
-ZX:time-warrior-v2	Time Warrior v2
 ZX:time-warrior-intro-1	Time Warrior: Intro 1
 ZX:time-warrior-intro-2	Time Warrior: Intro 2
 ZX:time-warrior-landscape	Time Warrior: Landscape
 ZX:time-watch	Time Watch
 ZX:time-wreck	Time Wreck
-ZX:time-zone	Time Zone
 ZX:time-gate	Time-Gate
 ZX:time-line	Time-Line
 ZX:timebomb	Timebomb
@@ -14394,7 +13995,7 @@ ZX:tixo	Tixo
 ZX:tixo-nim-2	Tixo + Nim II
 ZX:tizmatrix	Tizmatrix
 ZX:tizpan-lord-of-jungle	Tizpan, Lord of the Jungle
-ZX:tizzy-v2-00	Tizzy v2.00
+ZX:tizzy-v2-00	Tizzy
 ZX:tjs-cavern-capers	TJ's Cavern Capers
 ZX:tmlarg	TMLARG
 ZX:tmp	Tmp
@@ -14416,7 +14017,6 @@ ZX:to-center-of-earth	To the Center of Earth
 ZX:to-manor-bourne	To the Manor Bourne
 ZX:to-manor-bourne-intro	To the Manor Bourne: Intro
 ZX:to-top	To the Top!
-ZX:toad-runner	Toad Runner
 ZX:toader	Toader
 ZX:toadrunner	Toadrunner
 ZX:toads-travels	Toads Travels
@@ -14452,7 +14052,7 @@ ZX:tongue-tied-up-in-dungeon	Tongue Tied-up in the Dungeon
 ZX:toobin	Toobin'
 ZX:toofy-in-fan-land	Toofy in Fan Land
 ZX:toofys-nutty-nightmare	Toofy's Nutty Nightmare
-ZX:toofys-winter-nuts-v1-2	Toofy's Winter Nuts v1.2
+ZX:toofys-winter-nuts-v1-2	Toofy's Winter Nuts
 ZX:toolman	Toolman
 ZX:toolman-2-il-ritorno-di-alfredo	Toolman 2: Il Ritorno di Alfredo
 ZX:toot-n-come-in	Toot 'n' Come in
@@ -14534,7 +14134,7 @@ ZX:tournament-snooker	Tournament Snooker
 ZX:tournament-tennis	Tournament Tennis
 ZX:tournament-tennis-mens-and-ladies	Tournament Tennis: Mens & Ladies
 ZX:towdie	Towdie
-ZX:tower-of-barad-v1	Tower of Barad v1
+ZX:tower-of-barad-v1	Tower of Barad
 ZX:tower-of-despair	Tower of Despair
 ZX:tower-of-evil	Tower of Evil
 ZX:tower-of-hanoi	Tower of Hanoi
@@ -14553,7 +14153,6 @@ ZX:tracers	Tracers
 ZX:track	Track
 ZX:track-and-field	Track and Field
 ZX:track-home-remake	Track Home Remake
-ZX:track-suit-manager	Track Suit Manager
 ZX:track-trap	Track Trap
 ZX:trackbasher	Trackbasher
 ZX:tracksuit-manager	Tracksuit Manager
@@ -14563,7 +14162,6 @@ ZX:trader	Trader
 ZX:trader-2	Trader 2
 ZX:trafalgar	Trafalgar
 ZX:traffic-control	Traffic Control
-ZX:traga-perras	Traga-Perras
 ZX:tragaperras	Tragaperras
 ZX:trail	Trail
 ZX:trailblazer	Trailblazer
@@ -14583,7 +14181,6 @@ ZX:trans-express	Trans-Express
 ZX:trans-express-85	Trans-Express 85
 ZX:trans-express-85-2	Trans-Express 85.2
 ZX:trans-express-85-2-tape-to-cartridge-cartridge-to-cartridge	Trans-Express 85.2: Tape to Cartridge + Cartridge to Cartridge
-ZX:trans-express-v85-2	Trans-Express v85.2
 ZX:trans-express-supertrans	Trans-Express: Supertrans
 ZX:transfer	Transfer
 ZX:transmat	Transmat
@@ -14606,12 +14203,9 @@ ZX:tras-la-venta-del-cuadro	Tras la Venta del Cuadro
 ZX:trashman	Trashman
 ZX:trashman-crisis-time	Trashman: Crisis Time
 ZX:traskskatten	Traskskatten
-ZX:traskskatten-v2	Traskskatten v2
-ZX:traskskatten-v3	Traskskatten v3
 ZX:travel-through-time-vol-1-northern-lights	Travel Through Time Vol.1: Northern Lights
 ZX:travel-with-pac-man	Travel With Pac-Man
 ZX:travel-with-trashman	Travel with Trashman
-ZX:traveller-v3	Traveller, The v3
 ZX:travellers-tales	Traveller's Tales
 ZX:travellers-tales-aztec-assault-celtic-carnage	Traveller's Tales: Aztec Assault + Celtic Carnage
 ZX:travellers-tales-phoenix-violator-of-voodoo	Traveller's Tales: Phoenix + The Violator of Voodoo
@@ -14628,7 +14222,6 @@ ZX:treasure-island	Treasure Island
 ZX:treasure-island-dizzy	Treasure Island Dizzy
 ZX:treasure-island-dizzy-classic-edition-2023	Treasure Island Dizzy: Classic Edition 2023
 ZX:treasure-island-dizzy-extended-edition-2023	Treasure Island Dizzy: Extended Edition 2023
-ZX:treasure-of-lumos-v2	Treasure of Lumos, The v2
 ZX:treasure-of-meathos	Treasure of Meathos
 ZX:treasure-trail	Treasure Trail
 ZX:treasure-trove	Treasure Trove
@@ -14702,7 +14295,7 @@ ZX:trondheim-bors	Trondheim Bors
 ZX:tronix	Tronix
 ZX:tronn	Tronn
 ZX:troon	Troon
-ZX:trooper-point-5-v1-2	Trooper -Point 5 v1.2
+ZX:trooper-point-5-v1-2	Trooper -Point 5
 ZX:trotter	Trotter
 ZX:trouble-at-bridgeton	Trouble at Bridgeton
 ZX:trouble-brewin	Trouble Brewin'
@@ -14736,7 +14329,6 @@ ZX:tumler	Tumler
 ZX:tumulo-do-dracula-o	Tumulo do Dracula, O
 ZX:tumult-phase-i	Tumult: Phase I
 ZX:tundra	Tundra
-ZX:tundra-v2	Tundra v2
 ZX:tunel-3d	Tunel 3D
 ZX:tuneles-marcianos	Tuneles Marcianos
 ZX:tuneller-raider-2079	Tuneller Raider 2079
@@ -14760,7 +14352,6 @@ ZX:turbo-jet-set-willy	Turbo Jet Set Willy
 ZX:turbo-kart-racer	Turbo Kart Racer
 ZX:turbo-manic-miner	Turbo Manic Miner
 ZX:turbo-nova	Turbo Nova
-ZX:turbo-out-run	Turbo Out Run
 ZX:turbo-outrun	Turbo OutRun
 ZX:turbo-racers	Turbo Racers
 ZX:turbo-rubber-ducky-shootout	Turbo Rubber Ducky Shootout
@@ -14828,8 +14419,7 @@ ZX:twilight-zone	Twilight Zone
 ZX:twilight-krajina-tienov	Twilight: Krajina Tienov
 ZX:twin-cops	Twin Cops
 ZX:twin-kingdom-valley	Twin Kingdom Valley
-ZX:twin-turbo-v8	Twin Turbo V8
-ZX:twin-world	Twin World
+ZX:twin-turbo-v8	Twin Turbo
 ZX:twinlight	TWINLIGHT
 ZX:twintris	Twintris
 ZX:twinworld	Twinworld
@@ -14856,7 +14446,6 @@ ZX:u-boat	U-Boat
 ZX:u-boat-hunt	U-Boat Hunt
 ZX:u-boot-hunt	U-Boot Hunt
 ZX:u-jager	U-Jager
-ZX:u-f-o	U.F.O.
 ZX:u-k-motor	U.K. Motor
 ZX:u-k-motor-2	U.K. Motor 2
 ZX:u-n-squadron	U.N. Squadron
@@ -14868,7 +14457,6 @@ ZX:udg-strip-snap	UDG-Strip Snap!
 ZX:udg-tris	UDG-Tris
 ZX:ufo	Ufo
 ZX:ufo-2-devils-of-abyss	UFO 2: Devils of Abyss
-ZX:ufo-2-devils-of-abyss-v2-10	UFO 2: Devils of Abyss v2.10
 ZX:ufo-invaders	UFO Invaders
 ZX:ufo-adventure	UFO-Adventure
 ZX:ufo-flag-unknown	UFO: Flag Unknown
@@ -14895,7 +14483,7 @@ ZX:ultimate-first-communion-simulator	Ultimate First Communion Simulator
 ZX:ultimate-horse-racing-simulator	Ultimate Horse Racing Simulator
 ZX:ultimate-irc	Ultimate IRC
 ZX:ultimate-jetpack-simulator-2008	Ultimate Jetpack Simulator 2008
-ZX:ultimate-language-translator-v12-360	Ultimate Language Translator v12.360
+ZX:ultimate-language-translator-v12-360	Ultimate Language Translator
 ZX:ultimate-manic-miner	Ultimate Manic Miner
 ZX:ultimate-mortal-kombat-3	Ultimate Mortal Kombat 3
 ZX:ultimate-play-game-collected-works	Ultimate Play The Game: The Collected Works
@@ -14916,7 +14504,6 @@ ZX:unbeatable	Unbeatable
 ZX:unbelievable-ultimate	Unbelievable! Ultimate
 ZX:unbelievable-ultimate-2	Unbelievable! Ultimate 2
 ZX:uncle-jack	Uncle Jack
-ZX:under-ground	Under Ground
 ZX:under-pressure	Under Pressure
 ZX:underground	Underground
 ZX:underground-adventure	Underground Adventure
@@ -15015,7 +14602,6 @@ ZX:vaticania	VATICANIA
 ZX:vatman	Vatman
 ZX:vec-man	Vec-Man
 ZX:vectis-bus-operations-simulation	Vectis: Bus Operations Simulation
-ZX:vector-ball	Vector Ball
 ZX:vectorball	Vectorball
 ZX:vectron	Vectron
 ZX:vedrunien	Vedrunien
@@ -15026,7 +14612,6 @@ ZX:vegetable-crash	Vegetable Crash
 ZX:vegsosok	VEGSOSOK
 ZX:velcro-head	Velcro Head
 ZX:velika-akcija	Velika Akcija
-ZX:velika-akcija-v1-1	Velika Akcija v1.1
 ZX:velikoye-korolevstvo-eyforiya	Velikoye Korolevstvo Eyforiya
 ZX:velky-kseft	Velky kseft
 ZX:velky-nim	Velky NIM
@@ -15050,7 +14635,6 @@ ZX:vesele-velikonoce	Vesele velikonoce
 ZX:vesoljska-zgodba	Vesoljska Zgodba
 ZX:vetrelec	Vetrelec
 ZX:vexed	Vexed
-ZX:vexed-v1-15	Vexed v1.15
 ZX:viaje-al-centro-de-la-napia	Viaje al Centro de la Napia
 ZX:viaje-al-centro-de-la-tierra	Viaje al Centro de la Tierra
 ZX:viaje-al-centro-de-la-tierra-version-extendida	Viaje al Centro de la Tierra: Version Extendida
@@ -15121,7 +14705,6 @@ ZX:voidrunner	Voidrunner
 ZX:vojna-tankov	Vojna Tankov
 ZX:vojny-embera	Vojny Embera
 ZX:volcanic-dungeon	Volcanic Dungeon
-ZX:volcanic-dungeon-v2	Volcanic Dungeon v2
 ZX:volcanic-planet	Volcanic Planet
 ZX:volcano	Volcano
 ZX:volcano-action-game	Volcano: The Action Game
@@ -15131,7 +14714,7 @@ ZX:voodoo-castle	Voodoo Castle
 ZX:vortex-3d	Vortex, 3D
 ZX:voyage-into-unknown	Voyage into the Unknown
 ZX:voyager	Voyager
-ZX:vradarks-sphere-v1-2	Vradark's Sphere v1.2
+ZX:vradarks-sphere-v1-2	Vradark's Sphere
 ZX:vrah	Vrah
 ZX:vrhcaby	Vrhcaby
 ZX:vruce-letovanje	Vruce Letovanje
@@ -15144,7 +14727,6 @@ ZX:vulcan-missionpack	Vulcan Missionpack
 ZX:vurro-olimpic	Vurro Olimpic
 ZX:vzpoura-robotu	Vzpoura robotu
 ZX:w-worm-versus-mutant-s	W the Worm Versus the Mutant s
-ZX:w-h-b	W-H-B
 ZX:w-r	W.A.R.
 ZX:w-r-alpha	W.A.R.: Alpha
 ZX:w-r-beta	W.A.R.: Beta
@@ -15156,7 +14738,6 @@ ZX:waggle-o-mania	Waggle-O-Mania!
 ZX:waiting-for-sproggo	Waiting for Sproggo
 ZX:waiting-for-light	Waiting For The Light
 ZX:wake-me-up	Wake Me Up!
-ZX:wake-me-up-v2-0	Wake Me Up! v2.0
 ZX:wakemare	Wakemare
 ZX:waku-waku-move	Waku Waku Move!
 ZX:walk	Walk
@@ -15249,9 +14830,6 @@ ZX:wende	Wende
 ZX:wender-bender	Wender Bender
 ZX:wender-bender-question-tape-2	Wender Bender: Question Tape 2
 ZX:wentworth-west-and-east	Wentworth West and East
-ZX:wentworth-west-and-east-v1	Wentworth West and East v1
-ZX:wentworth-west-and-east-v2	Wentworth West and East v2
-ZX:wentworth-west-and-east-v3	Wentworth West and East v3
 ZX:werewolf-simulator	Werewolf Simulator
 ZX:werewolves-of-london	Werewolves of London
 ZX:wergild	Wergild
@@ -15277,7 +14855,6 @@ ZX:wheelin-wallie	Wheelin' Wallie
 ZX:wheels-of-fire	Wheels of Fire
 ZX:wheely	Wheely
 ZX:when-alex-didnt-do-it	When Alex Didn't Do It
-ZX:when-alex-didnt-do-it-v1-4	When Alex Didn't Do It v1.4
 ZX:where-did-moon-go	Where Did The Moon Go
 ZX:where-evil-dwells-zxzvm	Where Evil Dwells: ZxZvm
 ZX:where-in-world-is-edward-snowden	Where In The World Is Edward Snowden
@@ -15313,7 +14890,6 @@ ZX:wibstars	Wibstars
 ZX:wiking	Wiking
 ZX:wild-2	Wild 2
 ZX:wild-streets	Wild Streets
-ZX:wild-water	Wild Water
 ZX:wild-west	Wild West
 ZX:wild-west-head-hunter	Wild West Head Hunter
 ZX:wild-west-hero	Wild West Hero
@@ -15333,7 +14909,6 @@ ZX:willy-in-islands-of-mystery-part-1-exploration	Willy in the Islands of Myster
 ZX:willy-in-mirrorverse	WiLLY iN ThE MiRRoRVeRSE
 ZX:willy-meets-beatles	Willy Meets the Beatles
 ZX:willy-on-transatlantic-cruise	Willy on a Transatlantic Cruise
-ZX:willy-on-transatlantic-cruise-v2	Willy on a Transatlantic Cruise v2
 ZX:willy-takes-trip	Willy Takes a Trip
 ZX:willy-hacker	Willy the Hacker!
 ZX:willy-rogue	Willy the Rogue
@@ -15344,8 +14919,6 @@ ZX:willy-tournament-2004	Willy Tournament 2004
 ZX:willy-vs-vampire-lord	Willy vs. the Vampire Lord
 ZX:willy-man-who-sold-world	Willy: The Man Who Sold the World!
 ZX:willys-afterlife	Willy's Afterlife
-ZX:willys-afterlife-v2-0	Willy's Afterlife v2.0
-ZX:willys-afterlife-v2-00	Willy's Afterlife v2.00
 ZX:willys-hoard	Willy's Hoard
 ZX:willys-holiday	Willy's Holiday
 ZX:willys-new-hat	Willy's New Hat
@@ -15369,7 +14942,6 @@ ZX:winter-sports	Winter Sports
 ZX:winter-term	Winter Term
 ZX:winter-wonder-worm	Winter Wonder Worm
 ZX:winter-wonderland	Winter Wonderland
-ZX:wipe-out	Wipe-Out
 ZX:wipeout	Wipeout
 ZX:wishbringer-interactive-fantasy-for-beginners-zxzvm	Wishbringer: Interactive Fantasy for Beginners - ZxZvm
 ZX:witch-hunt	Witch Hunt
@@ -15413,7 +14985,6 @@ ZX:wombat-combat	Wombat Combat
 ZX:wonder-boy	Wonder Boy
 ZX:wonder-boy-in-monster-land	Wonder Boy in Monster Land
 ZX:wonderful-dizzy	Wonderful Dizzy
-ZX:wonderful-dizzy-v1-5	Wonderful Dizzy v1.5
 ZX:wonderland-dizzy	Wonderland Dizzy
 ZX:wonderworm	Wonderworm
 ZX:wonkey-chateau	Wonkey Chateau
@@ -15481,7 +15052,6 @@ ZX:worldbar-arcade-version	WorldBar: Arcade version
 ZX:worldbar-boardgame-version	WorldBar: Boardgame version
 ZX:worm-2	Worm 2
 ZX:worm-attack	Worm Attack
-ZX:worm-in-paradise-v2	Worm in Paradise, The v2
 ZX:worms	Worms
 ZX:wormywave	Wormywave
 ZX:worse-things-happen-at-sea	Worse Things Happen at Sea
@@ -15504,7 +15074,6 @@ ZX:wwi-fighting-heroes-and-some-crazy-aliens	WWI Fighting Heroes and Some Crazy 
 ZX:wycheweald	Wycheweald
 ZX:wychwood	Wychwood
 ZX:10-and-0	X and 0
-ZX:10-and-o	X and O
 ZX:10-files-1-2	X-Files 1, 2
 ZX:10-mas-ludo	X-Mas Ludo
 ZX:10-maze	X-Maze
@@ -15532,7 +15101,7 @@ ZX:xarq-zimmerman-trenches	Xarq: The Zimmerman Trenches
 ZX:xavior	Xavior
 ZX:xcel	Xcel
 ZX:xecutor	Xecutor
-ZX:xelda-1-quest-for-golden-apple-v1-03	Xelda 1: Quest for the Golden Apple v1.03
+ZX:xelda-1-quest-for-golden-apple-v1-03	Xelda 1: Quest for the Golden Apple
 ZX:xen	Xen
 ZX:xeno	Xeno
 ZX:xeno-2	Xeno II
@@ -15571,7 +15140,6 @@ ZX:yahtzx	YAHTZX
 ZX:yakzee	Yakzee
 ZX:yambs	Yambs
 ZX:yanga	Yanga+
-ZX:yankee-in-iraq-v1-0-1	Yankee in Iraq, A v1.0.1
 ZX:yankee-chickamauga	Yankee: Chickamauga
 ZX:yankee-gettysburg	Yankee: Gettysburg
 ZX:yard-story	Yard Story
@@ -15666,8 +15234,7 @@ ZX:zero-breakout	Zero Breakout
 ZX:zero-invaders	Zero Invaders
 ZX:zhak	Zhak
 ZX:zhizn	Zhizn'
-ZX:zhl-v3	ZHL v3
-ZX:zhl-v5	ZHL v5
+ZX:zhl-v3	ZHL
 ZX:zhor-el-rey-de-oidumas	Zhor, el Rey de Oidumas
 ZX:zhunder-vlade	Zhunder Vlade
 ZX:zia-rosa	Zia Rosa
@@ -15704,7 +15271,6 @@ ZX:zombie	Zombie
 ZX:zombie-calavera-prologue	Zombie Calavera Prologue
 ZX:zombie-dice	Zombie Dice
 ZX:zombie-zombie	Zombie Zombie
-ZX:zombie-zombie-v2	Zombie Zombie v2
 ZX:zombies	Zombies!
 ZX:zombo	Zombo
 ZX:zona-0	Zona 0
@@ -15712,7 +15278,7 @@ ZX:zona-de-combate	Zona de Combate
 ZX:zone-last-stalker	Zone the Last Stalker
 ZX:zone-trooper	Zone Trooper
 ZX:zone-m	Zone-M
-ZX:zoomblox-v3	ZoomBlox v3
+ZX:zoomblox-v3	ZoomBlox
 ZX:zooming-secretary	Zooming Secretary
 ZX:zoot	Zoot
 ZX:zoot-and-mankins	Zoot and the Mankins
@@ -15741,8 +15307,6 @@ ZX:zx-armor-alley	ZX Armor Alley
 ZX:zx-basic-game-compo-2014	ZX Basic Game Compo 2014
 ZX:zx-basic-wars	ZX BASIC Wars
 ZX:zx-berserk	ZX Berserk
-ZX:zx-berserk-v1	ZX Berserk v1
-ZX:zx-berserk-v2	ZX Berserk v2
 ZX:zx-bomber	ZX Bomber
 ZX:zx-brainfuck-interpreter	ZX Brainfuck Interpreter
 ZX:zx-breakout	ZX Breakout

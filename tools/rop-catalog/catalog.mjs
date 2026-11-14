@@ -60,7 +60,33 @@ function splitTitle(t) {
 const fnv = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
 const shardOf = (id) => (fnv(id) & 0xfff).toString(16).padStart(3, "0");   // 4096 small files
 const artTitle = (a) => a.replace(/\s*\((?:\d{4} )?(?:[\w .-]+ )?(?:video )?game\)$/i, "").trim();
-const clean = (s) => String(s || "").replace(/[\t\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+const clean0 = (s) => String(s || "").replace(/[\t\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+/* tidy a title: drop "(Disc 2) (...)" and "v1.2" / "r14" version tails, and turn "Bouncer, The" into "The Bouncer" */
+function clean(s) {
+  const o = clean0(s);
+  let t = o.replace(/\s*\(Disc \d+\)(\s*\([^)]*\))*/g, "").replace(/\s+[vV]\d+(\.\d+)*[a-z]?$/, "").replace(/\s+r\d{1,3}$/, "");
+  const m = t.match(/^(.+?), (The|A|An)(?=$|\s+-\s|:\s)(.*)$/);
+  if (m) t = m[2] + " " + m[1] + m[3];
+  t = t.replace(/\s{2,}/g, " ").trim();
+  return t.length >= 2 ? t : o;
+}
+/* duplicate key: two titles on one platform with the same key are the same game written differently
+ * ("Battle City" / "BattleCity", "U.S." / "US", "VII" / "7", "(Premium Box)"). Big open stores (PC, Mac, Linux,
+ * phones) only fold case and punctuation, because spacing there often tells different indie games apart. */
+const ROMAN_DUP = { ii: "2", iii: "3", iv: "4", vi: "6", vii: "7", viii: "8", ix: "9", xi: "11", xii: "12", xiii: "13" };
+const OPEN_STORES = new Set(["PC", "Mac", "Linux", "iOS", "Android"]);
+function dupKey(pid, title) {
+  const fold = title.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+  let a = (fold.replace(/\W/g, "").length >= title.replace(/\W/g, "").length / 2 ? fold : title).toLowerCase();
+  a = a.replace(/\s*[([][^)\]]*[)\]]/g, "").replace(/&/g, " and ");
+  if (OPEN_STORES.has(pid)) {
+    a = a.replace(/['’]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  } else {
+    a = a.replace(/\+/g, " and ").replace(/,\s*the\b/g, " ").replace(/^the\s+/, "").replace(/['’.]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  }
+  a = a.split(" ").map((w) => ROMAN_DUP[w] || w).join(" ");
+  return OPEN_STORES.has(pid) ? a : a.replace(/ /g, "");
+}
 
 /* ---------------- Wikidata ---------------- */
 async function sparql(q, tries = 4) {
@@ -305,8 +331,11 @@ const index = { built: stats.built, platforms: {} };
 let total = 0, described = 0;
 for (const p of plats) {
   const entries = [...perPlat.get(p.id).values()].sort((a, b) => a.title.localeCompare(b.title));
-  const used = new Set(), lines = [];
+  const used = new Set(), lines = [], keys = new Set();
   for (const e of entries) {
+    const dk = dupKey(p.id, clean(e.title));
+    if (dk && keys.has(dk)) continue;          // same game, written differently: keep the first
+    if (dk) keys.add(dk);
     let id = p.id + ":" + slug(e.title), n = 2;
     while (used.has(id) || (haveId.has(id))) id = p.id + ":" + slug(e.title) + "-" + n++;
     used.add(id);
