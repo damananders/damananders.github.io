@@ -281,7 +281,7 @@ export const ACCENTS = {
   maroon: "#cd4257", white: "#e9edf2", gray: "#9aa6b4", red: "#ff5a5a", orange: "#ff8c3a", gold: "#f5c542", yellow: "#ffe45c",
   green: "#46d37a", teal: "#2fd1c0", blue: "#4b9bff", purple: "#a374ff", pink: "#ff6fb5",
 };
-export const accentOf = (k) => ACCENTS[k] || ACCENTS.maroon;
+export const accentOf = (k) => ACCENTS[k] || (/^#[0-9a-f]{6}$/i.test(k || "") ? k : ACCENTS.maroon);
 
 /* ---------------- RetroAchievements: platforms it has achievement sets for ---------------- */
 export const RA_PLATFORMS = new Set(["PS1", "PS2", "PSP", "NES", "FDS", "SNES", "N64", "GC", "GB", "GBC", "GBA", "DS", "VB", "PokeMini",

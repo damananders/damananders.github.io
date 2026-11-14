@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE } from "./games.common.js?v=10";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE } from "./games.common.js?v=11";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -23,6 +23,15 @@ const BANNERS = [
 const FRAMES = [["none", "None"], ["ring", "Ring"], ["double", "Double"], ["glow", "Glow"], ["gold", "Gold"], ["neon", "Neon"],
   ["rainbow", "Rainbow"], ["pixel", "Pixel"], ["flame", "Flame"], ["ice", "Ice"], ["chip", "Chip"]];
 const NAME_FX = [["plain", "Plain"], ["glow", "Glow"], ["shine", "Shine"], ["rainbow", "Rainbow"], ["pixel", "Pixel"], ["outline", "Outline"]];
+/* exclusives: Admins (Discord Admin role) get the adm- set, the site owner gets both sets (the database checks) */
+const X_ADMIN = { banners: [["adm-crimson", "Crimson ops"], ["adm-alert", "Red alert"], ["adm-shield", "Shield wall"]],
+  frames: [["adm-shield", "Shield"], ["adm-pulse", "Pulse"]], fx: [["adm-alert", "Alert"], ["adm-stamp", "Stamped"]], page: [["adm-scan", "Scanlines"]] };
+const X_OWNER = { banners: [["own-throne", "Throne room"], ["own-cosmos", "Cosmos"], ["own-royale", "Royale"]],
+  frames: [["own-crown", "Crown"], ["own-halo", "Halo"]], fx: [["own-royal", "Royal"], ["own-holo", "Holo"]], page: [["own-embers", "Embers"], ["own-stars", "Starfall"], ["own-aurora", "Aurora"]] };
+const ALL_BANNERS = [...BANNERS, ...X_ADMIN.banners, ...X_OWNER.banners];
+const ALL_FRAMES = [...FRAMES, ...X_ADMIN.frames, ...X_OWNER.frames];
+const ALL_FX = [...NAME_FX, ...X_ADMIN.fx, ...X_OWNER.fx];
+const PAGE_FX = [["none", "None"], ...X_ADMIN.page, ...X_OWNER.page];
 const ACCENT_NAMES = { maroon: "Maroon", white: "White", gray: "Gray", red: "Red", orange: "Orange", gold: "Gold", yellow: "Yellow", green: "Green", teal: "Teal", blue: "Blue", purple: "Purple", pink: "Pink" };
 const STATUS_EMOJI = ["🎮", "🔥", "🏆", "😴", "💀", "🎧", "🍿", "🧠", "😤", "🥳", "📺", "🛠️", "🌙", "☕", "❤️", "👾"];
 const SECTIONS = [["now", "Now playing"], ["stats", "Stats"], ["links", "Gamer tags"], ["showcase", "Showcase"], ["badges", "Badges"],
@@ -96,11 +105,11 @@ function notice(title, body, ...extra) {
   root.replaceChildren(el("section", { class: "pf-card pf-notice" }, el("h2", { text: title }), body ? el("p", { text: body }) : null, ...extra));
 }
 const isHidden = (p, k) => Array.isArray(p.hidden_sections) && p.hidden_sections.includes(k);
-const bannerStyle = (b) => typeof b === "string" && b.startsWith(BANNER_OK) ? { cls: "pf-ban pf-ban--img", style: "--ban:url('" + b.replace(/'/g, "%27") + "')" } : { cls: "pf-ban pf-ban--" + (BANNERS.some(([k]) => k === b) ? b : "maroon"), style: null };
+const bannerStyle = (b) => typeof b === "string" && b.startsWith(BANNER_OK) ? { cls: "pf-ban pf-ban--img", style: "--ban:url('" + b.replace(/'/g, "%27") + "')" } : { cls: "pf-ban pf-ban--" + (ALL_BANNERS.some(([k]) => k === b) ? b : "maroon"), style: null };
 function avatarFramed(url, name, size, frame) {
-  return el("span", { class: "pf-avw pf-frame--" + (FRAMES.some(([k]) => k === frame) ? frame : "none"), style: "--s:" + size + "px" }, avatar(url, name, size, "pf-av"));
+  return el("span", { class: "pf-avw pf-frame--" + (ALL_FRAMES.some(([k]) => k === frame) ? frame : "none"), style: "--s:" + size + "px" }, avatar(url, name, size, "pf-av"));
 }
-const nameFx = (fx) => "pf-fx pf-fx--" + (NAME_FX.some(([k]) => k === fx) ? fx : "plain");
+const nameFx = (fx) => "pf-fx pf-fx--" + (ALL_FX.some(([k]) => k === fx) ? fx : "plain");
 
 /* one card section; owners see hidden sections with a note */
 function section(p, mine, key, title, ...kids) {
@@ -133,6 +142,8 @@ async function render() {
   const lv = levelOf(p);
   document.title = p.name + " — Rate-O-Pedia";
   root.style.setProperty("--acc", accentOf(p.accent));
+  document.querySelectorAll(".pf-pagefx").forEach((x) => x.remove());
+  if (p.page_fx && p.page_fx !== "none" && PAGE_FX.some(([k]) => k === p.page_fx)) document.body.append(el("div", { class: "pf-pagefx pf-pagefx--" + p.page_fx, "aria-hidden": "true" }));
 
   /* ---- hero ---- */
   const ban = bannerStyle(p.banner);
@@ -148,7 +159,8 @@ async function render() {
           pinned ? el("span", { class: "pf-pin", title: pinned[2] + ": " + pinned[3] }, pinned[1]) : null,
           p.is_owner ? ownerTag() : null, p.is_staff ? adminTag() : null,
           rank && rank <= 3 ? el("span", { class: "rop-me__medal rop-me__medal--" + ["gold", "silver", "bronze"][rank - 1], title: "Top " + rank + " voter", text: ["1st", "2nd", "3rd"][rank - 1] }) : null),
-        el("p", { class: "pf-sub" }, p.pronouns ? el("span", { class: "pf-pron", text: p.pronouns }) : null,
+        el("p", { class: "pf-sub" }, p.flair_text ? el("span", { class: "pf-flair" + (p.is_owner ? " pf-flair--own" : ""), text: p.flair_text }) : null,
+          p.pronouns ? el("span", { class: "pf-pron", text: p.pronouns }) : null,
           el("span", { class: "pf-title", text: lv.title }), el("span", { class: "pf-since", text: "Member since " + memberSince(p.member_since) })),
         status,
         p.motto ? el("p", { class: "pf-motto " + colorClass(p.motto_color), text: "“" + p.motto + "”" }) : (mine ? el("p", { class: "pf-motto pf-motto--none", text: "No motto yet." }) : null)),
@@ -392,7 +404,7 @@ function editor(p) {
     pic: prof.custom_avatar || null, color: prof.motto_color || "white",
     banner: p.banner || "maroon", accent: p.accent || "maroon", frame: p.frame || "none", fx: p.name_fx || "plain",
     emoji: p.status_emoji || "", now: p.now_playing || null, hidden: new Set(p.hidden_sections || []), wall: p.wall_open !== false,
-    pin: p.pinned_badge || "", links: Object.assign({}, p.links || {}),
+    pin: p.pinned_badge || "", links: Object.assign({}, p.links || {}), page: p.page_fx || "none",
   };
   const favs = (Array.isArray(p.favorites) ? p.favorites : []).slice(0, max);
   while (favs.length < max) favs.push(null);
@@ -415,11 +427,13 @@ function editor(p) {
       el("div", { class: "pf-pv__body" }, avatarFramed(st.pic || prof.avatar, nm, 72, st.frame),
         el("div", null,
           el("b", { class: "pf-pv__name" }, el("span", { class: nameFx(st.fx), "data-text": nm, text: nm }), st.pin ? el("span", { class: "pf-pin", text: (BADGES.find((x) => x[0] === st.pin) || [])[1] || "" }) : null),
+          flair && flair.value.trim() ? el("span", { class: "pf-flair" + (me.admin ? " pf-flair--own" : ""), text: flair.value.trim() }) : null,
           pron.value.trim() ? el("span", { class: "pf-pron", text: pron.value.trim() }) : null,
           (st.emoji || stText.value.trim()) ? el("p", { class: "pf-status" }, st.emoji ? el("span", { class: "pf-status__e", text: st.emoji }) : null, stText.value.trim()) : null,
           motto.value.trim() ? el("p", { class: "pf-motto " + colorClass(st.color), text: "“" + motto.value.trim() + "”" }) : null)));
   }
-  [name, pron, motto, stText].forEach((x) => x.addEventListener("input", paint));
+  const flair = (me.staff || me.admin) && "flair_text" in p ? el("input", { class: "gm-search pf-in", maxlength: "24", value: p.flair_text || "", placeholder: me.admin ? "e.g. Founder, Head Honcho" : "e.g. Moderator, Event Host", "aria-label": "Flair" }) : null;
+  [name, pron, motto, stText, flair].filter(Boolean).forEach((x) => x.addEventListener("input", paint));
 
   const swatchRow = (items, cur, set, cls, label, deco) => {
     const row = el("div", { class: "pf-sw " + (cls || ""), role: "radiogroup", "aria-label": label });
@@ -493,6 +507,26 @@ function editor(p) {
       return s;
     })()) : null;
 
+  /* --- Admin / owner exclusives --- */
+  const hasX = plus && "page_fx" in p && (me.staff || me.admin);
+  const xset = (k) => [...((me.staff || me.admin) ? X_ADMIN[k] : []), ...(me.admin ? X_OWNER[k] : [])];
+  const hex = me.admin ? el("input", { type: "color", class: "pf-hex", value: /^#[0-9a-f]{6}$/i.test(st.accent) ? st.accent : accentOf(st.accent), "aria-label": "Any accent colour" }) : null;
+  if (hex) hex.addEventListener("input", () => { st.accent = hex.value; paint(); });
+  const excl = hasX ? el("div", { class: "pf-tabpane pf-xpane", hidden: true },
+    el("p", { class: "pf-xhead" }, me.admin ? "👑 Owner + 🛡️ Admin exclusives" : "🛡️ Admin exclusives",
+      el("small", { text: me.admin ? "Only you can use the gold set. Admins get the red set." : "Only Admins (and the site owner) can use these." })),
+    el("label", { class: "pf-lab", text: "Flair (shows under your name)" }), flair,
+    el("label", { class: "pf-lab", text: "Exclusive banners" }),
+    swatchRow(xset("banners"), () => st.banner, (k) => { st.banner = k; banRow.querySelectorAll(".pf-sw__b").forEach((x) => x.classList.remove("is-on")); }, "pf-sw--ban", "Exclusive banner", (k) => "pf-ban pf-ban--" + k),
+    el("label", { class: "pf-lab", text: "Exclusive frames" }),
+    swatchRow(xset("frames"), () => st.frame, (k) => { st.frame = k; }, "pf-sw--txt", "Exclusive frame"),
+    el("label", { class: "pf-lab", text: "Exclusive name styles" }),
+    swatchRow(xset("fx"), () => st.fx, (k) => { st.fx = k; }, "pf-sw--txt", "Exclusive name style"),
+    el("label", { class: "pf-lab", text: "Page effect (covers your whole profile page)" }),
+    swatchRow([["none", "None"], ...xset("page")], () => st.page, (k) => { st.page = k; }, "pf-sw--txt", "Page effect"),
+    hex ? el("label", { class: "pf-lab", text: "Any accent colour" }) : null,
+    hex ? el("div", { class: "pf-picrow" }, hex, el("span", { class: "gm-note", text: "Overrides the accent swatches." })) : null) : null;
+
   /* --- About --- */
   const bio = el("textarea", { class: "gm-ta", maxlength: "600", rows: "6", placeholder: "Who you are, what you play, your hottest take…", "aria-label": "About me" });
   bio.value = p.bio || "";
@@ -554,7 +588,7 @@ function editor(p) {
     })()) : null;
 
   /* tabs */
-  const panes = [["Basics", basics], ["Look", look], ["About", about], ["Showcase", show], ["Gamer tags", tags], ["Sections", secs]].filter(([, x]) => x);
+  const panes = [["Basics", basics], ["Look", look], [me.admin ? "👑 Exclusive" : "🛡️ Exclusive", excl], ["About", about], ["Showcase", show], ["Gamer tags", tags], ["Sections", secs]].filter(([, x]) => x);
   const tabBar = el("div", { class: "pf-etabs", role: "tablist" }, ...panes.map(([label, pane], i) => el("button", { class: "pf-etab" + (i ? "" : " is-on"), type: "button", role: "tab", "aria-selected": i ? "false" : "true",
     text: label, onclick: (e) => { panes.forEach(([, x]) => { x.hidden = x !== pane; }); tabBar.querySelectorAll(".pf-etab").forEach((t) => { const on = t === e.currentTarget; t.classList.toggle("is-on", on); t.setAttribute("aria-selected", on ? "true" : "false"); }); } })));
 
@@ -566,7 +600,8 @@ function editor(p) {
       const links = {}; for (const [k] of LINKS) { const v = linkIns[k].value.trim(); if (v) links[k] = v; }
       const b = await sb.rpc("update_my_profile_extras", { p: {
         bio: bio.value, pronouns: pron.value.trim(), status_emoji: st.emoji, status_text: stText.value.trim(), now_playing: st.now ? st.now.id : "",
-        banner: st.banner, accent: st.accent, frame: st.frame, name_fx: st.fx, links, hidden_sections: [...st.hidden], wall_open: st.wall, pinned_badge: st.pin } });
+        banner: st.banner, accent: st.accent, frame: st.frame, name_fx: st.fx, links, hidden_sections: [...st.hidden], wall_open: st.wall, pinned_badge: st.pin,
+        ...(hasX ? { flair_text: flair ? flair.value.trim() : "", page_fx: st.page } : {}) } });
       if (b.error) { save.disabled = false; note.textContent = b.error.message; sfx("error"); return; }
     }
     save.disabled = false;
