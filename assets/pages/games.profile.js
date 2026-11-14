@@ -647,6 +647,16 @@ function editor(p) {
       return el("label", { class: "pf-linkedit__row" }, el("span", { text: label }), linkIns[k]);
     }))) : null;
 
+  /* --- findable in the site-wide search (round 26): off until the member turns it on --- */
+  const findC = el("input", { type: "checkbox", disabled: true });
+  let findWas = null;
+  const findBox = el("label", { class: "pf-check pf-check--wall", hidden: true }, findC,
+    el("span", null, "Let people find me in the site search ", el("small", { class: "gm-note", text: "(anyone can then look up your name and open your profile)" })));
+  sb.from("profiles").select("searchable").eq("id", me.user.id).maybeSingle().then(({ data, error }) => {
+    if (error || !data) return;            // database update 26 not run yet
+    findWas = !!data.searchable; findC.checked = findWas; findC.disabled = false; findBox.hidden = false;
+  }, () => {});
+
   /* --- Sections --- */
   const secs = plus ? el("div", { class: "pf-tabpane", hidden: true },
     el("p", { class: "gm-note", text: "Untick anything you'd rather keep off your profile." }),
@@ -659,7 +669,8 @@ function editor(p) {
       const c = el("input", { type: "checkbox", checked: st.wall });
       c.addEventListener("change", () => { st.wall = c.checked; });
       return el("label", { class: "pf-check pf-check--wall" }, c, el("span", { text: "Let other members sign my guestbook" }));
-    })()) : null;
+    })(),
+    findBox) : null;
 
   /* tabs */
   const panes = [["Basics", basics], ["Look", look], [me.admin ? "👑 Exclusive" : "🛡️ Exclusive", excl], ["About", about], ["Showcase", show], ["Gamer tags", tags], ["Sections", secs]].filter(([, x]) => x);
@@ -682,6 +693,10 @@ function editor(p) {
         const r = await sb.rpc("set_my_ra", { p_user: links.ra || "" });
         if (r.error) toast(r.error.message, "err");
       }
+    }
+    if (findWas !== null && findC.checked !== findWas) {
+      const f = await sb.rpc("set_my_searchable", { p_on: findC.checked });
+      if (f.error) toast(f.error.message, "err");
     }
     save.disabled = false;
     sfx("success"); toast("Profile saved", "ok");
