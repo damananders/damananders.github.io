@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/games.css?v=14" />
+<link rel="stylesheet" href="/assets/pages/games.css?v=15" />
 <!-- /site:head -->
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -40,7 +40,17 @@
     </div>
   </nav>
 
-  <section class="gm-auth" id="gm-auth" aria-label="Sign in"><p class="gm-auth__line">Loading…</p></section>
+  <aside class="gm-side" id="gm-side" aria-label="More on Rate-O-Pedia">
+    <section class="gm-auth" id="gm-auth" aria-label="Sign in"><p class="gm-auth__line">Loading…</p></section>
+    <section class="gm-sidecard gm-howto" aria-label="How scores work">
+      <h2 class="gm-head">How scores work</h2>
+      <p><span class="rop-sc rop-sc--v"><span class="rop-sc__i" aria-hidden="true">✔</span><span class="rop-sc__l">Verified</span></span> Discord members only.</p>
+      <p><span class="rop-sc rop-sc--o"><span class="rop-sc__i" aria-hidden="true">🌐</span><span class="rop-sc__l">Open-Vote</span></span> Everyone: members and visitors.</p>
+      <p class="gm-note">Pick a face from 0 to 5 on any game. Click it again to take your vote back.</p>
+    </section>
+    <section class="gm-week gm-sidecard" id="gm-week" aria-label="This week" hidden></section>
+    <section class="gm-voters gm-sidecard" id="gm-voters" aria-label="Leaderboard" hidden></section>
+  </aside>
   <div class="rop-tabs" id="rop-tabs" role="navigation" aria-label="Rate-O-Pedia"></div>
 
   <header class="hero" style="padding-bottom:8px">
@@ -54,15 +64,14 @@
       <input class="gm-search" id="gm-q" type="search" placeholder="Search for a game…" autocomplete="off" aria-label="Search for a game" />
       <div class="gm-tabs" id="gm-tabs" role="group" aria-label="Console"></div>
       <p class="gm-status" id="gm-status" role="status" aria-live="polite"></p>
-      <section class="gm-week" id="gm-week" aria-label="This week" hidden></section>
       <h2 class="gm-head" id="gm-head">Top rated</h2>
       <section class="gm-list" id="gm-list" aria-label="Games"></section>
       <section class="gm-add" id="gm-add" aria-label="Add a game"></section>
       <section class="gm-browse" id="gm-browse" aria-label="Browse games"></section>
-      <section class="gm-voters" id="gm-voters" aria-label="Leaderboard" hidden></section>
     </div>
     <noscript><p>This page needs JavaScript to load the games.</p></noscript>
   </main>
+
 
   <footer>
     <p>Scores are the opinions of community members. Game lists come from the open-source emulator projects, libretro-database and Wikidata; descriptions from Wikipedia. All names and trademarks belong to their respective owners.</p>
@@ -76,7 +85,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script type="module" src="/assets/pages/games.js?v=16"></script>
+<script type="module" src="/assets/pages/games.js?v=17"></script>
 <!-- /site:scripts -->
 </body>
 </html>

@@ -859,3 +859,50 @@ a.gm-console--link:hover{filter:brightness(1.25)}
 .gi-sc .gm-note{margin:2px 0 0;font-size:.75rem;grid-column:1}
 .gi-guestnote{font-size:.76rem}
 .gm-brow .rop-scores{margin-left:auto}
+
+/* ---------- ratings page: second column (score guide, this week, leaderboard) ---------- */
+.gm-side{display:grid;gap:16px;align-content:start;margin-top:18px}
+.gm-sidecard{border:1px solid var(--sx-line,rgba(255,255,255,.1));border-radius:18px;padding:14px 16px;background:var(--sx-glass,rgba(12,15,20,.78));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.gm-sidecard[hidden]{display:none}
+.gm-sidecard .gm-head{margin:0 0 8px;font-size:1.05rem}
+.gm-howto p{margin:6px 0;font-size:.86rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gm-howto .gm-note{display:block;font-size:.78rem}
+@media (min-width:860px){
+  .wrap:has(> #gm-side){display:grid;grid-template-columns:minmax(0,1fr) 310px;grid-template-rows:auto auto auto 1fr auto;column-gap:24px;align-items:start}
+  .wrap:has(> #gm-side) > *{grid-column:1 / -1}
+  .wrap:has(> #gm-side) > #rop-tabs{grid-column:1;grid-row:2}
+  .wrap:has(> #gm-side) > header.hero{grid-column:1;grid-row:3}
+  .wrap:has(> #gm-side) > main{grid-column:1;grid-row:4}
+  .wrap:has(> #gm-side) > #gm-side{grid-column:2;grid-row:2 / span 3;margin-top:0}
+  .wrap:has(> #gm-side) > footer{grid-row:5}
+  .gm-side .gm-auth.rop-me{margin:18px 0 0}
+  .gm-side .gm-week{margin:0}
+  .gm-side .gm-week__cols{grid-template-columns:1fr;gap:10px}
+  .gm-side .gm-week__col{padding:10px 12px}
+  .gm-side .gm-vmotto{display:none}
+  .gm-side .gm-vcard summary{gap:8px}
+}
+/* ratings cards: title + scores + Reviews on the left, the rating faces on the right (wide screens) */
+@media (min-width:700px){
+  .gm-card:has(> .gm-card__scores){grid-template-columns:minmax(0,1fr) auto;column-gap:18px;align-items:center}
+  .gm-card:has(> .gm-card__scores) > .gm-card__top{grid-column:1 / -1}
+  .gm-card:has(> .gm-card__scores) > .gm-card__scores{grid-column:1;grid-row:2;margin:0}
+  .gm-card:has(> .gm-card__scores) > .gm-toggle{grid-column:1;grid-row:3}
+  .gm-card:has(> .gm-card__scores) > .gm-rate,
+  .gm-card:has(> .gm-card__scores) > .gm-rate--guest{grid-column:2;grid-row:2 / span 2;justify-self:end;align-self:center}
+  .gm-card:has(> .gm-card__scores) > .gm-rate--guest{align-items:flex-end;text-align:right}
+  .gm-card:has(> .gm-card__scores) .gm-rate.rop-chips{flex-wrap:nowrap}
+  .gm-card:has(> .gm-card__scores) .gm-rate__hint{max-width:300px}
+  .gm-card:has(> .gm-card__scores) > .gm-more{grid-column:1 / -1}
+}
+.gm-side .gm-voters{margin:0}
+@media (max-width:859.98px){
+  .wrap:has(> #gm-side){display:flex;flex-direction:column}
+  .wrap:has(> #gm-side) > #gm-side{display:contents}
+  .wrap:has(> #gm-side) #gm-auth{order:1}
+  .wrap:has(> #gm-side) > #rop-tabs{order:2}
+  .wrap:has(> #gm-side) > header.hero{order:3}
+  .wrap:has(> #gm-side) > main{order:4}
+  .wrap:has(> #gm-side) .gm-sidecard{order:5;margin-top:16px}
+  .wrap:has(> #gm-side) > footer{order:9}
+}
