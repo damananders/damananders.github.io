@@ -830,3 +830,4 @@ a.gm-console--link:hover{filter:brightness(1.25)}
 .pf-sw--ban .pf-sw__b{position:relative;overflow:hidden}
 .pf-sw--ban .pf-sw__b.pf-ban--adm-shield::before,.pf-sw--ban .pf-sw__b.pf-ban--own-throne::before{font-size:16px;animation:none}
 .pf-pv .pf-ban--adm-shield::before,.pf-pv .pf-ban--own-throne::before{font-size:40px}
+.fr-reacts--c{margin-top:6px}.fr-reacts--c .fr-react{padding:3px 8px;font-size:.85rem}

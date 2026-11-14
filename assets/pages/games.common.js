@@ -323,30 +323,34 @@ export const REACTS = [["helpful", "Helpful", "👍"], ["funny", "Funny", "😂"
 /* which of these reviews you've reacted to: Map(review id -> Set(kind)) */
 export async function myReactions(ids) {
   const out = new Map();
-  if (!me.user || !ids.length) return out;
+  if (!ids.length) return out;
+  if (!(me.member && me.ready)) return guestReactions("review", ids);
   try {
     const { data } = await sb.from("review_reactions").select("review_id,kind").in("review_id", ids);
     for (const x of data || []) { if (!out.has(x.review_id)) out.set(x.review_id, new Set()); out.get(x.review_id).add(x.kind); }
   } catch (e) {}
   return out;
 }
-/* r = a public_reviews row (has helpful/funny/agree once round 15 is in) */
+/* r = a public_reviews row (has helpful/funny/agree once round 15 is in). Members react as themselves; everyone
+ * else (signed out, or not in the Discord yet) reacts as a visitor. mine = Set of reactions already on. */
 export function reactBar(r, mine) {
   if (r.helpful == null) return null;
   const set = mine || new Set();
   const own = !!(me.profile && me.profile.handle && me.profile.handle === r.handle);
-  const can = me.member && me.ready && !own;
+  const asMember = me.member && me.ready;
   const bar = el("div", { class: "rop-rx", role: "group", "aria-label": "Reactions to this review" });
   for (const [k, label, icon] of REACTS) {
     let n = +r[k] || 0, on = set.has(k);
-    const b = el("button", { class: "rop-rx__b" + (on ? " is-on" : ""), type: "button", "aria-pressed": on ? "true" : "false", disabled: !can,
-      title: own ? "Your own review" : !me.user ? "Sign in to react" : !me.member ? "Join the Discord to react" : label });
+    const b = el("button", { class: "rop-rx__b" + (on ? " is-on" : ""), type: "button", "aria-pressed": on ? "true" : "false", disabled: own, title: own ? "Your own review" : label });
     const draw = () => { b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); b.replaceChildren(el("span", { "aria-hidden": "true", text: icon }), el("span", { class: "rop-rx__l", text: label }), el("b", { text: n ? String(n) : "" })); };
     b.addEventListener("click", async () => {
       on = !on; n += on ? 1 : -1; draw(); if (on) { b.classList.add("rop-rx__b--pop"); setTimeout(() => b.classList.remove("rop-rx__b--pop"), 450); }
-      const { data, error } = await sb.rpc("toggle_review_reaction", { p_review: r.id, p_kind: k });
-      if (error) { on = !on; n += on ? 1 : -1; draw(); toast(error.message, "err"); return; }
-      if (data !== on) { on = !!data; n = Math.max(0, n + (on ? 1 : -1)); draw(); }
+      let now;
+      try {
+        if (asMember) { const { data, error } = await sb.rpc("toggle_review_reaction", { p_review: r.id, p_kind: k }); if (error) throw error; now = data === true; }
+        else now = await guestReact("review", r.id, k);
+      } catch (e) { on = !on; n += on ? 1 : -1; draw(); toast(e.message || String(e), "err"); return; }
+      if (now !== on) { on = now; n = Math.max(0, n + (on ? 1 : -1)); draw(); }
       if (on) set.add(k); else set.delete(k);
       sfx(on ? "success" : "tap");
     });
@@ -354,10 +358,41 @@ export function reactBar(r, mine) {
   }
   return bar;
 }
-
 /* ---------------- static game info (assets/data/gameinfo/<3-hex shard>.json) ---------------- */
 const fnv1a = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
 export const shardOf = (s) => (fnv1a(s) & 0xfff).toString(16).padStart(3, "0");
 export async function gameInfo(id) {
   try { const r = await fetch("/assets/data/gameinfo/" + shardOf(id) + ".json"); if (!r.ok) return {}; const j = await r.json(); return j[id] || {}; } catch (e) { return {}; }
+}
+
+/* ---------------- visitor reactions (no sign-in needed) ----------------
+ * Each browser gets a random visitor key; the database keeps only a hash of it and rate-limits it. */
+export function visitorKey() {
+  try {
+    let k = localStorage.getItem("rop.visitor");
+    if (!k || !/^[A-Za-z0-9_-]{20,64}$/.test(k)) {
+      const a = new Uint8Array(24); crypto.getRandomValues(a);
+      k = Array.from(a, (b) => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"[b & 63]).join("");
+      localStorage.setItem("rop.visitor", k);
+    }
+    return k;
+  } catch (e) { return null; }
+}
+/* which of these items this browser reacted to as a visitor: Map(id -> Set(reaction)) */
+export async function guestReactions(target, ids) {
+  const out = new Map(), k = visitorKey();
+  if (!k || !ids.length) return out;
+  try {
+    const { data } = await sb.rpc("guest_my_reactions", { p_target: target, p_ids: ids, p_key: k });
+    for (const x of data || []) { if (!out.has(x.target_id)) out.set(x.target_id, new Set()); out.get(x.target_id).add(x.reaction); }
+  } catch (e) {}
+  return out;
+}
+/* flip one visitor reaction; resolves to the new state (true = on) or throws with a readable message */
+export async function guestReact(target, id, reaction) {
+  const k = visitorKey();
+  if (!k) throw new Error("Your browser is blocking storage, so reactions can't be saved.");
+  const { data, error } = await sb.rpc("guest_react", { p_target: target, p_id: id, p_reaction: reaction, p_key: k });
+  if (error) throw new Error(/guest_react|function|schema cache/i.test(error.message) ? "Visitor reactions switch on with the next site update." : error.message);
+  return data === true;
 }

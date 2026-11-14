@@ -2,7 +2,7 @@
  * Everyone can read. Discord-server members can post, comment, react and report. Posts and comments are plain
  * text (links become clickable); nothing a member writes is ever inserted as HTML.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE } from "./games.common.js?v=11";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact } from "./games.common.js?v=12";
 
 const CATS = [["", "All"], ["anyps", "AnyPS"], ["games", "Games"], ["general", "General"], ["help", "Help"], ["offtopic", "Off-topic"]];
 const catName = (k) => (CATS.find(([c]) => c === k) || [k, k])[1];
@@ -58,31 +58,42 @@ async function report(target, btn) {
 /* ---------------- reactions ---------------- */
 async function loadMyReacts(ids) {
   myReacts = new Map();
-  if (!me.user || !ids.length) return;
+  if (!ids.length) return;
+  if (!canWrite()) { myReacts = await guestReactions("post", ids); return; }   // visitors react without signing in
   const { data } = await sb.from("forum_reactions").select("post_id,emoji").in("post_id", ids);
   for (const r of data || []) { if (!myReacts.has(r.post_id)) myReacts.set(r.post_id, new Set()); myReacts.get(r.post_id).add(r.emoji); }
 }
-function reactBar(post, compact) {
-  const bar = el("div", { class: "fr-reacts" + (compact ? " fr-reacts--compact" : ""), role: "group", "aria-label": "Reactions" });
+/* target "post" (members react as themselves, visitors as visitors) or "comment" (everyone reacts as a visitor) */
+function reactBar(post, compact, target, mineSet) {
+  target = target || "post";
+  const asMember = target === "post" && canWrite();
+  const bar = el("div", { class: "fr-reacts" + (compact ? " fr-reacts--compact" : "") + (target === "comment" ? " fr-reacts--c" : ""), role: "group", "aria-label": "Reactions" });
   const counts = Object.assign({}, post.reactions || {});
-  const mine = myReacts.get(post.id) || new Set();
+  const mine = mineSet || myReacts.get(post.id) || new Set();
   const draw = () => {
     bar.replaceChildren();
     for (const [k, glyph, label] of REACTS) {
       const n = counts[k] || 0, on = mine.has(k);
       if (compact && !n) continue;
-      bar.append(el("button", { type: "button", class: "fr-react" + (on ? " is-on" : ""), "aria-pressed": on ? "true" : "false", title: label + (canWrite() ? "" : " (members can react)"), "aria-label": label + ", " + n,
-        disabled: compact || !canWrite() ? true : null, onclick: () => toggle(k) }, el("span", { class: "fr-react__g", text: glyph }), n ? el("span", { class: "fr-react__n", text: String(n) }) : null));
+      bar.append(el("button", { type: "button", class: "fr-react" + (on ? " is-on" : ""), "aria-pressed": on ? "true" : "false", title: label, "aria-label": label + ", " + n,
+        disabled: compact ? true : null, onclick: () => toggle(k) }, el("span", { class: "fr-react__g", text: glyph }), n ? el("span", { class: "fr-react__n", text: String(n) }) : null));
     }
   };
   async function toggle(k) {
     const on = mine.has(k);
     if (on) { mine.delete(k); counts[k] = Math.max(0, (counts[k] || 1) - 1); } else { mine.add(k); counts[k] = (counts[k] || 0) + 1; }
-    myReacts.set(post.id, mine); draw(); sfx("tap");
-    const res = on
-      ? await sb.from("forum_reactions").delete().eq("post_id", post.id).eq("user_id", me.user.id).eq("emoji", k)
-      : await sb.from("forum_reactions").insert({ post_id: post.id, user_id: me.user.id, emoji: k });
-    if (res.error) { toast("That reaction didn't save", "err"); if (on) { mine.add(k); counts[k]++; } else { mine.delete(k); counts[k]--; } draw(); }
+    if (target === "post") myReacts.set(post.id, mine);
+    draw(); sfx("tap");
+    const undo = (msg) => { toast(msg || "That reaction didn't save", "err"); if (on) { mine.add(k); counts[k]++; } else { mine.delete(k); counts[k]--; } draw(); };
+    if (asMember) {
+      const res = on
+        ? await sb.from("forum_reactions").delete().eq("post_id", post.id).eq("user_id", me.user.id).eq("emoji", k)
+        : await sb.from("forum_reactions").insert({ post_id: post.id, user_id: me.user.id, emoji: k });
+      if (res.error) undo();
+      return;
+    }
+    try { const now = await guestReact(target, post.id, k); if (now === on) undo("That reaction was already " + (now ? "on" : "off") + "."); }
+    catch (e) { undo(e.message); }
   }
   draw();
   return bar;
@@ -213,6 +224,7 @@ function editPost(f, art) {
 async function loadComments(f, box) {
   const { data } = await sb.from("forum_thread").select("*").eq("post_id", f.id).order("created_at").limit(500);
   const rows = data || [];
+  const cr = rows.length && rows[0].reactions !== undefined ? await guestReactions("comment", rows.map((c) => c.id)) : null;
   box.replaceChildren(el("h2", { class: "gm-head", text: plural(rows.length, "comment") }));
   for (const c of rows) {
     const mine = !!(me.profile && me.profile.handle === c.handle);
@@ -235,7 +247,7 @@ async function loadComments(f, box) {
       } }));
     else if (canWrite()) tools.append(el("button", { class: "linkbtn", type: "button", text: "Report", onclick: (e) => report({ comment_id: c.id }, e.target) }));
     tools.append(el("button", { class: "linkbtn", type: "button", text: "Link", title: "Share this comment", onclick: () => share(postUrl(f.id) + "#c" + c.id, f.title) }));
-    item.append(byline(c, tools), rich(c.body, "fr-body fr-body--c"));
+    item.append(byline(c, tools), rich(c.body, "fr-body fr-body--c"), cr ? reactBar(c, false, "comment", cr.get(c.id) || new Set()) : "");
     box.append(item);
   }
   if (!rows.length) box.append(el("p", { class: "gm-note", text: "No comments yet." }));
