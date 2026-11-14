@@ -15,10 +15,10 @@
   if (done && !force) return;
 
   var STEPS = [
-    { sel: "main.avenues", title: "Two ways in", text: "A private WoW server to join, and a PlayStation launcher to download. Pick a card to dive in.", place: "below" },
+    { sel: "a.hb-rate", title: "Rate-O-Pedia", text: "Score games from every platform, write reviews, and chat in the forums.", place: "below" },
+    { sel: "main.avenues", title: "Two more ways in", text: "A private WoW server to join, and a PlayStation launcher to download. Pick a card to dive in.", place: "below" },
     { sel: ".ch-menu", title: "The page wheel", text: "This opens a radial menu of every page — click any spoke to go there.", place: "below" },
     { sel: ".ch-search", title: "Or just search", text: "Hit this (or press the “/” key) to search and jump straight to a page or a game.", place: "below" },
-    { sel: "a.hb-rate", title: "Rate-O-Pedia", text: "Score games from every platform, write reviews, and chat in the forums.", place: "above" },
     { sel: ".pl-cup", title: "Collect trophies", text: "You earn little trophies just by exploring the site. Keep an eye on this cup. Have fun!", place: "below" }
   ];
 
