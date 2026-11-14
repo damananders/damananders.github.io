@@ -1026,7 +1026,7 @@
     blurb: "Turn-based raft battles: lob things in an arc, mind the wind, upgrade your raft.",
     sync: [
       { k: "cleared", s: NS + "cleared", t: "union" }, { k: "pcleared", s: NS + "pcleared", t: "union" },
-      { k: "bestWave", s: NS + "bestWave", t: "max" }, { k: "coins", s: NS + "coins", t: "max" },
+      { k: "bestWave", s: NS + "bestWave", t: "max" },
       { k: "upg", s: NS + "upg", t: "maxmap" }, { k: "ammo", s: NS + "ammo", t: "ormap" }, { k: "owned", s: NS + "owned", t: "ormap" }
     ],
     onSync: function (g) { paintBest(g); },

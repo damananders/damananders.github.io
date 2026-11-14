@@ -411,7 +411,7 @@
     id: "row-home", name: "Row Home", icon: "🚣", accent: "#7fd3ff", W: W, H: H,
     blurb: "Row through the islands, dodge trouble, grab the lights. Coins buy upgrades in the Boatyard.",
     sync: [
-      { k: "best", s: "best404", t: "max" }, { k: "coins", s: "arcade.row-home.coins", t: "max" },
+      { k: "best", s: "best404", t: "max" },
       { k: "upg", s: "arcade.row-home.upg", t: "maxmap" }, { k: "skins", s: "arcade.row-home.skins", t: "union" }
     ],
     onSync: function (g) { paintBest(g); },
