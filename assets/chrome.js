@@ -758,6 +758,16 @@
     });
     if (links.firstChild && feat("footerLinks")) foot.appendChild(links);
 
+    /* a gentle, honest support line — the end-of-page moment, framed as covering real costs, never a nag */
+    var kofi = (Site.config && Site.config.kofi) || {};
+    if (feat("supportLine") && /^https:\/\//.test(String(kofi.url || ""))) {
+      var sup = el("p", { class: "ch-support" },
+        document.createTextNode("These are free fan projects I build for fun. If one made your day, you can "),
+        el("a", { class: "ch-support__link", href: kofi.url, target: "_blank", rel: "noopener" }, "help cover the hosting ☕"),
+        document.createTextNode(" — no pressure, ever."));
+      foot.appendChild(sup);
+    }
+
     /* other channels (site-config channels): one small badge per link that is filled in */
     var ch = (Site.config && Site.config.channels) || {}, NAMES = { youtube: "YouTube", tiktok: "TikTok", x: "X", instagram: "Instagram", bluesky: "Bluesky" };
     var badges = el("p", { class: "ch-channels" });

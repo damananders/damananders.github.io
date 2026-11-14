@@ -402,6 +402,10 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-links a{color:var(--sx-muted);text-decoration:none;transition:color .15s}
 .ch-links a:hover{color:var(--sx-accent)}
 .ch-links + .ch-stamp{margin-top:6px}
+.ch-support{margin:16px auto 0;max-width:52ch;font:500 .86rem/1.5 var(--sx-display);color:var(--sx-muted);text-align:center}
+.ch-support__link{color:var(--sx-text);text-decoration:none;border-bottom:1px solid var(--sx-line-2);white-space:nowrap;transition:color .15s,border-color .15s}
+.ch-support__link:hover{color:#ff5e5b;border-color:#ff5e5b}
+:root[data-theme="light"] .ch-support__link:hover{color:#d8403d;border-color:#d8403d}
 
 /* other channels + retro visitor counter (footer) */
 .ch-channels{margin:12px 0 0;display:flex;justify-content:center;flex-wrap:wrap;gap:8px}

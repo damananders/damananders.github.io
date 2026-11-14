@@ -18,7 +18,7 @@ window.SITE_EXTRA = {
   kofi: {
     url: "https://ko-fi.com/damananders",
     // Goal bar. Hidden until BOTH numbers are filled in, e.g. current: 40, target: 100.
-    goal: { title: "Help me survive this harsh world and keep building", current: 0, target: 15, currency: "$" },   // monthly; update "current" as support comes in
+    goal: { title: "Help pay for website costs!", current: 0, target: 75, currency: "$" },   // monthly; update "current" as support comes in
   },
 
   /* ---- AndersCraft ---- */
