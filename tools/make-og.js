@@ -12,7 +12,12 @@ const CARDS = [
   { file: "stream", kicker: "Stream", title: "Live from the workbench", sub: "Coding, reverse engineering, servers and game dev, live.", accent: "#9146ff" },
   { file: "links", kicker: "Links I like", title: "Sites I actually use", sub: "Places on the internet worth your click, ranked by me and by you.", accent: "#cd4257" },
   { file: "games", kicker: "Rate-O-Pedia Forums", title: "Rate the classics", sub: "Search thousands of PlayStation games and rate them 0 to 5.", accent: "#36d39a" },
-  { file: "support", kicker: "Support", title: "Keep the lights on", sub: "Fan projects I build for fun and run at my own cost. Chip in, no pressure.", accent: "#cd4257" }
+  { file: "support", kicker: "Support", title: "Keep the lights on", sub: "Fan projects I build for fun and run at my own cost. Chip in, no pressure.", accent: "#cd4257" },
+  { file: "anderscraft", kicker: "Private WoW server · WotLK 3.3.5a", title: "AndersCraft", sub: "A Wrath-era Azeroth built around freedom — any race, any class, a level 125 arc and a hardcore realm. Sign up in a minute.", accent: "#cd4257" },
+  { file: "anyps", kicker: "PlayStation launcher · Windows", title: "AnyPS", sub: "One controller-first launcher for six generations of PlayStation emulators, now with PS Vita. Bring your own games.", accent: "#3d8bff" },
+  { file: "discord", kicker: "Friends of DaManAnders", title: "Come hang out", sub: "Go-live alerts, new-review feeds and a place to talk about the projects. The Discord for everything Anders.", accent: "#5865f2" },
+  { file: "arcade", kicker: "Arcade", title: "Play something", sub: "Little browser games tucked into the site — row the boat home, stamp review scores, and more to come.", accent: "#cd4257" },
+  { file: "trophies", kicker: "Trophy cabinet", title: "Collect them all", sub: "Hidden trophies across the whole site — secret words, cheat codes and milestones. See how many you can find.", accent: "#f0b065" }
 ];
 const b64 = f => fs.readFileSync(path.join(root, f)).toString("base64");
 const html = c => `<!doctype html><meta charset="utf-8"><style>
