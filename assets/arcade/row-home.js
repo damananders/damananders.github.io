@@ -250,7 +250,7 @@
         { label: "How to Play", act: function () { howMenu(g, function () { titleMenu(g); }); } },
         { label: "Best Scores", act: function () { bestMenu(g); } }
       ],
-      back: function () { if (g.isFull()) g.full(false); },
+      back: function () { g.close(); },
       foot: "Esc, P or Start pauses. ⤢ plays in the full window."
     });
   }
@@ -409,6 +409,24 @@
   var tTitle = 0, titleBoat = { x: W / 2, y: H * 0.62, vx: 0 };
   A.register({
     id: "row-home", name: "Row Home", icon: "🚣", accent: "#7fd3ff", W: W, H: H,
+    order: 2, tags: ["Arcade", "Endless", "Daily run"],
+    tagline: "Row home through the islands at night. Grab the lights, dodge the rocks, logs and whirlpools, and see how far you get.",
+    about: "An endless rowing run. Steer between hazards, chain lights without getting hit for a combo, pick up power-ups and reach island checkpoints as the sea turns to night and storm. Coins buy boat upgrades and skins in the Boatyard, and there's a new seeded Daily Voyage every day.",
+    controls: [["Row", "Arrows or WASD (left stick, D-pad)"], ["Dash", "Space or Shift (A, RT)"], ["Pause", "Esc, P or Start"]],
+    stats: function () { return [["Best distance", bestEndless() + " m"], ["Today's Daily", bestDaily() + " m"], ["Coins", coins()], ["Skins owned", ownedSkins().length + " / " + SKINS.length]]; },
+    poster: function (x, w, h, t) {
+      var g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, "#0b1530"); g.addColorStop(0.55, "#1b3b6b"); g.addColorStop(1, "#0a2240"); x.fillStyle = g; x.fillRect(0, 0, w, h);
+      for (var i = 0; i < 40; i++) { x.fillStyle = "rgba(255,255,255," + (0.3 + 0.5 * Math.abs(Math.sin(t * 1.5 + i))) + ")"; x.fillRect((i * 97) % w, (i * 53) % (h * 0.45), 2, 2); }
+      x.fillStyle = "#081226"; x.beginPath(); x.moveTo(0, h * 0.5); x.quadraticCurveTo(120, h * 0.36, 230, h * 0.5); x.fill(); x.beginPath(); x.moveTo(400, h * 0.5); x.quadraticCurveTo(520, h * 0.33, w, h * 0.5); x.fill();
+      x.fillStyle = "#e2e8f0"; x.fillRect(548, h * 0.26, 12, 46); x.fillStyle = "#f6e05e"; x.beginPath(); x.arc(554, h * 0.25, 7, 0, 6.3); x.fill();
+      x.fillStyle = "rgba(246,224,94," + (0.18 + Math.sin(t * 2) * 0.08) + ")"; x.beginPath(); x.moveTo(554, h * 0.25); x.lineTo(380, h * 0.17); x.lineTo(380, h * 0.33); x.fill();
+      x.strokeStyle = "rgba(127,211,255,.25)"; x.lineWidth = 2; for (var r = 0; r < 6; r++) { x.beginPath(); for (var px = 0; px <= w; px += 20) x.lineTo(px, h * 0.55 + r * 28 + Math.sin(px / 50 + t * 1.3 + r) * 4); x.stroke(); }
+      for (var l = 0; l < 6; l++) { var lx = (l * 113 + 60) % w, ly = h * 0.6 + (l * 47) % 110 + Math.sin(t * 2 + l) * 4, gl = x.createRadialGradient(lx, ly, 1, lx, ly, 22); gl.addColorStop(0, "rgba(255,236,150,.95)"); gl.addColorStop(1, "rgba(255,236,150,0)"); x.fillStyle = gl; x.beginPath(); x.arc(lx, ly, 22, 0, 6.3); x.fill(); }
+      var bx = w * 0.42 + Math.sin(t * 0.8) * 30, by = h * 0.74 + Math.sin(t * 1.6) * 3;
+      x.fillStyle = "#8a5a2f"; x.beginPath(); x.moveTo(bx - 46, by); x.quadraticCurveTo(bx, by + 26, bx + 46, by); x.closePath(); x.fill();
+      x.fillStyle = "#cd4257"; D.rr(x, bx - 8, by - 26, 16, 20, 5); x.fill(); x.fillStyle = "#f1c9a5"; x.beginPath(); x.arc(bx, by - 32, 8, 0, 6.3); x.fill();
+      x.strokeStyle = "#c9a26b"; x.lineWidth = 3; var oa = Math.sin(t * 4) * 0.5; x.beginPath(); x.moveTo(bx - 4, by - 16); x.lineTo(bx - 40, by + 6 + oa * 10); x.moveTo(bx + 4, by - 16); x.lineTo(bx + 40, by + 6 - oa * 10); x.stroke();
+    },
     blurb: "Row through the islands, dodge trouble, grab the lights. Coins buy upgrades in the Boatyard.",
     sync: [
       { k: "best", s: "best404", t: "max" },

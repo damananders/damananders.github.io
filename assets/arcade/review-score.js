@@ -332,7 +332,7 @@
         { label: "How to Play", act: function () { howMenu(g, function () { titleMenu(g); }); } },
         { label: "Best Scores", act: function () { bestMenu(g); } }
       ],
-      back: function () { if (g.isFull()) g.full(false); },
+      back: function () { g.close(); },
       foot: "Esc, P or Start pauses. ⤢ plays in the full window."
     });
   }
@@ -562,6 +562,25 @@
 
   A.register({
     id: "review-score", name: "Review Score", icon: "🎮", accent: "#f0c23a", W: W, H: H,
+    order: 3, tags: ["Arcade", "Reflexes", "Real scores"],
+    tagline: "Game cases fly up. Stamp each one with its real Rate-O-Pedia score before it drops, and leave the hardware alone.",
+    about: "Cases with real box art fly across the screen. Click, tap or slice them to stamp their live Rate-O-Pedia score, which counts toward your round goal. Hitting a controller, console or other hardware, or clicking empty space, costs a quarter heart. Survive the timer and reach the goal on each difficulty, and there's a hidden one past Harder.",
+    controls: [["Stamp", "Click, tap or slice across cases"], ["Reticle", "Arrows / left stick, Space or A to stamp"], ["Pause", "Esc, P or Start"]],
+    stats: function () { return DIFF.filter(function (d) { return !d.hidden || hardererUnlocked(); }).map(function (d) { return [d.name, (bestOf(d.key) || "—") + (store.get("case404.won." + d.key, false) ? "  ✓" : "")]; }); },
+    poster: function (x, w, h, t) {
+      var g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#2a1546"); g.addColorStop(1, "#0d1b33"); x.fillStyle = g; x.fillRect(0, 0, w, h);
+      var cols = ["#cd4257", "#4a90d9", "#38a169", "#d69e2e", "#805ad5", "#e53e3e"];
+      for (var i = 0; i < 6; i++) {
+        var ph = (t * 0.35 + i / 6) % 1, cx = 70 + i * 100 + Math.sin(i * 2.3) * 20, cy = h + 60 - Math.sin(ph * Math.PI) * (h * 0.85), rot = (ph - 0.5) * (i % 2 ? 1.2 : -1.2);
+        x.save(); x.translate(cx, cy); x.rotate(rot);
+        x.fillStyle = "#111"; D.rr(x, -34, -46, 68, 92, 6); x.fill(); x.fillStyle = cols[i]; D.rr(x, -30, -36, 60, 78, 4); x.fill();
+        x.fillStyle = "rgba(255,255,255,.85)"; x.fillRect(-30, -44, 60, 7); x.fillStyle = "rgba(0,0,0,.25)"; x.beginPath(); x.arc(0, 4, 18, 0, 6.3); x.fill();
+        if (i % 2 === 0) { x.rotate(-0.3); x.strokeStyle = "#e53e3e"; x.lineWidth = 4; x.beginPath(); x.arc(4, 2, 22, 0, 6.3); x.stroke(); x.fillStyle = "#e53e3e"; x.font = "800 18px " + F.display; x.textAlign = "center"; x.fillText((3 + i * 0.4).toFixed(1), 4, 8); }
+        x.restore();
+      }
+      x.save(); x.translate(w * 0.8, h * 0.3 + Math.sin(t * 2) * 10); x.rotate(Math.sin(t) * 0.4); x.fillStyle = "#1a202c"; D.rr(x, -40, -18, 80, 36, 18); x.fill();
+      x.fillStyle = "#4a5568"; x.fillRect(-26, -3, 14, 5); x.fillRect(-21.5, -8, 5, 14); x.fillStyle = "#e53e3e"; x.beginPath(); x.arc(20, -4, 4, 0, 6.3); x.fill(); x.fillStyle = "#38a169"; x.beginPath(); x.arc(28, 4, 4, 0, 6.3); x.fill(); x.restore();
+    },
     blurb: "Stamp the flying game cases with their Rate-O-Pedia score. Skip the hardware.",
     sync: DIFF.map(function (d) { return { k: "best." + d.key, s: "case404.best." + d.key, t: "max" }; })
       .concat(DIFF.map(function (d) { return { k: "won." + d.key, s: "case404.won." + d.key, t: "or" }; }))

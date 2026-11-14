@@ -39,18 +39,37 @@
     { key: "doc",  name: "Doc",  hat: "#68d391", shirt: "#f7fafc", special: "repair",   pow: 0.95 },
     { key: "gull", name: "Wren", hat: "#b794f4", shirt: "#2d3748", special: "gull",     pow: 1 }
   ];
+  /* Shipwright: upgrades grouped by department. Each has max levels, a cost per level and a line per level. */
   var UPG = [
-    { key: "armor", name: "Hull Armor",      max: 4, cost: [30, 60, 110, 180], desc: function (l) { return "Planks take " + (3 + l) + " hits"; } },
-    { key: "tough", name: "Crew Toughness",  max: 4, cost: [30, 60, 110, 180], desc: function (l) { return "Crew health " + (100 + l * 20); } },
-    { key: "size",  name: "Bigger Raft",     max: 2, cost: [80, 200],          desc: function (l) { return (2 + l) + " crew · " + (6 + l) + " planks"; } },
-    { key: "arms",  name: "Strong Arms",     max: 3, cost: [40, 90, 160],      desc: function (l) { return "Throw power " + (100 + l * 8) + "%"; } },
-    { key: "satchel", name: "Ammo Satchel",  max: 2, cost: [100, 220],         desc: function (l) { return (2 + l) + " of each ammo per battle"; } },
-    { key: "cannon", name: "Deck Cannon",    max: 1, cost: [250],              desc: function (l) { return l ? "Mounted" : "A cannon that fires heavy balls"; } }
+    { key: "armor",  dep: "hull",    name: "Hull Armor",        max: 4, cost: [30, 60, 110, 180],  desc: function (l) { return "Planks take " + (3 + l) + " hits"; } },
+    { key: "size",   dep: "hull",    name: "Bigger Raft",       max: 2, cost: [80, 200],           desc: function (l) { return (2 + l) + " crew · " + (6 + l) + " planks"; } },
+    { key: "walls",  dep: "hull",    name: "Bulwarks",          max: 2, cost: [70, 160],           desc: function (l) { return (1 + l) + " wall block" + (l ? "s" : "") + " shielding the bow"; } },
+    { key: "tower",  dep: "hull",    name: "Crow's Nest",       max: 2, cost: [90, 190],           desc: function (l) { return l ? l + " tower block" + (l > 1 ? "s" : "") + " mid-deck" : "A tower that soaks up high lobs"; } },
+    { key: "pump",   dep: "hull",    name: "Pump & Patch",      max: 2, cost: [120, 240],          desc: function (l) { return l ? "Fixes a broken plank every " + (l > 1 ? 2 : 3) + " turns" : "Fixes broken planks on its own"; } },
+    { key: "tough",  dep: "crew",    name: "Crew Toughness",    max: 4, cost: [30, 60, 110, 180],  desc: function (l) { return "Crew health " + (100 + l * 20); } },
+    { key: "arms",   dep: "crew",    name: "Strong Arms",       max: 3, cost: [40, 90, 160],       desc: function (l) { return "Throw power " + (100 + l * 8) + "%"; } },
+    { key: "aid",    dep: "crew",    name: "First Aid Kits",    max: 3, cost: [60, 120, 200],      desc: function (l) { return l ? "Crew heal " + l * 4 + " every turn" : "Crew heal a little every turn"; } },
+    { key: "vests",  dep: "crew",    name: "Life Vests",        max: 1, cost: [90],                desc: function (l) { return l ? "Overboard costs 5 a turn" : "Halves overboard damage"; } },
+    { key: "spy",    dep: "crew",    name: "Spyglass",          max: 2, cost: [70, 150],           desc: function (l) { return l ? "Aim guide " + (100 + l * 45) + "% longer" : "A longer aim guide (when it's on)"; } },
+    { key: "satchel",dep: "arsenal", name: "Ammo Satchel",      max: 2, cost: [100, 220],          desc: function (l) { return (2 + l) + " of each ammo per battle"; } },
+    { key: "heavy",  dep: "arsenal", name: "Heavy Rocks",       max: 3, cost: [50, 110, 190],      desc: function (l) { return "Rocks hit for " + (30 + l * 6); } },
+    { key: "blast",  dep: "arsenal", name: "Bigger Blasts",     max: 2, cost: [120, 240],          desc: function (l) { return "Bomb and fire radius " + (100 + l * 18) + "%"; } },
+    { key: "wind2",  dep: "arsenal", name: "Second Wind",       max: 1, cost: [260],               desc: function (l) { return l ? "Each special can be used twice" : "Use every special twice per battle"; } },
+    { key: "cannon", dep: "cannon",  name: "Deck Cannon",       max: 1, cost: [250],               desc: function (l) { return l ? "Mounted" : "A cannon that fires heavy balls"; } },
+    { key: "bore",   dep: "cannon",  name: "Cannon Bore",       max: 2, cost: [140, 260],          desc: function (l) { return "Cannonballs hit for " + (45 + l * 12); }, need: "cannon" },
+    { key: "plate",  dep: "cannon",  name: "Cannon Plating",    max: 2, cost: [100, 200],          desc: function (l) { return "Cannon takes " + (4 + l * 2) + " hits"; }, need: "cannon" }
+  ];
+  var DEPS = [
+    { key: "hull",    name: "Hull & Deck",  icon: "🪵", blurb: "Armor, size, walls and repairs" },
+    { key: "crew",    name: "Crew",         icon: "🧭", blurb: "Health, arms, healing and aim" },
+    { key: "arsenal", name: "Arsenal",      icon: "💣", blurb: "Ammo unlocks and harder hits" },
+    { key: "cannon",  name: "Cannon",       icon: "⚙", blurb: "Mount it, bore it, plate it" },
+    { key: "decor",   name: "Decor",        icon: "🎨", blurb: "Sails, wood and flags" }
   ];
   var DECOR = {
-    sail: [["#cd4257", "Maroon", 0], ["#3b82f6", "Ocean", 25], ["#f6c445", "Sunflower", 25], ["#1f2937", "Midnight", 35], ["#ec4899", "Bubblegum", 35], ["#d4af37", "Gold", 90]],
-    wood: [["#a0703f", "Oak", 0], ["#6b4426", "Walnut", 20], ["#c9a26b", "Birch", 20], ["#5b7f8c", "Painted Teal", 40]],
-    flag: [["★", "Star", 0], ["⚓", "Anchor", 15], ["♛", "Crown", 30], ["♥", "Heart", 15], ["☠", "Skull", 40]]
+    sail: [["#cd4257", "Maroon", 0], ["#3b82f6", "Ocean", 25], ["#f6c445", "Sunflower", 25], ["#1f2937", "Midnight", 35], ["#ec4899", "Bubblegum", 35], ["#2f855a", "Forest", 35], ["#6b46c1", "Royal", 45], ["#d4af37", "Gold", 90]],
+    wood: [["#a0703f", "Oak", 0], ["#6b4426", "Walnut", 20], ["#c9a26b", "Birch", 20], ["#8c8172", "Driftwood", 30], ["#5b7f8c", "Painted Teal", 40], ["#7b2d26", "Cherry", 45]],
+    flag: [["★", "Star", 0], ["⚓", "Anchor", 15], ["♥", "Heart", 15], ["♛", "Crown", 30], ["⚡", "Bolt", 30], ["☠", "Skull", 40], ["🎯", "Bullseye", 60]]
   };
   function upg(k) { return (sget("upg", {}) || {})[k] || 0; }
   function setUpg(k, v) { var u = sget("upg", {}) || {}; u[k] = v; sset("upg", u); }
@@ -67,6 +86,77 @@
   ];
   function aiLevel() { var k = sget("ai", "fair"); return AI_LEVELS.filter(function (l) { return l.key === k; })[0] || AI_LEVELS[1]; }
   function guideMode() { return sget("guide", "auto"); }      /* auto: on for Sloppy / Fair, off for Sharp / Scary */
+
+  /* ---------------- sound: small synth, no files. A soft whoosh on throws; impacts sound like what the ammo is
+     made of (stone thuds, metal clanks, wood creaks and splinters, paper, glass, rubber), plus a layer for what it
+     hit (planks, water, crew). Game sound has its own on/off and volume in Settings. ---------------- */
+  var SND = { ctx: null, master: null, noise: null, last: {} };
+  function sndOn() { return sget("sound", true) !== false; }
+  function sndVol() { var v = +sget("vol", 0.7); return isNaN(v) ? 0.7 : Math.max(0, Math.min(1, v)); }
+  function ac() {
+    if (!sndOn()) return null;
+    try {
+      if (!SND.ctx) {
+        var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+        SND.ctx = new AC(); SND.master = SND.ctx.createGain(); SND.master.connect(SND.ctx.destination);
+        var len = SND.ctx.sampleRate * 1.5, buf = SND.ctx.createBuffer(1, len, SND.ctx.sampleRate), d = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        SND.noise = buf;
+      }
+      if (SND.ctx.state === "suspended") SND.ctx.resume();
+      SND.master.gain.value = sndVol() * 0.55;
+      return SND.ctx;
+    } catch (e) { return null; }
+  }
+  function env(g, t, a, peak, dec) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec); }
+  function noise(c, t, dur, type, f0, f1, q, peak, a) {
+    var n = c.createBufferSource(); n.buffer = SND.noise; var f = c.createBiquadFilter(); f.type = type; f.Q.value = q || 1;
+    f.frequency.setValueAtTime(f0, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    var g = c.createGain(); env(g, t, a || 0.005, peak, dur); n.connect(f); f.connect(g); g.connect(SND.master);
+    n.start(t, Math.random()); n.stop(t + dur + 0.05);
+  }
+  function tone(c, t, type, f0, f1, dur, peak, a) {
+    var o = c.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    var g = c.createGain(); env(g, t, a || 0.004, peak, dur); o.connect(g); g.connect(SND.master); o.start(t); o.stop(t + dur + 0.05);
+  }
+  /* what each ammo (and each boss's thrown item) is made of */
+  var MAT = { rock: "stone", shard: "stone", splitter: "stone", bouncer: "rubber", bomb: "blast", fire: "fire", gull: "bird", repair: "chime", ball: "metal",
+    form: "paper", paper: "paper", money: "paper", phone: "glass", skull: "bone", pick: "plastic", key: "plastic", vinyl: "plastic", record: "plastic", controller: "plastic", wax: "goo", star: "chime" };
+  function sound(kind, opt) {
+    var c = ac(); if (!c) return;
+    var now = c.currentTime; if (SND.last[kind] && now - SND.last[kind] < 0.03) return; SND.last[kind] = now;
+    var t = now + 0.005, v = (opt && opt.v) || 1, r = function (a, b) { return a + Math.random() * (b - a); };
+    switch (kind) {
+      case "whoosh": noise(c, t, 0.16, "bandpass", r(500, 700), r(1500, 2100), 1.4, 0.16 * v, 0.03); break;
+      case "stone": noise(c, t, 0.12, "lowpass", 900, 200, 1, 0.5 * v); tone(c, t, "sine", r(150, 180), 60, 0.14, 0.45 * v); break;
+      case "metal": [r(480, 540), r(1150, 1250), r(1760, 1900), r(2600, 2900)].forEach(function (f, i) { tone(c, t, i % 2 ? "triangle" : "sine", f, f * 0.99, 0.5 - i * 0.08, (0.22 - i * 0.04) * v); }); noise(c, t, 0.03, "highpass", 3000, 0, 1, 0.3 * v); break;
+      case "rubber": tone(c, t, "sine", r(260, 300), 110, 0.22, 0.4 * v); tone(c, t + 0.02, "sine", 520, 200, 0.12, 0.12 * v); break;
+      case "blast": noise(c, t, 0.7, "lowpass", 1400, 90, 0.7, 0.9 * v, 0.008); tone(c, t, "sine", 90, 35, 0.6, 0.7 * v); noise(c, t + 0.05, 0.4, "bandpass", 2400, 600, 0.8, 0.15 * v); break;
+      case "fire": noise(c, t, 0.35, "highpass", 1800, 900, 0.7, 0.35 * v, 0.02); for (var k = 0; k < 5; k++) noise(c, t + r(0.02, 0.3), 0.025, "bandpass", r(2500, 5000), 0, 3, 0.25 * v); break;
+      case "bird": tone(c, t, "sawtooth", 900, 1500, 0.08, 0.12 * v); tone(c, t + 0.09, "sawtooth", 1300, 700, 0.12, 0.1 * v); noise(c, t, 0.08, "lowpass", 700, 200, 1, 0.3 * v); break;
+      case "chime": tone(c, t, "sine", 880, 0, 0.5, 0.25 * v); tone(c, t + 0.06, "sine", 1320, 0, 0.5, 0.2 * v); tone(c, t + 0.12, "sine", 1760, 0, 0.6, 0.15 * v); break;
+      case "paper": noise(c, t, 0.12, "highpass", 2500, 4000, 0.6, 0.3 * v, 0.01); noise(c, t + 0.05, 0.08, "bandpass", 3000, 0, 1.5, 0.15 * v); break;
+      case "glass": tone(c, t, "sine", r(2300, 2600), 0, 0.18, 0.18 * v); tone(c, t, "square", r(3400, 3700), 0, 0.05, 0.05 * v); noise(c, t, 0.06, "highpass", 4000, 0, 1, 0.3 * v); break;
+      case "bone": noise(c, t, 0.05, "bandpass", 1400, 0, 4, 0.5 * v); tone(c, t, "triangle", 700, 400, 0.07, 0.25 * v); break;
+      case "plastic": noise(c, t, 0.04, "bandpass", 2200, 0, 3, 0.4 * v); tone(c, t, "square", 1100, 800, 0.05, 0.08 * v); break;
+      case "goo": noise(c, t, 0.22, "lowpass", 600, 150, 3, 0.35 * v, 0.02); tone(c, t, "sine", 220, 90, 0.2, 0.2 * v); break;
+      case "wood":    /* hit on a plank: a crack, then a short creak */
+        noise(c, t, 0.08, "bandpass", r(900, 1300), 0, 2.5, 0.45 * v); tone(c, t + 0.05, "sawtooth", r(95, 120), r(70, 85), 0.28, 0.05 * v, 0.06); break;
+      case "splinter":   /* a plank breaking */
+        for (var j = 0; j < 4; j++) noise(c, t + j * r(0.02, 0.045), 0.06, "bandpass", r(1200, 2600), 0, 2, 0.4 * v);
+        tone(c, t + 0.12, "sawtooth", r(70, 90), 55, 0.45, 0.06 * v, 0.1); noise(c, t, 0.25, "lowpass", 500, 120, 1, 0.35 * v); break;
+      case "splash": noise(c, t, 0.4, "lowpass", 2600, 300, 0.8, 0.4 * v, 0.01); noise(c, t + 0.05, 0.25, "highpass", 3000, 1500, 0.5, 0.12 * v); break;
+      case "body": tone(c, t, "sine", 140, 70, 0.12, 0.35 * v); noise(c, t, 0.06, "lowpass", 500, 0, 1, 0.3 * v); break;
+      case "zap": noise(c, t, 0.5, "highpass", 1200, 400, 0.5, 0.6 * v, 0.002); tone(c, t, "sawtooth", 140, 40, 0.5, 0.25 * v); break;
+    }
+  }
+  function impactSound(p, hit) {
+    var k = p.skin || (p.k === "shard" ? "shard" : p.k), mat = MAT[k] || "stone";
+    sound(mat);
+    if (hit && hit.block && mat !== "blast") sound("wood", { v: 0.8 });
+    else if (hit && hit.crew) sound("body", { v: 0.8 });
+    else if (hit && hit.cannon) sound("metal", { v: 0.6 });
+  }
 
   /* ---------------- campaign ---------------- */
   var REGIONS = [
@@ -157,7 +247,7 @@
       lines: ["Synergy!", "Let's disrupt your raft.", "Quarterly profits, baby.", "We're pivoting to your destruction.", "Think of the shareholders.", "Circle back, leverage, monetize."] },
     { r: 4, name: "Ally, Aires Allmother", short: "Ally", crew: 1, look: LK.ally, scale: 1.25, dmgMul: 0.7, planks: 9, walls: 3, tower: 1, hp: 320, ammo: ["bomb", "gull", "fire"], acc: 1.5,
       traits: ["command"], skin: "star", flag: "✦", sail: "#2c5282", blurb: "Her crew hits harder and keeps healing",
-      lines: ["Hold the line.", "On my mark.", "I expect better. I know you've got it.", "Good. Again."] },
+      lines: ["Go on your break.", "Slaaayy.", "Go on your break!", "Slaaayy!", "Hold the line.", "On my mark.", "I expect better. I know you've got it.", "Good. Again."], chatty: 0.6 },
     { r: 4, name: "Goof, Son of Raba", short: "Goof", crew: 1, look: LK.goof, scale: 1.4, planks: 8, walls: 2, tower: 1, hp: 300, ammo: ["bouncer", "splitter", "bomb"], acc: 1.5,
       traits: ["nowind"], skin: "record", flag: "☮", sail: "#c97b2a", blurb: "His throws ignore the wind",
       lines: ["No cops on this sea, man.", "The wind's just a suggestion.", "Peace, love and lobbing.", "It's all connected, man."] },
@@ -177,20 +267,20 @@
   function makeRaft(side, o) {
     var n = o.planks, x0 = side < 0 ? Math.max(24, 330 - n * PW) : Math.min(W - 24 - n * PW, W - 330);
     var r = { side: side, x0: x0, n: n, phase: Math.random() * 6, deck: [], walls: [], crew: [], cannon: null, ammo: {}, name: o.name, human: o.human, flag: o.flag || "★", sail: o.sail || "#cd4257", wood: o.wood || "#a0703f", acc: o.acc || 1, bhp: o.bhp || 3,
-      traits: (o.traits || []).slice(), skin: o.skin || null, mul: 1 };
+      traits: (o.traits || []).slice(), skin: o.skin || null, mul: 1, perks: o.perks || {}, pumpT: 0 };
     var tr = r.traits; r.nowind = tr.indexOf("nowind") >= 0; r.bend = tr.indexOf("bend") >= 0; r.fizzle = tr.indexOf("redtape") >= 0; if (tr.indexOf("command") >= 0) r.mul = 1.3;
     for (var i = 0; i < n; i++) r.deck.push({ i: i, hp: r.bhp, max: r.bhp, alive: true, burn: 0 });
     var front = side < 0 ? n - 1 : 0, mid = Math.floor(n / 2);
     for (var k = 0; k < o.walls; k++) r.walls.push({ col: front, row: k, hp: r.bhp, max: r.bhp, alive: true, burn: 0 });
     for (k = 0; k < o.tower; k++) r.walls.push({ col: side < 0 ? mid : mid - (n % 2 ? 0 : 1), row: k, hp: r.bhp, max: r.bhp, alive: true, burn: 0, tower: true });
     var used = {}; r.walls.forEach(function (w) { used[w.col] = 1; });
-    if (o.cannon) { var cc = side < 0 ? n - 2 : 1; if (used[cc]) cc = side < 0 ? n - 3 : 2; r.cannon = { col: cc, hp: 4, alive: true, ball: true }; used[cc] = 1; }
+    if (o.cannon) { var cc = side < 0 ? n - 2 : 1; if (used[cc]) cc = side < 0 ? n - 3 : 2; r.cannon = { col: cc, hp: 4 + 2 * (r.perks.plate || 0), alive: true, ball: true }; used[cc] = 1; }
     var cols = []; for (i = 0; i < n; i++) if (!used[i]) cols.push(i);
     if (side > 0) cols.reverse();                  /* crew stand back-to-front, away from the enemy */
     for (i = 0; i < o.crew; i++) {
       var role = o.roles ? o.roles[i % o.roles.length] : ROLES[i % ROLES.length];
       var col = cols[Math.min(cols.length - 1, Math.floor(i * cols.length / Math.max(1, o.crew)))];
-      r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
+      r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: r.perks.wind2 ? 2 : 1, burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
         look: o.looks ? o.looks[i % o.looks.length] : null, scale: o.scale || 1, armor: o.dmgMul || 1, dance: tr.indexOf("dance") >= 0 });
     }
     o.ammo.forEach(function (a) { r.ammo[a] = (r.ammo[a] || 0) + (o.ammoN || 2); });
@@ -226,7 +316,8 @@
     var region, foeCfg, mine, isVs = kind === "versus";
     var bhp = 3 + upg("armor"), chp = 100 + upg("tough") * 20, size = upg("size"), d = deco();
     var myAmmo = isVs ? AMMO_ORDER.slice(1) : AMMO_ORDER.slice(1).filter(unlocked);
-    mine = { name: isVs ? "Player 1" : "Your Raft", human: true, crew: isVs ? 3 : 2 + size, planks: isVs ? 7 : 6 + size, walls: 1, tower: 0, hp: isVs ? 120 : chp, ammo: myAmmo, ammoN: isVs ? 2 : 2 + upg("satchel"),
+    mine = { name: isVs ? "Player 1" : "Your Raft", human: true, crew: isVs ? 3 : 2 + size, planks: isVs ? 7 : 6 + size, walls: isVs ? 1 : 1 + upg("walls"), tower: isVs ? 0 : upg("tower"),
+      perks: isVs ? {} : { pump: upg("pump"), aid: upg("aid"), vests: upg("vests"), spy: upg("spy"), heavy: upg("heavy"), blast: upg("blast"), wind2: upg("wind2"), bore: upg("bore"), plate: upg("plate") }, hp: isVs ? 120 : chp, ammo: myAmmo, ammoN: isVs ? 2 : 2 + upg("satchel"),
       bhp: isVs ? 4 : bhp, cannon: !isVs && upg("cannon") > 0, sail: DECOR.sail[d.sail][0], wood: DECOR.wood[d.wood][0], flag: DECOR.flag[d.flag][0] };
     if (kind === "campaign") {
       var bt = BATTLES[idx]; region = REGIONS[bt.r];
@@ -249,7 +340,7 @@
     var keep = kind === "endless" && idx > 0 && B && B.mine ? B.mine : null;
     B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
       aim: { ang: 0.75, pow: 0.62, charging: false, chargeDir: 1, drag: null }, sel: 0, ammoSel: "rock", log: [], over: false, ai: null, firstTurn: true,
-      bolts: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null };
+      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null };
     B.mine = keep || makeRaft(-1, mine);
     if (keep) { refit(B.mine); }
     B.foe = makeRaft(1, foeCfg);
@@ -282,7 +373,7 @@
     if (s > 0) { B.aim.ang = 0.8; B.aim.pow = 0.6; } else { B.aim.ang = 0.75; B.aim.pow = 0.6; }
     if (!r.human) { B.phase = "ai"; B.timer = 0.9; B.ai = planAI(r); }
     else if (B.kind === "versus" && !B.firstTurn) g.toast((s < 0 ? "Player 1" : "Player 2") + "'s turn", "info");
-    if (B.kind === "prestige") traitTurn(g, s);
+    if (B.kind === "prestige") { traitTurn(g, s); chatter(); }
     B.firstTurn = false;
   }
   function pick(a) { return a[(Math.random() * a.length) | 0]; }
@@ -336,12 +427,22 @@
       var la = B.lastHuman, can = availAmmo(foe, thrower()).some(function (a) { return a.k === la.ammo; });
       B.ai = { ang: la.ang, pow: la.pow, ammo: can ? la.ammo : B.ai.ammo }; msg = "DaManAnders copies your last throw!";
     }
-    if (!msg && P.lines && Math.random() < 0.5) msg = P.short + ": \u201c" + pick(P.lines) + "\u201d";
     if (msg) g.toast(msg, "info");
+  }
+  /* speech bubbles over a crew member's head */
+  function say(r, m, text, dur) {
+    B.bubbles = B.bubbles.filter(function (b) { return b.m !== m; });
+    B.bubbles.push({ r: r, m: m, text: text, life: dur || 2.4, max: dur || 2.4 });
+  }
+  function chatter() {                         /* bosses talk during the fight; Ally talks a lot */
+    var P = PRESTIGE[B.idx]; if (!P || !P.lines) return;
+    if (Math.random() > (P.chatty || 0.35)) return;
+    var who = B.foe.crew.filter(function (m) { return m.alive; }); if (!who.length) return;
+    say(B.foe, pick(who), pick(P.lines));
   }
   function strike(g, bolt) {                     /* lightning lands */
     B.fx.push({ bolt: true, x: bolt.x, life: 0.4, seed: Math.random() * 100 });
-    B.flash = Math.max(B.flash, 0.5);
+    B.flash = Math.max(B.flash, 0.5); sound("zap");
     var r = B.mine;
     r.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(r, m); if (Math.abs(c.x - bolt.x) < 38) dmgCrew(g, r, m, 25, "lightning"); });
     r.deck.forEach(function (b) { if (!b.alive) return; var rc = blockRect(r, b, false); if (Math.abs(rc.x + rc.w / 2 - bolt.x) < 30) dmgBlock(r, b, 1, rc); });
@@ -387,10 +488,10 @@
     if (r.skin && !choice.special && (choice.k === "rock" || choice.k === "ball")) p.skin = r.skin;
     if (r.human) { B.blind = false; B.haze = false; B.reaper = 0; B.lastHuman = { ang: B.aim.ang, pow: B.aim.pow, ammo: choice.special ? "rock" : choice.k }; }
     B.projs.push(p);
-    if (choice.special) t.m.special = false; else if (choice.k !== "rock" && choice.k !== "ball") r.ammo[choice.k]--;
+    if (choice.special) { t.m.specials = (t.m.specials || 1) - 1; t.m.special = t.m.specials > 0; } else if (choice.k !== "rock" && choice.k !== "ball") r.ammo[choice.k]--;
     if (t.m) t.m.anim = 0.4;
     B.phase = "fly"; B.aim.charging = false; B.aim.drag = null; B.settle = 0;
-    Site.sfx("tap");
+    sound("whoosh", { v: 0.6 + B.aim.pow * 0.6 });
   }
 
   function hitTest(p) {
@@ -414,13 +515,14 @@
     m.hp = Math.max(0, Math.round(m.hp - n)); m.anim = -0.4;
     var c = crewPos(r, m);
     B.fx.push({ txt: "-" + Math.round(n), x: c.x, y: c.y - 60, vy: -50, life: 1, col: "#ff8a8a" });
+    if (!why && m.look === LK.dylan && m.hp > 0) say(r, m, "Correct.", 1.6);     /* Dylan, every time he's hit */
     if (m.hp <= 0) { m.alive = false; g.toast(m.name + " is out" + (why ? " (" + why + ")" : ""), r.human ? "bad" : "good"); }
   }
   function dmgBlock(r, b, n, rect) {
     if (!b.alive) return;
     b.hp -= n;
     if (b.hp <= 0) {
-      b.alive = false;
+      b.alive = false; sound("splinter");
       for (var i = 0; i < 6; i++) B.debris.push({ x: rect.x + rect.w / 2, y: rect.y + rect.h / 2, vx: (Math.random() - 0.5) * 300, vy: -150 - Math.random() * 250, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 10, w: 10 + Math.random() * 16, col: r.wood, life: 2.2 });
       if (b.i !== undefined) r.crew.forEach(function (m) { if (m.col === b.i) m.swim = true; });
     }
@@ -432,23 +534,23 @@
       r.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(r, m); if (Math.hypot(c.x - x, c.y - y) < a.rad) { m.hp = Math.min(m.max, m.hp + a.heal); healed++; m.burn = 0; } });
       var fixed = 0; r.deck.forEach(function (b) { if (!b.alive && fixed < 2) { b.alive = true; b.hp = b.max; fixed++; r.crew.forEach(function (m) { if (m.col === b.i) m.swim = false; }); } });
       r.walls.forEach(function (w) { if (w.alive) w.burn = 0; }); r.deck.forEach(function (b) { b.burn = 0; });
-      ring(x, y, a.rad, "#68d391"); g.toast("Repaired " + fixed + " plank" + (fixed === 1 ? "" : "s") + ", healed " + healed, "good");
+      ring(x, y, a.rad, "#68d391"); sound("chime"); g.toast("Repaired " + fixed + " plank" + (fixed === 1 ? "" : "s") + ", healed " + healed, "good");
       return;
     }
-    ring(x, y, a.rad, p.k === "bomb" ? "#ffb26b" : p.k === "fire" ? "#ff7a2f" : "rgba(255,255,255,.7)");
-    var mul = side(p.from).mul || 1;
+    var src = side(p.from), mul = src.mul || 1, rad = a.rad * (1 + ((src.perks || {}).blast || 0) * 0.18);
+    ring(x, y, rad, p.k === "bomb" ? "#ffb26b" : p.k === "fire" ? "#ff7a2f" : "rgba(255,255,255,.7)");
+    sound(p.k === "bomb" ? "blast" : p.k === "fire" ? "fire" : "stone");
     [B.mine, B.foe].forEach(function (r) {
       r.crew.forEach(function (m) {
         if (!m.alive) return; var sc = m.scale || 1, c = crewPos(r, m), d = Math.hypot(c.x - x, c.y - 12 * sc - y);
-        if (d < a.rad + 14 * sc) { dmgCrew(g, r, m, a.crew * mul * (d < 26 * sc ? 1 : 0.55)); if (a.burn) m.burn = a.burn; }
+        if (d < rad + 14 * sc) { dmgCrew(g, r, m, a.crew * mul * (d < 26 * sc ? 1 : 0.55)); if (a.burn) m.burn = a.burn; }
       });
       r.walls.concat(r.deck).forEach(function (b) {
         if (!b.alive) return; var isW = b.col !== undefined, rc = blockRect(r, b, isW), d = Math.hypot(rc.x + rc.w / 2 - x, rc.y + rc.h / 2 - y);
-        if (d < a.rad * 0.75) { dmgBlock(r, b, a.block, rc); if (a.burn && b.alive) b.burn = a.burn; }
+        if (d < rad * 0.75) { dmgBlock(r, b, a.block, rc); if (a.burn && b.alive) b.burn = a.burn; }
       });
-      if (r.cannon && r.cannon.alive) { var d2 = Math.hypot(colX(r, r.cannon.col) - x, deckY(r) - 14 - y); if (d2 < a.rad) { r.cannon.hp -= a.block; if (r.cannon.hp <= 0) { r.cannon.alive = false; g.toast((r.human ? "Your" : "Their") + " cannon is wrecked", r.human ? "bad" : "good"); } } }
+      if (r.cannon && r.cannon.alive) { var d2 = Math.hypot(colX(r, r.cannon.col) - x, deckY(r) - 14 - y); if (d2 < rad) { r.cannon.hp -= a.block; if (r.cannon.hp <= 0) { r.cannon.alive = false; g.toast((r.human ? "Your" : "Their") + " cannon is wrecked", r.human ? "bad" : "good"); } } }
     });
-    Site.sfx(p.k === "bomb" ? "error" : "tap");
   }
   function ring(x, y, rad, col) { B.fx.push({ ring: true, x: x, y: y, r: 6, max: rad, life: 0.45, col: col }); for (var i = 0; i < 10; i++) { var an = Math.random() * 6.28, v = 80 + Math.random() * 200; B.fx.push({ x: x, y: y, vx: Math.cos(an) * v, vy: Math.sin(an) * v - 80, life: 0.6, col: col }); } }
 
@@ -465,7 +567,7 @@
           if (best) { var want = Math.atan2(best.y - 14 - p.y, best.x - p.x), cur = Math.atan2(p.vy, p.vx), diff = Math.atan2(Math.sin(want - cur), Math.cos(want - cur)), turn = Math.max(-2.6 * h, Math.min(2.6 * h, diff)), sp = Math.max(420, Math.hypot(p.vx, p.vy)); cur += turn; p.vx = Math.cos(cur) * sp; p.vy = Math.sin(cur) * sp; }
           if (p.age > 5) { p.alive = false; break; }
         }
-        if (p.fizzleAt && p.age > p.fizzleAt) { p.alive = false; ring(p.x, p.y, 24, "#e2e8f0"); g.toast("Lost in paperwork", "good"); break; }
+        if (p.fizzleAt && p.age > p.fizzleAt) { p.alive = false; ring(p.x, p.y, 24, "#e2e8f0"); sound("paper"); g.toast("Lost in paperwork", "good"); break; }
         if (p.bend && p.age > 0.4) {             /* dab bending: steer toward the nearest enemy */
           var bf = side(-p.from), bt = null, bdd = 1e9;
           bf.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(bf, m), dd = Math.hypot(c.x - p.x, c.y - p.y); if (dd < bdd) { bdd = dd; bt = c; } });
@@ -482,16 +584,18 @@
         if (!hit) continue;
         var key = p.k === "shard" ? "splitter" : p.k, a = AMMO[key];
         if (hit.water && p.k !== "repair") {
-          if (p.k === "bouncer" && p.bounces < a.bounces && !hit.lost) { p.bounces++; p.vy = -Math.abs(p.vy) * 0.55; p.vx *= 0.8; p.y = WY - 2; splash(p.x); continue; }
-          splash(p.x); p.alive = false;
+          if (p.k === "bouncer" && p.bounces < a.bounces && !hit.lost) { p.bounces++; p.vy = -Math.abs(p.vy) * 0.55; p.vx *= 0.8; p.y = WY - 2; splash(p.x); sound("splash", { v: 0.5 }); sound("rubber", { v: 0.6 }); continue; }
+          splash(p.x); p.alive = false; if (!hit.lost) sound("splash");
           if (!hit.lost && (p.k === "bomb" || p.k === "fire")) explode(g, { k: key, from: p.from }, p.x, WY);
           break;
         }
-        if (hit.water) { splash(p.x); p.alive = false; g.toast("The repair kit sank", "info"); break; }
+        if (hit.water) { splash(p.x); sound("splash"); p.alive = false; g.toast("The repair kit sank", "info"); break; }
         if (p.k === "repair") { explode(g, p, p.x, p.y); p.alive = false; break; }
         if (key === "bomb" || key === "fire") explode(g, { k: key, from: p.from }, p.x, p.y);     /* the blast does all the damage */
         else {
-          if (hit.crew) dmgCrew(g, hit.r, hit.crew, a.crew * (side(p.from).mul || 1), null);
+          var sr = side(p.from), pk2 = sr.perks || {}, bonus = key === "rock" ? (pk2.heavy || 0) * 6 : key === "ball" ? (pk2.bore || 0) * 12 : 0;
+          impactSound(p, hit);
+          if (hit.crew) dmgCrew(g, hit.r, hit.crew, (a.crew + bonus) * (sr.mul || 1), null);
           else if (hit.block) dmgBlock(hit.r, hit.block, a.block, hit.rect);
           else if (hit.cannon) { hit.r.cannon.hp -= a.block; if (hit.r.cannon.hp <= 0) hit.r.cannon.alive = false; }
           ring(p.x, p.y, 16, a.col); if (hit.crew) Site.sfx("success");
@@ -542,7 +646,15 @@
   function sunk(r) { return r.deck.filter(function (b) { return b.alive; }).length < r.n * 0.35; }
   function endTurn(g) {
     [B.mine, B.foe].forEach(function (r) {                 /* fire burns, swimmers tire */
-      r.crew.forEach(function (m) { if (!m.alive) return; if (m.burn > 0) { m.burn--; dmgCrew(g, r, m, 8, "burns"); } if (m.swim) dmgCrew(g, r, m, 10, "overboard"); });
+      var pk = r.perks || {};
+      r.crew.forEach(function (m) { if (!m.alive) return; if (m.burn > 0) { m.burn--; dmgCrew(g, r, m, 8, "burns"); } if (m.swim) dmgCrew(g, r, m, pk.vests ? 5 : 10, "overboard"); });
+      if (r.side === B.turnSide) {              /* the side that just threw: first aid and pumps */
+        if (pk.aid) r.crew.forEach(function (m) { if (m.alive && m.hp < m.max) m.hp = Math.min(m.max, m.hp + pk.aid * 4); });
+        if (pk.pump && ++r.pumpT >= (pk.pump > 1 ? 2 : 3)) {
+          var dead = r.deck.filter(function (b) { return !b.alive; })[0];
+          if (dead) { r.pumpT = 0; dead.alive = true; dead.hp = dead.max; r.crew.forEach(function (m) { if (m.col === dead.i) m.swim = false; }); var rc = blockRect(r, dead, false); ring(rc.x + rc.w / 2, rc.y, 22, "#68d391"); sound("wood", { v: 0.5 }); }
+        }
+      }
       r.walls.concat(r.deck).forEach(function (b) { if (b.alive && b.burn > 0) { b.burn--; dmgBlock(r, b, 1, blockRect(r, b, b.col !== undefined)); } });
     });
     var mineOut = !aliveCrew(B.mine) || sunk(B.mine), foeOut = !aliveCrew(B.foe) || sunk(B.foe);
@@ -615,6 +727,7 @@
     var r = side(B.turnSide), human = r.human;
     [B.mine, B.foe].forEach(function (rr) { rr.crew.forEach(function (m) { if (m.anim > 0) m.anim = Math.max(0, m.anim - dt); else if (m.anim < 0) m.anim = Math.min(0, m.anim + dt); }); });
     if (B.flash > 0) B.flash = Math.max(0, B.flash - dt * 1.4);
+    for (var bb = B.bubbles.length - 1; bb >= 0; bb--) { B.bubbles[bb].life -= dt; if (B.bubbles[bb].life <= 0 || !B.bubbles[bb].m.alive) B.bubbles.splice(bb, 1); }
     for (var bi = B.bolts.length - 1; bi >= 0; bi--) { B.bolts[bi].warn -= dt; if (B.bolts[bi].warn <= 0) { strike(g, B.bolts[bi]); B.bolts.splice(bi, 1); } }
     if (B.phase === "aim" && human && B.reaper > 0) { B.reaper -= dt; if (B.reaper <= 0) { reap(g); return; } }
     if (B.phase === "aim" && human) aimInput(g, dt);
@@ -668,37 +781,104 @@
     for (var row = 1; row < 5; row++) { x.beginPath(); for (px = 0; px <= W; px += 24) x.lineTo(px, WY + row * 34 + Math.sin(px / 60 + t * 1.2 + row) * 4); x.stroke(); }
   }
   function drawRaft(x, r, t) {
-    var dy = deckY(r), d;
-    x.fillStyle = "rgba(0,0,0,.25)"; x.beginPath(); x.ellipse(r.x0 + r.n * PW / 2, WY + 10, r.n * PW / 2 + 10, 8, 0, 0, 6.3); x.fill();
-    for (var i = 0; i < r.n; i++) { if (!r.deck[i].alive) continue; x.fillStyle = "#5a3b1f"; x.beginPath(); x.ellipse(r.x0 + i * PW + PW / 2, dy + 22, PW / 2 - 1, 9, 0, 0, 6.3); x.fill(); }
+    var dy = deckY(r), i;
+    x.fillStyle = "rgba(0,0,0,.28)"; x.beginPath(); x.ellipse(r.x0 + r.n * PW / 2, WY + 10, r.n * PW / 2 + 12, 9, 0, 0, 6.3); x.fill();
+    /* the logs under the deck, seen end-on: bark, heartwood, growth rings */
+    for (i = 0; i < r.n; i++) {
+      if (!r.deck[i].alive) continue;
+      var lx = r.x0 + i * PW + PW / 2, ly = dy + 22, rw = PW / 2 - 1;
+      x.fillStyle = shade(r.wood, -62); x.beginPath(); x.ellipse(lx, ly, rw, 10, 0, 0, 6.3); x.fill();
+      x.fillStyle = shade(r.wood, 10); x.beginPath(); x.ellipse(lx, ly, rw - 4, 7, 0, 0, 6.3); x.fill();
+      x.strokeStyle = shade(r.wood, -28); x.lineWidth = 1; x.beginPath(); x.ellipse(lx, ly, rw - 9, 4.6, 0, 0, 6.3); x.stroke(); x.beginPath(); x.ellipse(lx, ly, rw - 14, 2.4, 0, 0, 6.3); x.stroke();
+      x.fillStyle = "rgba(20,60,70,.35)"; x.fillRect(lx - rw, ly + 3, rw * 2, 7);      /* waterline */
+    }
+    /* mast with rope rings, rigging and a cloth sail */
     var mastCol = Math.floor(r.n / 2), mx = colX(r, mastCol) + (r.side < 0 ? -PW / 2 : PW / 2);
-    x.strokeStyle = "#4a3220"; x.lineWidth = 6; x.beginPath(); x.moveTo(mx, dy); x.lineTo(mx, dy - 170); x.stroke();
-    x.fillStyle = r.sail; x.beginPath(); x.moveTo(mx + 3 * -r.side, dy - 160); x.quadraticCurveTo(mx - r.side * 70, dy - 110, mx + 3 * -r.side, dy - 60); x.closePath(); x.fill();
+    x.strokeStyle = "rgba(60,40,24,.55)"; x.lineWidth = 1.5;
+    x.beginPath(); x.moveTo(mx, dy - 166); x.lineTo(r.x0 + 4, dy); x.moveTo(mx, dy - 166); x.lineTo(r.x0 + r.n * PW - 4, dy); x.stroke();
+    var mg = x.createLinearGradient(mx - 4, 0, mx + 4, 0); mg.addColorStop(0, "#5a3d24"); mg.addColorStop(0.5, "#7a5634"); mg.addColorStop(1, "#3e2a18");
+    x.fillStyle = mg; x.fillRect(mx - 3.5, dy - 172, 7, 172);
+    x.fillStyle = "#c9a96e"; [dy - 150, dy - 64, dy - 12].forEach(function (yy) { x.fillRect(mx - 5, yy, 10, 4); x.fillStyle = "#a88a52"; x.fillRect(mx - 5, yy + 2, 10, 1); x.fillStyle = "#c9a96e"; });
+    var tip = mx - r.side * 70, top = mx + 3 * -r.side;
+    x.save(); x.beginPath(); x.moveTo(top, dy - 160); x.quadraticCurveTo(tip, dy - 110, top, dy - 60); x.closePath();
+    var sg = x.createLinearGradient(top, 0, tip, 0); sg.addColorStop(0, shade(r.sail, -30)); sg.addColorStop(0.6, r.sail); sg.addColorStop(1, shade(r.sail, 22));
+    x.fillStyle = sg; x.fill(); x.clip();
+    x.strokeStyle = "rgba(0,0,0,.18)"; x.lineWidth = 1; for (i = 1; i < 5; i++) { x.beginPath(); x.moveTo(top, dy - 160 + i * 20); x.quadraticCurveTo(tip, dy - 150 + i * 18, top + -r.side * 60, dy - 140 + i * 20); x.stroke(); }
+    x.restore();
+    x.strokeStyle = shade(r.sail, -45); x.lineWidth = 2; x.beginPath(); x.moveTo(top, dy - 160); x.quadraticCurveTo(tip, dy - 110, top, dy - 60); x.stroke();
     if (r.flag === "maple") canFlag(x, mx - r.side * 28, dy - 110, 34);
     else if (r.flag === "lighthouse") {
-      var lx = mx - r.side * 26, ly = dy - 86;
-      fillPath(x, "#f7fafc", [[lx - 7, ly], [lx + 7, ly], [lx + 4, ly - 34], [lx - 4, ly - 34]]);
-      x.fillStyle = "#c53030"; x.fillRect(lx - 6, ly - 10, 12, 5); x.fillRect(lx - 5, ly - 24, 10, 5);
-      x.fillStyle = "rgba(255,236,150," + (0.45 + Math.sin(t * 3) * 0.25) + ")"; x.beginPath(); x.moveTo(lx, ly - 39); x.lineTo(lx - r.side * 40, ly - 50); x.lineTo(lx - r.side * 40, ly - 28); x.closePath(); x.fill();
-      circ(x, "#f6e05e", lx, ly - 38, 4); x.fillStyle = "#1a202c"; x.fillRect(lx - 5, ly - 44, 10, 3);
+      var lhx = mx - r.side * 26, lhy = dy - 86;
+      fillPath(x, "#f7fafc", [[lhx - 7, lhy], [lhx + 7, lhy], [lhx + 4, lhy - 34], [lhx - 4, lhy - 34]]);
+      x.fillStyle = "#c53030"; x.fillRect(lhx - 6, lhy - 10, 12, 5); x.fillRect(lhx - 5, lhy - 24, 10, 5);
+      x.fillStyle = "rgba(255,236,150," + (0.45 + Math.sin(t * 3) * 0.25) + ")"; x.beginPath(); x.moveTo(lhx, lhy - 39); x.lineTo(lhx - r.side * 40, lhy - 50); x.lineTo(lhx - r.side * 40, lhy - 28); x.closePath(); x.fill();
+      circ(x, "#f6e05e", lhx, lhy - 38, 4); x.fillStyle = "#1a202c"; x.fillRect(lhx - 5, lhy - 44, 10, 3);
     }
-    else { x.fillStyle = "#fff"; x.font = "700 26px " + F.display; x.textAlign = "center"; x.fillText(r.flag, mx - r.side * 26, dy - 100); }
-    var fw = Math.sin(t * 6) * 4; x.fillStyle = r.sail; x.beginPath(); x.moveTo(mx, dy - 170); x.lineTo(mx - r.side * (30 + fw), dy - 163); x.lineTo(mx, dy - 156); x.fill();
-    r.deck.forEach(function (b) { if (!b.alive) return; var rc = blockRect(r, b, false); plank(x, rc, r.wood, b); });
-    r.walls.forEach(function (w) { if (!w.alive) return; var rc = blockRect(r, w, true); plank(x, rc, w.tower ? shade(r.wood, -18) : shade(r.wood, -8), w); });
+    else { x.fillStyle = "rgba(255,255,255,.92)"; x.font = "700 26px " + F.display; x.textAlign = "center"; x.fillText(r.flag, mx - r.side * 26, dy - 100); }
+    var fw = Math.sin(t * 6) * 4; x.fillStyle = r.sail; x.beginPath(); x.moveTo(mx, dy - 172); x.lineTo(mx - r.side * (30 + fw), dy - 165 + Math.sin(t * 5) * 2); x.lineTo(mx, dy - 158); x.fill();
+    /* deck planks, then rope lashings over the seams */
+    r.deck.forEach(function (b) { if (!b.alive) return; plank(x, blockRect(r, b, false), r.wood, b, r, "deck"); });
+    for (i = 0; i < r.n - 1; i++) {
+      if (!r.deck[i].alive || !r.deck[i + 1].alive) continue;
+      var sx = r.x0 + (i + 1) * PW;
+      x.strokeStyle = "#c9a96e"; x.lineWidth = 2.2; x.beginPath();
+      for (var k = 0; k < 3; k++) { x.moveTo(sx - 3, dy + 3 + k * 5); x.lineTo(sx + 3, dy + 6 + k * 5); }
+      x.stroke(); x.strokeStyle = "rgba(90,66,30,.6)"; x.lineWidth = 0.8; x.stroke();
+    }
+    r.walls.forEach(function (w) { if (!w.alive) return; plank(x, blockRect(r, w, true), w.tower ? shade(r.wood, -18) : shade(r.wood, -8), w, r, w.tower ? "tower" : "wall"); });
     if (r.cannon && r.cannon.alive) {
       var cx = colX(r, r.cannon.col), cy = dy - 14, ang = (B.turnSide === r.side && thrower() && thrower().cannon) ? B.aim.ang : 0.5;
-      x.save(); x.translate(cx, cy); x.scale(-r.side, 1); x.rotate(-ang); x.fillStyle = "#2d3748"; D.rr(x, -6, -8, 40, 16, 6); x.fill(); x.restore();
-      x.fillStyle = "#4a3220"; x.beginPath(); x.arc(cx, cy + 4, 12, 0, 6.3); x.fill();
+      x.save(); x.translate(cx, cy); x.scale(-r.side, 1); x.rotate(-ang);
+      var cg = x.createLinearGradient(0, -8, 0, 8); cg.addColorStop(0, "#5a6578"); cg.addColorStop(0.45, "#2d3748"); cg.addColorStop(1, "#151b26");
+      x.fillStyle = cg; D.rr(x, -6, -8, 40, 16, 6); x.fill(); x.fillStyle = "#1a202c"; x.fillRect(30, -9, 6, 18); x.fillStyle = "#4a5568"; x.fillRect(10, -8.5, 3, 17);
+      x.restore();
+      x.fillStyle = "#4a3220"; x.beginPath(); x.arc(cx, cy + 4, 12, 0, 6.3); x.fill(); x.strokeStyle = "#2a1c10"; x.lineWidth = 2; x.beginPath(); x.moveTo(cx - 9, cy + 4); x.lineTo(cx + 9, cy + 4); x.moveTo(cx, cy - 5); x.lineTo(cx, cy + 13); x.stroke();
+      circ(x, "#9aa3ad", cx, cy + 4, 2.5);
     }
     r.crew.forEach(function (m) { drawCrew(x, r, m, t); });
   }
-  function shade(hex, n) { var v = parseInt(hex.slice(1), 16), rr = Math.max(0, Math.min(255, (v >> 16) + n)), gg = Math.max(0, Math.min(255, ((v >> 8) & 255) + n)), bb = Math.max(0, Math.min(255, (v & 255) + n)); return "rgb(" + rr + "," + gg + "," + bb + ")"; }
-  function plank(x, rc, col, b) {
-    x.fillStyle = col; D.rr(x, rc.x, rc.y, rc.w, rc.h, 3); x.fill();
-    x.strokeStyle = "rgba(0,0,0,.25)"; x.lineWidth = 1.5; x.beginPath(); x.moveTo(rc.x + 4, rc.y + rc.h * 0.4); x.lineTo(rc.x + rc.w - 4, rc.y + rc.h * 0.4); x.stroke();
-    if (b.hp < b.max) { x.strokeStyle = "rgba(0,0,0,.55)"; x.lineWidth = 2; x.beginPath(); x.moveTo(rc.x + rc.w * 0.3, rc.y); x.lineTo(rc.x + rc.w * 0.5, rc.y + rc.h * 0.6); x.lineTo(rc.x + rc.w * 0.4, rc.y + rc.h); if (b.hp < b.max - 1) { x.moveTo(rc.x + rc.w * 0.8, rc.y); x.lineTo(rc.x + rc.w * 0.65, rc.y + rc.h * 0.7); } x.stroke(); }
-    if (b.burn > 0) { x.fillStyle = "rgba(255,120,40,.75)"; x.beginPath(); x.moveTo(rc.x + 6, rc.y); x.quadraticCurveTo(rc.x + rc.w / 2, rc.y - 22 - Math.random() * 6, rc.x + rc.w - 6, rc.y); x.fill(); }
+  function shade(hex, n) {
+    if (hex.charAt(0) !== "#") return hex;
+    if (hex.length === 4) hex = "#" + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2) + hex.charAt(3) + hex.charAt(3);
+    var v = parseInt(hex.slice(1), 16), rr = Math.max(0, Math.min(255, (v >> 16) + n)), gg = Math.max(0, Math.min(255, ((v >> 8) & 255) + n)), bb = Math.max(0, Math.min(255, (v & 255) + n));
+    return "#" + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1);
+  }
+  function hash(n) { n = (n ^ 61) ^ (n >>> 16); n = (n + (n << 3)) | 0; n ^= n >>> 4; n = Math.imul(n, 0x27d4eb2d); n ^= n >>> 15; return (n >>> 0) / 4294967296; }
+  /* a wooden plank with grain, a knot now and then, nails, and damage (cracks, splinters, char) */
+  function plank(x, rc, col, b, r, kind) {
+    var seed = (r && r.side < 0 ? 7000 : 9000) + (b.i !== undefined ? b.i : 100 + b.col * 10 + b.row) + (kind === "tower" ? 500 : 0);
+    var hurt = 1 - b.hp / b.max, base = b.burn > 0 ? shade(col, -30) : shade(col, -Math.round(hurt * 26));
+    var gr = x.createLinearGradient(0, rc.y, 0, rc.y + rc.h); gr.addColorStop(0, shade(base, 22)); gr.addColorStop(0.5, base); gr.addColorStop(1, shade(base, -24));
+    x.fillStyle = gr; D.rr(x, rc.x, rc.y, rc.w, rc.h, 3); x.fill();
+    x.save(); D.rr(x, rc.x, rc.y, rc.w, rc.h, 3); x.clip();
+    x.strokeStyle = "rgba(40,22,8,.32)"; x.lineWidth = 1;                /* grain */
+    var lines = kind === "deck" ? 4 : 5;
+    for (var i = 0; i < lines; i++) {
+      var gy = rc.y + 3 + (i + hash(seed + i) * 0.6) * (rc.h - 4) / lines, amp = 0.8 + hash(seed * 3 + i) * 1.6, ph = hash(seed * 7 + i) * 6;
+      x.beginPath(); for (var gx = 0; gx <= rc.w; gx += 4) x.lineTo(rc.x + gx, gy + Math.sin(gx / 7 + ph) * amp); x.stroke();
+    }
+    if (hash(seed * 11) < 0.45) {                                         /* knot */
+      var kx = rc.x + 6 + hash(seed * 13) * (rc.w - 12), ky = rc.y + rc.h * (0.3 + hash(seed * 17) * 0.4);
+      x.fillStyle = "rgba(50,28,10,.45)"; x.beginPath(); x.ellipse(kx, ky, 3.4, 2.2, 0, 0, 6.3); x.fill();
+      x.strokeStyle = "rgba(50,28,10,.3)"; x.beginPath(); x.ellipse(kx, ky, 5.5, 3.6, 0, 0, 6.3); x.stroke();
+    }
+    x.fillStyle = "rgba(255,240,210,.18)"; x.fillRect(rc.x, rc.y, rc.w, 1.5);   /* top edge catches the light */
+    if (kind === "wall") { x.strokeStyle = "rgba(40,22,8,.45)"; x.lineWidth = 2.5; x.beginPath(); x.moveTo(rc.x + 3, rc.y + 3); x.lineTo(rc.x + rc.w - 3, rc.y + rc.h - 3); x.stroke(); }
+    if (kind === "tower") {                                               /* iron bands + rivets */
+      x.fillStyle = "#4a5568"; x.fillRect(rc.x, rc.y + 3, rc.w, 3.5); x.fillRect(rc.x, rc.y + rc.h - 7, rc.w, 3.5);
+      x.fillStyle = "#a0aec0"; [rc.x + 4, rc.x + rc.w - 4].forEach(function (nx) { circ(x, "#a0aec0", nx, rc.y + 4.7, 1.2); circ(x, "#a0aec0", nx, rc.y + rc.h - 5.3, 1.2); });
+    } else { circ(x, "#5f6670", rc.x + 4, rc.y + rc.h / 2, 1.5); circ(x, "#5f6670", rc.x + rc.w - 4, rc.y + rc.h / 2, 1.5); circ(x, "rgba(255,255,255,.35)", rc.x + 3.6, rc.y + rc.h / 2 - 0.5, 0.6); circ(x, "rgba(255,255,255,.35)", rc.x + rc.w - 4.4, rc.y + rc.h / 2 - 0.5, 0.6); }
+    if (b.hp < b.max) {                                                    /* cracks, then a splintered notch */
+      x.strokeStyle = "rgba(20,10,4,.75)"; x.lineWidth = 1.8; x.beginPath();
+      x.moveTo(rc.x + rc.w * 0.3, rc.y); x.lineTo(rc.x + rc.w * 0.5, rc.y + rc.h * 0.55); x.lineTo(rc.x + rc.w * 0.42, rc.y + rc.h); x.moveTo(rc.x + rc.w * 0.5, rc.y + rc.h * 0.55); x.lineTo(rc.x + rc.w * 0.62, rc.y + rc.h * 0.7);
+      if (b.hp < b.max - 1) { x.moveTo(rc.x + rc.w * 0.82, rc.y); x.lineTo(rc.x + rc.w * 0.68, rc.y + rc.h * 0.7); x.lineTo(rc.x + rc.w * 0.74, rc.y + rc.h); }
+      x.stroke();
+      if (b.hp <= 1) { x.fillStyle = "rgba(10,14,20,.9)"; x.beginPath(); x.moveTo(rc.x + rc.w * 0.35, rc.y - 1); x.lineTo(rc.x + rc.w * 0.45, rc.y + rc.h * 0.35); x.lineTo(rc.x + rc.w * 0.52, rc.y + rc.h * 0.12); x.lineTo(rc.x + rc.w * 0.6, rc.y + rc.h * 0.3); x.lineTo(rc.x + rc.w * 0.68, rc.y - 1); x.fill(); }
+    }
+    if (b.burn > 0) { x.fillStyle = "rgba(20,10,5,.45)"; x.fillRect(rc.x, rc.y, rc.w, rc.h); }
+    x.restore();
+    x.strokeStyle = "rgba(30,16,6,.55)"; x.lineWidth = 1; D.rr(x, rc.x + 0.5, rc.y + 0.5, rc.w - 1, rc.h - 1, 3); x.stroke();
+    if (b.burn > 0) { var fl = Math.random() * 6; x.fillStyle = "rgba(255,120,40,.8)"; x.beginPath(); x.moveTo(rc.x + 5, rc.y); x.quadraticCurveTo(rc.x + rc.w / 2, rc.y - 22 - fl, rc.x + rc.w - 5, rc.y); x.fill(); x.fillStyle = "rgba(255,210,90,.85)"; x.beginPath(); x.moveTo(rc.x + 12, rc.y); x.quadraticCurveTo(rc.x + rc.w / 2, rc.y - 11 - fl / 2, rc.x + rc.w - 12, rc.y); x.fill(); }
   }
   function drawCrew(x, r, m, t) {
     var c = crewPos(r, m), face = -r.side, s = m.scale || 1;
@@ -855,6 +1035,18 @@
     x.save(); x.translate(5, -8); x.rotate(arm); x.strokeStyle = "#141018"; x.lineWidth = 6; x.lineCap = "round"; x.beginPath(); x.moveTo(0, 0); x.lineTo(14, 0); x.stroke(); circ(x, "#e2e8f0", 17, 0, 3); x.restore();
     x.restore();
   }
+  function drawBubble(x, b) {
+    var c = crewPos(b.r, b.m), s = b.m.scale || 1, top = b.m.look === "reaper" ? 72 : b.m.look === "doc" ? 52 : 62;
+    var y = c.y - top * s - 46, a = Math.min(1, b.life * 3, (b.max - b.life) * 8 + 0.2);
+    x.save(); x.globalAlpha = Math.max(0, Math.min(1, a));
+    x.font = "800 17px " + F.display; var tw = x.measureText(b.text).width, w = tw + 26, h = 32;
+    var bx = Math.max(10, Math.min(W - w - 10, c.x - w / 2));
+    x.fillStyle = "#fff"; D.rr(x, bx, y - h, w, h, 12); x.fill();
+    x.beginPath(); x.moveTo(c.x - 8, y - 1); x.lineTo(c.x + 4, y + 12); x.lineTo(c.x + 10, y - 1); x.fill();
+    x.strokeStyle = "rgba(0,0,0,.25)"; x.lineWidth = 2; D.rr(x, bx, y - h, w, h, 12); x.stroke();
+    x.fillStyle = "#1a202c"; x.textAlign = "center"; x.fillText(b.text, bx + w / 2, y - 10);
+    x.restore();
+  }
   function drawSkin(x, p, t) {                    /* what bosses throw instead of plain rocks */
     var k = p.skin; x.save(); x.translate(p.x, p.y); x.rotate(p.age * 7);
     if (k === "form" || k === "paper") { x.fillStyle = "#f7f7ef"; x.fillRect(-8, -10, 16, 20); x.strokeStyle = k === "paper" ? "#2f855a" : "#a0aec0"; x.lineWidth = 1.2; for (var i = 0; i < 4; i++) { x.beginPath(); x.moveTo(-5, -5 + i * 4); x.lineTo(5, -5 + i * 4); x.stroke(); } if (k === "form") { x.fillStyle = "#c53030"; x.font = "800 7px " + F.mono; x.textAlign = "center"; x.fillText("DENIED", 0, -6); } }
@@ -895,7 +1087,8 @@
       if (r.human) {
         var p = { x: o.x, y: o.y, vx: v.vx, vy: v.vy };
         x.fillStyle = "rgba(255,255,255,.9)";
-        for (var i = 1; i <= 26; i++) { for (var k = 0; k < 2; k++) { p.vy += GRAV * STEP * 2; p.x += p.vx * STEP * 2; p.y += p.vy * STEP * 2; } if (i % 2) { x.beginPath(); x.arc(p.x, p.y, 3.2 - i * 0.08, 0, 6.3); x.fill(); } }
+        var steps = 26 + Math.round(26 * 0.45 * ((r.perks || {}).spy || 0));
+        for (var i = 1; i <= steps; i++) { for (var k = 0; k < 2; k++) { p.vy += GRAV * STEP * 2; p.x += p.vx * STEP * 2; p.y += p.vy * STEP * 2; } if (i % 2) { x.beginPath(); x.arc(p.x, p.y, Math.max(1, 3.2 - i * 0.08), 0, 6.3); x.fill(); } }
       }
     }
     x.strokeStyle = "rgba(255,255,255,.9)"; x.lineWidth = 3; x.beginPath(); x.moveTo(o.x, o.y); x.lineTo(o.x + Math.cos(B.aim.ang) * 46 * (s < 0 ? 1 : -1), o.y - Math.sin(B.aim.ang) * 46); x.stroke();
@@ -939,22 +1132,53 @@
 
   /* ---------------- menus ---------------- */
   function paintBest(g) { var c = cleared().length; g.setBest(c + "/" + BATTLES.length + " battles" + (prestigeOpen() ? "  ·  prestige " + pcleared().length + "/" + PRESTIGE.length : "") + "  ·  best wave " + (sget("bestWave", 0) || 0) + "  ·  " + coins() + " coins"); }
+  var TIPS = [
+    "Wind pushes everything in flight. Watch the arrow at the top before you throw.",
+    "Break the plank under an enemy and they end up overboard, losing health every turn.",
+    "A raft with under a third of its deck left sinks. Sometimes the raft is the easier target.",
+    "Repair kits only work on your own raft: lob them short.",
+    "Bouncers skip off the water. Aim them low and let them hop in.",
+    "Splitters break in three at the top of their arc. Throw them high over walls.",
+    "The seagull ignores the wind and finds the nearest enemy on its own.",
+    "Every crew member has a ★ special. Switch throwers with Q / E to use them all.",
+    "Fire keeps burning for three turns, on planks and on people.",
+    "The Shipwright's Pump & Patch fixes broken planks without you lifting a finger."
+  ];
+  function raftRating() { var have = 0, all = 0; UPG.forEach(function (u) { have += upg(u.key); all += u.max; }); return { have: have, all: all }; }
+  function affordable() { var c = coins(), n = 0; UPG.forEach(function (u) { var l = upg(u.key); if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need))) n++; }); AMMO_ORDER.slice(1).forEach(function (k) { if (!unlocked(k) && c >= AMMO[k].cost) n++; }); return n; }
+  function statTile(label, value, frac, note) {
+    var t = el("div", { class: "ak-stat" }, el("span", { text: label }), el("b", { text: String(value) }));
+    if (frac != null) { var bar = el("i", { class: "ak-stat__bar" }); bar.appendChild(el("i", { style: { width: Math.round(Math.max(0, Math.min(1, frac)) * 100) + "%" } })); t.appendChild(bar); }
+    if (note) t.appendChild(el("em", { text: note }));
+    return t;
+  }
   function titleMenu(g) {
     paintBest(g);
+    var cl = cleared(), pc = pcleared(), rr = raftRating(), aff = affordable(), next = -1, pnext = -1, i;
+    for (i = 0; i < BATTLES.length; i++) if (cl.indexOf(i) < 0) { next = i; break; }
+    if (prestigeOpen()) for (i = 0; i < PRESTIGE.length; i++) if (pc.indexOf(i) < 0) { pnext = i; break; }
+    var stats = el("div", { class: "ak-stats" },
+      statTile("Campaign", cl.length + " / " + BATTLES.length, cl.length / BATTLES.length, next < 0 ? "All islands cleared" : "Next: " + BATTLES[next].name),
+      prestigeOpen() ? statTile("Prestige", pc.length + " / " + PRESTIGE.length, pc.length / PRESTIGE.length, pnext < 0 ? "You beat them all" : "Next: " + PRESTIGE[pnext].short) : statTile("Prestige", "???", null, "Clear the campaign to find out"),
+      statTile("Best wave", sget("bestWave", 0) || 0, null, "Endless Survival"),
+      statTile("Coins", coins(), null, aff ? aff + " upgrade" + (aff > 1 ? "s" : "") + " in reach" : "Win battles to earn more"),
+      statTile("Raft level", rr.have + " / " + rr.all, rr.have / rr.all, "Upgrades bought"),
+      statTile("Enemy aim", aiLevel().name, null, "Change in Settings"));
+    var items = [];
+    if (pnext >= 0 && next < 0) items.push({ label: "Continue: " + PRESTIGE[pnext].short, cls: "is-gold", sub: "Prestige · boss " + (pnext + 1) + " of " + PRESTIGE.length, act: function () { startBattle(g, "prestige", pnext); } });
+    else if (next >= 0) items.push({ label: next ? "Continue: " + BATTLES[next].name : "Start the Campaign", cls: "is-primary", sub: REGIONS[BATTLES[next].r].name + " · battle " + (next + 1) + " of " + BATTLES.length, act: function () { startBattle(g, "campaign", next); } });
+    items.push({ label: "🗺 Campaign", sub: "Pick any battle you've reached", act: function () { campaignMenu(g); } });
+    if (prestigeOpen()) items.push({ label: "👑 Prestige Campaign", cls: "is-gold", sub: pc.length + " of " + PRESTIGE.length + " bosses beaten", act: function () { prestigeMenu(g); } });
+    items.push({ label: "🌊 Endless Survival", sub: "Waves until you sink · best " + (sget("bestWave", 0) || 0), act: function () { B = null; startBattle(g, "endless", 0); } });
+    items.push({ label: "⚔ Versus", sub: "2 players, one keyboard or pad", act: function () { startBattle(g, "versus", 0); } });
+    items.push({ label: "🔨 Shipwright", sub: coins() + " coins" + (aff ? " · " + aff + " in reach" : ""), cls: aff ? "is-hot" : "", act: function () { shop(g, function () { titleMenu(g); }); } });
+    items.push({ label: "⚙ Settings", sub: "Aim, guide, sound", act: function () { settingsMenu(g); } });
+    items.push({ label: "📖 How to Play", sub: "Controls, ammo, tips", act: function () { howMenu(g, function () { titleMenu(g); }); } });
     g.menu({
-      cls: "is-hero", kicker: "Arcade", title: "Supreme Lobbing",
-      sub: "Lob rocks, bombs and seagulls at the enemy raft before they sink yours. Mind the wind.",
-      items: [
-        { label: "Campaign", cls: "is-primary", sub: cleared().length + " of " + BATTLES.length + " battles won", act: function () { campaignMenu(g); } }
-      ].concat(prestigeOpen() ? [{ label: "Prestige Campaign", cls: "is-gold", sub: pcleared().length + " of " + PRESTIGE.length + " bosses beaten", act: function () { prestigeMenu(g); } }] : []).concat([
-        { label: "Endless Survival", sub: "Best: " + (sget("bestWave", 0) || 0) + " waves", act: function () { B = null; startBattle(g, "endless", 0); } },
-        { label: "Versus (2 Players)", sub: "Take turns on one keyboard or controller", act: function () { startBattle(g, "versus", 0); } },
-        { label: "Shipwright", sub: coins() + " coins · upgrades and decor", act: function () { shop(g, function () { titleMenu(g); }); } },
-        { label: "Settings", sub: "Enemy aim: " + aiLevel().name, act: function () { settingsMenu(g); } },
-        { label: "How to Play", act: function () { howMenu(g, function () { titleMenu(g); }); } }
-      ]),
-      back: function () { if (g.isFull()) g.full(false); },
-      foot: "Esc, P or Start pauses. ⤢ plays in the full window."
+      cls: "is-hero is-side is-wide", kicker: "Arcade · Turn-based raft battles", title: "Supreme Lobbing",
+      body: stats, items: items, grid: true,
+      back: function () { g.close(); },
+      foot: "Tip: " + pick(TIPS)
     });
   }
   function campaignMenu(g) {
@@ -978,11 +1202,14 @@
     paintBest(g);
     g.menu({ kicker: "Secret", title: "Prestige Campaign", sub: "Twelve bosses, each with their own tricks. Enemy aim: " + aiLevel().name + ".", items: items, grid: true, cls: "is-wide", back: function () { titleMenu(g); }, focus: Math.min(next, items.length - 1) });
   }
-  function settingsMenu(g) {
+  function settingsMenu(g, focus) {
     var items = AI_LEVELS.map(function (l) { return { label: "Enemy aim: " + l.name + (aiLevel().key === l.key ? " ✓" : ""), act: function () { sset("ai", l.key); settingsMenu(g); } }; });
     [["auto", "Aim guide: Auto"], ["always", "Aim guide: Always"], ["never", "Aim guide: Never"]].forEach(function (o) { items.push({ label: o[1] + (guideMode() === o[0] ? " ✓" : ""), sub: o[0] === "auto" ? "On for Sloppy and Fair, off for Sharp and Scary" : "", act: function () { sset("guide", o[0]); settingsMenu(g); } }); });
+    items.push({ label: "Game sound: " + (sndOn() ? "On ✓" : "Off"), sub: "Whooshes and impacts", act: function () { sset("sound", !sndOn()); if (sndOn()) sound("metal"); settingsMenu(g); } });
+    var vols = [0.3, 0.5, 0.7, 1], vi = vols.indexOf(sndVol());
+    items.push({ label: "Volume: " + Math.round(sndVol() * 100) + "%", sub: "Press to change", disabled: !sndOn(), act: function () { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, items.length - 2); } });
     items.push({ label: "Back", act: function () { titleMenu(g); } });
-    g.menu({ title: "Settings", items: items, grid: true, cls: "is-wide", back: function () { titleMenu(g); } });
+    g.menu({ title: "Settings", items: items, grid: true, cls: "is-wide", back: function () { titleMenu(g); }, focus: focus || 0 });
   }
   function howMenu(g, back) {
     var ul = el("ul", { class: "ak-howto" },
@@ -991,38 +1218,90 @@
       el("li", { html: "Each crew member has their own health and a <b>★ special shot</b> once per battle. Switch thrower with <kbd>Q</kbd> / <kbd>E</kbd> (<kbd>LB</kbd> / <kbd>RB</kbd>), and ammo with <kbd>Z</kbd> / <kbd>X</kbd>, <kbd>1</kbd>–<kbd>8</kbd> or <kbd>Y</kbd>." }),
       el("li", { html: "Ammo: <b>Rock</b> (unlimited), <b>Bouncer</b> skips up to 3 times, <b>Splitter</b> breaks in three at the top of its arc, <b>Bomb</b> blasts a wide area, <b>Fire Pot</b> burns for 3 turns, <b>Seagull</b> homes in on the nearest enemy, <b>Repair Kit</b> heals your crew and replaces planks where it lands on your own raft." }),
       el("li", { html: "Planks and walls break. Crew whose plank is gone end up <b>overboard</b> and lose health every turn. A raft with under a third of its deck left sinks." }),
-      el("li", { html: "Win battles for coins and spend them at the <b>Shipwright</b>: armor, tougher crew, a bigger raft (more crew), stronger arms, ammo, a deck cannon and decor." }));
+      el("li", { html: "Win battles for coins and spend them at the <b>Shipwright</b>. Its five departments: <b>Hull & Deck</b> (armor, size, walls, a crow's nest, self-repairing planks), <b>Crew</b> (health, arms, first aid, life vests, a spyglass), <b>Arsenal</b> (ammo, heavy rocks, bigger blasts, double specials), <b>Cannon</b> and <b>Decor</b>." }),
+      el("li", { html: "Sound: a whoosh on every throw, and impacts that sound like what hit: stone, metal, rubber, paper, glass, wood cracking and splintering. Turn it off or change the volume in <b>Settings</b>." }));
     g.menu({ title: "How to Play", body: ul, items: [{ label: "Back", act: back }], back: back, cls: "is-wide" });
   }
+  /* Shipwright: a front desk with five departments; each department lists its upgrades with level pips */
+  function pips(l, max) { var o = ""; for (var i = 0; i < max; i++) o += i < l ? "●" : "○"; return o; }
   function shop(g, back, focus) {
-    var items = [], c = coins();
-    UPG.forEach(function (u) {
-      var l = upg(u.key), maxed = l >= u.max, cost = maxed ? 0 : u.cost[l];
-      items.push({ label: u.name + (u.max > 1 ? " Lv " + l + "/" + u.max : l ? " ✓" : ""), sub: u.desc(l) + (maxed ? " · maxed" : " · " + cost + " coins"), disabled: maxed || c < cost,
-        act: function () { addCoins(-cost); setUpg(u.key, l + 1); Site.sfx("success"); shop(g, back, items.length && idxOf(u.name)); } });
+    var c = coins(), aff = affordable();
+    var items = DEPS.map(function (dp) {
+      var have = 0, all = 0, can = 0;
+      if (dp.key === "decor") { ["sail", "wood", "flag"].forEach(function (k) { DECOR[k].forEach(function (d, i) { all++; if (owns(k, i)) have++; else if (c >= d[2]) can++; }); }); }
+      else {
+        UPG.forEach(function (u) { if (u.dep !== dp.key) return; var l = upg(u.key); have += l; all += u.max; if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need))) can++; });
+        if (dp.key === "arsenal") AMMO_ORDER.slice(1).forEach(function (k) { all++; if (unlocked(k)) have++; else if (c >= AMMO[k].cost) can++; });
+      }
+      return { label: dp.icon + " " + dp.name, sub: dp.blurb + " · " + have + "/" + all + (can ? " · " + can + " in reach" : ""), cls: can ? "is-hot" : "", act: function () { dept(g, dp.key, back); } };
     });
-    AMMO_ORDER.slice(1).forEach(function (k) {
-      var a = AMMO[k], has = unlocked(k);
-      items.push({ label: "Ammo: " + a.name + (has ? " ✓" : ""), sub: has ? "Unlocked" : a.cost + " coins", disabled: has || c < a.cost,
-        act: function () { addCoins(-a.cost); var u = sget("ammo", {}) || {}; u[k] = true; sset("ammo", u); Site.sfx("success"); shop(g, back); } });
-    });
-    var dc = deco();
-    ["sail", "wood", "flag"].forEach(function (kind) {
-      DECOR[kind].forEach(function (d, i) {
-        var own = owns(kind, i), on = dc[kind] === i, label = (kind === "sail" ? "Sail" : kind === "wood" ? "Wood" : "Flag") + ": " + d[1] + (kind === "flag" ? " " + d[0] : "");
-        items.push({ label: label + (on ? " ✓" : ""), sub: on ? "In use" : own ? "Owned · use" : d[2] + " coins", disabled: on || (!own && c < d[2]),
-          act: function () { if (!own) { addCoins(-d[2]); var o = sget("owned", {}) || {}; o[kind + i] = true; sset("owned", o); } var dd = deco(); dd[kind] = i; sset("deco", dd); Site.sfx("success"); shop(g, back); } });
-      });
-    });
-    function idxOf(name) { for (var i = 0; i < items.length; i++) if (items[i].label.indexOf(name) === 0) return i; return 0; }
     items.push({ label: "Back", act: back });
     paintBest(g);
-    g.menu({ title: "Shipwright", sub: c + " coins. Upgrades are kept in this browser.", items: items, grid: true, cls: "is-wide", back: back, focus: focus || 0 });
+    var stats = el("div", { class: "ak-stats" }, statTile("Coins", c, null, aff ? aff + " thing" + (aff > 1 ? "s" : "") + " you can buy now" : "Win battles to earn more"), statTile("Raft level", raftRating().have + " / " + raftRating().all, raftRating().have / raftRating().all, "Upgrades bought"), statTile("Ammo", AMMO_ORDER.slice(1).filter(unlocked).length + " / " + (AMMO_ORDER.length - 1), null, "Types unlocked"));
+    g.menu({ kicker: "Shipwright", title: "The Boat Shop", sub: "Upgrades and decor are kept in this browser and sync with a linked account (coins stay per device).", body: stats, items: items, grid: true, cls: "is-wide", back: back, focus: focus || 0 });
   }
-
+  function dept(g, key, back, focus) {
+    var c = coins(), dp = DEPS.filter(function (d) { return d.key === key; })[0], items = [], again = function (i) { dept(g, key, back, i); }, toShop = function () { shop(g, back, DEPS.indexOf(dp)); };
+    function buyFx() { sound("chime"); sound("wood", { v: 0.6 }); }
+    if (key !== "decor") {
+      UPG.forEach(function (u) {
+        if (u.dep !== key) return;
+        var l = upg(u.key), maxed = l >= u.max, cost = maxed ? 0 : u.cost[l], locked = u.need && !upg(u.need), idx = items.length;
+        items.push({ label: u.name + "  " + pips(l, u.max), cls: maxed ? "is-owned" : (!locked && c >= cost ? "is-hot" : ""),
+          sub: locked ? "Needs the Deck Cannon first" : maxed ? u.desc(l) + " · maxed" : "Now: " + u.desc(l) + " → " + u.desc(l + 1) + " · " + cost + " coins",
+          disabled: maxed || locked || c < cost, act: function () { addCoins(-cost); setUpg(u.key, l + 1); buyFx(); again(idx); } });
+      });
+      if (key === "arsenal") AMMO_ORDER.slice(1).forEach(function (k) {
+        var a = AMMO[k], has = unlocked(k), idx = items.length;
+        items.push({ label: a.icon + " " + a.name + (has ? " ✓" : ""), cls: has ? "is-owned" : (c >= a.cost ? "is-hot" : ""), sub: has ? "Unlocked · " + (2 + upg("satchel")) + " per battle" : a.cost + " coins", disabled: has || c < a.cost,
+          act: function () { addCoins(-a.cost); var u = sget("ammo", {}) || {}; u[k] = true; sset("ammo", u); buyFx(); again(idx); } });
+      });
+    } else {
+      var dc = deco();
+      ["sail", "wood", "flag"].forEach(function (kind) {
+        DECOR[kind].forEach(function (d, i) {
+          var own = owns(kind, i), on = dc[kind] === i, idx = items.length, label = (kind === "sail" ? "Sail" : kind === "wood" ? "Wood" : "Flag") + ": " + d[1] + (kind === "flag" ? " " + d[0] : "");
+          items.push({ label: label + (on ? " ✓" : ""), cls: on ? "is-owned" : "", sub: on ? "In use" : own ? "Owned · use it" : d[2] + " coins", disabled: on || (!own && c < d[2]),
+            act: function () { if (!own) { addCoins(-d[2]); var o = sget("owned", {}) || {}; o[kind + i] = true; sset("owned", o); } var dd = deco(); dd[kind] = i; sset("deco", dd); buyFx(); again(idx); } });
+        });
+      });
+    }
+    items.push({ label: "Back to the shop", act: toShop });
+    paintBest(g);
+    g.menu({ kicker: "Shipwright · " + c + " coins", title: dp.icon + " " + dp.name, sub: dp.blurb + ".", items: items, grid: true, cls: "is-wide", back: toShop, focus: focus || 0 });
+  }
+  function POSTER(x, w, h, t) {
+    var g = x.createLinearGradient(0, 0, 0, h * 0.72); g.addColorStop(0, "#f39a5a"); g.addColorStop(1, "#ffd9a8"); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    x.fillStyle = "rgba(255,244,214,.9)"; x.beginPath(); x.arc(w * 0.5, h * 0.42, 54, 0, 6.3); x.fill();
+    var sy = h * 0.72, sea = x.createLinearGradient(0, sy, 0, h); sea.addColorStop(0, "#2a7d8f"); sea.addColorStop(1, "#0f3b4a");
+    x.fillStyle = sea; x.beginPath(); x.moveTo(0, h); for (var px = 0; px <= w; px += 16) x.lineTo(px, sy + Math.sin(px / 40 + t * 1.6) * 4); x.lineTo(w, h); x.fill();
+    function raft(cx, side, sail, by) {
+      var y = sy - 10 + Math.sin(t * 1.4 + cx) * 3 + (by || 0);
+      for (var i = -3; i < 3; i++) { x.fillStyle = i % 2 ? "#a0703f" : "#8a5f34"; D.rr(x, cx + i * 22, y, 21, 14, 3); x.fill(); }
+      x.strokeStyle = "#4a3220"; x.lineWidth = 4; x.beginPath(); x.moveTo(cx, y); x.lineTo(cx, y - 96); x.stroke();
+      x.fillStyle = sail; x.beginPath(); x.moveTo(cx, y - 90); x.quadraticCurveTo(cx - side * 44, y - 62, cx, y - 34); x.fill();
+      for (var k = 0; k < 2; k++) { var mx = cx + side * (k ? 40 : 22) * -1 + (k ? 0 : 0); x.fillStyle = k ? "#4a90d9" : "#e9e3d6"; D.rr(x, mx - 7, y - 30, 14, 18, 4); x.fill(); x.fillStyle = "#f1c9a5"; x.beginPath(); x.arc(mx, y - 38, 7, 0, 6.3); x.fill(); x.fillStyle = k ? "#f6ad55" : "#cd4257"; x.fillRect(mx - 6, y - 50, 12, 7); }
+    }
+    raft(150, -1, "#cd4257"); raft(w - 150, 1, "#2d3748");
+    var ph = (t * 0.45) % 1, x0 = 180, x1 = w - 170, ax = x0 + (x1 - x0) * ph, ay = sy - 70 - Math.sin(ph * Math.PI) * 190;
+    x.fillStyle = "rgba(255,255,255,.75)"; for (var i2 = 0; i2 < 18; i2++) { var q = ph - i2 * 0.025; if (q < 0) break; x.beginPath(); x.arc(x0 + (x1 - x0) * q, sy - 70 - Math.sin(q * Math.PI) * 190, 3.2 - i2 * 0.15, 0, 6.3); x.fill(); }
+    x.fillStyle = "#9aa3ad"; x.beginPath(); x.arc(ax, ay, 9, 0, 6.3); x.fill(); x.strokeStyle = "rgba(0,0,0,.35)"; x.lineWidth = 2; x.stroke();
+    x.fillStyle = "rgba(255,255,255,.85)"; for (var c = 0; c < 3; c++) { var cx2 = ((c * 230 + t * 18) % (w + 200)) - 100; x.beginPath(); x.ellipse(cx2, 50 + c * 26, 50, 15, 0, 0, 6.3); x.ellipse(cx2 + 30, 42 + c * 26, 32, 13, 0, 0, 6.3); x.fill(); }
+    }
   /* ---------------- register ---------------- */
   A.register({
     id: "supreme-lobbing", name: "Supreme Lobbing", icon: "🎯", accent: "#f6ad55", W: W, H: H,
+    order: 1, badge: "Updated", tags: ["Turn-based", "Campaign", "2 players"],
+    tagline: "Turn-based raft battles. Lob rocks, bombs and seagulls through the wind and sink the other raft before it sinks yours.",
+    about: "Two rafts, one sea. Take turns lobbing things in an arc at the enemy crew while the wind and waves shift every turn. Win battles for coins, build up your raft at the Shipwright, and work through the campaign's islands and bosses. There's also Endless Survival, two-player Versus, and a secret campaign for those who finish the first.",
+    controls: [["Aim", "Drag back and release, or ← → ↑ ↓"], ["Throw", "Hold Space to charge, release"], ["Thrower", "Q / E (LB / RB)"], ["Ammo", "Z / X, 1-9 (D-pad, Y)"], ["Pause", "Esc, P or Start"]],
+    stats: function () {
+      var r = [["Campaign", cleared().length + " / " + BATTLES.length + " battles"]];
+      if (prestigeOpen()) r.push(["Prestige", pcleared().length + " / " + PRESTIGE.length + " bosses"]);
+      r.push(["Best wave", sget("bestWave", 0) || 0]); r.push(["Coins", coins()]);
+      return r;
+    },
+    poster: function (x, w, h, t) { POSTER(x, w, h, t); },
     blurb: "Turn-based raft battles: lob things in an arc, mind the wind, upgrade your raft.",
     sync: [
       { k: "cleared", s: NS + "cleared", t: "union" }, { k: "pcleared", s: NS + "pcleared", t: "union" },
@@ -1057,8 +1336,7 @@
     draw: function (g, x) {
       var t = performance.now() / 1000;
       if (!B || g.state === "title") {
-        drawScene(x, REGIONS[0], t);
-        x.save(); x.globalAlpha = 0.9; D.text(x, "🎯", W / 2, H * 0.5, "120px " + F.display, "#fff", "center", false); x.restore();
+        x.save(); x.scale(W / 640, H / 360); POSTER(x, 640, 360, t); x.restore();
         return;
       }
       drawScene(x, B.region, B.t);
@@ -1082,6 +1360,7 @@
         else { x.fillStyle = f.col; x.fillRect(f.x - 3, f.y - 3, 6, 6); }
       });
       x.globalAlpha = 1;
+      B.bubbles.forEach(function (b) { drawBubble(x, b); });
       if (B.flash > 0) { x.fillStyle = "rgba(255,255,255," + Math.min(0.85, B.flash) + ")"; x.fillRect(0, 0, W, H); }
       hud(g, x);
     }
