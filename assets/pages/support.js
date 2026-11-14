@@ -4,7 +4,7 @@
  * edge function, donation_progress rpc, member_supporters) lives on the Rate-O-Pedia side; this file only
  * calls it. Everything degrades to a friendly "being set up" state until those are deployed.
  */
-import { sb, me, onAuth, signIn } from "/assets/pages/games.common.js?v=16";
+import { sb, me, onAuth, signIn } from "/assets/pages/games.common.js?v=19";
 
 const $ = (id) => document.getElementById(id);
 const toast = (msg, type) => { try { if (window.Site && Site.toast) Site.toast(msg, { type: type || "info" }); } catch (e) {} };
