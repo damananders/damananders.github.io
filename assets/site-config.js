@@ -203,7 +203,7 @@ window.SITE_EXTRA = {
   resume: {
     contactEndpoint: "https://formspree.io/f/xdavyjdd",
     linkedin: "",   // removed from the page at the owner's request
-    github: "https://github.com/damananders",
+    github: "",     // removed: the GitHub host is kept out of sight from visitors
     pdfUrl: "",
   },
 

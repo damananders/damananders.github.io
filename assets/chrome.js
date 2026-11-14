@@ -793,15 +793,14 @@
   }, "chrome:search");
 
   /* ====================================================================================================
-   * Footer stamp (ideas #79 + #75) — "Last updated <date>" from the repo's latest commit, plus a
-   * quiet "Star on GitHub" link. Degrades to just the star link if the commit date can't be fetched.
+   * Footer stamp (idea #75) — a quiet "Last updated <date>" from the host's latest commit. The host is
+   * kept out of sight: no link, and nothing on the stamp names where the site lives. Hidden if undated.
    * ==================================================================================================== */
   Site.ready(function () {
     if (!feat("lastUpdated")) return;
     var foot = document.querySelector("footer"); if (!foot) return;
     var repo = "damananders/damananders.github.io";
     var stamp = el("p", { class: "ch-stamp" });
-    var star = el("a", { class: "ch-stamp__star", href: "https://github.com/" + repo, target: "_blank", rel: "noopener" }, svg(ICON.star, { width: 14, height: 14 }), "Star on GitHub");
     var here = Site.page, links = el("p", { class: "ch-links" });
     [["links", "/links/", "Links I Like"], ["changelog", "/changelog/", "What's New"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
       if (l[0] === here || (l[0] === "dash" && !Site.owner)) return;
@@ -849,8 +848,6 @@
     function render(dateStr) {
       stamp.textContent = "";
       if (dateStr) stamp.appendChild(el("span", { class: "ch-stamp__when", text: "Last updated " + dateStr }));
-      if (dateStr) stamp.appendChild(document.createTextNode("  ·  "));
-      stamp.appendChild(star);
     }
     render("");
     if (Site.fetchJSON) Site.fetchJSON("https://api.github.com/repos/" + repo + "/commits?per_page=1", { ttl: 3600, timeout: 6000 }).then(function (j) {

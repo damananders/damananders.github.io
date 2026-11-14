@@ -530,7 +530,7 @@
           var old = dl.getAttribute("href");
           dl.href = a64.url; dl.removeAttribute("aria-disabled");
           dl.textContent = "Download AnyPS V" + got.text;
-          meta.textContent = [rel.published ? "Posted " + Site.fmtDate(rel.published) : "", Site.fmtBytes(a64.size), "Hosted on GitHub"].filter(Boolean).join(" · ");
+          meta.textContent = [rel.published ? "Posted " + Site.fmtDate(rel.published) : "", Site.fmtBytes(a64.size)].filter(Boolean).join(" · ");
           if (https(old)) { meta.appendChild(doc.createTextNode(" · ")); meta.appendChild(mirror(old, cmp(got.n, have.n) === 0, have)); }
           if (counter) meta.appendChild(counter);
           if (shaLines[0] && shaLines[0].parentNode === meta.parentNode) shaLines[0].hidden = true;

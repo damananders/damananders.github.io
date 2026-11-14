@@ -98,7 +98,7 @@
       });
       var a = (window.SITE && SITE.anyps) || {};
       tAny.set(a.version ? "V" + a.version : "Unknown", a.date ? "Published " + Site.fmtDate(a.date) : "");
-      Site.live.releases().then(function (r) { if (!r) tDl.set("Not connected", "Fill in anyps.githubRepo in site-config.js."); else tDl.set(Site.fmtNum(r.downloads), "Across all GitHub releases, latest " + r.tag, "ok"); });
+      Site.live.releases().then(function (r) { if (!r) tDl.set("Not connected", "Set the AnyPS releases repo in site-config.js."); else tDl.set(Site.fmtNum(r.downloads), "Across all releases, latest " + r.tag, "ok"); });
       var g = cfg.kofi && cfg.kofi.goal;
       if (g && isFinite(g.target) && g.target > 0) tKo.set((g.currency || "$") + (g.current || 0) + " of " + (g.currency || "$") + g.target, Math.round(100 * (g.current || 0) / g.target) + "% this month");
       else tKo.set("No goal set", "");
