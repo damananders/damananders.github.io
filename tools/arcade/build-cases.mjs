@@ -25,6 +25,8 @@ const UA = "damananders.github.io arcade case builder (https://damananders.githu
 
 // platform preference when a game exists on several (better-known box art first)
 const PREF = ["PS2", "PS1", "PS3", "SNES", "N64", "GC", "Wii", "NES", "GEN", "PSP", "GBA", "DS", "X360", "Xbox", "SAT", "DC", "GB", "GBC", "3DS", "WiiU", "SMS"];
+// apps and retail bundles that sit in the catalog but aren't games
+const NOT_GAME = /\b(Spotify|Netflix|YouTube|Hulu|Crunchyroll|Plex|Twitch|Amazon (Instant|Video|Prime)|Facebook|Skype|Web Browser|Media Player|Value Pack|Double Pack|Twin Pack|Bundle)\b/i;
 const prefRank = (id) => { const p = id.split(":")[0]; const i = PREF.indexOf(p); return i < 0 ? 99 : i; };
 
 function hasArt(a) {
@@ -41,7 +43,7 @@ for (const f of readdirSync(INFO)) {
   for (const [id, v] of Object.entries(d)) {
     if (!v || typeof v !== "object" || !hasArt(v.a) || !v.t) continue;
     const title = v.st ? v.t + ": " + v.st : v.t;
-    if (title.length > 80) continue;
+    if (title.length > 80 || NOT_GAME.test(title)) continue;
     all.push({ id, title, art: v.a, q: v.q || null, w: v.w || null, dl: (v.d || "").length, pl: (v.pl || []).length });
   }
 }
