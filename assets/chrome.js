@@ -586,6 +586,91 @@
   }, "chrome:menu");
 
   /* ====================================================================================================
+   * Site search — a small command palette. A header button or the "/" key opens it; type to jump to any
+   * page, or hit the Rate-O-Pedia action to search the games there. Keyboard-first (arrows + Enter).
+   * ==================================================================================================== */
+  Site.ready(function () {
+    if (!feat("search") || !nav) return;
+    var dlg = null, input = null, listEl = null, results = [], sel = 0;
+
+    function items() {
+      var out = PAGES.map(function (p) { return { label: p[2], href: p[1], kind: "Page", key: (p[0] + " " + p[2]).toLowerCase() }; });
+      out.push({ label: "Trophy Cabinet", href: "/trophies/", kind: "Page", key: "trophies trophy cabinet achievements" });
+      out.push({ label: "Résumé", href: "/resume/", kind: "Page", key: "resume cv hire work with me" });
+      if (Site.owner) out.push({ label: "Dashboard", href: "/dash/", kind: "Owner", key: "dashboard owner stats" });
+      return out;
+    }
+    function score(it, q) {
+      var l = it.label.toLowerCase();
+      if (l === q) return 0;
+      if (l.indexOf(q) === 0) return 1;
+      if (it.key.indexOf(q) === 0 || (" " + it.key).indexOf(" " + q) >= 0) return 2;
+      if (l.indexOf(q) >= 0 || it.key.indexOf(q) >= 0) return 3;
+      return Infinity;
+    }
+    function compute(q) {
+      q = (q || "").trim().toLowerCase();
+      var out = [];
+      var pool = items().map(function (it) { return { it: it, s: q ? score(it, q) : 4 }; })
+        .filter(function (r) { return r.s !== Infinity; }).sort(function (a, b) { return a.s - b.s; });
+      pool.forEach(function (r) { out.push(r.it); });
+      /* always offer the Rate-O-Pedia search as the last option — the fallback when a page isn't what you want */
+      if (q) out.push({ label: "Search Rate-O-Pedia for “" + q + "”", href: "/games/?q=" + encodeURIComponent(q), kind: "Search", rop: true });
+      return out;
+    }
+    function draw() {
+      results = compute(input.value); sel = 0; listEl.textContent = "";
+      results.forEach(function (it, i) {
+        var a = el("a", { href: it.href, class: "ch-srch__item" + (i === 0 ? " is-sel" : "") + (it.rop ? " ch-srch__item--rop" : ""), role: "option", "aria-selected": i === 0 ? "true" : "false" },
+          el("span", { class: "ch-srch__label", text: it.label }),
+          el("span", { class: "ch-srch__kind", text: it.kind }));
+        a.addEventListener("mousemove", function () { move(i); });
+        listEl.appendChild(a);
+      });
+      if (!results.length) listEl.appendChild(el("p", { class: "ch-srch__empty", text: "No pages match. Try the Rate-O-Pedia search." }));
+    }
+    function move(i) {
+      if (!results.length) return;
+      i = (i + results.length) % results.length; if (i === sel) return;
+      var nodes = listEl.querySelectorAll(".ch-srch__item");
+      if (nodes[sel]) { nodes[sel].classList.remove("is-sel"); nodes[sel].setAttribute("aria-selected", "false"); }
+      sel = i;
+      if (nodes[sel]) { nodes[sel].classList.add("is-sel"); nodes[sel].setAttribute("aria-selected", "true"); try { nodes[sel].scrollIntoView({ block: "nearest" }); } catch (e) {} }
+    }
+    function build() {
+      if (dlg) return dlg;
+      input = el("input", { type: "search", class: "ch-srch__input", placeholder: "Search pages, or jump to Rate-O-Pedia…", "aria-label": "Search", autocomplete: "off", spellcheck: "false" });
+      listEl = el("ul", { class: "ch-srch__list", role: "listbox", "aria-label": "Results" });
+      var body = el("div", { class: "ch-srch" }, input, listEl);
+      dlg = Site.modal({ id: "ch-search", title: "Search", className: "ch-srch__modal", body: body });
+      input.addEventListener("input", draw);
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowDown") { e.preventDefault(); move(sel + 1); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); move(sel - 1); }
+        else if (e.key === "Enter") { var node = listEl.querySelectorAll(".ch-srch__item")[sel]; if (node) { e.preventDefault(); sfx("nav"); node.click(); } }
+      });
+      dlg.addEventListener("close", function () { dlg.remove(); dlg = null; });
+      return dlg;
+    }
+    function openSearch() {
+      build(); input.value = ""; draw(); Site.dialog.open(dlg);
+      setTimeout(function () { try { input.focus(); } catch (e) {} }, 30);
+    }
+
+    var btn = el("button", { type: "button", class: "sx-iconbtn ch-search", style: { order: "15" }, "aria-label": "Search", title: "Search ( / )" },
+      svg('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>'));
+    btn.addEventListener("click", function () { sfx("open"); openSearch(); });
+    var toolbar = Site.tools(); if (toolbar) toolbar.appendChild(btn);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+      var t = e.target; if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (dlg && dlg.open) return;
+      e.preventDefault(); sfx("open"); openSearch();
+    });
+  }, "chrome:search");
+
+  /* ====================================================================================================
    * Footer stamp (ideas #79 + #75) — "Last updated <date>" from the repo's latest commit, plus a
    * quiet "Star on GitHub" link. Degrades to just the star link if the commit date can't be fetched.
    * ==================================================================================================== */
