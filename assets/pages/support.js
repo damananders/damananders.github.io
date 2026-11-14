@@ -61,10 +61,17 @@ async function checkout(body, btn) {
     }
     if (status === 401) { signIn(); return; }
     if (status === 400) { toast(emsg || "Please pick an amount between $1 and $1,000.", "warn"); return; }
-    /* 503 (key not set), 404 (function not deployed yet) or a network error — not live yet */
-    toast("Donations are being set up — check back soon. 💛", "info");
+    if (status === 404 || status === 503 || status === 0) {
+      /* function not deployed, key not set, or couldn't be reached — genuinely not live yet */
+      toast("Donations are being set up — check back soon. 💛");
+      return;
+    }
+    /* any other status (e.g. a 500 from Stripe) is a real error — surface it, don't hide it */
+    console.error("[support] checkout failed:", status, emsg);
+    toast(emsg || "Something went wrong — please try again in a moment.", "err");
   } catch (e) {
-    toast("Donations are being set up — check back soon. 💛", "info");
+    console.error("[support] checkout threw:", e);
+    toast("Donations are being set up — check back soon. 💛");
   } finally {
     setBusy(btn, false);
   }
@@ -112,7 +119,8 @@ async function loadProgress() {
     var month = Math.max(0, Number(row.month_cents) || 0);
     var sup = Math.max(0, Number(row.supporters) || 0);
     var pct = Math.max(0, Math.min(100, Math.round(month / goal * 100)));
-    goalPct.textContent = pct + "%";
+    goalPct.textContent = month > 0 ? pct + "%" : "";                 /* a bright 0% reads as discouraging */
+    barFill.parentNode.classList.toggle("sup-bar--empty", month <= 0);
     requestAnimationFrame(function () { barFill.style.width = pct + "%"; });
     var remaining = Math.max(0, goal - month);
     var line;
