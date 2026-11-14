@@ -597,7 +597,16 @@
     if (isKicked(u)) chips.appendChild(el("span", { class: "cp-chip cp-chip--kick", text: "Kicked" }));
     if (u.banned) chips.appendChild(el("span", { class: "cp-chip cp-chip--ban", text: "Banned" }));
     var av = u.avatar ? el("img", { class: "cp-user__av", src: u.avatar, alt: "", loading: "lazy" }) : el("span", { class: "cp-user__av cp-user__av--none", "aria-hidden": "true", text: (label || "?").slice(0, 1).toUpperCase() });
-    var nm = el("strong", { class: "cp-user__name", text: label });
+    /* clicking a member's name opens their profile in a new tab (keeps the panel open), without toggling the card */
+    var nm;
+    if (u.handle) {
+      var phref = "/games/profile/?u=" + encodeURIComponent(u.handle);
+      nm = el("a", { class: "cp-user__name cp-user__name--link", href: phref, title: "Open " + label + "'s profile ↗", "aria-label": "Open " + label + "'s profile" });
+      nm.textContent = label;
+      nm.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); window.open(phref, "_blank", "noopener"); });
+    } else {
+      nm = el("strong", { class: "cp-user__name", text: label });
+    }
     var meta = el("span", { class: "cp-user__meta", text: "@" + u.handle + (u.forced_name ? " · name forced" : "") + " · " + ((u.reviews || 0) + " reviews, " + (u.comments || 0) + " comments") });
     var sum = el("summary", { class: "cp-user__sum" }, av, el("span", { class: "cp-user__id" }, nm, meta), chips);
     var d = el("details", { class: "cp-user" + (u.is_owner ? " cp-user--owner" : ""), open: mOpen[u.handle] ? "" : null });
