@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged } from "./games.common.js?v=15";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged } from "./games.common.js?v=16";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -157,7 +157,7 @@ async function render() {
       el("div", { class: "pf-id" },
         el("h1", { class: "pf-name" }, el("span", { class: nameFx(p.name_fx), "data-text": p.name, text: p.name }),
           pinned ? el("span", { class: "pf-pin", title: pinned[2] + ": " + pinned[3] }, pinned[1]) : null,
-          p.is_owner ? ownerTag() : null, p.is_staff ? adminTag() : null,
+          p.is_owner ? ownerTag() : null, p.is_staff ? adminTag() : null, supporterTag(p),
           rank && rank <= 3 ? el("span", { class: "rop-me__medal rop-me__medal--" + ["gold", "silver", "bronze"][rank - 1], title: "Top " + rank + " voter", text: ["1st", "2nd", "3rd"][rank - 1] }) : null),
         el("p", { class: "pf-sub" }, p.flair_text ? el("span", { class: "pf-flair" + (p.is_owner ? " pf-flair--own" : ""), text: p.flair_text }) : null,
           p.pronouns ? el("span", { class: "pf-pron", text: p.pronouns }) : null,
@@ -377,6 +377,18 @@ async function wall(p, mine, box) {
     ta.value = ""; count.textContent = "0 / 300"; sfx("success"); load();
   } });
   box.append(el("div", { class: "pf-wall__write" }, ta, el("div", { class: "gm-write__bar" }, send, count)));
+}
+
+/* ---------------- Supporter badge (round 22): anyone who has donated through /support/ ---------------- */
+function supporterTag(p) {
+  const t = el("a", { class: "pf-supporter", href: "/support/", hidden: true, text: "♥ Supporter" });
+  sb.from("member_supporters").select("supporter_since,supporter_tier").eq("handle", p.handle).maybeSingle().then(({ data, error }) => {
+    if (error || !data) { t.remove(); return; }
+    t.title = (data.supporter_tier === "monthly" ? "Monthly supporter" : "Supporter") + " since " + memberSince(data.supporter_since) + ". Thank you!";
+    if (data.supporter_tier === "monthly") t.classList.add("pf-supporter--monthly");
+    t.hidden = false;
+  }, () => t.remove());
+  return t;
 }
 
 /* ---------------- follow button + follower counts (round 21) ---------------- */

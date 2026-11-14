@@ -75,7 +75,7 @@ export function signIn() {
   sb.auth.signInWithOAuth({ provider: "discord", options: { scopes: "identify guilds.members.read", redirectTo: location.origin + "/games/" } });
 }
 export function takeReturn() {
-  try { const r = sessionStorage.getItem(RETURN_KEY); sessionStorage.removeItem(RETURN_KEY); return r && r.startsWith("/games/") ? r : null; } catch (e) { return null; }
+  try { const r = sessionStorage.getItem(RETURN_KEY); sessionStorage.removeItem(RETURN_KEY); return r && /^\/(?:games|support)\//.test(r) ? r : null; } catch (e) { return null; }
 }
 
 /* me = { user, profile, member, banned, ready } ; ready = the round-11 SQL (11_rateopedia_profiles_forums_station.sql) has been run (profiles have handles) */

@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged } from "./games.common.js?v=15";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged } from "./games.common.js?v=16";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);

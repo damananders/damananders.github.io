@@ -1047,3 +1047,7 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .ls-mosaic:empty::after{content:"📋";grid-column:1/-1;align-self:center;justify-self:center;font-size:2.2rem;opacity:.7}
 .fd-stars{justify-self:start}
 .gi-credit{display:block;margin-top:4px;font-size:.72rem;opacity:.7;text-align:center}
+.pf-supporter{display:inline-flex;align-items:center;margin-left:8px;padding:2px 8px;border-radius:999px;font:700 .7rem/1.4 var(--sx-mono,monospace);letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;color:#ff8fb1;background:rgba(255,95,145,.14);border:1px solid rgba(255,95,145,.45);text-decoration:none}
+.pf-supporter--monthly{color:#fff;background:linear-gradient(90deg,#d6336c,#cd4257);border-color:transparent}
+:root[data-theme="light"] .pf-supporter{color:#b0255a}
+:root[data-theme="light"] .pf-supporter--monthly{color:#fff}
