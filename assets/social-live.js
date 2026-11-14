@@ -146,15 +146,23 @@
     var sign = typeof g.currency === "string" ? g.currency : "$";
     var title = (typeof g.title === "string" && g.title.trim()) || "Ko-fi goal";
     function money(n) { return sign + Site.fmtNum(Math.round(n * 100) / 100); }
-    var amounts = money(current) + " of " + money(target);
     var p = pct + "%";
+    var started = current > 0;            /* only show the meter once there's momentum — an empty bar reads as begging */
+    var remaining = Math.max(0, target - current);
 
-    var bar = el("span", { class: "sl-goal", "aria-hidden": "true", style: { "--sl-p": p } }, el("i"));
+    /* the thin bar under the button only once donations have started */
     var pop = el("span", { class: "sl-pop", id: "sl-goal-pop", role: "tooltip", style: { "--sl-p": p } },
-      el("span", { class: "sl-pop__title", text: title }),
-      el("span", { class: "sl-pop__row" }, el("b", { text: amounts }), el("span", { text: p })),
-      el("span", { class: "sl-pop__bar", "aria-hidden": "true" }, el("i")));
-    b.appendChild(bar); b.appendChild(pop);
+      el("span", { class: "sl-pop__title", text: title }));
+    if (started) {
+      b.appendChild(el("span", { class: "sl-goal", "aria-hidden": "true", style: { "--sl-p": p } }, el("i")));
+      pop.appendChild(el("span", { class: "sl-pop__row" }, el("b", { text: money(current) + " of " + money(target) }), el("span", { text: p })));
+      pop.appendChild(el("span", { class: "sl-pop__bar", "aria-hidden": "true" }, el("i")));
+      pop.appendChild(el("span", { class: "sl-pop__note", text: remaining > 0 ? money(remaining) + " to go this month" : "Goal reached — thank you! 💛" }));
+    } else {
+      pop.appendChild(el("span", { class: "sl-pop__note", text: "Fan projects I build for fun and run at my own cost. Anything at all helps keep them online — no pressure." }));
+    }
+    pop.appendChild(el("span", { class: "sl-pop__cta", text: "Buy me a coffee ☕ →" }));
+    b.appendChild(pop);
     b.classList.add("sl-on", "sl-has-goal");
     var desc = b.getAttribute("aria-describedby");
     b.setAttribute("aria-describedby", desc ? desc + " sl-goal-pop" : "sl-goal-pop");

@@ -43,6 +43,9 @@
 .sl-pop__bar{display:block;height:6px;border-radius:999px;overflow:hidden;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
 .sl-pop__bar > i{display:block;height:100%;width:var(--sl-p,0%);border-radius:inherit;background:#ff5e5b}
 :root[data-theme="light"] .sl-pop__bar > i{background:#d8403d}
+.sl-pop__note{display:block;font:500 .82rem/1.4 var(--sx-display);color:var(--sx-muted)}
+.sl-pop__cta{display:block;margin-top:2px;font:700 .86rem var(--sx-display);color:#ff5e5b}
+:root[data-theme="light"] .sl-pop__cta{color:#d8403d}
 :root[data-motion="reduce"] .sl-pop{transition:none;transform:none}
 
 /* ---- Below 1180px the header row is tight (an inline badge could push the buttons onto a second line and
