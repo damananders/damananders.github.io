@@ -1,6 +1,17 @@
 {
   "_help": "Site-wide news. Newest first is not required (the site sorts by date). tag is one of: site, anyps, anderscraft, games, vault. url is optional and may be a path on this site. Leave date as \"\" for an undated note.",
   "items": [
+    { "date": "2026-11-13", "tag": "site", "title": "A floating page menu", "body": "The top-left menu is now a constellation of page cards you can drift through, each with a short description. Prefer it calmer? Flip it to a neat grid with the toggle inside.", "url": "/" },
+    { "date": "2026-11-13", "tag": "site", "title": "Search the whole site", "body": "Press the “/” key or the new search button in the header to jump straight to any page, or on to the game ratings.", "url": "/" },
+    { "date": "2026-11-13", "tag": "site", "title": "The Trophy Cabinet", "body": "Every trophy in one place at /trophies/, with tiers, earned dates and filters. A few new ones, and some secret codes, are hiding in there too.", "url": "/trophies/" },
+    { "date": "2026-11-13", "tag": "site", "title": "An arcade of little games", "body": "The browser games from the 404 page now have a home of their own.", "url": "/arcade/" },
+    { "date": "2026-11-13", "tag": "site", "title": "“Right now” on the hub", "body": "A live strip up top shows when I'm streaming, whether the AndersCraft realms are online, and the week's top-rated game.", "url": "/" },
+    { "date": "2026-11-13", "tag": "site", "title": "A guided first look", "body": "First time here? A quick, easy-to-skip tour points out the landmarks on the hub.", "url": "/" },
+    { "date": "2026-11-13", "tag": "site", "title": "Friends of DaManAnders on Discord", "body": "A new page for the community server, with go-live pings, a review feed, project channels and a one-click join.", "url": "/discord/" },
+    { "date": "2026-11-13", "tag": "anyps", "title": "Screenshots on the AnyPS page", "body": "A new gallery of the launcher in action, with a full-screen viewer.", "url": "/anyps/" },
+    { "date": "2026-11-13", "tag": "anderscraft", "title": "The AndersCraft page, reforged", "body": "A new look for the realm page, with a forge-lit hero and a live pulse on the hardcore realm.", "url": "/anderscraft/" },
+    { "date": "2026-11-13", "tag": "games", "title": "Every platform, one place", "body": "Rate-O-Pedia now covers hundreds of thousands of games across dozens of platforms, with per-platform hubs, leaderboards and a weekly roundup of what's hot.", "url": "/games/" },
+    { "date": "2026-11-13", "tag": "games", "title": "Make your profile your own", "body": "Members get a customisable profile now — banners, colours, badges, a backlog and a guestbook — plus reactions on reviews and backlog buttons on every game.", "url": "/games/" },
     { "date": "2026-11-12", "tag": "site", "title": "Classic skin, new season sounds and 13 more trophies", "body": "Pick Classic in settings for the original lighthouse look with the ocean. Fall, winter, spring and summer each have their own soundscape now.", "url": "/changelog/" },
     { "date": "2026-11-12", "tag": "site", "title": "Links I Like, and a menu on every page", "body": "A page of sites I use, with a public ranking you can vote on, plus a menu button at the top left of every page.", "url": "/links/" },
     { "date": "2026-11-12", "tag": "site", "title": "Seasons, trophies and secrets", "body": "The site now dresses for the season, hands out trophies for exploring, and reacts to a few words if you just type them.", "url": "/" },
