@@ -188,6 +188,7 @@ export function authPill(box, opts) {
     el("div", { class: "rop-me__head" }, avatar(myAvatar(), myName(), 52, "rop-me__av"),
       el("div", { class: "rop-me__who" }, el("span", { class: "rop-me__line" }, el("b", { class: "rop-me__name", text: myName() }), flair), status)),
     el("ul", { class: "rop-me__stats" }, rLi, pLi, cLi));
+  if (me.ready) box.querySelector(".rop-me__head").append(bell());
   const btns = el("div", { class: "rop-me__btns" });
   if (!me.member && !me.banned) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
     el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
@@ -235,6 +236,13 @@ export async function share(url, title) {
   try { if (navigator.share) { await navigator.share({ title, url: full }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
   try { await navigator.clipboard.writeText(full); toast("Link copied", "ok"); sfx("copy"); }
   catch (e) { prompt("Copy this link:", full); }
+}
+
+/* the link-preview page for a game (games/s/, built daily for rated games) when there is one, else the game page */
+export async function shareUrlFor(id) {
+  const m = /^([A-Za-z0-9]+):([a-z0-9-]{1,90})$/.exec(id || "");
+  if (m) try { const r = await fetch("/games/s/" + m[1] + "/" + m[2] + ".html", { method: "HEAD" }); if (r.ok) return "/games/s/" + m[1] + "/" + m[2] + ".html"; } catch (e) {}
+  return "/games/game/?id=" + encodeURIComponent(id);
 }
 
 /* ---------------- rating chips: a little CPU chip with a face, 0 (miserable) to 5 (overjoyed) ---------------- */
@@ -361,8 +369,12 @@ export function reactBar(r, mine) {
 /* ---------------- static game info (assets/data/gameinfo/<3-hex shard>.json) ---------------- */
 const fnv1a = (s) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
 export const shardOf = (s) => (fnv1a(s) & 0xfff).toString(16).padStart(3, "0");
+const shardCache = new Map();
 export async function gameInfo(id) {
-  try { const r = await fetch("/assets/data/gameinfo/" + shardOf(id) + ".json"); if (!r.ok) return {}; const j = await r.json(); return j[id] || {}; } catch (e) { return {}; }
+  const k = shardOf(id);
+  if (!shardCache.has(k)) shardCache.set(k, fetch("/assets/data/gameinfo/" + k + ".json").then((r) => r.ok ? r.json() : {}, () => ({})).catch(() => ({})));
+  const j = await shardCache.get(k);
+  return (j && j[id]) || {};
 }
 
 /* ---------------- visitor reactions (no sign-in needed) ----------------
@@ -434,3 +446,118 @@ export async function guestRate(id, stars) {
   if (error) throw new Error(/guest_rate|function|schema cache/i.test(error.message) ? "Visitor ratings switch on with the next site update." : error.message);
 }
 export const VISITOR_NOTE = "Visitor vote: counts toward the Open-Vote score. Join the Discord to make it Verified.";
+
+/* ---------------- smarter title search ----------------
+ * "battlecity" finds "Battle City", "zelda link past" finds "The Legend of Zelda: A Link to the Past",
+ * "ratchet and clank" finds "Ratchet & Clank". Uses the database's skey column (title without spaces,
+ * punctuation, "the" and "and") once it exists; plain title search before that. */
+export const searchKey = (t) => String(t || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+  .replace(/\b(the|and)\b|&/g, "").replace(/[^a-z0-9]+/g, "");
+let skeyProbe = null, skeyOk = false;
+export function hasSearchKey() {
+  if (!skeyProbe) skeyProbe = sb.from("game_scores").select("id,skey").limit(1).then((r) => (skeyOk = !r.error), () => false);
+  return skeyProbe;
+}
+/* add a title filter to a game_scores query. Not async on purpose (query builders are thenables):
+ * await hasSearchKey() once before calling it. */
+export function titleSearch(req, q) {
+  const raw = String(q || "").trim();
+  const words = raw.replace(/[%_*,()."\\]/g, " ").split(/\s+/).filter(Boolean);
+  if (!skeyOk) return req.ilike("title", "%" + raw.replace(/[%_]/g, " ") + "%");
+  const k = searchKey(raw);
+  // every word in order, with anything between ("zelda link past"), or the squashed key ("battlecity")
+  const loose = "*" + words.join("*") + "*";
+  return k ? req.or("title.ilike." + loose + ",skey.ilike.*" + k + "*") : req.ilike("title", loose.replace(/\*/g, "%"));
+}
+
+/* ---------------- notifications bell (signed-in members) ----------------
+ * Reactions, replies and guestbook notes on your stuff. Opening the list marks everything read. */
+const NOTE_TEXT = {
+  reply: (n, who) => n > 1 ? n + " new replies on your thread, latest from " + (who || "someone") : (who || "Someone") + " replied to your thread",
+  reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your post",
+  review_reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your review",
+  wall: (n, who) => (who || "Someone") + (n > 1 ? " and others left " + n + " notes" : " signed") + " your guestbook",
+};
+const NOTE_ICON = { reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝" };
+let bellTimer = 0;
+export function bell() {
+  const count = el("span", { class: "rop-bell__n", hidden: true });
+  const panel = el("div", { class: "rop-bell__panel", hidden: true, role: "dialog", "aria-label": "Notifications" });
+  const b = el("button", { class: "rop-bell", type: "button", "aria-label": "Notifications", "aria-expanded": "false", title: "Notifications" },
+    el("span", { "aria-hidden": "true", text: "🔔" }), count);
+  const wrap = el("div", { class: "rop-bell__wrap", hidden: true }, b, panel);
+  let rows = [];
+  const draw = () => {
+    const unread = rows.filter((r) => !r.read).length;
+    count.hidden = !unread; count.textContent = unread > 9 ? "9+" : String(unread);
+    b.setAttribute("aria-label", unread ? unread + " new notifications" : "Notifications");
+    panel.replaceChildren(el("p", { class: "rop-bell__h", text: "Notifications" }),
+      rows.length ? el("ul", { class: "rop-bell__list" }, ...rows.map((r) => el("li", { class: r.read ? "" : "is-new" },
+        el("a", { href: r.link }, el("span", { class: "rop-bell__i", "aria-hidden": "true", text: NOTE_ICON[r.kind] || "•" }),
+          el("span", { class: "rop-bell__t" }, el("b", { text: (NOTE_TEXT[r.kind] || (() => "Something happened"))(r.n, r.actor_name) }),
+            r.snippet ? el("span", { class: "rop-bell__s", text: r.snippet }) : null,
+            el("span", { class: "rop-bell__when", text: ago(r.created_at) }))))))
+        : el("p", { class: "gm-note", text: "Nothing yet. Reactions, replies and guestbook notes show up here." }));
+  };
+  const load = () => sb.from("notifications").select("*").order("created_at", { ascending: false }).limit(25).then(({ data, error }) => {
+    if (error) return;            // database update not run yet: no bell
+    rows = data || []; wrap.hidden = false; draw();
+  }, () => {});
+  b.addEventListener("click", async () => {
+    const open = panel.hidden;
+    panel.hidden = !open; b.setAttribute("aria-expanded", String(open));
+    if (open && rows.some((r) => !r.read)) {
+      try { await sb.rpc("mark_notifications_read"); } catch (e) {}
+      setTimeout(() => { rows.forEach((r) => { r.read = true; }); count.hidden = true; }, 1500);
+    }
+  });
+  document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) { panel.hidden = true; b.setAttribute("aria-expanded", "false"); } });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { panel.hidden = true; b.setAttribute("aria-expanded", "false"); } });
+  load();
+  clearInterval(bellTimer);
+  bellTimer = setInterval(() => { if (wrap.isConnected && document.visibilityState === "visible" && panel.hidden) load(); }, 120000);
+  return wrap;
+}
+
+/* ---------------- report button (anyone; visitors use their visitor key) ---------------- */
+export async function reportItem(kind, id, reason) {
+  const col = { post: "post_id", comment: "comment_id", review: "review_id", wall: "wall_id", media: "media_id" }[kind];
+  const r = await sb.rpc("report_item", { p_kind: kind, p_id: id, p_reason: reason, p_key: visitorKey() });
+  if (!r.error) return null;
+  if (/report_item|function|schema cache/i.test(r.error.message) && me.member && me.user && kind !== "wall") {   // before the database update
+    const x = await sb.from("forum_reports").insert({ user_id: me.user.id, reason: reason || null, [col]: id });
+    return x.error ? x.error.message : null;
+  }
+  return r.error.message;
+}
+export function reportBtn(kind, id, cls) {
+  return el("button", { class: "linkbtn " + (cls || "gm-report"), type: "button", text: "Report", title: "Tell the moderators about this", onclick: async (e) => {
+    const b = e.currentTarget;
+    const reason = prompt("What's wrong with it? (optional)");
+    if (reason === null) return;
+    b.disabled = true;
+    const err = await reportItem(kind, id, reason.trim().slice(0, 300));
+    b.textContent = err ? "Couldn't report" : "Reported, thanks";
+    if (err) { b.title = err; b.disabled = false; }
+  } });
+}
+
+/* ---------------- box art (libretro-thumbnails; hidden if the picture doesn't exist) ---------------- */
+export function boxArtUrl(a) {
+  if (!a) return null;
+  const i = a.indexOf("/"); if (i < 1) return null;
+  return "https://thumbnails.libretro.com/" + encodeURIComponent(a.slice(0, i)) + "/Named_Boxarts/" + encodeURIComponent(a.slice(i + 1)) + ".png";
+}
+export function boxArt(a, title, cls) {
+  const src = boxArtUrl(a); if (!src) return null;
+  const img = el("img", { class: "rop-art " + (cls || ""), src, alt: "Box art: " + (title || ""), loading: "lazy", decoding: "async", referrerpolicy: "no-referrer" });
+  img.addEventListener("error", () => img.remove());
+  img.addEventListener("load", () => img.classList.add("is-in"));
+  return img;
+}
+/* fill box art into elements later (cards render first, art arrives with the info shard) */
+export function artSlot(id, title, cls) {
+  const slot = el("span", { class: "rop-artslot " + (cls || ""), "aria-hidden": "true" });
+  gameInfo(id).then((x) => { const img = x && x.a ? boxArt(x.a, title) : null; if (img) slot.append(img); else slot.remove(); }, () => slot.remove());
+  return slot;
+}

@@ -2,7 +2,7 @@
  * Scores, votes, hearts, reviews and backlog counts come live from the database; facts from the static info cards
  * (with the owner's corrections on top). The better number in each row is highlighted.
  */
-import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols } from "./games.common.js?v=13";
+import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=14";
 
 const root = $("cmp-root");
 const qs = new URLSearchParams(location.search);
@@ -29,7 +29,7 @@ function searcher(side) {
   let t = 0;
   q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(async () => {
     const s = q.value.trim(); if (s.length < 2) { res.replaceChildren(); return; }
-    const { data } = await sb.from("game_scores").select("id,title,console").ilike("title", "%" + s.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).limit(8);
+    await hasSearchKey(); const { data } = await (titleSearch(sb.from("game_scores").select("id,title,console"), s)).order("votes", { ascending: false }).limit(8);
     res.replaceChildren(...(data || []).map((x) => el("button", { type: "button", class: "pf-res__b", onclick: () => { pick[side] = x.id; go(); } }, consoleChip(x.console), " " + x.title)));
     if (!res.children.length) res.append(el("p", { class: "gm-note", text: "No match." }));
   }, 220); });
@@ -89,6 +89,7 @@ function grid(A, B) {
     const d = X.info.d ? (X.info.d.length > 320 ? X.info.d.slice(0, 317).replace(/\s+\S*$/, "") + "…" : X.info.d) : "";
     return el("article", { class: "cmp-card" + (win === k ? " is-win" : "") },
       win === k ? el("span", { class: "cmp-crown", text: "👑 Community favourite" }) : null,
+      X.info.a ? el("div", { class: "cmp-art" }, boxArt(X.info.a, X.g.title)) : null,
       el("div", { class: "gi-chips" }, platformLink(X.g.console)),
       el("h2", null, el("a", { href: gameUrl(X.id), text: X.info.t || X.g.title })),
       el("p", { class: "cmp-big" + (mood != null ? " rop-chip--" + mood : "") }, mood != null ? chipSvg(mood) : null, " ", s != null ? s.toFixed(1) : "–", el("small", { class: "gm-note", text: mood != null ? "  " + CHIP_WORD[mood] : "" })),
@@ -96,7 +97,12 @@ function grid(A, B) {
       dl, d ? el("p", { class: "cmp-desc", text: d }) : null,
       el("a", { class: "linkbtn", href: gameUrl(X.id), text: "Open the info card →" }));
   };
-  return el("div", { class: "cmp-grid" }, card(A, "a", 0), card(B, "b", 1));
+  // phones: one head-to-head table (A | what | B) instead of two long cards one under the other
+  const h2h = A && B ? el("table", { class: "cmp-h2h" },
+    el("thead", null, el("tr", null, el("th", { text: A.info.t || A.g.title }), el("th", { "aria-label": "Stat" }), el("th", { text: B.info.t || B.g.title }))),
+    el("tbody", null, ...rows.filter((r) => r[2]).map(([label, show, val, low]) => { const [ba, bb] = best(val, low);
+      return el("tr", null, el("td", { class: ba ? "is-best" : null, text: String(show(A)) }), el("th", { scope: "row", text: label.replace(/^[^A-Za-z]+/, "") }), el("td", { class: bb ? "is-best" : null, text: String(show(B)) })); }))) : null;
+  return el("div", null, h2h, el("div", { class: "cmp-grid" + (h2h ? " has-h2h" : "") }, card(A, "a", 0), card(B, "b", 1)));
 }
 
 subnav($("rop-tabs"), "ratings");

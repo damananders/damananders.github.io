@@ -3,10 +3,10 @@
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=13";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=14";
 
 const root = $("op-root");
-const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"]];
+const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"], ["visitors", "Visitors"], ["health", "Health"]];
 let tab = TABS.some(([k]) => k === location.hash.slice(1)) ? location.hash.slice(1) : "reports";
 const people = new Map();   // user_id -> profile row (admin can read every profile)
 
@@ -73,7 +73,7 @@ function shell() {
 }
 function open() {
   const body = $("op-body"); body.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
-  ({ reports, posts, comments, reviews, members, media, games })[tab](body).catch((e) => body.replaceChildren(el("p", { class: "gm-bad", text: "Couldn't load: " + (e.message || e) })));
+  ({ reports, posts, comments, reviews, members, media, games, visitors, health })[tab](body).catch((e) => body.replaceChildren(el("p", { class: "gm-bad", text: "Couldn't load: " + (e.message || e) })));
 }
 const refresh = () => { counts(); open(); };
 function row(...kids) { return el("article", { class: "op-row" }, ...kids); }
@@ -86,12 +86,15 @@ async function reports(body) {
   const M = mIds.length ? await sb.from("game_media").select("id,game_id,path,caption,user_id,hidden").in("id", mIds) : { data: [] };
   const meds = new Map((M.data || []).map((x) => [x.id, x]));
   const pIds = data.filter((r) => r.post_id).map((r) => r.post_id), cIds = data.filter((r) => r.comment_id).map((r) => r.comment_id), rIds = data.filter((r) => r.review_id).map((r) => r.review_id);
+  const wIds = data.filter((r) => r.wall_id).map((r) => r.wall_id);
+  const W = wIds.length ? await sb.from("profile_wall").select("id,profile_id,body,author_id,hidden").in("id", wIds) : { data: [] };
+  const walls = new Map((W.data || []).map((x) => [x.id, Object.assign(x, { user_id: x.author_id })]));
   const [P, C, R] = await Promise.all([
     pIds.length ? sb.from("forum_posts").select("id,title,body,user_id,hidden").in("id", pIds) : { data: [] },
     cIds.length ? sb.from("forum_comments").select("id,post_id,body,user_id,hidden").in("id", cIds) : { data: [] },
     rIds.length ? sb.from("reviews").select("id,game_id,body,user_id,hidden").in("id", rIds) : { data: [] }]);
   const posts = new Map((P.data || []).map((x) => [x.id, x])), coms = new Map((C.data || []).map((x) => [x.id, x])), revs = new Map((R.data || []).map((x) => [x.id, x]));
-  await loadPeople([...data.map((r) => r.user_id), ...[...posts.values(), ...coms.values(), ...revs.values(), ...meds.values()].map((x) => x.user_id)]);
+  await loadPeople([...data.map((r) => r.user_id), ...[...posts.values(), ...coms.values(), ...revs.values(), ...meds.values(), ...walls.values()].map((x) => x.user_id), ...[...walls.values()].map((x) => x.profile_id)]);
   body.replaceChildren();
   if (!data.length) return body.append(el("p", { class: "gm-empty", text: "No reports. All quiet." }));
   for (const r of data) {
@@ -99,19 +102,75 @@ async function reports(body) {
     if (r.post_id) { kind = "Post"; t = posts.get(r.post_id); id = r.post_id; link = "/games/forum/?p=" + id; hideFn = (h) => act("mod_post", { p_id: id, p_hidden: h }, h ? "Post hidden" : "Post shown", refresh); delKind = "post"; }
     else if (r.comment_id) { kind = "Comment"; t = coms.get(r.comment_id); id = r.comment_id; link = t ? "/games/forum/?p=" + t.post_id + "#c" + id : null; hideFn = (h) => act("mod_comment", { p_id: id, p_hidden: h }, h ? "Comment hidden" : "Comment shown", refresh); delKind = "comment"; }
     else if (r.media_id) { kind = "Upload"; t = meds.get(r.media_id); id = r.media_id; if (t) t.body = (t.caption ? t.caption + " · " : "") + t.path; link = t ? "/games/game/?id=" + encodeURIComponent(t.game_id) : null; hideFn = (h) => act("mod_media", { p_id: id, p_hidden: h }, h ? "Upload hidden" : "Upload shown", refresh); delKind = "media"; }
+    else if (r.wall_id) { kind = "Guestbook note"; t = walls.get(r.wall_id); id = r.wall_id; const o = t && people.get(t.profile_id); link = o ? profileUrl(o.handle) + "#wall" : null; hideFn = (h) => act("mod_wall", { p_id: id, p_hidden: h }, h ? "Note hidden" : "Note shown", refresh); delKind = null; }
     else { kind = "Review"; t = revs.get(r.review_id); id = r.review_id; link = t ? "/games/?q=" : null; hideFn = (h) => act("mod_review", { p_id: id, p_hidden: h }, h ? "Review hidden" : "Review shown", refresh); delKind = "review"; }
     body.append(row(
       el("div", { class: "op-meta" }, el("span", { class: "op-pill", text: kind }), pill(r.resolved, "resolved"), pill(t && t.hidden, "hidden", true),
-        el("span", { class: "gm-note", text: "reported " + ago(r.created_at) + " by " }), who(r.user_id)),
+        el("span", { class: "gm-note", text: "reported " + ago(r.created_at) + " by " }), r.user_id ? who(r.user_id) : el("span", { class: "op-pill", text: "a visitor" + (r.ip ? " · " + r.ip : "") })),
       el("p", { class: "op-reason", text: r.reason ? "“" + r.reason + "”" : "(no reason given)" }),
       t ? el("blockquote", { class: "op-quote" }, t.title ? el("b", { text: t.title + " — " }) : null, snip(t.body), el("div", { class: "op-by" }, "by ", who(t.user_id))) : el("p", { class: "gm-note", text: "The reported item is already gone." }),
       el("div", { class: "op-acts" },
         link ? el("a", { class: "op-btn", href: link, target: "_blank", rel: "noopener", text: "Open" }) : null,
         t ? btn(t.hidden ? "Unhide" : "Hide", () => hideFn(!t.hidden)) : null,
-        t ? btn("Delete " + kind.toLowerCase(), () => sure("Delete this " + kind.toLowerCase() + " for good?") && act("mod_delete", { p_kind: delKind, p_id: String(id) }, kind + " deleted", refresh), true) : null,
+        t && delKind ? btn("Delete " + kind.toLowerCase(), () => sure("Delete this " + kind.toLowerCase() + " for good?") && act("mod_delete", { p_kind: delKind, p_id: String(id) }, kind + " deleted", refresh), true) : null,
         t ? btn("Ban author", () => { const p = people.get(t.user_id); if (p && sure("Ban " + (p.display_name || p.name) + "?")) act("mod_ban", { p_handle: p.handle, p_banned: true }, "Banned", refresh); }, true) : null,
         btn(r.resolved ? "Reopen" : "Mark resolved", () => act("mod_resolve_report", { p_id: r.id, p_resolved: !r.resolved }, r.resolved ? "Reopened" : "Resolved", refresh)))));
   }
+}
+
+/* ---------------- visitors: visitor votes and reactions, network blocks ---------------- */
+async function visitors(body) {
+  const { data, error } = await sb.rpc("mod_guest_activity");
+  if (error) { body.replaceChildren(el("p", { class: "gm-note", text: /mod_guest_activity|function|schema cache/i.test(error.message) ? "This tab switches on after 20_rateopedia_site_improvements.sql is run." : error.message })); return; }
+  const d = data || {};
+  const stat = (v, k) => el("div", { class: "op-stat" }, el("b", { text: Number(v || 0).toLocaleString() }), el("span", { text: k }));
+  const games = (d.games || []).map((g) => row(
+    el("div", { class: "op-meta" }, consoleChip(g.console), el("a", { href: "/games/game/?id=" + encodeURIComponent(g.game_id), target: "_blank", rel: "noopener", text: g.title }),
+      el("span", { class: "gm-note", text: g.day + " today · " + g.total + " total · avg " + g.average })),
+    el("div", { class: "op-acts" }, btn("Clear visitor votes", () => sure("Remove every visitor vote on " + g.title + "?") && act("mod_clear_guest_ratings", { p_game: g.game_id }, "Cleared", refresh), true))));
+  const addrs = (d.addresses || []).map((a) => {
+    const blocked = (d.blocked || []).some((b) => b.ip === a.ip);
+    return row(el("div", { class: "op-meta" }, el("code", { text: a.ip }), pill(blocked, "blocked", true), el("span", { class: "gm-note", text: a.actions + " actions in 7 days · last " + ago(a.last) })),
+      el("div", { class: "op-acts" },
+        blocked ? btn("Unblock", () => act("mod_block_ip", { p_ip: a.ip, p_block: false }, "Unblocked", refresh))
+          : btn("Block", () => act("mod_block_ip", { p_ip: a.ip, p_block: true }, "Blocked", refresh), true),
+        btn("Block and wipe", () => sure("Block " + a.ip + " and delete every visitor vote and reaction from it?") && act("mod_block_ip", { p_ip: a.ip, p_block: true, p_wipe: true }, "Blocked and wiped", refresh), true)));
+  });
+  const blockedOnly = (d.blocked || []).filter((b) => !(d.addresses || []).some((a) => a.ip === b.ip)).map((b) => row(
+    el("div", { class: "op-meta" }, el("code", { text: b.ip }), pill(true, "blocked", true), el("span", { class: "gm-note", text: "since " + shortDate(b.created_at) })),
+    el("div", { class: "op-acts" }, btn("Unblock", () => act("mod_block_ip", { p_ip: b.ip, p_block: false }, "Unblocked", refresh)))));
+  body.replaceChildren(
+    el("div", { class: "op-counts" }, stat(d.ratings_24h, "Visitor votes today"), stat(d.reactions_24h, "Visitor reactions today"), stat(d.ratings_total, "Visitor votes in all")),
+    el("h3", { class: "gm-head", text: "Games visitors voted on most" }), games.length ? el("div", { class: "op-list" }, ...games) : el("p", { class: "gm-note", text: "No visitor votes yet." }),
+    el("h3", { class: "gm-head", text: "Busiest network addresses (7 days)" }),
+    el("p", { class: "gm-note", text: "A blocked address can still browse, but can't vote, react or report as a visitor. Members are never affected." }),
+    addrs.length || blockedOnly.length ? el("div", { class: "op-list" }, ...addrs, ...blockedOnly) : el("p", { class: "gm-note", text: "Nothing yet." }));
+}
+
+/* ---------------- health: database size against the free plan ---------------- */
+const FREE = { db: 500 * 1024 * 1024, storage: 1024 * 1024 * 1024 };
+const mb = (b) => (b / 1024 / 1024).toFixed(b < 10 * 1024 * 1024 ? 1 : 0) + " MB";
+async function health(body) {
+  const { data, error } = await sb.rpc("mod_db_health");
+  if (error) { body.replaceChildren(el("p", { class: "gm-note", text: /mod_db_health|function|schema cache/i.test(error.message) ? "This tab switches on after 20_rateopedia_site_improvements.sql is run." : error.message })); return; }
+  const d = data || {};
+  const meter = (label, used, cap) => {
+    const pct = Math.min(100, (used / cap) * 100);
+    return el("div", { class: "op-meter" + (pct > 80 ? " is-hot" : pct > 60 ? " is-warm" : "") },
+      el("div", { class: "op-meter__top" }, el("b", { text: label }), el("span", { text: mb(used) + " of " + mb(cap) + " (" + pct.toFixed(0) + "%)" })),
+      el("div", { class: "op-meter__bar" }, el("span", { style: "width:" + pct + "%" })));
+  };
+  const max = Math.max(1, ...(d.tables || []).map((t) => t.bytes));
+  body.replaceChildren(
+    el("p", { class: "gm-note", text: "Supabase's free plan allows a 500 MB database and 1 GB of file storage. Past 80% it's time to clean up or upgrade." }),
+    meter("Database", d.db_bytes || 0, FREE.db),
+    d.storage_bytes != null ? meter("File storage (avatars, banners, screenshots)", d.storage_bytes, FREE.storage) : null,
+    el("div", { class: "op-counts" }, ...[["Games", d.games], ["Members", d.members], ["Member votes", d.ratings], ["Visitor votes", d.visitor_ratings]].map(([k, v]) =>
+      el("div", { class: "op-stat" }, el("b", { text: Number(v || 0).toLocaleString() }), el("span", { text: k })))),
+    el("h3", { class: "gm-head", text: "Biggest tables" }),
+    el("div", { class: "op-tables" }, ...(d.tables || []).map((t) => el("div", { class: "op-trow" },
+      el("span", { class: "op-trow__n", text: t.name }), el("span", { class: "op-trow__bar" }, el("span", { style: "width:" + (t.bytes / max) * 100 + "%" })),
+      el("span", { class: "gm-note", text: mb(t.bytes) + " · " + Math.max(0, t.rows).toLocaleString() + " rows" })))));
 }
 
 /* ---------------- posts ---------------- */

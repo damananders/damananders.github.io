@@ -1,0 +1,28 @@
+# Rebuilds the Rate-O-Pedia link-preview pages (games/s/) once a day from the live scores.
+name: Rate-O-Pedia share pages
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: rop-share
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/rop-share/build.mjs
+      - run: |
+          git config user.name "rop-share bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A games/s
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -qm "Rate-O-Pedia: refresh link-preview pages"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done

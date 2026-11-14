@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE } from "./games.common.js?v=13";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey } from "./games.common.js?v=14";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -78,6 +78,7 @@ function card(g, rank) {
   const c = el("article", { class: "gm-card" + medalCls + (rank && rank <= 10 ? " gm-card--top10" : "") },
     el("div", { class: "gm-card__top" },
       rank && rank <= 3 ? medal(rank) : (rank ? el("span", { class: "gm-vrank", text: "#" + rank }) : null),
+      artSlot(g.id, g.title, "gm-art"),
       platformLink(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
       rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia" }, el("span", { "aria-hidden": "true", text: "★ " }), "Must Play!") : null,
@@ -98,7 +99,7 @@ async function load() {
   let req = sb.from("game_scores").select(cols);
   const ids = filterIds();
   if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
-  if (q.length >= 2) { req = req.ilike("title", "%" + q.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).order("title").limit(40); head.textContent = "Results for “" + q + "”"; }
+  if (q.length >= 2) { await hasSearchKey(); req = titleSearch(req, q).order("votes", { ascending: false }).order("title").limit(40); head.textContent = "Results for “" + q + "”"; }
   else if (open) { req = req.gt("open_votes", 0).order("open_average", { ascending: false }).order("open_votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated · Open-Vote"; }
   else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated" + (cols.includes("open_votes") ? " · Verified" : ""); }
   rankSwitch(q.length < 2 && cols.includes("open_votes"));
@@ -214,7 +215,7 @@ async function reviews(g, box) {
       el("span", { class: "gm-review__when", text: new Date(r.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) })),
       r.stars != null ? el("span", { class: "gm-review__mood rop-chip--" + r.stars, title: r.stars + " / 5 · " + CHIP_WORD[r.stars] }, chipSvg(r.stars), el("b", { text: String(r.stars) })) : null);
     const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") }, head, el("p", { class: "gm-review__body", text: r.body }), reactBar(r, rx.get(r.id)));
-    if (member && r.id != null && me.ready) art.append(el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: (e) => report({ review_id: r.id }, e.target) }));
+    if (r.id != null && !(me.profile && r.handle && me.profile.handle === r.handle)) art.append(reportBtn("review", r.id));
     box.append(art);
   }
   if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
@@ -280,13 +281,6 @@ async function writeBox(g, box, shown) {
   }
 }
 
-async function report(target, btn) {
-  const reason = prompt("What's wrong with it? (optional)") ;
-  if (reason === null) return;
-  const { error } = await sb.from("forum_reports").insert({ user_id: user.id, reason: reason.trim().slice(0, 300) || null, ...target });
-  btn.textContent = error ? "Couldn't report" : "Reported";
-  btn.disabled = true;
-}
 
 /* ---------------- add a missing game ---------------- */
 function addBox(q, data) {

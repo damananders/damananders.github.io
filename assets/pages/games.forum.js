@@ -2,7 +2,7 @@
  * Everyone can read. Discord-server members can post, comment, react and report. Posts and comments are plain
  * text (links become clickable); nothing a member writes is ever inserted as HTML.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact } from "./games.common.js?v=13";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact , reportBtn } from "./games.common.js?v=14";
 
 const CATS = [["", "All"], ["anyps", "AnyPS"], ["games", "Games"], ["general", "General"], ["help", "Help"], ["offtopic", "Off-topic"]];
 const catName = (k) => (CATS.find(([c]) => c === k) || [k, k])[1];
@@ -47,12 +47,6 @@ function gate(what) {
 function byline(x, extra) {
   return el("div", { class: "fr-by" }, avatar(x.avatar, x.author, 28), nameLink(x.handle, x.author), x.author_is_owner ? ownerTag() : null, x.author_is_staff ? adminTag() : null,
     el("span", { class: "fr-when", title: new Date(x.created_at).toLocaleString(), text: ago(x.created_at) + (x.edited_at ? " · edited" : "") }), extra || null);
-}
-async function report(target, btn) {
-  const reason = prompt("What's wrong with it? (optional)");
-  if (reason === null) return;
-  const { error } = await sb.from("forum_reports").insert({ user_id: me.user.id, reason: reason.trim().slice(0, 300) || null, ...target });
-  btn.textContent = error ? "Couldn't report" : "Reported — thanks"; btn.disabled = true;
 }
 
 /* ---------------- reactions ---------------- */
@@ -193,7 +187,7 @@ async function postView() {
       const { error } = await sb.from("forum_posts").delete().eq("id", f.id);
       if (error) toast("Couldn't delete: " + error.message, "err"); else location.href = "/games/forum/";
     } }));
-  else if (canWrite()) tools.append(el("button", { class: "linkbtn", type: "button", text: "Report", onclick: (e) => report({ post_id: f.id }, e.target) }));
+  else tools.append(reportBtn("post", f.id, "fr-report"));
   const art = el("article", { class: "fr-post" },
     el("a", { class: "linkbtn fr-back", href: "/games/forum/" + (f.category ? "?c=" + f.category : ""), text: "← " + catName(f.category) }),
     el("div", { class: "fr-card__top" }, el("span", { class: "fr-cat", "data-c": f.category, text: catName(f.category) }),
@@ -245,7 +239,7 @@ async function loadComments(f, box) {
         const { error } = await sb.from("forum_comments").delete().eq("id", c.id);
         if (error) toast("Couldn't delete: " + error.message, "err"); else loadComments(f, box);
       } }));
-    else if (canWrite()) tools.append(el("button", { class: "linkbtn", type: "button", text: "Report", onclick: (e) => report({ comment_id: c.id }, e.target) }));
+    else tools.append(reportBtn("comment", c.id, "fr-report"));
     tools.append(el("button", { class: "linkbtn", type: "button", text: "Link", title: "Share this comment", onclick: () => share(postUrl(f.id) + "#c" + c.id, f.title) }));
     item.append(byline(c, tools), rich(c.body, "fr-body fr-body--c"), cr ? reactBar(c, false, "comment", cr.get(c.id) || new Set()) : "");
     box.append(item);

@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE } from "./games.common.js?v=13";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor } from "./games.common.js?v=14";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -37,6 +37,8 @@ async function render() {
   info = Object.assign({}, base, (fix.data && fix.data.data) || {});
   const title = info.t || game.title, sub = info.st || "";
   document.title = title + (sub ? " — " + sub : "") + " · Rate-O-Pedia";
+  let shareHref = "/games/game/?id=" + encodeURIComponent(id);
+  shareUrlFor(id).then((u) => { shareHref = u; });
 
   myStars = null;
   if (me.user && me.member) { const r = await sb.from("ratings").select("stars").eq("game_id", id).maybeSingle(); myStars = r.data ? r.data.stars : null; }
@@ -58,13 +60,14 @@ async function render() {
 
   const card = el("article", { class: "gi-card", "data-c": game.console },
     el("header", { class: "gi-head" },
+      info.a ? el("div", { class: "gi-art" }, boxArt(info.a, title)) : null,
       el("div", { class: "gi-headtext" },
         el("div", { class: "gi-chips" }, platformLink(game.console), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
         el("h1", { class: "gi-title", text: title }),
         sub ? el("p", { class: "gi-sub", text: sub }) : null),
       el("div", { class: "gi-headbtns" }, heartBtn(),
         el("a", { class: "linkbtn", href: compareUrl(id), text: "Compare" }),
-        el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share("/games/game/?id=" + encodeURIComponent(id), title) }))),
+        el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share(shareHref, title) }))),
     el("div", { class: "gi-grid" },
       el("div", { class: "gi-main" }, desc, facts),
       el("aside", { class: "gi-side" }, scoreBox(), playBox(title), compatBox())),
@@ -229,11 +232,7 @@ function mediaBox() {
           if (row.data) await sb.storage.from("game-media").remove([row.data.path]);
           const { error } = await sb.from("game_media").delete().eq("id", m.id);
           if (error) toast(error.message, "err"); else load();
-        } }) : (me.member && me.ready ? el("button", { class: "linkbtn gm-report", type: "button", text: "Report", onclick: async (e) => {
-          const reason = prompt("What's wrong with it? (optional)"); if (reason === null) return;
-          const { error } = await sb.from("forum_reports").insert({ user_id: me.user.id, media_id: m.id, reason: reason.trim().slice(0, 300) || null });
-          e.target.textContent = error ? "Couldn't report" : "Reported"; e.target.disabled = true;
-        } }) : null)));
+        } }) : reportBtn("media", m.id)));
   }
   // uploader
   if (!me.user) box.append(el("p", { class: "fr-gate" }, el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "Sign in" }), " to upload screenshots or clips."));

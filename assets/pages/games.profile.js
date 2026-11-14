@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE } from "./games.common.js?v=13";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey } from "./games.common.js?v=14";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -192,6 +192,7 @@ async function render() {
       : el("button", { class: "pf-link pf-link--" + k, type: "button", title: "Copy", onclick: async () => { try { await navigator.clipboard.writeText(v); toast(label + " copied", "ok"); } catch (e) { prompt(label + ":", v); } } },
         el("small", { text: label + " · copy" }), el("b", { text: v }));
   }))) : null;
+  const raBox = p.ra_user ? raCard(p, mine) : null;
   const aboutBox = p.bio || mine ? el("section", { class: "pf-card pf-sec pf-sec--about" }, el("h2", { class: "gm-head pf-h", text: "About" }),
     p.bio ? el("div", { class: "pf-bio" }, ...p.bio.split(/\n{2,}/).map((para) => el("p", { text: para })))
       : el("p", { class: "gm-note", text: plus ? "Tell people about yourself in Edit profile → About." : "The About box arrives with the next database update." })) : null;
@@ -234,7 +235,7 @@ async function render() {
   const revBox = section(p, mine, "reviews", "Recent reviews", el("p", { class: "gm-empty", text: "Loading…" }));
 
   root.replaceChildren(...[head,
-    el("div", { class: "pf-cols pf-cols--top" }, el("div", { class: "pf-col" }, aboutBox, linkBox), el("div", { class: "pf-col" }, nowBox, statsBox)),
+    el("div", { class: "pf-cols pf-cols--top" }, el("div", { class: "pf-col" }, aboutBox, linkBox), el("div", { class: "pf-col" }, nowBox, raBox, statsBox)),
     showBox, badgeBox, blBox, heartBox, wallBox,
     el("div", { class: "pf-cols" }, postsBox, revBox)].filter(Boolean));
   root.querySelectorAll(".pf-col:empty").forEach((c) => c.remove());
@@ -329,6 +330,7 @@ async function backlog(p, mine, box) {
 async function wall(p, mine, box) {
   const list = el("div", { class: "pf-wall" });
   box.lastChild.replaceWith(list);
+  box.id = "wall";
   async function load() {
     const { data, error } = await sb.from("public_wall").select("*").eq("profile_handle", p.handle).order("created_at", { ascending: false }).limit(60);
     if (error) { box.remove(); return; }
@@ -344,7 +346,7 @@ async function wall(p, mine, box) {
               if (!confirm("Delete this note?")) return;
               const { error } = await sb.rpc("wall_delete", { p_id: n.id });
               if (error) toast(error.message, "err"); else { sfx("tap"); load(); }
-            } }) : null),
+            } }) : reportBtn("wall", n.id)),
           el("p", { text: n.body })));
     }));
     if (!data.length) list.append(el("p", { class: "gm-note", text: mine ? "No notes yet. Friends can sign your guestbook here." : "No notes yet. Be the first to sign it." }));
@@ -368,6 +370,26 @@ async function wall(p, mine, box) {
   box.append(el("div", { class: "pf-wall__write" }, ta, el("div", { class: "gm-write__bar" }, send, count)));
 }
 
+/* ---------------- RetroAchievements card ----------------
+ * Points and mastered games come from the ra-sync function (it holds the RA key); the picture straight from RA. */
+function raCard(p, mine) {
+  const num = (v, k) => el("div", { class: "pf-ra__n" }, el("b", { text: v == null ? "–" : Number(v).toLocaleString() }), el("span", { text: k }));
+  const nums = el("div", { class: "pf-ra__nums" }, num(p.ra_points, "points"), num(p.ra_masteries, "mastered"));
+  const card = el("section", { class: "pf-card pf-sec pf-ra" },
+    el("h2", { class: "gm-head pf-h", text: "RetroAchievements" }),
+    el("a", { class: "pf-ra__who", href: raUserUrl(p.ra_user), target: "_blank", rel: "noopener nofollow" },
+      el("img", { class: "pf-ra__pic", src: "https://media.retroachievements.org/UserPic/" + encodeURIComponent(p.ra_user) + ".png", alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: (e) => e.target.remove() }),
+      el("span", null, el("b", { text: p.ra_user }), p.ra_verified ? el("span", { class: "pf-ra__ok", title: "Their RetroAchievements motto confirms this account", text: " ✔ verified" }) : null)),
+    nums,
+    mine && !p.ra_verified ? el("p", { class: "gm-note", text: "To show the ✔, put rop:" + p.handle + " anywhere in your RetroAchievements motto. It updates within a few hours." }) : null);
+  // ask for fresh numbers (the function keeps them for 6 hours, so this is cheap)
+  sb.functions.invoke("ra-sync", { body: { handle: p.handle } }).then(({ data }) => {
+    if (!data || !data.ok || data.cached) return;
+    nums.replaceWith(el("div", { class: "pf-ra__nums" }, num(data.ra_points, "points"), num(data.ra_masteries, "mastered")));
+  }, () => {});
+  return card;
+}
+
 /* ---------------- editor ---------------- */
 async function toWebp(file, w, h, q) {
   const bmp = await createImageBitmap(file);
@@ -388,7 +410,7 @@ function gameSearch(placeholder, onPick, skip) {
   let t = 0;
   q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(async () => {
     const s = q.value.trim(); if (s.length < 2) { res.replaceChildren(); return; }
-    const { data } = await sb.from("game_scores").select("id,title,console").ilike("title", "%" + s.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).limit(8);
+    await hasSearchKey(); const { data } = await (titleSearch(sb.from("game_scores").select("id,title,console"), s)).order("votes", { ascending: false }).limit(8);
     res.replaceChildren(...(data || []).filter((x) => !(skip && skip(x))).map((x) =>
       el("button", { type: "button", class: "pf-res__b", onclick: () => onPick(x) }, consoleChip(x.console), " " + x.title)));
     if (!res.children.length) res.append(el("p", { class: "gm-note", text: "No match. You can add missing games on the Ratings page." }));
@@ -603,6 +625,11 @@ function editor(p) {
         banner: st.banner, accent: st.accent, frame: st.frame, name_fx: st.fx, links, hidden_sections: [...st.hidden], wall_open: st.wall, pinned_badge: st.pin,
         ...(hasX ? { flair_text: flair ? flair.value.trim() : "", page_fx: st.page } : {}) } });
       if (b.error) { save.disabled = false; note.textContent = b.error.message; sfx("error"); return; }
+      // RetroAchievements tag doubles as the RA account the profile card syncs from (round 20)
+      if (p.ra_user !== undefined && (links.ra || null) !== (p.ra_user || null)) {
+        const r = await sb.rpc("set_my_ra", { p_user: links.ra || "" });
+        if (r.error) toast(r.error.message, "err");
+      }
     }
     save.disabled = false;
     sfx("success"); toast("Profile saved", "ok");
