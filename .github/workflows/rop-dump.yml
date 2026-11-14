@@ -1,0 +1,24 @@
+# Dumps the live Rate-O-Pedia game list to the branch rop-dump (games.tsv) so it can be audited. Run by hand.
+name: Rate-O-Pedia list dump
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/rop-dump/dump.mjs
+      - run: |
+          git config user.name "rop-dump bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan rop-dump
+          git rm -rq --cached .
+          gzip -9 out/games.tsv && mv out/games.tsv.gz games.tsv.gz
+          git add games.tsv.gz && git commit -qm "Rate-O-Pedia list dump ($(date -u +%FT%TZ))"
+          git push -f origin rop-dump
