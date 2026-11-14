@@ -517,6 +517,8 @@
     var here = Site.page, open = false, closing = 0;
     var path = location.pathname.replace(/index\.html$/, "");
     var exact = PAGES.some(function (p) { return p[1] === path; });
+    var mode = Site.store.get("menu.layout", "float");   /* "float" (zero-g constellation) or "neat" (static grid) */
+    if (mode !== "neat") mode = "float";
 
     var btn = el("button", { type: "button", class: "sx-iconbtn ch-menu", "aria-label": "Site menu", "aria-haspopup": "true", "aria-expanded": "false", "aria-controls": "ch-radial", title: "Site menu" },
       svg('<circle cx="12" cy="12" r="2.1"/><circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/>', { fill: "currentColor", stroke: "none" }));
@@ -555,7 +557,7 @@
       var inEl = card.querySelector(".ch-rad__in");
       function tilt(e) {
         if (e.pointerType && e.pointerType !== "mouse") return;
-        if (Site.reducedMotion) return;
+        if (mode !== "float" || Site.reducedMotion) return;
         var r = inEl.getBoundingClientRect(); if (r.width < 8) return;
         var gx = clamp((e.clientX - r.left) / r.width, 0, 1), gy = clamp((e.clientY - r.top) / r.height, 0, 1);
         inEl.style.setProperty("--tx", ((gx - 0.5) * 11).toFixed(2) + "deg");
@@ -576,7 +578,7 @@
     /* global parallax: the whole constellation leans toward the cursor */
     var mqFine = window.matchMedia ? matchMedia("(pointer:fine)") : { matches: true }, rafP = 0;
     overlay.addEventListener("pointermove", function (e) {
-      if (!open || !mqFine.matches || Site.reducedMotion) return;
+      if (!open || mode !== "float" || !mqFine.matches || Site.reducedMotion) return;
       var px = clamp(e.clientX / (window.innerWidth || 1) - 0.5, -0.5, 0.5);
       var py = clamp(e.clientY / (window.innerHeight || 1) - 0.5, -0.5, 0.5);
       if (rafP) return;
@@ -586,7 +588,28 @@
     }, { passive: true });
     overlay.addEventListener("pointerleave", function () { wheel.style.setProperty("--px", 0); wheel.style.setProperty("--py", 0); });
 
-    function focusables() { return [center].concat(nodes); }
+    /* layout toggle: let people swap the floaty constellation for a neat static grid (remembered per browser) */
+    var floatIco = svg('<circle cx="6" cy="7" r="2.3"/><circle cx="17" cy="6" r="1.8"/><circle cx="12" cy="15" r="2.1"/><circle cx="18.5" cy="16" r="1.5"/>', { fill: "currentColor", stroke: "none" });
+    var neatIco = svg('<rect x="3.5" y="4" width="7" height="7" rx="1.4"/><rect x="13.5" y="4" width="7" height="7" rx="1.4"/><rect x="3.5" y="13" width="7" height="7" rx="1.4"/><rect x="13.5" y="13" width="7" height="7" rx="1.4"/>', { fill: "none", stroke: "currentColor" });
+    var bFloat = el("button", { type: "button", class: "ch-rad__segb", "data-m": "float", title: "Floaty layout" }, floatIco, el("span", { text: "Floaty" }));
+    var bNeat = el("button", { type: "button", class: "ch-rad__segb", "data-m": "neat", title: "Neat grid" }, neatIco, el("span", { text: "Neat" }));
+    var seg = el("div", { class: "ch-rad__seg", role: "group", "aria-label": "Menu layout" }, bFloat, bNeat);
+    var segBtns = [bFloat, bNeat];
+    function applyMode(m, save) {
+      mode = (m === "neat") ? "neat" : "float";
+      overlay.setAttribute("data-layout", mode);
+      segBtns.forEach(function (b) {
+        var on = b.getAttribute("data-m") === mode;
+        b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on));
+      });
+      if (mode !== "float") { wheel.style.setProperty("--px", 0); wheel.style.setProperty("--py", 0); }
+      if (save) { try { Site.store.set("menu.layout", mode); } catch (e) {} }
+    }
+    segBtns.forEach(function (b) { b.addEventListener("click", function () { applyMode(b.getAttribute("data-m"), true); sfx("tap"); }); });
+    overlay.appendChild(seg);
+    applyMode(mode, false);
+
+    function focusables() { return [center].concat(nodes).concat(segBtns); }
     function set(on) {
       if (on === open) return;
       open = on; btn.setAttribute("aria-expanded", String(on));
