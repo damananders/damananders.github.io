@@ -1024,6 +1024,12 @@
   A.register({
     id: "supreme-lobbing", name: "Supreme Lobbing", icon: "🎯", accent: "#f6ad55", W: W, H: H,
     blurb: "Turn-based raft battles: lob things in an arc, mind the wind, upgrade your raft.",
+    sync: [
+      { k: "cleared", s: NS + "cleared", t: "union" }, { k: "pcleared", s: NS + "pcleared", t: "union" },
+      { k: "bestWave", s: NS + "bestWave", t: "max" }, { k: "coins", s: NS + "coins", t: "max" },
+      { k: "upg", s: NS + "upg", t: "maxmap" }, { k: "ammo", s: NS + "ammo", t: "ormap" }, { k: "owned", s: NS + "owned", t: "ormap" }
+    ],
+    onSync: function (g) { paintBest(g); },
     init: function (g) { paintBest(g); g.debug = { B: function () { return B; }, start: function (k, i) { startBattle(g, k, i); } }; },
     title: function (g) { titleMenu(g); },
     restart: function (g) { if (B) { var k = B.kind, i = B.kind === "endless" ? 0 : B.idx; if (k === "endless") B = null; startBattle(g, k, i); } },

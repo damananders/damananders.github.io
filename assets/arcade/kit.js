@@ -135,6 +135,7 @@
       g.state = s; stage.setAttribute("data-state", s);
       bPause.hidden = !(s === "play" || s === "paused");
       syncCapture(); g.wake();
+      if ((s === "over" || s === "title") && def.sync) sySoon();
     };
     g.start = function () { g.closeMenu(); g.setState("play"); if (!full && def.autoFull !== false) g.full(true); try { cv.focus({ preventScroll: true }); } catch (e) {} last = performance.now(); };
     g.pause = function () {
@@ -330,6 +331,66 @@
     return function () { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; };
   }
 
+  /* ---------------- account sync (assets/sync.js) ----------------
+     A game lists what to carry across devices in def.sync: [{ k: name, s: Site.store key, t: type, d: default }].
+     Types say how two copies merge, and every one of them only ever adds or keeps the best:
+       max (numbers), or (flags), union (arrays), maxmap ({key: number}), ormap ({key: flag}).
+     Values go up in the "arcade" section as "<game id>/<k>". The server replaces a key with whatever is pushed,
+     so a browser pulls and merges before its first push, and only ever pushes its merged (never lower) copy. */
+  var SY = { pulled: false, pulling: false, sent: {}, timer: 0 };
+  function syEq(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+  function syMerge(t, a, b) {
+    if (a == null) return b; if (b == null) return a;
+    if (t === "max") return Math.max(+a || 0, +b || 0);
+    if (t === "or") return !!(a || b);
+    if (t === "union") {
+      var out = (Array.isArray(a) ? a : []).slice();
+      (Array.isArray(b) ? b : []).forEach(function (v) { if (out.indexOf(v) < 0) out.push(v); });
+      return out.every(function (v) { return typeof v === "number"; }) ? out.sort(function (x, y) { return x - y; }) : out;
+    }
+    if (t === "maxmap" || t === "ormap") {
+      var o = {}, A = a && typeof a === "object" ? a : {}, Bm = b && typeof b === "object" ? b : {};
+      Object.keys(A).concat(Object.keys(Bm)).forEach(function (k) { o[k] = t === "maxmap" ? Math.max(+A[k] || 0, +Bm[k] || 0) : !!(A[k] || Bm[k]); });
+      return o;
+    }
+    return a;
+  }
+  function syEmpty(v) { return v == null || v === 0 || v === false || (Array.isArray(v) && !v.length) || (typeof v === "object" && !Array.isArray(v) && !Object.keys(v).length); }
+  function syEach(fn) { games.forEach(function (g) { (g.def.sync || []).forEach(function (sp) { fn(g, sp, g.id + "/" + sp.k); }); }); }
+  function syLinked() { return !!(Site.sync && Site.sync.linked && Site.sync.linked()); }
+  function syPush() {
+    SY.timer = 0;
+    if (!syLinked()) return;
+    if (!SY.pulled) {                             /* merge with the account first, so a stale copy never goes up */
+      if (SY.pulling) return; SY.pulling = true;
+      Site.sync.pull({ loud: false }).then(function (r) { SY.pulling = false; if (r && r.ok) { SY.pulled = true; syPush(); } }, function () { SY.pulling = false; });
+      return;
+    }
+    var patch = {}, n = 0;
+    syEach(function (g, sp, key) {
+      var v = Site.store.get(sp.s, sp.d == null ? null : sp.d);
+      if (syEmpty(v) || syEq(v, SY.sent[key])) return;
+      patch[key] = v; SY.sent[key] = v; n++;
+    });
+    if (n) Site.emit("arcade:save", patch);
+  }
+  function sySoon(ms) { if (!SY.timer) SY.timer = setTimeout(syPush, ms == null ? 1200 : ms); }
+  Site.on("sync:pulled:arcade", function (state) {
+    if (!state || typeof state !== "object") return;
+    SY.pulled = true;
+    var touched = [];
+    syEach(function (g, sp, key) {
+      if (!(key in state)) return;
+      var rv = state[key], lv = Site.store.get(sp.s, null), m = syMerge(sp.t, lv, rv);
+      SY.sent[key] = rv;                          /* what the account holds now */
+      if (!syEq(m, lv)) { Site.store.set(sp.s, m); if (touched.indexOf(g) < 0) touched.push(g); }
+    });
+    touched.forEach(function (g) { try { if (g.def.onSync) g.def.onSync(g); } catch (e) {} });
+    sySoon(400);                                  /* send up anything this browser has that the account lacked */
+  });
+  Site.on("sync:changed", function () { if (!syLinked()) { SY.pulled = false; SY.sent = {}; } });
+  document.addEventListener("visibilitychange", function () { if (document.hidden && SY.pulled) syPush(); });
+
   window.Arcade = {
     register: function (def) {
       if (!host()) return null;
@@ -340,6 +401,7 @@
       g.setState("title");
       if (def.title) def.title(g);
       g.wake(); g.paint();
+      if (def.sync) sySoon(4000);                 /* after sync.js's own pull on page load */
       return g;
     },
     draw: draw, FONT: FONT, rng: rng, games: games,
