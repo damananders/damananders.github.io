@@ -170,6 +170,11 @@ export async function loadMe(session, skipVerify) {
   me.profile = r.data || null;
   me.banned = !!(me.profile && me.profile.banned);
   me.member = !!(me.profile && me.profile.is_member) && !me.banned;
+  me.restricted = null;   // muted or kicked from the control panel (round 25): read-only for now
+  if (me.member) {
+    try { const r = await sb.rpc("my_restrictions"); const x = r.data;
+      if (!r.error && x && (x.muted || x.kicked_until)) { me.restricted = x; me.member = false; } } catch (e) {}
+  }
   if (me.ready) { try { const a = await sb.rpc("is_admin"); me.admin = a.data === true; } catch (e) {} }
   // Admin bubble (set server-side from the Discord role); tells the site trophies about it once per page load
   if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
@@ -211,6 +216,9 @@ export function authPill(box, opts) {
   const handle = me.ready && me.profile && me.profile.handle;
   const flair = el("span", { class: "rop-me__flair" }, me.admin ? ownerTag() : null, me.staff ? adminTag() : null);
   const status = me.banned ? el("span", { class: "rop-me__sub gm-bad", text: "This account is suspended." })
+    : me.restricted ? el("span", { class: "rop-me__sub gm-bad", text: me.restricted.kicked_until
+        ? "Read-only until " + new Date(me.restricted.kicked_until).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })
+        : "Your account is muted (read-only)" })
     : me.member ? el("span", { class: "rop-me__sub gm-ok", text: "In the server" + (o.okTail ? o.okTail.replace(/^,\s*/, " · ").replace(/\.$/, "") : " · votes count") })
     : el("span", { class: "rop-me__sub", text: "Not in the server yet" });
   const stat = (label) => { const b = el("b", { text: "–" }); return [el("li", null, b, el("span", { text: label })), b]; };
@@ -221,9 +229,9 @@ export function authPill(box, opts) {
     el("ul", { class: "rop-me__stats" }, rLi, pLi, cLi));
   if (me.ready) box.querySelector(".rop-me__head").append(bell());
   const btns = el("div", { class: "rop-me__btns" });
-  if (!me.member && !me.banned) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
+  if (!me.member && !me.banned && !me.restricted) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
     el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
-  if (handle) btns.append(el("a", { class: (me.member ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
+  if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
   if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/station/", text: "Operation Station" }));
   btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));

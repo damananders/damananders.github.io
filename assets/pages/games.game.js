@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt } from "./games.common.js?v=18";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt } from "./games.common.js?v=19";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");

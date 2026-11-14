@@ -2,7 +2,7 @@
  * The latest ratings, reviews and lists from the members you follow, from the database function my_feed(),
  * which only ever returns your own feed. Follow people with the Follow button on their profile.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, INVITE, consoleChip, gameUrl, artSlot, chipSvg, CHIP_WORD, profileUrl } from "./games.common.js?v=18";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, INVITE, consoleChip, gameUrl, artSlot, chipSvg, CHIP_WORD, profileUrl } from "./games.common.js?v=19";
 
 const root = $("fd-root");
 let oldest = null;
