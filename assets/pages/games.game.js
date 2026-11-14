@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged } from "./games.common.js?v=17";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt } from "./games.common.js?v=18";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -60,7 +60,7 @@ async function render() {
 
   const card = el("article", { class: "gi-card", "data-c": game.console },
     el("header", { class: "gi-head" },
-      info.g || info.a || info.sa || info.ra ? el("div", { class: "gi-art" }, boxArt(info, title), !info.g && !info.a && !info.sa && info.ra ? el("a", { class: "gi-credit", href: "https://rawg.io/", target: "_blank", rel: "noopener", text: "Picture: RAWG" }) : null) : null,
+      headArt(title),
       el("div", { class: "gi-headtext" },
         el("div", { class: "gi-chips" }, platformLink(game.console), info.y ? el("span", { class: "gi-year", text: String(info.y) }) : null),
         el("h1", { class: "gi-title", text: title }),
@@ -206,6 +206,60 @@ function heartBtn() {
   return b;
 }
 
+/* ---------------- cover: automatic sources first, else a member's upload (round 24) ---------------- */
+function headArt(title) {
+  if (hasAutoArt(info)) {
+    return el("div", { class: "gi-art" }, boxArt(info, title),
+      !info.g && !info.a && !info.sa && info.ra ? el("a", { class: "gi-credit", href: "https://rawg.io/", target: "_blank", rel: "noopener", text: "Picture: RAWG" }) : null);
+  }
+  const box = el("div", { class: "gi-art gi-art--member" });
+  memberCover(id).then((c) => {
+    if (c) {
+      const mine = me.profile && me.profile.handle === c.handle;
+      box.replaceChildren(boxArt(c, title), el("span", { class: "gi-credit" }, "Cover by ", nameLink(c.handle, c.by)),
+        mine || me.admin ? el("button", { class: "linkbtn gi-credit", type: "button", text: "Remove cover", onclick: () => removeCover(c) }) : reportBtn("media", c.id));
+    } else if (me.member && me.ready) {
+      box.classList.add("gi-art--add");
+      box.replaceChildren(el("button", { class: "gi-addcover", type: "button", onclick: () => pickCover(box, title) },
+        el("span", { "aria-hidden": "true", text: "＋" }), el("span", { text: "Add the cover" })));
+    }
+  });
+  return box;
+}
+async function removeCover(c) {
+  if (!confirm("Remove this cover?")) return;
+  const row = await sb.from("game_media").select("path").eq("id", c.id).maybeSingle();
+  if (row.data) await sb.storage.from("game-media").remove([row.data.path]);
+  const { error } = await sb.from("game_media").delete().eq("id", c.id);
+  if (error) { toast(error.message, "err"); return; }
+  forgetCover(id); render();
+}
+function pickCover(box, title) {
+  const f = el("input", { type: "file", accept: "image/png,image/jpeg,image/webp", hidden: true });
+  f.addEventListener("change", async () => {
+    const file = f.files && f.files[0]; if (!file) return;
+    try {
+      const bmp = await createImageBitmap(file);
+      if (bmp.width < 120 || bmp.height < 120) throw new Error("That picture is too small for a cover.");
+      const s = Math.min(1, 1000 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+      c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise((r) => c.toBlob(r, "image/webp", 0.9));
+      toast("Uploading cover…", "info");
+      const p = me.user.id + "/cover-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7) + ".webp";
+      const up = await sb.storage.from("game-media").upload(p, blob, { contentType: "image/webp", cacheControl: "31536000" });
+      if (up.error) throw up.error;
+      const { error } = await sb.from("game_media").insert({ game_id: id, user_id: me.user.id, kind: "cover", path: p, caption: null });
+      if (error) {
+        await sb.storage.from("game-media").remove([p]);
+        throw new Error(/check constraint|kind/i.test(error.message) ? "Cover uploads switch on after the owner's database update." : error.message.replace(/new row violates row-level security policy.*/, "Upload limit reached (20 a day)."));
+      }
+      sfx("success"); toast("Cover added. Thanks!", "ok"); forgetCover(id); render();
+    } catch (e) { toast(e.message || String(e), "err"); sfx("error"); }
+  });
+  box.append(f); f.click();
+}
+
 /* ---------------- member screenshots and clips ---------------- */
 function mediaBox() {
   const box = el("section", { class: "gi-box gi-media" }, el("h2", { class: "gi-h", text: "Screenshots & clips" }));
@@ -213,7 +267,7 @@ function mediaBox() {
   box.append(grid);
   load();
   async function load() {
-    const { data, error } = await sb.from("public_game_media").select("*").eq("game_id", id).order("created_at", { ascending: false }).limit(60);
+    const { data, error } = await sb.from("public_game_media").select("*").eq("game_id", id).neq("kind", "cover").order("created_at", { ascending: false }).limit(60);
     if (error) { grid.replaceChildren(el("p", { class: "gm-note", text: "Uploads switch on once the site's database update goes in." })); return; }
     grid.replaceChildren(...(data || []).map(tile));
     if (!(data || []).length) grid.append(el("p", { class: "gm-note", text: "No screenshots yet." }));

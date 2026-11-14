@@ -585,6 +585,7 @@ export function boxArtUrl(a) {
     if (a.a) return boxArtUrl(a.a);
     if (a.sa) return "https://cdn.cloudflare.steamstatic.com/steam/apps/" + encodeURIComponent(a.sa) + "/library_600x900.jpg";
     if (a.ra && /^https:\/\/media\.rawg\.io\//.test(a.ra)) return a.ra;
+    if (a.mc && a.mc.startsWith(MEDIA_URL)) return a.mc;   // a member's uploaded cover
     return null;
   }
   if (!a) return null;
@@ -602,9 +603,37 @@ export function boxArt(a, title, cls) {
   img.addEventListener("load", () => img.classList.add("is-in"));
   return img;
 }
+/* members' uploaded covers (round 24), used where no automatic cover exists. Lookups made in the same moment
+ * are sent as one query. Resolves to { mc, by, handle, id } or null. */
+const MEDIA_URL = "https://zjhlhkruqzfendvbglsb.supabase.co/storage/v1/object/public/game-media/";
+const coverCache = new Map(); let coverQueue = null;
+export function memberCover(id) {
+  if (coverCache.has(id)) return coverCache.get(id);
+  const p = new Promise((res) => {
+    if (!coverQueue) {
+      coverQueue = new Map();
+      setTimeout(async () => {
+        const q = coverQueue; coverQueue = null;
+        let rows = [];
+        try { const r = await sb.from("public_game_covers").select("id,game_id,url,handle,author").in("game_id", [...q.keys()]); rows = r.error ? [] : r.data || []; } catch (e) {}
+        const got = new Map(rows.map((x) => [x.game_id, { mc: x.url, by: x.author, handle: x.handle, id: x.id }]));
+        for (const [k, fns] of q) fns.forEach((f) => f(got.get(k) || null));
+      }, 30);
+    }
+    (coverQueue.get(id) || coverQueue.set(id, []).get(id)).push(res);
+  });
+  coverCache.set(id, p);
+  return p;
+}
+export function forgetCover(id) { coverCache.delete(id); }
+export const hasAutoArt = (x) => !!(x && (x.g || x.a || x.sa || x.ra));
 /* fill box art into elements later (cards render first, art arrives with the info shard) */
 export function artSlot(id, title, cls) {
   const slot = el("span", { class: "rop-artslot " + (cls || ""), "aria-hidden": "true" });
-  gameInfo(id).then((x) => { const img = x && (x.g || x.a || x.sa || x.ra) ? boxArt(x, title) : null; if (img) slot.append(img); else slot.remove(); }, () => slot.remove());
+  gameInfo(id).then(async (x) => {
+    let img = hasAutoArt(x) ? boxArt(x, title) : null;
+    if (!img) { const c = await memberCover(id); img = c ? boxArt(c, title) : null; }
+    if (img) slot.append(img); else slot.remove();
+  }, () => slot.remove());
   return slot;
 }

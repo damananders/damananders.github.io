@@ -1056,3 +1056,8 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .gm-alts__b{padding:2px 9px;border-radius:999px;border:1px solid var(--sx-line,rgba(255,255,255,.18));background:transparent;color:inherit;font:600 .74rem var(--sx-mono,monospace);cursor:pointer}
 .gm-alts__b:hover{border-color:var(--sx-accent,#cd4257)}
 .gm-alts__b.is-on{background:var(--sx-accent,#cd4257);border-color:transparent;color:#fff}
+.gi-art--member .gi-credit{display:block}
+.gi-art.gi-art--add{display:block}
+.gi-addcover{display:grid;place-items:center;align-content:center;gap:6px;width:100%;aspect-ratio:3/4;border:2px dashed var(--sx-line,rgba(255,255,255,.25));border-radius:10px;background:rgba(255,255,255,.03);color:inherit;font:600 .85rem var(--sx-sans,inherit);cursor:pointer;transition:border-color .15s,background .15s}
+.gi-addcover span:first-child{font-size:1.8rem;line-height:1;opacity:.8}
+.gi-addcover:hover,.gi-addcover:focus-visible{border-color:var(--sx-accent,#cd4257);background:rgba(205,66,87,.08)}

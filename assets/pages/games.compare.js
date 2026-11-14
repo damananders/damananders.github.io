@@ -2,7 +2,7 @@
  * Scores, votes, hearts, reviews and backlog counts come live from the database; facts from the static info cards
  * (with the owner's corrections on top). The better number in each row is highlighted.
  */
-import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=17";
+import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=18";
 
 const root = $("cmp-root");
 const qs = new URLSearchParams(location.search);

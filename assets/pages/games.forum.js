@@ -2,7 +2,7 @@
  * Everyone can read. Discord-server members can post, comment, react and report. Posts and comments are plain
  * text (links become clickable); nothing a member writes is ever inserted as HTML.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact , reportBtn } from "./games.common.js?v=17";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact , reportBtn } from "./games.common.js?v=18";
 
 const CATS = [["", "All"], ["anyps", "AnyPS"], ["games", "Games"], ["general", "General"], ["help", "Help"], ["offtopic", "Off-topic"]];
 const catName = (k) => (CATS.find(([c]) => c === k) || [k, k])[1];
