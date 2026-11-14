@@ -17,7 +17,7 @@ const WDQS = "https://query.wikidata.org/sparql";
 const RAWG_KEY = process.env.RAWG_API_KEY || "";
 const RAWG_MAX = +(process.env.RAWG_MAX || 700);
 // Rate-O-Pedia platform id -> RAWG platform ids (https://api.rawg.io/api/platforms)
-const RAWG_PLAT = { PS5: 187, PS4: 18, Switch: 7, XSX: 186, XOne: 1, WiiU: 10, "3DS": 8, Vita: 19, PC: 4, Mac: 5, Linux: 6, iOS: 3, Android: 21, X360: 14, PS3: 16 };
+const RAWG_PLAT = { PS5: 187, PS4: 18, Switch: 7, XSX: 186, XOne: 1, WiiU: 10, "3DS": 8, Vita: 19, PC: 4, Mac: 5, Linux: 6, iOS: 3, Android: 21, X360: 14, PS3: 16, PS2: 15, PS1: 27 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 

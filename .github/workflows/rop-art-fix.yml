@@ -1,0 +1,37 @@
+# Second box-art pass: checks every libretro cover against the covers that really exist on
+# github.com/libretro-thumbnails and re-matches the ones that would show nothing. Press "Run workflow".
+name: Rate-O-Pedia cover check
+on:
+  workflow_dispatch:
+    inputs:
+      plats:
+        description: "Platforms to check (space separated)"
+        default: "PS1 PS2 PS3"
+permissions:
+  contents: write
+concurrency:
+  group: rop-art-modern
+  cancel-in-progress: false
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          git fetch -q origin rop-dump
+          git show origin/rop-dump:games.tsv.gz > /tmp/games.tsv.gz
+      - run: node tools/rop-art/fix-thumbs.mjs /tmp/games.tsv.gz
+        env:
+          PLATS: ${{ github.event.inputs.plats || 'PS1 PS2 PS3' }}
+          GITHUB_TOKEN: ${{ github.token }}
+      - run: |
+          git config user.name "rop-art bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A assets/data/gameinfo
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -qm "Rate-O-Pedia: re-matched covers to real thumbnails"
+          for i in 1 2 3 4; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 10; done
