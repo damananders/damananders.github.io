@@ -1,9 +1,11 @@
 /* arcade/kit.js — the shared shell for the site's playable games (the Arcade page and the 404 page).
  *
  * Each game registers itself with Arcade.register({...}); the kit gives it:
- *   - a tab in the game picker, and a stage (canvas + menu layer + toasts) that lives in the page;
- *   - "take over the window": starting a run lifts the stage into a full-window overlay; Shrink puts it back in
- *     the page, where it stays fully playable (the run is not interrupted);
+ *   - a big launcher card on the page (poster art drawn by def.poster, tagline, tags, your progress, Play + Info);
+ *   - a stage (canvas + menu layer + toasts) that opens in the full window when the card is played. Minimize docks
+ *     it as a small player in the corner that stays fully playable; Expand brings it back; Close pauses the run and
+ *     returns to the cards. True browser fullscreen is one button away. Each game has a link (/arcade/#<id>) and the
+ *     browser Back button closes it;
  *   - a title-menu system (Arcade menus are real buttons: mouse, keyboard arrows + Enter, controller D-pad + A, B back);
  *   - pause on Esc / P / controller Start, and automatically when the tab or window loses focus;
  *   - input state: held keys, pointer in game coordinates, and the polled controller (sticks, triggers, buttons);
@@ -19,19 +21,33 @@
   var Site = window.Site, el = Site.el, doc = document, root = doc.documentElement;
   if (((Site.config && Site.config.features) || {}).arcade === false) return;
 
-  var games = [], active = null, wrap = null, picker = null, fullHost = null;
-  var DPR_CAP = 2, PAD_DEAD = 0.18;
+  var games = [], active = null, wrap = null, grid = null, filters = null, fullHost = null, sheet = null;
+  var DPR_CAP = 2, PAD_DEAD = 0.18, ROUTE = Site.page === "arcade";
 
   function host() {
     if (wrap) return wrap;
     var h = doc.querySelector(".nf-arcade") || doc.querySelector(".nf-hero");
     if (!h) return null;
-    picker = el("div", { class: "ak-pick", role: "tablist", "aria-label": "Pick a game" });
-    wrap = el("section", { class: "ak", "aria-label": "Games" }, picker);
+    filters = el("div", { class: "ak-filters", hidden: "", role: "toolbar", "aria-label": "Filter games" });
+    grid = el("div", { class: "ak-grid", role: "list" });
+    wrap = el("section", { class: "ak" + (Site.page === "404" ? " is-compact" : ""), "aria-label": "Games" },
+      Site.page === "404" ? el("h2", { class: "ak-head", text: "Or play a game while you're here" }) : null, filters, grid);
     h.appendChild(wrap);
-    fullHost = el("div", { class: "ak-full", hidden: "" });
+    fullHost = el("div", { class: "ak-full", hidden: "", role: "dialog", "aria-modal": "false" });
     (doc.body || h).appendChild(fullHost);
     return wrap;
+  }
+  /* once there are enough games, tag chips filter the grid */
+  var tagSel = "";
+  function paintFilters() {
+    if (games.length <= 6) { filters.hidden = true; return; }
+    var tags = []; games.forEach(function (g) { (g.def.tags || []).forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
+    filters.textContent = ""; filters.hidden = false;
+    [""].concat(tags).forEach(function (t) {
+      var b = el("button", { type: "button", class: "ak-chip" + (t === tagSel ? " is-on" : ""), "aria-pressed": t === tagSel ? "true" : "false", text: t || "All games" });
+      b.addEventListener("click", function () { tagSel = t; paintFilters(); games.forEach(function (g) { g.tile.hidden = !!t && (g.def.tags || []).indexOf(t) < 0; }); });
+      filters.appendChild(b);
+    });
   }
 
   /* ---------------- capture: who owns the keyboard / controller right now ---------------- */
@@ -41,14 +57,83 @@
     if (on) root.setAttribute("data-arcade-input", ""); else root.removeAttribute("data-arcade-input");
   }
 
-  /* ---------------- picker ---------------- */
-  function select(g, focusTab) {
+  /* ---------------- open / close (one game open at a time) ---------------- */
+  function select(g) {
     if (active === g) return;
-    if (active) { if (active.state === "play") active.pause(); if (active.isFull()) active.full(false); active.card.hidden = true; active.tab.setAttribute("aria-selected", "false"); active.tab.classList.remove("is-active"); }
-    active = g; g.card.hidden = false; g.tab.setAttribute("aria-selected", "true"); g.tab.classList.add("is-active");
+    if (active && active.isOpen()) active.close(true);
+    active = g;
     Site.store.set("arcade.pick", g.id);
-    if (focusTab) try { g.tab.focus(); } catch (e) {}
     g.wake(); syncCapture();
+  }
+  /* routing: /arcade/#<id> opens a game; Back closes it */
+  var pushed = false;
+  function route(g) {
+    if (!ROUTE || !history.pushState) return;
+    var want = g ? "#" + g.id : "";
+    if (location.hash === want) return;
+    try {
+      if (g) { history.pushState({ ak: g.id }, "", want); pushed = true; }
+      else if (pushed && history.state && history.state.ak) { pushed = false; history.back(); }
+      else history.replaceState(null, "", location.pathname + location.search);
+    } catch (e) {}
+  }
+  function fromHash() {
+    var id = (location.hash || "").slice(1), g = games.filter(function (x) { return x.id === id; })[0];
+    if (g) { if (!g.isOpen()) g.open({ fromRoute: true }); }
+    else if (active && active.isOpen()) active.close(false, true);
+  }
+  if (ROUTE) window.addEventListener("popstate", function () { pushed = false; fromHash(); });
+
+  /* ---------------- details sheet ---------------- */
+  function openSheet(g) {
+    closeSheet();
+    var d = g.def, body = el("div", { class: "ak-sheet__body" });
+    body.appendChild(el("p", { class: "ak-sheet__lead", text: d.about || d.blurb || "" }));
+    if (d.controls && d.controls.length) {
+      var kv = el("div", { class: "ak-kv ak-sheet__kv" });
+      d.controls.forEach(function (c) { kv.appendChild(el("span", { text: c[0] })); kv.appendChild(el("b", { text: c[1] })); });
+      body.appendChild(el("h4", { text: "Controls" })); body.appendChild(kv);
+    }
+    var st = []; try { st = d.stats ? d.stats(g) || [] : []; } catch (e) {}
+    if (st.length) {
+      var kv2 = el("div", { class: "ak-kv ak-sheet__kv" });
+      st.forEach(function (c) { kv2.appendChild(el("span", { text: c[0] })); kv2.appendChild(el("b", { text: String(c[1]) })); });
+      body.appendChild(el("h4", { text: "Your progress" })); body.appendChild(kv2);
+    }
+    var play = el("button", { type: "button", class: "ak-play", text: "Play " + d.name });
+    var x = el("button", { type: "button", class: "ak-sheet__x", "aria-label": "Close", text: "✕" });
+    sheet = el("div", { class: "ak-sheet", role: "dialog", "aria-modal": "true", "aria-label": d.name, style: { "--ak-accent": d.accent || "#cd4257" } },
+      el("div", { class: "ak-sheet__card" }, x, el("div", { class: "ak-sheet__kicker", text: (d.tags || []).join(" · ") }), el("h3", { text: d.name }), body, play));
+    function shut() { closeSheet(); try { g.tile.querySelector(".ak-info").focus(); } catch (e) {} }
+    x.addEventListener("click", shut);
+    sheet.addEventListener("click", function (e) { if (e.target === sheet) shut(); });
+    sheet.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.stopPropagation(); shut(); } });
+    play.addEventListener("click", function () { closeSheet(); g.open(); });
+    doc.body.appendChild(sheet); root.classList.add("ak-lock");
+    try { play.focus(); } catch (e) {}
+  }
+  function closeSheet() { if (sheet && sheet.parentNode) sheet.parentNode.removeChild(sheet); sheet = null; if (!(active && active.isOpen() && active.isFull())) root.classList.remove("ak-lock"); }
+
+  /* ---------------- posters: drawn by the game, animated while hovered or focused ---------------- */
+  var PW_ = 640, PH_ = 360;
+  function posterLoop(g) {
+    var cv = g.posterCv, ctx = cv.getContext("2d"), live = false, raf2 = 0, t0 = performance.now();
+    function size() {
+      var r = cv.getBoundingClientRect(), dpr = Math.min(DPR_CAP, window.devicePixelRatio || 1);
+      var w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    }
+    function drawP(t) {
+      size();
+      var sx = cv.width / PW_, sy = cv.height / PH_, s = Math.max(sx, sy);
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#04070b"; ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.setTransform(s, 0, 0, s, (cv.width - PW_ * s) / 2, (cv.height - PH_ * s) / 2);
+      try { if (g.def.poster) g.def.poster(ctx, PW_, PH_, t); else { ctx.fillStyle = g.def.accent || "#cd4257"; ctx.fillRect(0, 0, PW_, PH_); draw.text(ctx, g.def.icon || "🎮", PW_ / 2, PH_ / 2 + 40, "120px " + FONT.display, "#fff", "center"); } } catch (e) { console.error("[arcade] poster " + g.id, e); }
+    }
+    function tick(now) { raf2 = 0; drawP((now - t0) / 1000); if (live) raf2 = requestAnimationFrame(tick); }
+    g.posterOn = function (on) { live = !!on && !Site.reducedMotion; if (live && !raf2) raf2 = requestAnimationFrame(tick); };
+    if (window.ResizeObserver) new ResizeObserver(function () { drawP(1.2); }).observe(cv);
+    drawP(1.2);
   }
 
   /* ---------------- controller polling (analog sticks + triggers for gameplay) ---------------- */
@@ -79,19 +164,31 @@
     var menuLayer = el("div", { class: "ak-menu", hidden: "" });
     var toasts = el("div", { class: "ak-toasts", "aria-live": "polite" });
     var bPause = el("button", { type: "button", class: "ak-hb ak-hb--pause", title: "Pause (Esc / P / Start)", "aria-label": "Pause", hidden: "" }, "❚❚");
-    var bSize = el("button", { type: "button", class: "ak-hb ak-hb--size", title: "Full window", "aria-label": "Full window" }, "⤢");
-    var hb = el("div", { class: "ak-hbs" }, bPause, bSize);
+    var bSize = el("button", { type: "button", class: "ak-hb ak-hb--size", title: "Minimize", "aria-label": "Minimize" }, "▁");
+    var bFs = el("button", { type: "button", class: "ak-hb ak-hb--fs", title: "Fullscreen", "aria-label": "Fullscreen" }, "⛶");
+    var bClose = el("button", { type: "button", class: "ak-hb ak-hb--close", title: "Close (keeps your run paused)", "aria-label": "Close game" }, "✕");
+    if (!(doc.fullscreenEnabled || doc.webkitFullscreenEnabled)) bFs.hidden = true;
+    var hb = el("div", { class: "ak-hbs" }, bPause, bFs, bSize, bClose);
     var stage = el("div", { class: "ak-stage", style: { "--ak-ar": W + " / " + H, "--ak-accent": def.accent || "#cd4257" } }, cv, menuLayer, toasts, hb);
-    var slot = el("div", { class: "ak-slot" }, stage);
-    var bestEl = el("span", { class: "ak-card__best" });
-    var card = el("article", { class: "ak-card", id: "ak-" + def.id, hidden: "", "aria-label": def.name },
-      el("div", { class: "ak-card__head" }, el("h2", { text: (def.icon ? def.icon + " " : "") + def.name }), bestEl),
-      slot, def.blurb ? el("p", { class: "ak-card__blurb", text: def.blurb }) : null);
-    var tab = el("button", { type: "button", class: "ak-pick__b", role: "tab", "aria-selected": "false", "aria-controls": "ak-" + def.id }, (def.icon ? def.icon + " " : "") + def.name);
+    var shelf = el("div", { class: "ak-shelf", hidden: "" }, stage);
+
+    /* the launcher card */
+    var bestEl = el("span", { class: "ak-tile__best" });
+    var posterCv = el("canvas", { class: "ak-tile__poster", "aria-hidden": "true" });
+    var playBtn = el("button", { type: "button", class: "ak-play", "aria-label": "Play " + def.name, text: "Play" });
+    var infoBtn = el("button", { type: "button", class: "ak-info", "aria-label": "About " + def.name, title: "How to play and your progress", text: "i" });
+    var tags = el("div", { class: "ak-tile__tags" }); (def.tags || []).forEach(function (t) { tags.appendChild(el("span", { text: t })); });
+    var tile = el("article", { class: "ak-tile", id: "ak-" + def.id, role: "listitem", style: { "--ak-accent": def.accent || "#cd4257" } },
+      el("div", { class: "ak-tile__art" }, posterCv, def.badge ? el("span", { class: "ak-tile__badge", text: def.badge }) : null),
+      el("div", { class: "ak-tile__body" },
+        el("h2", { class: "ak-tile__name", text: def.name }),
+        el("p", { class: "ak-tile__pitch", text: def.tagline || def.blurb || "" }),
+        tags, bestEl,
+        el("div", { class: "ak-tile__row" }, playBtn, infoBtn)));
 
     var ctx = cv.getContext("2d");
     var g = {
-      id: def.id, def: def, W: W, H: H, ctx: ctx, canvas: cv, stage: stage, card: card, tab: tab,
+      id: def.id, def: def, W: W, H: H, ctx: ctx, canvas: cv, stage: stage, tile: tile, posterCv: posterCv, playBtn: playBtn,
       state: "title", time: 0, view: { s: 1, ox: 0, oy: 0, cw: 0, ch: 0, dpr: 1 },
       keys: {}, keyHits: {}, pointer: { x: W / 2, y: H / 2, down: false, inside: false, type: "mouse" }, pad: pollPad(null),
       store: {
@@ -99,7 +196,7 @@
         set: function (k, v) { Site.store.set("arcade." + def.id + "." + k, v); }
       }
     };
-    var full = false, raf = 0, last = 0, menuSpec = null, menuBtns = [], menuSel = 0;
+    var full = false, open = false, raf = 0, last = 0, menuSpec = null, menuBtns = [], menuSel = 0;
 
     /* ---- sizing ---- */
     function fit() {
@@ -114,37 +211,70 @@
     window.addEventListener("resize", fit);
     g.toGame = function (cx, cy) { var r = cv.getBoundingClientRect(), v = g.view; return { x: (cx - r.left - v.ox) / v.s, y: (cy - r.top - v.oy) / v.s }; };
 
-    /* ---- full window / shrink ---- */
-    g.isFull = function () { return full; };
-    g.full = function (on) {
-      on = !!on; if (on === full) return;
-      full = on;
-      if (on) { fullHost.appendChild(stage); fullHost.hidden = false; root.classList.add("ak-lock"); }
-      else { slot.appendChild(stage); fullHost.hidden = true; root.classList.remove("ak-lock"); }
-      stage.classList.toggle("is-full", on);
-      bSize.textContent = on ? "⤡" : "⤢"; bSize.title = on ? "Shrink back into the page" : "Full window"; bSize.setAttribute("aria-label", bSize.title);
+    /* ---- open (full window) / minimize (docked mini player) / close ---- */
+    g.isOpen = function () { return open; };
+    g.isFull = function () { return open && full; };
+    function layout() {
+      fullHost.classList.toggle("is-mini", open && !full);
+      stage.classList.toggle("is-full", open && full); stage.classList.toggle("is-mini", open && !full);
+      fullHost.setAttribute("aria-modal", open && full ? "true" : "false"); fullHost.setAttribute("aria-label", def.name);
+      if (open && full) root.classList.add("ak-lock"); else if (!sheet) root.classList.remove("ak-lock");
+      bSize.textContent = full ? "▁" : "⤢"; bSize.title = full ? "Minimize (keep playing in the corner)" : "Expand to the full window"; bSize.setAttribute("aria-label", bSize.title);
+      tile.classList.toggle("is-open", open);
+      playBtn.textContent = open ? "Open" : g.state === "paused" ? "Resume" : "Play";
       fit(); syncCapture(); paint();
+    }
+    g.open = function (o) {
+      o = o || {};
+      select(g);
+      if (!open) { open = true; full = true; fullHost.textContent = ""; fullHost.appendChild(stage); fullHost.hidden = false; if (!o.fromRoute) route(g); }
+      else full = true;
+      layout();
       if (menuSpec) focusSel(); else try { cv.focus({ preventScroll: true }); } catch (e) {}
-      if (!on && g.state !== "play") try { card.scrollIntoView({ block: "nearest" }); } catch (e) {}
+      Site.sfx("open"); g.wake();
     };
+    g.full = function (on) {
+      on = !!on;
+      if (!open) { if (on) g.open(); return; }
+      if (on === full) return;
+      full = on; layout();
+      if (menuSpec) focusSel(); else try { cv.focus({ preventScroll: true }); } catch (e) {}
+    };
+    g.close = function (quiet, fromRoute) {
+      if (!open) return;
+      if (g.state === "play") g.pause();
+      exitFs();
+      open = false; full = false; shelf.appendChild(stage); fullHost.hidden = true;
+      layout();
+      if (!fromRoute) route(null);
+      if (!quiet) { Site.sfx("close"); try { playBtn.focus({ preventScroll: true }); } catch (e) {} }
+    };
+    function exitFs() { try { if (doc.fullscreenElement) doc.exitFullscreen(); else if (doc.webkitFullscreenElement) doc.webkitExitFullscreen(); } catch (e) {} }
     bSize.addEventListener("click", function () { g.full(!full); });
+    bClose.addEventListener("click", function () { g.close(); });
+    bFs.addEventListener("click", function () {
+      if (doc.fullscreenElement || doc.webkitFullscreenElement) { exitFs(); return; }
+      if (!full) g.full(true);
+      try { (fullHost.requestFullscreen || fullHost.webkitRequestFullscreen).call(fullHost); } catch (e) {}
+    });
     bPause.addEventListener("click", function () { if (g.state === "play") g.pause(); else if (g.state === "paused") g.resume(); });
 
     /* ---- states ---- */
     g.setState = function (s) {
       g.state = s; stage.setAttribute("data-state", s);
+      if (!open) playBtn.textContent = s === "paused" ? "Resume" : "Play";
       bPause.hidden = !(s === "play" || s === "paused");
       syncCapture(); g.wake();
       if ((s === "over" || s === "title") && def.sync) sySoon();
     };
-    g.start = function () { g.closeMenu(); g.setState("play"); if (!full && def.autoFull !== false) g.full(true); try { cv.focus({ preventScroll: true }); } catch (e) {} last = performance.now(); };
+    g.start = function () { g.closeMenu(); g.setState("play"); if (!open) g.open(); try { cv.focus({ preventScroll: true }); } catch (e) {} last = performance.now(); };
     g.pause = function () {
       if (g.state !== "play") return;
       g.setState("paused"); g.keys = {}; Site.sfx("close");
       var items = [{ label: "Resume", act: g.resume }];
       if (def.restart) items.push({ label: "Restart", act: function () { def.restart(g); } });
       (def.pauseItems ? def.pauseItems(g) : []).forEach(function (it) { items.push(it); });
-      items.push({ label: full ? "Shrink Window" : "Full Window", act: function () { g.full(!full); g.pause.reopen(); } });
+      items.push({ label: full ? "Minimize" : "Full Window", sub: full ? "Keep playing in the corner" : "", act: function () { g.full(!full); g.pause.reopen(); } });
       items.push({ label: "Main Menu", sub: "Ends this run", act: function () { g.toTitle(); } });
       g.menu({ title: "Paused", items: items, back: g.resume, cls: "is-pause" });
     };
@@ -178,7 +308,7 @@
     g.closeMenu = function () { menuSpec = null; menuBtns = []; menuLayer.hidden = true; menuLayer.textContent = ""; };
     g.menuOpen = function () { return !!menuSpec; };
     function mark() { menuBtns.forEach(function (b, i) { b.classList.toggle("is-sel", i === menuSel); }); }
-    function focusSel() { var b = menuBtns[menuSel]; if (b && (full || captured(g) || stage.contains(doc.activeElement))) try { b.focus({ preventScroll: true }); } catch (e) {} }
+    function focusSel() { var b = menuBtns[menuSel]; if (b && open && (full || captured(g) || stage.contains(doc.activeElement))) try { b.focus({ preventScroll: true }); } catch (e) {} }
     function moveSel(d) { if (!menuBtns.length) return; menuSel = (menuSel + d + menuBtns.length) % menuBtns.length; mark(); try { menuBtns[menuSel].focus({ preventScroll: true }); } catch (e) {} Site.sfx("hover"); }
     function menuBack() { if (menuSpec && menuSpec.back) { Site.sfx("close"); menuSpec.back(); } }
     function menuOk() { var b = menuBtns[menuSel]; if (b) b.click(); }
@@ -222,7 +352,7 @@
     }
     function frame(now) {
       raf = 0;
-      if (doc.hidden || active !== g) return;
+      if (doc.hidden || active !== g || !open) return;
       var dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
       g.pad = pollPad(g.pad);
       if (g.pad.hit.start && captured(g) && !menuSpec) { if (g.state === "play") g.pause(); }
@@ -232,20 +362,27 @@
       g.keyHits = {};
       if (!Site.reducedMotion || g.state === "play" || def.alwaysAnimate) raf = requestAnimationFrame(frame);
     }
-    g.wake = function () { if (!raf && active === g && !doc.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
+    g.wake = function () { if (!raf && active === g && open && !doc.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
     g.paint = paint;
     g.key = function (code) { return !!g.keys[code]; };
     g.hit = function (code) { return !!g.keyHits[code]; };
 
-    host(); wrap.appendChild(card); picker.appendChild(tab);
-    tab.addEventListener("click", function () { select(g); });
+    host(); grid.appendChild(tile); wrap.appendChild(shelf);
+    playBtn.addEventListener("click", function () { if (open) g.full(true); else g.open(); });
+    infoBtn.addEventListener("click", function () { Site.sfx("open"); openSheet(g); });
+    tile.querySelector(".ak-tile__art").addEventListener("click", function () { playBtn.click(); });
+    tile.addEventListener("pointerenter", function () { g.posterOn(true); });
+    tile.addEventListener("pointerleave", function () { g.posterOn(false); });
+    tile.addEventListener("focusin", function () { g.posterOn(true); });
+    tile.addEventListener("focusout", function () { g.posterOn(false); });
+    posterLoop(g);
     return g;
   }
 
   /* ---------------- keyboard routing ---------------- */
   var GAMEKEYS = /^(Arrow|Space$|Enter$|Key[WASDPZXCQEF]$|Shift|Digit[0-9]$|Tab$)/;
   doc.addEventListener("keydown", function (e) {
-    var g = active; if (!g) return;
+    var g = active; if (!g || !g.isOpen() || sheet) return;
     var t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
     var cap = captured(g), inStage = g.stage.contains(doc.activeElement);
     if (!cap && !inStage) return;
@@ -259,7 +396,7 @@
       return;   /* otherwise Enter / Space: the focused button handles them natively */
     }
     if (g.state === "play" && (k === "Escape" || k === "p" || k === "P")) { e.preventDefault(); e.stopPropagation(); g.pause(); return; }
-    if (k === "Escape" && g.isFull()) { e.preventDefault(); g.full(false); return; }
+    if (k === "Escape" && g.isFull()) { e.preventDefault(); g.close(); return; }
     if (!g.keys[e.code]) g.keyHits[e.code] = true;
     g.keys[e.code] = true;
     if (g.def.key) g.def.key(g, e);
@@ -391,20 +528,37 @@
   Site.on("sync:changed", function () { if (!syLinked()) { SY.pulled = false; SY.sent = {}; } });
   document.addEventListener("visibilitychange", function () { if (document.hidden && SY.pulled) syPush(); });
 
+  /* the page header's "Continue playing" button + sync status (only where the page has the slots) */
+  function paintContinue() {
+    var slot = doc.querySelector(".ak-continue"); if (!slot) return;
+    var id = Site.store.get("arcade.pick", null), g = games.filter(function (x) { return x.id === id; })[0];
+    slot.textContent = "";
+    if (g) {
+      var b = el("button", { type: "button", class: "ak-cont", style: { "--ak-accent": g.def.accent || "#cd4257" } }, el("span", { text: "Continue playing" }), el("b", { text: g.def.name }));
+      b.addEventListener("click", function () { g.open(); }); slot.appendChild(b);
+    }
+    var st = doc.querySelector(".ak-syncstat");
+    if (st) { var on = syLinked(), h = Site.sync && Site.sync.handle ? Site.sync.handle() : ""; st.textContent = on ? "Progress syncs to your account" + (h ? " (" + h + ")" : "") + "." : "Progress is saved in this browser. Link your account (top of the page) to carry it to other devices."; }
+  }
+  Site.on("sync:changed", function () { setTimeout(paintContinue, 0); });
+  /* controller Start on the page (no game open) opens the last game */
+  if (Site.gamepad) Site.gamepad.on(function (b) { if (b !== "start" || (active && active.isOpen()) || sheet || Site.page !== "arcade") return; var g = games.filter(function (x) { return x.id === Site.store.get("arcade.pick", null); })[0] || games[0]; if (g) g.open(); });
+  doc.addEventListener("fullscreenchange", function () { if (active) setTimeout(function () { active.paint(); }, 50); });
+
   window.Arcade = {
     register: function (def) {
       if (!host()) return null;
       var g = make(def); games.push(g);
-      var want = Site.store.get("arcade.pick", null);
-      if (!active || g.id === want) select(g);
       try { if (def.init) def.init(g); } catch (e) { console.error("[arcade] init " + def.id, e); }
       g.setState("title");
       if (def.title) def.title(g);
-      g.wake(); g.paint();
+      games.slice().sort(function (a, b) { return (a.def.order || 99) - (b.def.order || 99); }).forEach(function (x) { grid.appendChild(x.tile); });
+      paintFilters(); paintContinue();
+      if (ROUTE && location.hash === "#" + g.id) setTimeout(function () { if (!g.isOpen()) g.open({ fromRoute: true }); }, 0);
       if (def.sync) sySoon(4000);                 /* after sync.js's own pull on page load */
       return g;
     },
-    draw: draw, FONT: FONT, rng: rng, games: games,
+    draw: draw, FONT: FONT, rng: rng, games: games, open: function (id) { var g = games.filter(function (x) { return x.id === id; })[0]; if (g) g.open(); return g; },
     active: function () { return active; }
   };
 })();
