@@ -677,6 +677,38 @@
   Site.ready(function () {
     if (!feat("search") || !nav) return;
     var dlg = null, input = null, listEl = null, results = [], sel = 0;
+    /* opted-in member profiles, looked up live from Rate-O-Pedia as you type (searchable=true only) */
+    var memberHits = [], memberQ = null, mTimer = 0, mSeq = 0;
+    var SB = Site.sb || {};
+
+    function lookupMembers(q) {
+      q = (q || "").trim();
+      if (q.length < 2) { if (memberHits.length || memberQ) { memberHits = []; memberQ = ""; draw(); } return; }
+      if (q.toLowerCase() === (memberQ || "")) return;          /* already have these */
+      clearTimeout(mTimer);
+      mTimer = setTimeout(function () { fetchMembers(q); }, 220);
+    }
+    function fetchMembers(q) {
+      if (!SB.url || !SB.key) return;
+      var seq = ++mSeq, key = q.toLowerCase();
+      fetch(SB.url + "/rest/v1/rpc/member_search", {
+        method: "POST",
+        headers: { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" },
+        body: JSON.stringify({ p_q: q })
+      }).then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
+        .then(function (r) {
+          if (seq !== mSeq || !dlg || !input) return;           /* stale, or the palette closed */
+          if ((input.value || "").trim().toLowerCase() !== key) return;  /* the query moved on */
+          var list = r && r.ok && Array.isArray(r.members) ? r.members : [];
+          memberHits = list.slice(0, 8).map(function (m) {
+            var handle = String(m.handle || "").trim();
+            var name = String(m.name || "").trim() || ("@" + handle);
+            return { label: name === "@" + handle ? name : name + " · @" + handle,
+                     href: "/games/profile/?u=" + encodeURIComponent(handle), kind: "Member", member: true };
+          }).filter(function (it) { return it.href !== "/games/profile/?u="; });
+          memberQ = key; draw();
+        });
+    }
 
     function items() {
       var out = PAGES.map(function (p) { return { label: p[2], href: p[1], kind: "Page", key: (p[0] + " " + p[2]).toLowerCase() }; });
@@ -699,20 +731,24 @@
       var pool = items().map(function (it) { return { it: it, s: q ? score(it, q) : 4 }; })
         .filter(function (r) { return r.s !== Infinity; }).sort(function (a, b) { return a.s - b.s; });
       pool.forEach(function (r) { out.push(r.it); });
+      /* opted-in member profiles matching the current query (loaded live, see lookupMembers) */
+      if (q && memberQ === q) memberHits.forEach(function (it) { out.push(it); });
       /* always offer the Rate-O-Pedia search as the last option — the fallback when a page isn't what you want */
       if (q) out.push({ label: "Search Rate-O-Pedia for “" + q + "”", href: "/games/?q=" + encodeURIComponent(q), kind: "Search", rop: true });
       return out;
     }
     function draw() {
+      var q = (input.value || "").trim().toLowerCase();
       results = compute(input.value); sel = 0; listEl.textContent = "";
       results.forEach(function (it, i) {
-        var a = el("a", { href: it.href, class: "ch-srch__item" + (i === 0 ? " is-sel" : "") + (it.rop ? " ch-srch__item--rop" : ""), role: "option", "aria-selected": i === 0 ? "true" : "false" },
+        var a = el("a", { href: it.href, class: "ch-srch__item" + (i === 0 ? " is-sel" : "") + (it.rop ? " ch-srch__item--rop" : "") + (it.member ? " ch-srch__item--member" : ""), role: "option", "aria-selected": i === 0 ? "true" : "false" },
           el("span", { class: "ch-srch__label", text: it.label }),
           el("span", { class: "ch-srch__kind", text: it.kind }));
         a.addEventListener("mousemove", function () { move(i); });
         listEl.appendChild(a);
       });
       if (!results.length) listEl.appendChild(el("p", { class: "ch-srch__empty", text: "No pages match. Try the Rate-O-Pedia search." }));
+      lookupMembers(q);
     }
     function move(i) {
       if (!results.length) return;
