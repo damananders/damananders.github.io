@@ -238,7 +238,7 @@ async function render() {
 
   root.replaceChildren(...[head,
     el("div", { class: "pf-cols pf-cols--top" }, el("div", { class: "pf-col" }, aboutBox, linkBox), el("div", { class: "pf-col" }, nowBox, raBox, statsBox)),
-    showBox, listsBox, badgeBox, blBox, heartBox, wallBox,
+    showBox, listsBox, badgeBox, blBox, heartBox, wallBox, mine ? syncCard() : null,
     el("div", { class: "pf-cols" }, postsBox, revBox)].filter(Boolean));
   root.querySelectorAll(".pf-col:empty").forEach((c) => c.remove());
   if (mine && params.has("edit")) editor(p);
@@ -389,6 +389,28 @@ function supporterTag(p) {
     t.hidden = false;
   }, () => t.remove());
   return t;
+}
+
+/* ---------------- private sync code (round 27): only ever drawn on your own profile ---------------- */
+function syncCard() {
+  const box = el("section", { class: "pf-card pf-sync", hidden: true });
+  let code = "", shown = false;
+  const val = el("code", { class: "pf-sync__code", text: "••••-••••-••••-••••" });
+  const showB = el("button", { class: "linkbtn", type: "button", text: "Show", onclick: () => { shown = !shown; draw(); } });
+  const copyB = el("button", { class: "btn gm-btn", type: "button", text: "Copy code", onclick: async () => {
+    try { await navigator.clipboard.writeText(code); toast("Sync code copied", "ok"); } catch (e) { shown = true; draw(); toast("Copy it from the box", "info"); }
+  } });
+  const newB = el("button", { class: "linkbtn gm-bad", type: "button", text: "Make a new code", onclick: async () => {
+    if (!confirm("Make a new sync code? Browsers linked with the old code stop syncing until you enter the new one there.")) return;
+    const r = await sb.rpc("sync_regenerate"); if (r.error) { toast(r.error.message, "err"); return; }
+    code = r.data; shown = true; draw(); toast("New sync code made", "ok");
+  } });
+  function draw() { val.textContent = shown ? code : "••••-••••-••••-••••"; showB.textContent = shown ? "Hide" : "Show"; }
+  box.append(el("h2", { class: "gm-head pf-h" }, el("span", { text: "Your sync code" }), el("span", { class: "pf-hiddenTag", text: "Only you can see this" })),
+    el("p", { class: "gm-note", text: "Enter this code on the site in any other browser or device to bring your trophies and arcade progress along. Keep it to yourself: anyone with it can sync to your progress." }),
+    el("div", { class: "pf-sync__row" }, val, showB, copyB, newB));
+  sb.rpc("my_sync_code").then(({ data, error }) => { if (error || !data) return; code = data; box.hidden = false; }, () => {});
+  return box;
 }
 
 /* ---------------- follow button + follower counts (round 21) ---------------- */
