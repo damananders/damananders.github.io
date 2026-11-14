@@ -96,14 +96,9 @@ window.SITE_EXTRA = {
         size: "", // total pack size, e.g. "40 GB"
         url: "https://drive.google.com/file/d/1jCCjTKj4cLumR0Q2f-NyTntzVBwJfBL5/view?usp=sharing",
         games: [
-          // Edit this to match what's actually in the pack (name is all that's required):
-          { name: "Crash Bandicoot", year: 1996, region: "NTSC-U", genre: "Platformer" },
-          { name: "Spyro the Dragon", year: 1998, region: "NTSC-U", genre: "Platformer" },
-          { name: "Final Fantasy VII", year: 1997, region: "NTSC-U", genre: "RPG", note: "3 discs." },
-          { name: "Metal Gear Solid", year: 1998, region: "NTSC-U", genre: "Stealth", note: "2 discs." },
-          { name: "Gran Turismo 2", year: 1999, region: "NTSC-U", genre: "Racing" },
-          { name: "Resident Evil 2", year: 1998, region: "NTSC-U", genre: "Survival Horror", note: "2 discs." },
-          { name: "Tony Hawk's Pro Skater 2", year: 2000, region: "NTSC-U", genre: "Sports" },
+          { name: "Soul Blade", year: 1997, region: "NTSC-U", genre: "Fighting" },
+          { name: "The Legend of Dragoon", year: 2000, region: "NTSC-U", genre: "RPG", note: "4 discs." },
+          { name: "Crash Team Racing", year: 1999, region: "NTSC-U", genre: "Racing" },
           { name: "Castlevania: Symphony of the Night", year: 1997, region: "NTSC-U", genre: "Metroidvania" },
         ],
       },
