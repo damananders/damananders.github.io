@@ -1,0 +1,320 @@
+{
+ "built": "2026-11-14T01:09:08.888Z",
+ "platforms": {
+  "2600": {
+   "cards": 580,
+   "art": 531,
+   "factsFilled": 0
+  },
+  "5200": {
+   "cards": 82,
+   "art": 73,
+   "factsFilled": 0
+  },
+  "7800": {
+   "cards": 68,
+   "art": 59,
+   "factsFilled": 0
+  },
+  "PS1": {
+   "cards": 5785,
+   "art": 5528,
+   "factsFilled": 73
+  },
+  "PS2": {
+   "cards": 6116,
+   "art": 4487,
+   "factsFilled": 3648
+  },
+  "PSP": {
+   "cards": 1581,
+   "art": 1448,
+   "factsFilled": 790
+  },
+  "PS3": {
+   "cards": 3861,
+   "art": 3853,
+   "factsFilled": 2830
+  },
+  "Vita": {
+   "cards": 651,
+   "art": 227,
+   "factsFilled": 0
+  },
+  "Xbox": {
+   "cards": 1562,
+   "art": 1398,
+   "factsFilled": 0
+  },
+  "X360": {
+   "cards": 2487,
+   "art": 1662,
+   "factsFilled": 0
+  },
+  "NES": {
+   "cards": 2105,
+   "art": 1944,
+   "factsFilled": 1
+  },
+  "FDS": {
+   "cards": 321,
+   "art": 251,
+   "factsFilled": 0
+  },
+  "SNES": {
+   "cards": 2402,
+   "art": 2179,
+   "factsFilled": 0
+  },
+  "N64": {
+   "cards": 546,
+   "art": 476,
+   "factsFilled": 0
+  },
+  "GC": {
+   "cards": 1093,
+   "art": 988,
+   "factsFilled": 0
+  },
+  "Wii": {
+   "cards": 4585,
+   "art": 4418,
+   "factsFilled": 20
+  },
+  "WiiU": {
+   "cards": 1610,
+   "art": 1530,
+   "factsFilled": 1
+  },
+  "GB": {
+   "cards": 1333,
+   "art": 1266,
+   "factsFilled": 1
+  },
+  "GBC": {
+   "cards": 1185,
+   "art": 1127,
+   "factsFilled": 2
+  },
+  "GBA": {
+   "cards": 2154,
+   "art": 1975,
+   "factsFilled": 1
+  },
+  "DS": {
+   "cards": 5439,
+   "art": 5174,
+   "factsFilled": 0
+  },
+  "3DS": {
+   "cards": 1488,
+   "art": 1271,
+   "factsFilled": 0
+  },
+  "VB": {
+   "cards": 36,
+   "art": 33,
+   "factsFilled": 0
+  },
+  "PokeMini": {
+   "cards": 23,
+   "art": 22,
+   "factsFilled": 0
+  },
+  "SG1000": {
+   "cards": 100,
+   "art": 89,
+   "factsFilled": 0
+  },
+  "SMS": {
+   "cards": 453,
+   "art": 426,
+   "factsFilled": 0
+  },
+  "GEN": {
+   "cards": 1459,
+   "art": 1259,
+   "factsFilled": 0
+  },
+  "SCD": {
+   "cards": 281,
+   "art": 242,
+   "factsFilled": 0
+  },
+  "32X": {
+   "cards": 49,
+   "art": 36,
+   "factsFilled": 0
+  },
+  "SAT": {
+   "cards": 1467,
+   "art": 1357,
+   "factsFilled": 0
+  },
+  "DC": {
+   "cards": 990,
+   "art": 883,
+   "factsFilled": 0
+  },
+  "GG": {
+   "cards": 432,
+   "art": 405,
+   "factsFilled": 0
+  },
+  "Pico": {
+   "cards": 317,
+   "art": 317,
+   "factsFilled": 0
+  },
+  "DOS": {
+   "cards": 14641,
+   "art": 14567,
+   "factsFilled": 0
+  },
+  "Lynx": {
+   "cards": 312,
+   "art": 304,
+   "factsFilled": 0
+  },
+  "Jaguar": {
+   "cards": 199,
+   "art": 187,
+   "factsFilled": 0
+  },
+  "ST": {
+   "cards": 3034,
+   "art": 2828,
+   "factsFilled": 3
+  },
+  "A8": {
+   "cards": 2766,
+   "art": 2723,
+   "factsFilled": 0
+  },
+  "CV": {
+   "cards": 150,
+   "art": 137,
+   "factsFilled": 0
+  },
+  "INTV": {
+   "cards": 151,
+   "art": 141,
+   "factsFilled": 0
+  },
+  "Vectrex": {
+   "cards": 37,
+   "art": 35,
+   "factsFilled": 0
+  },
+  "O2": {
+   "cards": 82,
+   "art": 80,
+   "factsFilled": 0
+  },
+  "ChanF": {
+   "cards": 34,
+   "art": 32,
+   "factsFilled": 0
+  },
+  "PCE": {
+   "cards": 509,
+   "art": 360,
+   "factsFilled": 0
+  },
+  "PCECD": {
+   "cards": 459,
+   "art": 455,
+   "factsFilled": 0
+  },
+  "PCFX": {
+   "cards": 82,
+   "art": 67,
+   "factsFilled": 0
+  },
+  "NeoGeo": {
+   "cards": 249,
+   "art": 181,
+   "factsFilled": 1
+  },
+  "NGCD": {
+   "cards": 129,
+   "art": 102,
+   "factsFilled": 0
+  },
+  "NGP": {
+   "cards": 100,
+   "art": 87,
+   "factsFilled": 0
+  },
+  "WS": {
+   "cards": 238,
+   "art": 201,
+   "factsFilled": 0
+  },
+  "3DO": {
+   "cards": 433,
+   "art": 399,
+   "factsFilled": 0
+  },
+  "CDi": {
+   "cards": 1754,
+   "art": 1743,
+   "factsFilled": 0
+  },
+  "Arcadia": {
+   "cards": 50,
+   "art": 48,
+   "factsFilled": 0
+  },
+  "SV": {
+   "cards": 63,
+   "art": 63,
+   "factsFilled": 0
+  },
+  "GCom": {
+   "cards": 20,
+   "art": 20,
+   "factsFilled": 0
+  },
+  "Amiga": {
+   "cards": 6498,
+   "art": 6263,
+   "factsFilled": 0
+  },
+  "C64": {
+   "cards": 3296,
+   "art": 2628,
+   "factsFilled": 0
+  },
+  "VIC20": {
+   "cards": 220,
+   "art": 172,
+   "factsFilled": 0
+  },
+  "ZX": {
+   "cards": 15381,
+   "art": 15257,
+   "factsFilled": 0
+  },
+  "MSX": {
+   "cards": 954,
+   "art": 686,
+   "factsFilled": 1
+  },
+  "CPC": {
+   "cards": 2931,
+   "art": 2760,
+   "factsFilled": 2
+  },
+  "X68K": {
+   "cards": 978,
+   "art": 954,
+   "factsFilled": 0
+  },
+  "PC98": {
+   "cards": 712,
+   "art": 712,
+   "factsFilled": 0
+  }
+ }
+}
