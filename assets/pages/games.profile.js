@@ -133,7 +133,7 @@ async function render() {
     sb.from("member_profiles").select("*").eq("handle", handle).maybeSingle(),
     sb.from("voter_stats").select("handle").order("votes", { ascending: false }).limit(3)]);
   if (error) return notice("Profiles are almost here", "Custom profiles switch on as soon as the site's database update goes in. Check back soon.");
-  if (!p) return notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Rate-O-Pedia" }));
+  if (!p) { notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Rate-O-Pedia" })); adminPanel(handle); return; }
   const mine = !!(me.profile && me.profile.handle === p.handle);
   const plus = "banner" in p;      // round 15 is in
   const rank = ((top.data || []).findIndex((x) => x.handle === p.handle)) + 1;
@@ -241,6 +241,7 @@ async function render() {
     showBox, listsBox, badgeBox, blBox, heartBox, wallBox, mine ? syncCard() : null,
     el("div", { class: "pf-cols" }, postsBox, revBox)].filter(Boolean));
   root.querySelectorAll(".pf-col:empty").forEach((c) => c.remove());
+  adminPanel(p.handle);
   if (mine && params.has("edit")) editor(p);
 
   if (blBox) backlog(p, mine, blBox);
@@ -389,6 +390,63 @@ function supporterTag(p) {
     t.hidden = false;
   }, () => t.remove());
   return t;
+}
+
+/* ---------------- site-admin tools on a profile ----------------
+ * Drawn ONLY when the viewer is the site admin (me.admin) AND this tab holds a live control-panel session
+ * (sessionStorage "site.admin", checked with site_admin_whoami). Same server actions as /control/ > Members;
+ * the server re-checks the session key on every one. */
+function adminToken() { try { const a = JSON.parse(sessionStorage.getItem("site.admin") || "null"); return a && typeof a.token === "string" && a.token.length === 64 ? a.token : null; } catch (e) { return null; } }
+async function adminPanel(handle) {
+  const tok = me.admin ? adminToken() : null;
+  if (!tok || !handle) return;
+  const who = await sb.rpc("site_admin_whoami", { p_token: tok }).catch(() => null);
+  if (!who || who.error || !who.data || !who.data.ok) return;
+  const box = el("section", { class: "pf-card pf-admin", "aria-label": "Site admin tools" });
+  root.append(box);
+  const call = async (fn, args, done) => {
+    box.querySelectorAll("button,input,select").forEach((b) => { b.disabled = true; });
+    const { data, error } = await sb.rpc(fn, Object.assign({ p_token: tok, p_handle: handle }, args));
+    if (error || !data || !data.ok) { toast((error && error.message) || (data && data.error === "signed-out" ? "Control panel session ended. Sign in on /control/ again." : (data && data.error) || "That didn't work."), "err"); sfx("error"); }
+    else { sfx("success"); toast(done(data), "ok"); }
+    draw();
+  };
+  async function draw() {
+    box.replaceChildren(el("h2", { class: "gm-head pf-h" }, el("span", { text: "Site admin: manage this profile" }), el("span", { class: "pf-hiddenTag", text: "Only you see this" })),
+      el("p", { class: "gm-empty", text: "Loading…" }));
+    const r = await sb.rpc("site_admin_member_list", { p_token: tok, p_q: handle, p_limit: 20, p_offset: 0 });
+    const m = r.data && r.data.ok && (r.data.members || []).find((x) => x.handle === handle);
+    box.lastChild.remove();
+    if (!m) { box.append(el("p", { class: "gm-note", text: r.data && r.data.error === "signed-out" ? "Control panel session ended." : "This member isn't in the member list." })); return; }
+    if (m.is_owner) { box.append(el("p", { class: "gm-note", text: "This is the site owner's profile. Member actions don't apply here." })); return; }
+    const state = [m.banned ? "Banned" + (m.ban_reason ? " (" + m.ban_reason + ")" : "") : null, m.muted ? "Muted" : null,
+      m.kicked_until ? "Kicked until " + new Date(m.kicked_until).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : null,
+      m.forced_name ? "Forced name: " + m.forced_name : null].filter(Boolean);
+    box.append(el("p", { class: "pf-admin__state" + (state.length ? " gm-bad" : " gm-ok"), text: state.length ? state.join(" · ") : "In good standing" }),
+      el("p", { class: "gm-note", text: m.ratings + " ratings · " + m.reviews + " reviews · " + m.posts + " posts · " + m.comments + " comments · " + m.wall_notes + " wall notes · " + m.media + " uploads" + (m.lists != null ? " · " + m.lists + " lists" : "") }));
+    const nameIn = el("input", { class: "gm-search pf-in", maxlength: "24", placeholder: "Forced name", value: m.forced_name || "", "aria-label": "Forced name" });
+    const kickSel = el("select", { class: "gm-search pf-in", "aria-label": "Kick length" }, ...[["1", "1 hour"], ["24", "1 day"], ["72", "3 days"], ["168", "1 week"], ["720", "30 days"]].map(([v, t]) => el("option", { value: v, text: t })));
+    const wipeSel = el("select", { class: "gm-search pf-in", "aria-label": "Content to wipe" }, ...["reviews", "comments", "posts", "ratings", "lists", "wall", "media", "reactions", "all"].map((w) => el("option", { value: w, text: w === "all" ? "everything" : w })));
+    const btn = (text, fn, cls) => el("button", { class: "btn gm-btn " + (cls || ""), type: "button", text, onclick: fn });
+    box.append(el("div", { class: "pf-admin__grid" },
+      el("div", { class: "pf-admin__row" }, el("b", { text: "Name" }), nameIn,
+        btn("Force name", () => { const n = nameIn.value.trim(); if (n.length < 2) return toast("Names are 2 to 24 characters.", "err"); call("site_admin_member_force_name", { p_name: n }, () => "Name forced"); }),
+        m.forced_name ? btn("Clear", () => call("site_admin_member_force_name", { p_name: "" }, () => "Forced name cleared"), "pf-admin__soft") : null),
+      el("div", { class: "pf-admin__row" }, el("b", { text: "Mute" }),
+        btn(m.muted ? "Unmute" : "Mute (read-only)", () => call("site_admin_member_mute", { p_on: !m.muted }, (d) => d.muted ? "Muted" : "Unmuted"), m.muted ? "" : "pf-admin__warn")),
+      el("div", { class: "pf-admin__row" }, el("b", { text: "Kick" }), kickSel,
+        btn("Kick", () => call("site_admin_member_kick", { p_until: new Date(Date.now() + (+kickSel.value) * 3600e3).toISOString() }, () => "Kicked"), "pf-admin__warn"),
+        m.kicked_until ? btn("Lift kick", () => call("site_admin_member_kick", { p_until: null }, () => "Kick lifted"), "pf-admin__soft") : null),
+      el("div", { class: "pf-admin__row" }, el("b", { text: "Ban" }),
+        m.banned ? btn("Unban", () => call("site_admin_member_ban", { p_on: false, p_reason: null }, () => "Unbanned"))
+          : btn("Ban…", () => { const why = prompt("Reason for the ban (optional):", ""); if (why === null) return; call("site_admin_member_ban", { p_on: true, p_reason: why }, () => "Banned"); }, "pf-admin__bad")),
+      el("div", { class: "pf-admin__row" }, el("b", { text: "Profile" }),
+        btn("Reset customizations", () => { if (confirm("Reset all of this member's profile customizations?")) call("site_admin_member_reset", {}, () => "Profile reset"); }, "pf-admin__warn")),
+      el("div", { class: "pf-admin__row" }, el("b", { text: "Wipe" }), wipeSel,
+        btn("Delete", () => { if (confirm("Delete this member's " + (wipeSel.value === "all" ? "content of every kind" : wipeSel.value) + " for good?"))
+          call("site_admin_member_wipe", { p_what: wipeSel.value }, (d) => "Deleted " + Object.entries(d.deleted || {}).map(([k, v]) => v + " " + k).join(", ")); }, "pf-admin__bad"))));
+  }
+  draw();
 }
 
 /* ---------------- private sync code (round 27): only ever drawn on your own profile ---------------- */

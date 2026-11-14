@@ -1063,3 +1063,12 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .gi-addcover:hover,.gi-addcover:focus-visible{border-color:var(--sx-accent,#cd4257);background:rgba(205,66,87,.08)}
 .pf-sync__row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .pf-sync__code{font:700 1.15rem var(--sx-mono,monospace);letter-spacing:.08em;padding:8px 14px;border-radius:10px;background:rgba(0,0,0,.3);border:1px dashed var(--sx-line,rgba(255,255,255,.2));user-select:all}
+.pf-admin{border-color:rgba(205,66,87,.55);background:linear-gradient(180deg,rgba(205,66,87,.08),transparent 60%)}
+.pf-admin__state{margin:0;font-weight:700}
+.pf-admin__grid{display:grid;gap:10px}
+.pf-admin__row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pf-admin__row>b{min-width:64px;font-size:.85rem;opacity:.8}
+.pf-admin__row .pf-in{width:auto;min-width:0;flex:0 1 200px}
+.pf-admin .btn.pf-admin__warn{background:#b7791f}
+.pf-admin .btn.pf-admin__bad{background:#c53030}
+.pf-admin .btn.pf-admin__soft{background:transparent;border:1px solid currentColor}
