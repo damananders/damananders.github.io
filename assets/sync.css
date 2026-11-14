@@ -1,0 +1,28 @@
+/* sync.css — cross-device account sync UI (assets/sync.js). Prefix sy-. */
+.sy-btn-tool{position:relative}
+.sy-btn-tool svg{width:20px;height:20px}
+.sy-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--sx-muted);opacity:.0;transition:opacity .2s,background .2s}
+.sy-btn-tool.is-linked .sy-dot{opacity:1;background:var(--sx-ok)}
+
+.sy-box{display:flex;flex-direction:column;gap:14px;max-width:440px}
+.sy-note{margin:0;color:var(--sx-muted);font-size:.95rem;line-height:1.55}
+.sy-form{display:flex;gap:10px;flex-wrap:wrap}
+.sy-input{flex:1 1 220px;min-width:0;box-sizing:border-box;font:600 1.02rem var(--sx-mono);letter-spacing:.08em;text-align:center;
+  padding:12px 14px;border-radius:12px;border:1px solid var(--sx-line-2);background:var(--sx-glass);color:var(--sx-text);text-transform:uppercase}
+.sy-input::placeholder{color:var(--sx-muted);letter-spacing:.06em}
+.sy-input:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px;border-color:var(--sx-accent)}
+.sy-btn{cursor:pointer}
+.sy-actions{display:flex;gap:10px;flex-wrap:wrap}
+.sy-btn--ghost{background:transparent;border:1px solid var(--sx-line-2);color:var(--sx-muted)}
+.sy-btn--ghost:hover{color:var(--sx-text);border-color:var(--sx-accent)}
+
+.sy-linked{display:flex;align-items:flex-start;gap:10px;margin:0;font-size:1.02rem;line-height:1.5;color:var(--sx-text)}
+.sy-linked strong{color:var(--sx-accent);filter:brightness(1.25)}
+:root[data-theme="light"] .sy-linked strong{filter:none}
+.sy-tick{width:22px;height:22px;flex:none;color:var(--sx-ok);margin-top:1px}
+
+.sy-status{min-height:1.3em;margin:0;font-size:.9rem;color:var(--sx-muted)}
+.sy-status--ok{color:var(--sx-ok)}
+.sy-status--err{color:var(--sx-err)}
+.sy-help{font-size:.9rem;color:var(--sx-accent);text-decoration:none}
+.sy-help:hover{text-decoration:underline}
