@@ -461,6 +461,22 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
 
 @media print{.ch-menu__box,.ch-radial{display:none}}
 
+/* site search palette (chrome:search) */
+.ch-srch{display:flex;flex-direction:column;gap:10px;min-width:min(440px,78vw)}
+.ch-srch__input{width:100%;font:inherit;font-size:1rem;color:var(--sx-text);background:var(--sx-surface-2,var(--sx-surface));
+  border:1px solid var(--sx-line-2);border-radius:11px;padding:11px 14px;outline:none;transition:border-color .15s,box-shadow .15s}
+.ch-srch__input:focus{border-color:var(--sx-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--sx-accent) 22%,transparent)}
+.ch-srch__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;max-height:46vh;overflow:auto}
+.ch-srch__item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--sx-text);border:1px solid transparent}
+.ch-srch__item.is-sel{background:var(--sx-surface-2,rgba(255,255,255,.06));border-color:var(--sx-line-2)}
+.ch-srch__label{flex:1;font:500 .98rem var(--sx-display)}
+.ch-srch__item.is-sel .ch-srch__label{color:var(--sx-accent)}
+.ch-srch__kind{flex:none;font:600 .64rem var(--sx-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--sx-muted);padding:3px 7px;border:1px solid var(--sx-line-2);border-radius:6px}
+.ch-srch__item--rop,.ch-srch__item--rop .ch-srch__label{color:var(--sx-accent)}
+.ch-srch__item--rop .ch-srch__kind{color:var(--sx-accent);border-color:currentColor}
+.ch-srch__empty{margin:6px 2px;color:var(--sx-muted);font-size:.9rem}
+@media print{.ch-search{display:none}}
+
 /* site admin badge (chrome:admin) */
 .ch-admin{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 10px;border-radius:999px;
   border:1px solid #2fbf71;background:rgba(7,14,10,.92);color:#eafff3;font:600 .74rem/1 var(--display,system-ui);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.45)}
