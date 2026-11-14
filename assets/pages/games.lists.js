@@ -3,7 +3,7 @@
  * (save_list, delete_list, toggle_list_like) that checks the member and the limits, so nothing here is trusted.
  */
 import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, nameLink, ago, share, sfx, toast, INVITE,
-  consoleChip, gameUrl, artSlot, hasSearchKey, titleSearch, scoreCols, scorePair , statsChanged } from "./games.common.js?v=16";
+  consoleChip, gameUrl, artSlot, hasSearchKey, titleSearch, scoreCols, scorePair , statsChanged } from "./games.common.js?v=17";
 
 const root = $("ls-root");
 const qs = new URLSearchParams(location.search);

@@ -34,7 +34,7 @@ const info = (id) => {
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const art = (a) => { const i = a ? a.indexOf("/") : -1; return i > 0 ? "https://thumbnails.libretro.com/" + encodeURIComponent(a.slice(0, i)) + "/Named_Boxarts/" + encodeURIComponent(a.slice(i + 1)) + ".png" : null; };
 // Steam's wide header suits link previews better than the tall library cover
-const artOf = (x) => x.a ? art(x.a) : x.sa ? "https://cdn.cloudflare.steamstatic.com/steam/apps/" + encodeURIComponent(x.sa) + "/header.jpg" : x.ra && /^https:\/\/media\.rawg\.io\//.test(x.ra) ? x.ra : null;
+const artOf = (x) => x.g && /^ps3\/cover\/[A-Z]{2}\/[A-Z]{4}\d{5}$/.test(x.g) ? "https://art.gametdb.com/" + x.g + ".jpg" : x.a ? art(x.a) : x.sa ? "https://cdn.cloudflare.steamstatic.com/steam/apps/" + encodeURIComponent(x.sa) + "/header.jpg" : x.ra && /^https:\/\/media\.rawg\.io\//.test(x.ra) ? x.ra : null;
 const score = (avg, n) => n > 0 ? Number(avg).toFixed(1) + "/5 (" + n + (n === 1 ? " vote" : " votes") + ")" : "not rated yet";
 
 const keep = new Set();

@@ -581,6 +581,7 @@ export function reportBtn(kind, id, cls) {
 /* ---------------- box art (libretro-thumbnails; hidden if the picture doesn't exist) ---------------- */
 export function boxArtUrl(a) {
   if (a && typeof a === "object") {
+    if (a.g && /^ps3\/cover\/[A-Z]{2}\/[A-Z]{4}\d{5}$/.test(a.g)) return "https://art.gametdb.com/" + a.g + ".jpg";
     if (a.a) return boxArtUrl(a.a);
     if (a.sa) return "https://cdn.cloudflare.steamstatic.com/steam/apps/" + encodeURIComponent(a.sa) + "/library_600x900.jpg";
     if (a.ra && /^https:\/\/media\.rawg\.io\//.test(a.ra)) return a.ra;
@@ -604,6 +605,6 @@ export function boxArt(a, title, cls) {
 /* fill box art into elements later (cards render first, art arrives with the info shard) */
 export function artSlot(id, title, cls) {
   const slot = el("span", { class: "rop-artslot " + (cls || ""), "aria-hidden": "true" });
-  gameInfo(id).then((x) => { const img = x && (x.a || x.sa || x.ra) ? boxArt(x, title) : null; if (img) slot.append(img); else slot.remove(); }, () => slot.remove());
+  gameInfo(id).then((x) => { const img = x && (x.g || x.a || x.sa || x.ra) ? boxArt(x, title) : null; if (img) slot.append(img); else slot.remove(); }, () => slot.remove());
   return slot;
 }

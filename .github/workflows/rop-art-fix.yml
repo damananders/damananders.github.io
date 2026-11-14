@@ -15,7 +15,7 @@ concurrency:
 jobs:
   fix:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,6 +28,8 @@ jobs:
         env:
           PLATS: ${{ github.event.inputs.plats || 'PS1 PS2 PS3' }}
           GITHUB_TOKEN: ${{ github.token }}
+      - if: contains(github.event.inputs.plats || 'PS1 PS2 PS3', 'PS3')
+        run: node tools/rop-art/gametdb.mjs /tmp/games.tsv.gz
       - run: |
           git config user.name "rop-art bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

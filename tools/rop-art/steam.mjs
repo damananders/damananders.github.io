@@ -37,7 +37,7 @@ async function get(url, opts = {}) {
 // ---- load every shard
 const shards = new Map(), dirty = new Set();
 for (const f of fs.readdirSync(INFO)) if (/^[0-9a-f]{3}\.json$/.test(f)) shards.set(f, JSON.parse(fs.readFileSync(path.join(INFO, f), "utf8")));
-const hasArt = (x) => x.a || x.sa || x.ra;
+const hasArt = (x) => x.g || x.a || x.sa || x.ra;
 let entries = 0;
 const byQ = new Map();       // QID -> [[shard, id], ...]
 for (const [f, j] of shards) for (const [id, x] of Object.entries(j)) {

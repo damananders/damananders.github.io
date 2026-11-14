@@ -46,6 +46,7 @@ async function gh(url) {
     await new Promise((s) => setTimeout(s, 5000 * 2 ** i));
   }
 }
+let truncated = false;
 async function boxarts(sys) {
   const repo = "libretro-thumbnails/" + sys.replace(/ /g, "_");
   const meta = await gh("https://api.github.com/repos/" + repo);
@@ -53,7 +54,7 @@ async function boxarts(sys) {
   const dir = root.tree.find((x) => x.path === "Named_Boxarts");
   if (!dir) return [];
   const t = await gh("https://api.github.com/repos/" + repo + "/git/trees/" + dir.sha);
-  if (t.truncated) log(sys, "listing truncated");
+  if (t.truncated) { log(sys, "listing truncated"); truncated = true; }
   return t.tree.filter((x) => x.type === "blob" && x.path.endsWith(".png")).map((x) => x.path.slice(0, -4));
 }
 
@@ -87,9 +88,8 @@ for (const pid of PLATS) {
   }
   if (!have.size) continue;
   // safety: if the listing came back far smaller than the covers we already point at, don't drop anything
-  let current = 0; for (const [, sh] of shards) for (const [id, x] of Object.entries(sh)) if (id.startsWith(pid + ":") && x.a) current++;
-  const mayDrop = have.size >= current * 0.4;
-  if (!mayDrop) log(pid, "only", have.size, "covers listed for", current, "games with covers: re-matching but not dropping");
+  const mayDrop = !truncated;   // a full listing is the truth, even when it is small (PS3 has only a few dozen)
+  if (!mayDrop) log(pid, "listing incomplete: re-matching but not dropping");
   const st = stats[pid] = { games: 0, ok: 0, fixed: 0, added: 0, dropped: 0, none: 0 };
   const ids = new Set(titles.keys());
   for (const [, sh] of shards) for (const id of Object.keys(sh)) if (id.startsWith(pid + ":")) ids.add(id);
