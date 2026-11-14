@@ -238,12 +238,12 @@
       var n = d && d.id ? d : d && d.detail; var id = n && n.id;
       if (id === "hb-code") award("door"); else if (id === "hg-box") award("hire"); else if (id === "ax-keys") award("shortcuts");
     });
+    Site.on("resume:card", function () { award("card"); });   /* opened a project dropdown on the résumé */
     doc.addEventListener("click", function (e) {
       var t = e.target; if (!t || !t.closest) return;
       if (t.closest(".ch-theme")) award("theme");
       else if (t.closest(".ch-gear")) award("settings");
       else if (t.closest(".ch-share")) award("share");
-      else if (t.closest(".rz-card__head")) award("card");
       else if (t.closest(".ch-menu")) award("menu");
       else if (t.closest(".lk2-go,.lk2-shotlink")) award("linkout");
       else if (t.closest(".lk2-vote")) award("voter");
