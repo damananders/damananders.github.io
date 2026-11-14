@@ -4,12 +4,12 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink } from "./games.common.js?v=12";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE } from "./games.common.js?v=13";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
-let user = null, member = false, consoleFilter = "", famFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "", loadSeq = 0;
+let user = null, member = false, consoleFilter = "", famFilter = "", mine = new Map(), reviewCounts = new Map(), searchTimer = 0, lastQuery = "", loadSeq = 0, rankBy = "verified";
 
 /* ---------------- sign-in and membership (shared pill, see games.common.js) ---------------- */
 function onSession(m) {
@@ -52,7 +52,11 @@ const filterName = () => consoleFilter ? platformName(consoleFilter) : famFilter
 function ratingRow(g) {
   const my = mine.has(g.id) ? mine.get(g.id) : null;
   const row = el("div", { class: "gm-rate", role: "group", "aria-label": "Your rating for " + g.title });
-  if (!user || !member) { row.append(el("span", { class: "gm-rate__lock", text: user ? "Join the Discord to rate" : "Sign in to rate" })); return row; }
+  if (!user || !member) {
+    if (g.open_votes === undefined) { row.append(el("span", { class: "gm-rate__lock", text: user ? "Join the Discord to rate" : "Sign in to rate" })); return row; }
+    // visitors (and signed-in non-members) rate too; their vote only counts toward the Open-Vote score
+    return el("div", { class: "gm-rate gm-rate--guest" }, chipRow(my, (v) => rateGuest(g, v), "Your visitor rating for " + g.title), el("span", { class: "gm-rate__hint", text: VISITOR_NOTE }));
+  }
   return chipRow(my, (v) => rate(g, v), "Your rating for " + g.title);
 }
 function card(g, rank) {
@@ -77,8 +81,9 @@ function card(g, rank) {
       platformLink(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
       rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia" }, el("span", { "aria-hidden": "true", text: "★ " }), "Must Play!") : null,
-      mood, el("span", { class: "gm-score", text: score }),
-      el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" })),
+      g.open_votes === undefined ? mood : null, g.open_votes === undefined ? el("span", { class: "gm-score", text: score }) : null,
+      g.open_votes === undefined ? el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" }) : null),
+    g.open_votes === undefined ? null : el("div", { class: "gm-card__scores" }, mood, scorePair(g)),
     ratingRow(g), toggle, more);
   c.dataset.id = g.id;
   return c;
@@ -87,19 +92,28 @@ async function load() {
   const seq = ++loadSeq;
   const q = $("gm-q").value.trim(); lastQuery = q;
   const list = $("gm-list"), head = $("gm-head");
-  let req = sb.from("game_scores").select("id,console,title,votes,average");
+  const cols = await scoreCols();
+  if (seq !== loadSeq) return;
+  const open = rankBy === "open" && cols.includes("open_votes");
+  let req = sb.from("game_scores").select(cols);
   const ids = filterIds();
   if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
   if (q.length >= 2) { req = req.ilike("title", "%" + q.replace(/[%_]/g, " ") + "%").order("votes", { ascending: false }).order("title").limit(40); head.textContent = "Results for “" + q + "”"; }
-  else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated"; }
+  else if (open) { req = req.gt("open_votes", 0).order("open_average", { ascending: false }).order("open_votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated · Open-Vote"; }
+  else { req = req.gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(25); head.textContent = filterName() + " top rated" + (cols.includes("open_votes") ? " · Verified" : ""); }
+  rankSwitch(q.length < 2 && cols.includes("open_votes"));
   const { data, error } = await req;
   if (seq !== loadSeq) return;                        // a newer load is already on its way
   if (error) { say("Couldn't load the games: " + error.message, true); return; }
   const myMap = new Map();
-  if (user && data.length) {
+  if (user && member && data.length) {
     const r = await sb.from("ratings").select("game_id,stars").in("game_id", data.map((g) => g.id));
     if (seq !== loadSeq) return;
     for (const x of r.data || []) myMap.set(x.game_id, x.stars);
+  } else if (data.length && cols.includes("open_votes")) {
+    const r = await guestRatings(data.map((g) => g.id));
+    if (seq !== loadSeq) return;
+    for (const [k, v] of r) myMap.set(k, v);
   }
   const counts = new Map();
   if (data.length) {
@@ -135,7 +149,7 @@ function browse(q) {
     letters, list, more, note);
   async function page(fresh) {
     const ids = filterIds();
-    let req = sb.from("game_scores").select("id,console,title,votes,average");
+    let req = sb.from("game_scores").select(await scoreCols());
     if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
     req = browseLetter === "#" ? req.filter("title", "match", "^[^A-Za-z]") : req.ilike("title", browseLetter + "%");
     const { data, error } = await req.order("title").range(browseFrom, browseFrom + 59);
@@ -143,7 +157,7 @@ function browse(q) {
     if (fresh) list.replaceChildren();
     for (const g of data || []) list.append(el("li", { class: "gm-brow" }, consoleChip(g.console),
       el("a", { class: "gm-brow__t", href: "/games/game/?id=" + encodeURIComponent(g.id), text: g.title }),
-      el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" })));
+      g.open_votes === undefined ? el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" }) : scorePair(g, true)));
     browseFrom += (data || []).length;
     more.hidden = (data || []).length < 60;
     note.textContent = fresh && !(data || []).length ? "No games starting with " + browseLetter + " here." : "";
@@ -170,6 +184,23 @@ async function rate(g, stars) {
   if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
   load();
   voters();
+}
+
+async function rateGuest(g, stars) {
+  say("");
+  try { await guestRate(g.id, stars); } catch (e) { say("That vote didn't save: " + e.message, true); return; }
+  if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
+  load();
+}
+/* the top-rated list can rank by either score */
+function rankSwitch(show) {
+  let sw = $("gm-rankby");
+  if (!show) { if (sw) sw.hidden = true; return; }
+  if (!sw) { sw = el("div", { id: "gm-rankby", class: "gm-rankby", role: "group", "aria-label": "Rank by" }); $("gm-head").after(sw); }
+  sw.hidden = false;
+  sw.replaceChildren(el("span", { class: "gm-note", text: "Rank by" }),
+    ...[["verified", "✔ Verified", "Discord members' votes only"], ["open", "🌐 Open-Vote", "Members and visitors together"]].map(([k, label, tip]) =>
+      el("button", { class: "gm-tab" + (rankBy === k ? " is-on" : ""), type: "button", title: tip, "aria-pressed": rankBy === k ? "true" : "false", text: label, onclick: () => { if (rankBy !== k) { rankBy = k; load(); } } })));
 }
 
 /* ---------------- reviews ---------------- */

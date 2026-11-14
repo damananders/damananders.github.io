@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions } from "./games.common.js?v=12";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE } from "./games.common.js?v=13";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -25,7 +25,7 @@ async function render() {
   authPill($("gm-auth"), { okTail: ", you can rate and upload." });
   if (!id) { root.replaceChildren(el("p", { class: "gm-empty", text: "No game picked. " }, el("a", { href: "/games/", text: "Search Rate-O-Pedia" }))); return; }
   const [g, base, fix] = await Promise.all([
-    sb.from("game_scores").select("id,console,title,votes,average").eq("id", id).maybeSingle(),
+    scoreCols().then((c) => sb.from("game_scores").select(c).eq("id", id).maybeSingle()),
     staticInfo(),
     sb.from("game_info_fix").select("data").eq("game_id", id).maybeSingle()]);
   game = g.data;
@@ -38,7 +38,9 @@ async function render() {
   const title = info.t || game.title, sub = info.st || "";
   document.title = title + (sub ? " — " + sub : "") + " · Rate-O-Pedia";
 
-  if (me.user) { const r = await sb.from("ratings").select("stars").eq("game_id", id).maybeSingle(); myStars = r.data ? r.data.stars : null; }
+  myStars = null;
+  if (me.user && me.member) { const r = await sb.from("ratings").select("stars").eq("game_id", id).maybeSingle(); myStars = r.data ? r.data.stars : null; }
+  else if (game.open_votes !== undefined) { const r = await guestRatings([id]); myStars = r.has(id) ? r.get(id) : null; }
 
   const facts = el("dl", { class: "gi-facts" });
   const fact = (k, v) => { if (v == null || v === "" || (Array.isArray(v) && !v.length)) return; facts.append(el("dt", { text: k }), el("dd", null, ...(Array.isArray(v) ? [v.join(", ")] : [String(v)]))); };
@@ -76,16 +78,32 @@ async function render() {
 function scoreBox() {
   const box = el("section", { class: "gi-box gi-score" });
   const avg = game.votes > 0 ? Number(game.average).toFixed(1) : "–";
-  box.append(el("h2", { class: "gi-h", text: "Rate-O-Pedia score" }),
+  const open = game.open_votes !== undefined;
+  if (!open) box.append(el("h2", { class: "gi-h", text: "Rate-O-Pedia score" }),
     el("p", { class: "gi-big" }, el("b", { text: avg }), el("span", { text: " / 5" })),
     el("p", { class: "gm-note", text: game.votes ? plural(game.votes, "vote") : "Not rated yet" }));
-  const row = el("div", { class: "gm-rate" });
-  if (!me.user) row.append(el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "Sign in to rate" }));
-  else if (!me.member) row.append(el("a", { class: "linkbtn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord to rate" }));
   else {
-    row.append(chipRow(myStars, (v) => rate(v), "Your rating"));
+    const oavg = game.open_votes > 0 ? Number(game.open_average).toFixed(1) : "–";
+    const half = (cls, icon, title, val, note, tip) => el("div", { class: "gi-sc gi-sc--" + cls, title: tip },
+      el("h2", { class: "gi-h" }, el("span", { "aria-hidden": "true", text: icon + " " }), title),
+      el("p", { class: "gi-big" }, el("b", { text: val }), el("span", { text: " / 5" })), el("p", { class: "gm-note", text: note }));
+    box.append(el("div", { class: "gi-scores" },
+      half("v", "✔", "Verified Review Score", avg, game.votes ? plural(game.votes, "member vote") : "No member votes yet", "Discord members only"),
+      half("o", "🌐", "Open-Vote Review Score", oavg, game.open_votes ? plural(game.open_votes, "vote") + " · " + plural(game.visitor_votes || 0, "visitor") : "No votes yet", "Members and visitors together")));
   }
+  const row = el("div", { class: "gm-rate" });
+  if (me.user && me.member) row.append(chipRow(myStars, (v) => rate(v), "Your rating"));
+  else if (open) {
+    row.append(chipRow(myStars, (v) => rateGuest(v), "Your visitor rating"));
+    box.append(row, el("p", { class: "gm-note gi-guestnote" }, VISITOR_NOTE + " ",
+      me.user ? el("a", { href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }) : el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "Sign in" })));
+    if (me.admin && game.visitor_votes) box.append(clearGuests());
+    return box;
+  }
+  else if (!me.user) row.append(el("button", { class: "linkbtn", type: "button", onclick: signIn, text: "Sign in to rate" }));
+  else row.append(el("a", { class: "linkbtn", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord to rate" }));
   box.append(row);
+  if (me.admin && game.visitor_votes) box.append(clearGuests());
   return box;
 }
 async function rate(stars) {
@@ -93,6 +111,20 @@ async function rate(stars) {
     : await sb.from("ratings").upsert({ user_id: me.user.id, game_id: id, stars, updated_at: new Date().toISOString() });
   if (res.error) { toast("That vote didn't save: " + res.error.message, "err"); return; }
   sfx("success"); render();
+}
+
+async function rateGuest(stars) {
+  try { await guestRate(id, stars); } catch (e) { toast("That vote didn't save: " + e.message, "err"); return; }
+  sfx("success"); render();
+}
+/* owner: wipe this game's visitor votes (if a game gets brigaded) */
+function clearGuests() {
+  return el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Clear " + plural(game.visitor_votes, "visitor vote") + " (owner)", onclick: async (e) => {
+    if (!confirm("Remove every visitor vote on this game? Member votes stay.")) return;
+    const { data, error } = await sb.rpc("mod_clear_guest_ratings", { p_game: id });
+    if (error) { toast("Couldn't clear them: " + error.message, "err"); return; }
+    toast("Removed " + plural(data || 0, "visitor vote") + "."); render();
+  } });
 }
 
 /* ---------------- your backlog, how many members have it listed, RetroAchievements ---------------- */

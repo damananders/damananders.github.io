@@ -831,3 +831,31 @@ a.gm-console--link:hover{filter:brightness(1.25)}
 .pf-sw--ban .pf-sw__b.pf-ban--adm-shield::before,.pf-sw--ban .pf-sw__b.pf-ban--own-throne::before{font-size:16px;animation:none}
 .pf-pv .pf-ban--adm-shield::before,.pf-pv .pf-ban--own-throne::before{font-size:40px}
 .fr-reacts--c{margin-top:6px}.fr-reacts--c .fr-react{padding:3px 8px;font-size:.85rem}
+
+/* ---------- round 19: Verified and Open-Vote scores, visitor ratings ---------- */
+.rop-scores{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rop-sc{display:inline-flex;align-items:baseline;gap:5px;padding:3px 9px;border-radius:999px;border:1px solid var(--sc-c);background:color-mix(in srgb,var(--sc-c) 12%,transparent);font-size:.8rem;white-space:nowrap}
+.rop-sc--v{--sc-c:#46d37a}
+.rop-sc--o{--sc-c:#4b9bff}
+.rop-sc__i{font-size:.75rem;color:var(--sc-c)}
+.rop-sc__l{color:var(--sx-muted,#a8abb3)}
+.rop-sc b{font:700 .95rem var(--sx-mono,"DM Mono",monospace);color:var(--sx-text,#e8e8ea)}
+.rop-sc__n{color:var(--sx-muted,#a8abb3);font-size:.74rem}
+.rop-scores--c .rop-sc{padding:1px 7px;font-size:.72rem}
+.rop-scores--c .rop-sc b{font-size:.8rem}
+.gm-card__scores{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 2px}
+.gm-rate--guest{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.gm-rate--guest .gm-rate{margin:0}
+.gm-rate__hint{font-size:.74rem;color:var(--sx-muted,#a8abb3)}
+.gm-rankby{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-4px 0 10px}
+.gm-rankby .gm-tab{font-size:.82rem}
+.gi-scores{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px}
+.gi-sc{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px;padding:8px 12px;border-radius:10px;border:1px solid var(--sc-c);background:color-mix(in srgb,var(--sc-c) 8%,transparent)}
+.gi-sc--v{--sc-c:#46d37a}
+.gi-sc--o{--sc-c:#4b9bff}
+.gi-sc .gi-h{font-size:.78rem;margin:0;grid-column:1}
+.gi-sc .gi-big{grid-column:2;grid-row:1/span 2;margin:0}
+.gi-sc .gi-big{font-size:1.9rem}
+.gi-sc .gm-note{margin:2px 0 0;font-size:.75rem;grid-column:1}
+.gi-guestnote{font-size:.76rem}
+.gm-brow .rop-scores{margin-left:auto}

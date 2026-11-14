@@ -396,3 +396,41 @@ export async function guestReact(target, id, reaction) {
   if (error) throw new Error(/guest_react|function|schema cache/i.test(error.message) ? "Visitor reactions switch on with the next site update." : error.message);
   return data === true;
 }
+
+/* ---------------- two scores: Verified (Discord members) and Open-Vote (members + visitors) ----------------
+ * Visitors rate without signing in; their votes only count toward the Open-Vote score.
+ * Until the database update that adds the Open-Vote columns is run, pages ask for the old columns only. */
+export const SCORE_COLS = "id,console,title,votes,average";
+let openProbe = null;
+export function hasOpenScores() {
+  if (!openProbe) openProbe = sb.from("game_scores").select("id,open_votes").limit(1).then((r) => !r.error, () => false);
+  return openProbe;
+}
+export async function scoreCols(base) { return (base || SCORE_COLS) + ((await hasOpenScores()) ? ",open_votes,open_average,visitor_votes" : ""); }
+export const fmtScore = (avg, votes) => votes > 0 ? Number(avg).toFixed(1) : "–";
+/* the two scores side by side, for cards and lists; null when the Open-Vote columns aren't there yet */
+export function scorePair(g, compact) {
+  if (g.open_votes === undefined) return null;
+  const v = (n) => n === 1 ? "1 vote" : Number(n || 0).toLocaleString() + " votes";
+  const pill = (cls, icon, label, avg, n, tip) => el("span", { class: "rop-sc rop-sc--" + cls, title: tip },
+    el("span", { class: "rop-sc__i", "aria-hidden": "true", text: icon }), el("span", { class: "rop-sc__l", text: label }),
+    el("b", { text: fmtScore(avg, n) }), compact ? null : el("span", { class: "rop-sc__n", text: v(n) }));
+  return el("span", { class: "rop-scores" + (compact ? " rop-scores--c" : "") },
+    pill("v", "✔", "Verified", g.average, g.votes, "Verified Review Score: Discord members only (" + v(g.votes) + ")"),
+    pill("o", "🌐", "Open-Vote", g.open_average, g.open_votes, "Open-Vote Review Score: members and visitors together (" + v(g.open_votes) + ", " + v(g.visitor_votes) + " from visitors)"));
+}
+/* this browser's own visitor ratings: Map(game id -> stars) */
+export async function guestRatings(ids) {
+  const out = new Map(), k = visitorKey();
+  if (!k || !ids.length) return out;
+  try { const { data } = await sb.rpc("guest_my_ratings", { p_ids: ids, p_key: k }); for (const x of data || []) out.set(x.game_id, x.stars); } catch (e) {}
+  return out;
+}
+/* set (0-5) or clear (null) this browser's visitor rating; throws with a readable message */
+export async function guestRate(id, stars) {
+  const k = visitorKey();
+  if (!k) throw new Error("Your browser is blocking storage, so visitor ratings can't be saved.");
+  const { error } = await sb.rpc("guest_rate", { p_game: id, p_stars: stars, p_key: k });
+  if (error) throw new Error(/guest_rate|function|schema cache/i.test(error.message) ? "Visitor ratings switch on with the next site update." : error.message);
+}
+export const VISITOR_NOTE = "Visitor vote: counts toward the Open-Vote score. Join the Discord to make it Verified.";

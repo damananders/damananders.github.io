@@ -2,7 +2,7 @@
  * Scores, votes, hearts, reviews and backlog counts come live from the database; facts from the static info cards
  * (with the owner's corrections on top). The better number in each row is highlighted.
  */
-import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName } from "./games.common.js?v=12";
+import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols } from "./games.common.js?v=13";
 
 const root = $("cmp-root");
 const qs = new URLSearchParams(location.search);
@@ -11,7 +11,7 @@ const pick = { a: (qs.get("a") || "").slice(0, 160), b: (qs.get("b") || "").slic
 async function load(id) {
   if (!id) return null;
   const [g, base, fix, h, bl, rv] = await Promise.all([
-    sb.from("game_scores").select("id,console,title,votes,average").eq("id", id).maybeSingle(),
+    scoreCols().then((c) => sb.from("game_scores").select(c).eq("id", id).maybeSingle()),
     gameInfo(id),
     sb.from("game_info_fix").select("data").eq("game_id", id).maybeSingle(),
     sb.from("game_heart_counts").select("hearts").eq("game_id", id).maybeSingle(),
@@ -59,9 +59,13 @@ function grid(A, B) {
   const num = (X, f) => (X ? f(X) : null);
   const best = (f, low) => { const a = num(A, f), b = num(B, f); if (a == null || b == null || a === b) return [false, false]; return low ? [a < b, b < a] : [a > b, b > a]; };
   const score = (X) => X.g.votes > 0 ? Number(X.g.average) : null;
+  const open = [A, B].some((X) => X && X.g.open_votes !== undefined);
   const rows = [
-    ["Score", (X) => score(X) != null ? Number(X.g.average).toFixed(2) + " / 5" : "Not rated", (X) => score(X) ?? -1],
-    ["Votes", (X) => X.g.votes.toLocaleString(), (X) => X.g.votes],
+    [open ? "✔ Verified score" : "Score", (X) => score(X) != null ? Number(X.g.average).toFixed(2) + " / 5" : "Not rated", (X) => score(X) ?? -1],
+    [open ? "Member votes" : "Votes", (X) => X.g.votes.toLocaleString(), (X) => X.g.votes],
+    ...(open ? [
+      ["🌐 Open-Vote score", (X) => X.g.open_votes > 0 ? Number(X.g.open_average).toFixed(2) + " / 5" : "Not rated", (X) => X.g.open_votes > 0 ? Number(X.g.open_average) : -1],
+      ["All votes", (X) => X.g.open_votes.toLocaleString() + " (" + (X.g.visitor_votes || 0).toLocaleString() + " visitors)", (X) => X.g.open_votes]] : []),
     ["Reviews", (X) => X.reviews.toLocaleString(), (X) => X.reviews],
     ["Hearts", (X) => X.hearts.toLocaleString(), (X) => X.hearts],
     ["Beaten by", (X) => X.bl ? X.bl.beaten + " members" : "–", (X) => X.bl ? X.bl.beaten : -1],

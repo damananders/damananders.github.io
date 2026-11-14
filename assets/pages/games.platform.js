@@ -2,7 +2,7 @@
  * Without ?p= it lists every platform by family (optionally one family with ?f=). With ?p= it shows that platform's
  * numbers, its own leaderboard (top rated, most voted), its top raters, recent reviews, a random pick and browsing.
  */
-import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS } from "./games.common.js?v=12";
+import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores } from "./games.common.js?v=13";
 
 const qs = new URLSearchParams(location.search);
 const pid = qs.get("p") || "", fam = qs.get("f") || "";
@@ -66,14 +66,20 @@ async function hub(p) {
     ...PLATFORMS.filter((x) => x.fam === p.fam).map((x) => el("a", { class: x.id === p.id ? "is-on" : null, href: platformUrl(x.id), "aria-current": x.id === p.id ? "page" : null, text: x.name })),
     el("a", { href: "/games/platform/", text: "All platforms →" }));
   const box = (title) => el("section", { class: "pf-card" }, el("h2", { class: "gm-head", text: title }), el("p", { class: "gm-empty", text: "Loading…" }));
-  const top = box("Top rated on " + p.id), most = box("Most voted"), raters = box("Top " + p.id + " raters"), recent = box("Latest " + p.id + " reviews");
-  root.replaceChildren(hero, el("div", { style: "margin-top:12px" }, sibs), el("div", { class: "ph-cols" }, top, most, raters, recent));
+  const top = box("Top rated on " + p.id + " · Verified"), openTop = box("Top rated on " + p.id + " · Open-Vote"), most = box("Most voted"), raters = box("Top " + p.id + " raters"), recent = box("Latest " + p.id + " reviews");
+  root.replaceChildren(hero, el("div", { style: "margin-top:12px" }, sibs), el("div", { class: "ph-cols" }, top, openTop, most, raters, recent));
 
   const gameRow = (g, tail) => el("li", null, g.votes > 0 ? el("span", { class: "gm-mood rop-chip--" + Math.round(g.average), title: CHIP_WORD[Math.round(g.average)] }, chipSvg(Math.round(g.average))) : null,
     el("a", { href: gameUrl(g.id), text: g.title }), el("span", { class: "gm-note", text: tail(g) }));
   const fill = (b, rows, make, empty) => { b.lastChild.replaceWith(rows.length ? el("ol", { class: "ph-top" }, ...rows.map(make)) : el("p", { class: "gm-note", text: empty })); };
   sb.from("game_scores").select("id,title,votes,average").eq("console", p.id).gt("votes", 0).order("average", { ascending: false }).order("votes", { ascending: false }).limit(10)
     .then(({ data }) => fill(top, data || [], (g) => gameRow(g, (g) => Number(g.average).toFixed(1) + " / 5"), "Nothing rated on " + p.id + " yet. Be the first."));
+  hasOpenScores().then((ok) => {
+    if (!ok) { openTop.remove(); top.querySelector("h2").textContent = "Top rated on " + p.id; return; }
+    sb.from("game_scores").select("id,title,open_votes,open_average").eq("console", p.id).gt("open_votes", 0).order("open_average", { ascending: false }).order("open_votes", { ascending: false }).limit(10)
+      .then(({ data }) => fill(openTop, (data || []).map((g) => ({ id: g.id, title: g.title, votes: g.open_votes, average: g.open_average })),
+        (g) => gameRow(g, (g) => Number(g.average).toFixed(1) + " / 5 · " + fmt(g.votes) + "v"), "No votes on " + p.id + " yet. Anyone can vote, no sign-in needed."));
+  });
   sb.from("game_scores").select("id,title,votes,average").eq("console", p.id).gt("votes", 0).order("votes", { ascending: false }).limit(10)
     .then(({ data }) => fill(most, data || [], (g) => gameRow(g, (g) => fmt(g.votes) + " votes"), "No votes yet."));
   sb.rpc("platform_top_raters", { p_console: p.id, p_limit: 10 }).then(({ data, error }) => {
