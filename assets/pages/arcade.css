@@ -1,15 +1,15 @@
 /* pages/arcade.css — the standalone Arcade page.
- * The two games mount into .nf-arcade and are themselves styled by 404.css (prefix nf-).
+ * The games mount into .nf-arcade and are styled by /assets/arcade/kit.css (prefix ak-).
  * This file only lays out the page around them. Prefix ac-arc- to stay clear of the AndersCraft ac- page. */
 
 .ac-arc-hero{text-align:center}
 .ac-arc-hero .lead{max-width:56ch;margin-left:auto;margin-right:auto}
 
-.nf-arcade{max-width:640px;margin:14px auto 0}
-.nf-arcade .nf-game{margin-top:16px}
+.nf-arcade{max-width:1000px;margin:14px auto 0}
+.nf-arcade .ak{margin-top:12px}
 
 /* a small footer note row of what's inside */
-.ac-arc-tips{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:center;margin:22px auto 0;max-width:640px;
+.ac-arc-tips{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:center;margin:22px auto 0;max-width:1000px;
   color:var(--muted);font-size:.9rem}
 .ac-arc-tips b{color:var(--text);font-family:var(--display,inherit)}
 
