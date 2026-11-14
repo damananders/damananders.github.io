@@ -142,11 +142,26 @@
     if (!t) return false;
     got[id] = Date.now(); Site.store.set("trophies", got); paintCup();
     queue.push(t); setTimeout(nextPop, 350);
+    if (Site.emit) Site.emit("trophy:earned", { id: id, at: got[id] });   /* cross-device sync (assets/sync.js) listens */
     if (id === "all") setTimeout(celebrate, 500);
     if (id !== "all" && !t.special && !got.all && count() === CORE.length - 1) setTimeout(function () { award("all"); }, 600);
     return true;
   }
   Site.trophy = award;
+  /* Cross-device sync hooks (assets/sync.js). merge() folds in trophies earned on another device with no toasts,
+     keeping the earliest timestamp per trophy; it never removes one. all() hands back the current set to push up. */
+  Site.trophy.all = function () { return got; };
+  Site.trophy.merge = function (remote) {
+    if (!remote || typeof remote !== "object") return got;
+    var changed = false;
+    Object.keys(remote).forEach(function (id) {
+      var ts = +remote[id] || 0; if (!ts) return;
+      if (!got[id]) { got[id] = ts; changed = true; }
+      else if (ts < got[id]) { got[id] = ts; changed = true; }
+    });
+    if (changed) { Site.store.set("trophies", got); paintCup(); }
+    return got;
+  };
 
   function openList() {
     var list = el("ul", { class: "pl-list" });
