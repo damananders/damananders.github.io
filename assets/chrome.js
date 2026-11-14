@@ -500,17 +500,18 @@
    * The private pages are deliberately not listed, and the résumé is left out at the owner's request (the footer's hire link leads there). features.navMenu = false removes it.
    * ==================================================================================================== */
   var PAGES = [
-    ["hub", "/", "Home"], ["anyps", "/anyps/", "AnyPS"], ["anderscraft", "/anderscraft/", "AndersCraft"],
-    ["games", "/games/", "Rate-O-Pedia"], ["forum", "/games/forum/", "Forums"],
-    ["links", "/links/", "Links I Like"], ["stream", "/stream/", "Stream"],
-    ["discord", "/discord/", "Discord"], ["arcade", "/arcade/", "Arcade"],
-    ["uses", "/uses/", "Uses"], ["changelog", "/changelog/", "What's New"]
+    ["hub", "/", "Home", "Back to the hub"], ["anyps", "/anyps/", "AnyPS", "The PlayStation launcher"], ["anderscraft", "/anderscraft/", "AndersCraft", "Private WoW server"],
+    ["games", "/games/", "Rate-O-Pedia", "Rate & review games"], ["forum", "/games/forum/", "Forums", "Talk games & projects"],
+    ["links", "/links/", "Links I Like", "Sites I actually use"], ["stream", "/stream/", "Stream", "Watch me live"],
+    ["discord", "/discord/", "Discord", "Join the community"], ["arcade", "/arcade/", "Arcade", "Little browser games"],
+    ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"]
   ];
   /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from
      the middle on a ring, each an ordinary link (click or Enter to visit). Animated, colour-accented, and
      drivable by mouse, keyboard (Tab, or arrows to step around the ring) or a controller. The dim backdrop,
      Esc, or the centre button close it. Reduced motion keeps it, just without the fly-out. */
   var RAD_ACCENTS = ["#cd4257", "#3d8bff", "#ff7a1f", "#36d39a", "#c77dff", "#1ec5b3", "#f0c23a", "#ff6076", "#8c5aff", "#2fbf71"];
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   Site.ready(function () {
     if (!feat("navMenu") || !nav) return;
     var here = Site.page, open = false, closing = 0;
@@ -528,17 +529,62 @@
       svg('<path d="M6 6l12 12M18 6 6 18"/>'));
     wheel.appendChild(center);
     var N = PAGES.length, nodes = [];
+    /* Lay the cards on a loose ring. Each gets unit offsets (--x,--y scaled by the ring radius in CSS),
+       a parallax depth, a small idle-float delay and a gentle base lean, so they feel like they drift free. */
     PAGES.forEach(function (p, i) {
       var cur = exact ? p[1] === path : p[0] === here;
-      var ang = i * (360 / N);
-      var a = el("a", { href: p[1], class: "ch-rad__node" + (cur ? " is-current" : ""), role: "menuitem",
-        "aria-current": cur ? "page" : null, style: { "--a": ang + "deg", "--d": (i * 34) + "ms", "--ac": RAD_ACCENTS[i % RAD_ACCENTS.length] } },
-        el("span", { class: "ch-rad__t", text: p[2] }));
-      wheel.appendChild(a); nodes.push(a);
+      /* two loose rings so the wide cards never crowd: 7 on the outer ring, the rest tucked inside */
+      var OUT = 7, inner = i >= OUT, cnt = inner ? (N - OUT) : OUT, k = inner ? i - OUT : i;
+      var ang = -Math.PI / 2 + (k / cnt) * Math.PI * 2 + (inner ? Math.PI / (N - OUT) : 0);
+      var rad = inner ? 0.6 : 1;
+      var x = Math.cos(ang) * rad, y = Math.sin(ang) * rad;
+      var depth = 7 + ((i * 37) % 13);                        /* 7..19px of parallax travel */
+      var rot = (Math.sin(i * 1.7) * 3).toFixed(2);           /* base lean */
+      var card = el("a", { href: p[1], class: "ch-rad__card" + (cur ? " is-current" : ""), role: "menuitem",
+        "aria-current": cur ? "page" : null,
+        style: { "--x": x.toFixed(3), "--y": y.toFixed(3), "--d": (i * 42) + "ms", "--dp": depth + "px",
+                 "--rot": rot + "deg", "--fd": (i * 0.41).toFixed(2) + "s", "--ac": RAD_ACCENTS[i % RAD_ACCENTS.length] } },
+        el("span", { class: "ch-rad__float" },
+          el("span", { class: "ch-rad__in" },
+            el("span", { class: "ch-rad__dot", "aria-hidden": "true" }),
+            el("span", { class: "ch-rad__txt" },
+              el("span", { class: "ch-rad__t", text: p[2] }),
+              el("span", { class: "ch-rad__s", text: p[3] || "" })),
+            el("span", { class: "ch-rad__glare", "aria-hidden": "true" }))));
+      /* per-card 3D tilt + glare follow (mouse only) — the AnyPS-card feel */
+      var inEl = card.querySelector(".ch-rad__in");
+      function tilt(e) {
+        if (e.pointerType && e.pointerType !== "mouse") return;
+        if (Site.reducedMotion) return;
+        var r = inEl.getBoundingClientRect(); if (r.width < 8) return;
+        var gx = clamp((e.clientX - r.left) / r.width, 0, 1), gy = clamp((e.clientY - r.top) / r.height, 0, 1);
+        inEl.style.setProperty("--tx", ((gx - 0.5) * 11).toFixed(2) + "deg");
+        inEl.style.setProperty("--ty", (-(gy - 0.5) * 9).toFixed(2) + "deg");
+        inEl.style.setProperty("--gx", (gx * 100).toFixed(1) + "%");
+        inEl.style.setProperty("--gy", (gy * 100).toFixed(1) + "%");
+      }
+      function untilt() { ["--tx", "--ty"].forEach(function (k) { inEl.style.removeProperty(k); }); }
+      card.addEventListener("pointermove", tilt, { passive: true });
+      card.addEventListener("pointerleave", untilt);
+      card.addEventListener("pointercancel", untilt);
+      wheel.appendChild(card); nodes.push(card);
     });
     var scrim = el("div", { class: "ch-rad__scrim" });
     var overlay = el("div", { class: "ch-radial", id: "ch-radial", hidden: true }, scrim, wheel);
     (document.body || document.documentElement).appendChild(overlay);
+
+    /* global parallax: the whole constellation leans toward the cursor */
+    var mqFine = window.matchMedia ? matchMedia("(pointer:fine)") : { matches: true }, rafP = 0;
+    overlay.addEventListener("pointermove", function (e) {
+      if (!open || !mqFine.matches || Site.reducedMotion) return;
+      var px = clamp(e.clientX / (window.innerWidth || 1) - 0.5, -0.5, 0.5);
+      var py = clamp(e.clientY / (window.innerHeight || 1) - 0.5, -0.5, 0.5);
+      if (rafP) return;
+      rafP = requestAnimationFrame(function () {
+        rafP = 0; wheel.style.setProperty("--px", px.toFixed(3)); wheel.style.setProperty("--py", py.toFixed(3));
+      });
+    }, { passive: true });
+    overlay.addEventListener("pointerleave", function () { wheel.style.setProperty("--px", 0); wheel.style.setProperty("--py", 0); });
 
     function focusables() { return [center].concat(nodes); }
     function set(on) {
