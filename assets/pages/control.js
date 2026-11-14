@@ -180,6 +180,7 @@
     ["content", "Content", "Headline, support, pages and résumé", '<path d="M4 5h16M4 10h16M4 15h10M4 20h7"/>', "sections"],
     ["links", "Links I Like", "The ranked list on /links/", '<path d="M9.5 13.5a4 4 0 0 0 5.7.3l2.5-2.5a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14.5 10.5a4 4 0 0 0-5.7-.3l-2.5 2.5a4 4 0 0 0 5.7 5.7l1.4-1.4"/>', "links"],
     ["social", "Social & counting", "Channels, Twitch, Discord, analytics", '<path d="M4 11a8 8 0 0 1 8-8M4 11a8 8 0 0 0 8 8M4 11h16"/><circle cx="12" cy="11" r="8"/>', "sections"],
+    ["users", "Users", "Members, moderation and bans", '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6.1M17.5 19a5.5 5.5 0 0 0-3-4.9"/>', "users"],
     ["features", "Features", "Turn any part of the site on or off", '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><path d="M5 16h4M15 8h4"/>', "sections"],
     ["secrets", "Secrets", "Every cheat code, for reference", '<circle cx="9" cy="12" r="4"/><path d="M13 12h8M18 12v3M15 12v2"/>', "cheats"],
     ["advanced", "Advanced", "Raw settings and this browser", '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>', "advanced"],
@@ -274,6 +275,7 @@
     if (!c) return;
     if (c[4] === "sections") drawSections(content, cur);
     else if (c[4] === "links") drawLinks(content);
+    else if (c[4] === "users") drawUsers(content);
     else if (c[4] === "cheats") drawCheats(content);
     else if (c[4] === "advanced") drawAdvanced(content);
     else if (c[4] === "security") drawSecurity(content);
@@ -507,6 +509,159 @@
       });
     });
     return el("div", { class: "cp-nums" }, el("label", { class: "cp-field" }, el("span", { text: "Visits from the site" }), c), el("label", { class: "cp-field" }, el("span", { text: "Public points" }), sc), b, msg);
+  }
+
+  /* ---------- folder: users (Rate-O-Pedia moderation) ----------
+     The panel is only the front end. Every action below runs as a server RPC that re-checks the admin session
+     (public.site_admin_session) and mutates Rate-O-Pedia's member tables; mutes, kicks and bans are enforced there
+     (RLS on the posting paths) so they hold even if someone skips this page. RPC names live in MOD so they are easy
+     to re-point if the Rate-O-Pedia side finalizes different ones. Until that SQL is run, the list says so. */
+  var MOD = {
+    list: "site_admin_member_list", force: "site_admin_member_force_name", mute: "site_admin_member_mute",
+    kick: "site_admin_member_kick", ban: "site_admin_member_ban", reset: "site_admin_member_reset",
+    wipe: "site_admin_member_wipe", banlist: "site_admin_banlist"
+  };
+  var mQuery = "", mOpen = {}, mUsers = null;
+  var WIPES = [["reviews", "Reviews"], ["comments", "Comments"], ["posts", "Posts"], ["ratings", "Ratings"], ["lists", "Lists"], ["wall", "Wall"], ["media", "Media"], ["reactions", "Reactions"], ["all", "Everything"]];
+  var KICKS = [["1h", "1 hour"], ["1d", "1 day"], ["3d", "3 days"], ["1w", "1 week"], ["1mo", "1 month"]];
+  function kickUntil(code) { var ms = { "1h": 36e5, "1d": 864e5, "3d": 3 * 864e5, "1w": 7 * 864e5, "1mo": 30 * 864e5 }[code] || 864e5; return new Date(Date.now() + ms).toISOString(); }
+  function when(s) { if (!s) return ""; try { var d = new Date(s); return isNaN(d) ? String(s) : d.toLocaleString([], { dateStyle: "medium", timeStyle: "short" }); } catch (e) { return String(s); } }
+  function isKicked(u) { return u.kicked_until && new Date(u.kicked_until).getTime() > Date.now(); }
+  function sure(btn, label, run) {
+    btn.addEventListener("click", function () {
+      if (btn.getAttribute("data-sure") !== "1") { btn.setAttribute("data-sure", "1"); btn.textContent = label; setTimeout(function () { if (btn.getAttribute("data-sure") === "1") { btn.removeAttribute("data-sure"); btn.textContent = btn.getAttribute("data-label"); } }, 4000); return; }
+      btn.removeAttribute("data-sure"); btn.textContent = btn.getAttribute("data-label"); run();
+    });
+  }
+
+  function drawUsers(p) {
+    p.textContent = "";
+    p.appendChild(el("h2", { class: "cp-pane__h", text: "Users" }));
+    p.appendChild(el("p", { class: "cp-fine", text: "Everyone verified through Discord on Rate-O-Pedia. Search, then open a member to moderate them. Mutes, kicks and bans are enforced on the server, so they hold even outside this panel." }));
+    var si = el("input", { type: "search", class: "cp-search", placeholder: "Search members by name or handle…", value: mQuery, "aria-label": "Search members", autocomplete: "off" });
+    var refresh = el("button", { type: "button", class: "cp-mini", text: "Refresh" });
+    var status = el("span", { class: "cp-msg", role: "status", "aria-live": "polite" });
+    var listWrap = el("div", { class: "cp-users" });
+    var banWrap = el("div", { class: "cp-banlist" });
+    var ctx = { listWrap: listWrap, banWrap: banWrap, status: status };
+    var t;
+    si.addEventListener("input", function () { clearTimeout(t); mQuery = si.value; t = setTimeout(function () { loadMembers(ctx); }, 300); });
+    refresh.addEventListener("click", function () { loadMembers(ctx); loadBanlist(ctx); });
+    p.appendChild(el("div", { class: "cp-urow" }, el("div", { class: "cp-search__wrap" }, Site.svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>'), si), refresh, status));
+    p.appendChild(listWrap);
+    p.appendChild(el("h3", { class: "cp-h3", text: "Ban list" }));
+    p.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Permanently banned members. Unban to let them back in." }));
+    p.appendChild(banWrap);
+    loadMembers(ctx); loadBanlist(ctx);
+  }
+  function loadMembers(ctx) {
+    ctx.status.textContent = "Loading…";
+    rpc(MOD.list, { p_token: token, p_q: mQuery, p_limit: 100, p_offset: 0 }).then(function (r) {
+      ctx.listWrap.textContent = "";
+      if (r && r.ok && Array.isArray(r.members)) {
+        mUsers = r.members; ctx.status.textContent = r.total ? r.members.length + " of " + r.total : "";
+        if (!r.members.length) { ctx.listWrap.appendChild(el("p", { class: "cp-empty", text: mQuery ? "No members match that search." : "No verified members yet." })); return; }
+        r.members.forEach(function (u) { ctx.listWrap.appendChild(memberRow(u, ctx)); });
+      } else {
+        ctx.status.textContent = "";
+        ctx.listWrap.appendChild(el("p", { class: "cp-empty", text: r && r.error === "unset" ? "User moderation isn't switched on yet. Run the latest Rate-O-Pedia moderation SQL (25_member_control.sql) in Supabase, then press Refresh." : why(r) }));
+      }
+    });
+  }
+  function loadBanlist(ctx) {
+    rpc(MOD.banlist, { p_token: token }).then(function (r) {
+      ctx.banWrap.textContent = "";
+      if (!r || !r.ok || !Array.isArray(r.banned)) { if (r && r.error === "unset") return; ctx.banWrap.appendChild(el("p", { class: "cp-fine", text: why(r) })); return; }
+      if (!r.banned.length) { ctx.banWrap.appendChild(el("p", { class: "cp-fine", text: "No one is banned." })); return; }
+      r.banned.forEach(function (u) {
+        var un = el("button", { type: "button", class: "cp-mini", text: "Unban" });
+        un.addEventListener("click", function () { un.disabled = true; rpc(MOD.ban, { p_token: token, p_handle: u.handle, p_on: false, p_reason: "" }).then(function (r2) { if (r2 && r2.ok) { loadBanlist(ctx); loadMembers(ctx); } else { un.disabled = false; ctx.status.textContent = why(r2); } }); });
+        ctx.banWrap.appendChild(el("div", { class: "cp-ban" }, el("strong", { text: u.name || u.handle }), el("span", { class: "cp-fine", text: "@" + u.handle + (u.ban_reason ? " · " + u.ban_reason : "") }), un));
+      });
+    });
+  }
+  function act(ctx, name, extra, onok) {
+    ctx.status.textContent = "Working…";
+    var body = { p_token: token }; for (var k in extra) body[k] = extra[k];
+    rpc(name, body).then(function (r) {
+      if (r && r.ok) { ctx.status.textContent = "Done."; Site.sfx("toggle"); if (onok) onok(r); loadMembers(ctx); loadBanlist(ctx); }
+      else { ctx.status.textContent = why(r); Site.sfx("error"); }
+    });
+  }
+  function memberRow(u, ctx) {
+    var label = u.forced_name || u.name || u.discord_name || u.handle;
+    var chips = el("span", { class: "cp-user__chips" });
+    if (u.is_owner) chips.appendChild(el("span", { class: "cp-chip cp-chip--owner", text: "Owner" }));
+    else if (u.is_staff) chips.appendChild(el("span", { class: "cp-chip cp-chip--staff", text: "Staff" }));
+    if (u.muted) chips.appendChild(el("span", { class: "cp-chip cp-chip--mute", text: "Muted" }));
+    if (isKicked(u)) chips.appendChild(el("span", { class: "cp-chip cp-chip--kick", text: "Kicked" }));
+    if (u.banned) chips.appendChild(el("span", { class: "cp-chip cp-chip--ban", text: "Banned" }));
+    var av = u.avatar ? el("img", { class: "cp-user__av", src: u.avatar, alt: "", loading: "lazy" }) : el("span", { class: "cp-user__av cp-user__av--none", "aria-hidden": "true", text: (label || "?").slice(0, 1).toUpperCase() });
+    var nm = el("strong", { class: "cp-user__name", text: label });
+    var meta = el("span", { class: "cp-user__meta", text: "@" + u.handle + (u.forced_name ? " · name forced" : "") + " · " + ((u.reviews || 0) + " reviews, " + (u.comments || 0) + " comments") });
+    var sum = el("summary", { class: "cp-user__sum" }, av, el("span", { class: "cp-user__id" }, nm, meta), chips);
+    var d = el("details", { class: "cp-user" + (u.is_owner ? " cp-user--owner" : ""), open: mOpen[u.handle] ? "" : null });
+    d.addEventListener("toggle", function () { if (d.open) mOpen[u.handle] = true; else delete mOpen[u.handle]; });
+    d.appendChild(sum);
+    d.appendChild(u.is_owner
+      ? el("div", { class: "cp-user__body" }, el("p", { class: "cp-fine", text: "This is the site owner — moderation actions don't apply." }))
+      : memberActions(u, ctx));
+    return d;
+  }
+  function memberActions(u, ctx) {
+    var box = el("div", { class: "cp-user__body" });
+
+    /* forced name */
+    var fn = el("input", { type: "text", maxlength: "40", value: u.forced_name || "", placeholder: u.name || "Display name" });
+    var fset = el("button", { type: "button", class: "cp-mini", text: "Force name" });
+    var fclr = el("button", { type: "button", class: "cp-mini", text: "Clear", disabled: u.forced_name ? null : true });
+    fset.addEventListener("click", function () { act(ctx, MOD.force, { p_handle: u.handle, p_name: fn.value.trim() }); });
+    fclr.addEventListener("click", function () { act(ctx, MOD.force, { p_handle: u.handle, p_name: "" }); });
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Forced display name" }), el("div", { class: "cp-act__row" }, fn, fset, fclr)));
+
+    /* mute */
+    var mute = el("button", { type: "button", class: "cp-mini" + (u.muted ? " is-on" : ""), text: u.muted ? "Unmute" : "Mute" });
+    mute.addEventListener("click", function () { act(ctx, MOD.mute, { p_handle: u.handle, p_on: !u.muted }); });
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Mute" + (u.muted ? " — on (no reviews, comments or posts)" : " (stops reviews, comments and posts)") }), el("div", { class: "cp-act__row" }, mute)));
+
+    /* kick (temp ban) */
+    var ksel = el("select", {}); KICKS.forEach(function (o) { ksel.appendChild(el("option", { value: o[0], text: o[1] })); });
+    var kick = el("button", { type: "button", class: "cp-mini", text: "Kick" });
+    kick.addEventListener("click", function () { act(ctx, MOD.kick, { p_handle: u.handle, p_until: kickUntil(ksel.value) }); });
+    var krow = el("div", { class: "cp-act__row" }, ksel, kick);
+    if (isKicked(u)) { var klift = el("button", { type: "button", class: "cp-mini", text: "Lift kick" }); klift.addEventListener("click", function () { act(ctx, MOD.kick, { p_handle: u.handle, p_until: null }); }); krow.appendChild(klift); }
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: isKicked(u) ? "Kick — active until " + when(u.kicked_until) : "Kick (temporary ban)" }), krow));
+
+    /* ban / unban */
+    var brow;
+    if (u.banned) {
+      var unban = el("button", { type: "button", class: "cp-mini", text: "Unban" });
+      unban.addEventListener("click", function () { act(ctx, MOD.ban, { p_handle: u.handle, p_on: false, p_reason: "" }); });
+      brow = el("div", { class: "cp-act__row" }, unban);
+    } else {
+      var reason = el("input", { type: "text", maxlength: "120", placeholder: "Reason (optional)" });
+      var ban = el("button", { type: "button", class: "cp-danger", text: "Ban", "data-label": "Ban" });
+      sure(ban, "Press again to ban", function () { act(ctx, MOD.ban, { p_handle: u.handle, p_on: true, p_reason: reason.value.trim() }); });
+      brow = el("div", { class: "cp-act__row" }, reason, ban);
+    }
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: u.banned ? "Banned" + (u.ban_reason ? " — " + u.ban_reason : "") : "Ban (permanent, goes to the ban list)" }), brow));
+
+    /* reset profile */
+    var reset = el("button", { type: "button", class: "cp-danger", text: "Reset customizations", "data-label": "Reset customizations" });
+    sure(reset, "Press again to reset", function () { act(ctx, MOD.reset, { p_handle: u.handle }); });
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Reset profile customizations (banner, colours, frames, status — for bug recovery)" }), el("div", { class: "cp-act__row" }, reset)));
+
+    /* wipe content */
+    var wrow = el("div", { class: "cp-act__row cp-act__row--wrap" });
+    WIPES.forEach(function (w) {
+      var b = el("button", { type: "button", class: "cp-danger", text: w[1], "data-label": w[1] });
+      sure(b, "Press again", function () { act(ctx, MOD.wipe, { p_handle: u.handle, p_what: w[0] }); });
+      wrow.appendChild(b);
+    });
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Wipe content (deletes it — each button is its own trigger)" }), wrow));
+
+    box.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Verified " + (when(u.verified_since) || "—") + (u.last_seen ? " · last seen " + when(u.last_seen) : "") }));
+    return box;
   }
 
   /* ---------- folder: secrets (cheats, read-only reference) ---------- */
