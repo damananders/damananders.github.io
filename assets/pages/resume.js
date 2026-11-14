@@ -40,6 +40,7 @@
         var card = this.closest(".rz-card"), open = card.classList.toggle("is-open");
         this.setAttribute("aria-expanded", open ? "true" : "false");
         if (Site.sfx) Site.sfx(open ? "open" : "toggle");
+        if (open && Site.emit) Site.emit("resume:card");   /* a project dropdown was opened (Due Diligence trophy) */
       });
     }
   }, "resume cards");
