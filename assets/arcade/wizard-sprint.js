@@ -6,7 +6,7 @@
  * the bag, Wiz Level, in-run challenges, rebindable controls and one whole-save record that syncs to the account
  * (newest save wins; the other is kept as a backup and the player is told).
  * Everything is drawn in code on a 640 x 360 pixel buffer and scaled up crisp. Sound is synthesised.
- * Story text in STORY / CHAT is placeholder: the director writes the final lines.
+ * Story text lives in wizard-story.js; the director edits it from the control panel's Wizard Story page.
  */
 (function () {
   "use strict";
@@ -34,43 +34,14 @@
   }
 
   /* ---------------- story (PLACEHOLDER text: the director writes the final lines) ---------------- */
-  var STORY = {
-    open: [
-      "{Name} the All-Knowing had nothing left to learn, nobody worth fearing, and nobody worth caring about. So {Name} took a nap. A long, magickal one.",
-      "SNAP.  FLASH.  BOOM.",
-      "Morning. The tomes: gone. The robes: shredded. The wands, swords and bows: missing or melted. There is a hole in the tower where the library used to be.",
-      "{Name} is wearing a sleep cap, a stained tunic and some deeply questionable skivvies. In the mud by the hole is a trail of footprints.",
-      "For the first time in centuries, {Name} is afraid. And furious. And... motivated?"
-    ],
-    clear1: [
-      "Your hat, back from a mud imp! The tracks lead on, toward a tavern.",
-      "Back home it is still raining through the roof you do not have. You hold a soggy scroll over your head. It's a start."
-    ]
-  };
-  var CHAT = {
-    early: ["I used to have SO many hats.", "Running. Me. Disgusting.", "Whoever did this is getting a strongly worded hex.", "My feet are touching MUD.", "I have not jogged since the Third Age.",
-      "These skivvies were not built for speed.", "Is this what 'cardio' is? I hate it.", "I knew everything yesterday. EVERYTHING.", "Footprints. Rude, muddy footprints.", "A nap. One nap. And THIS.",
-      "My knees are filing a complaint.", "I could have teleported. I HAD a spell for that.", "Note to self: lock the tower.", "The forest smells like... outside.", "Fresh air. Ugh."],
-    mid: ["Do imps always look this smug?", "I am sweating. Wizards do not sweat.", "That squirrel judged me. I felt it.", "Somewhere, someone is wearing my robes.", "I miss my chair.",
-      "Left foot, right foot. Riveting.", "If I find my wand I'm never putting it down.", "Who steals a whole LIBRARY?", "I had a tome for blisters. HAD.", "The audacity. The sheer audacity.",
-      "I'd turn them into a newt if I remembered how.", "Poof. Poof. Is that all I've got? Poof?", "Still got it. Sort of. A bit.", "Mud between the toes. Delightful. No.", "This is fine. I'm fine. Everything is fine."],
-    late: ["The tracks are fresher here.", "I can smell my own hat. Don't ask.", "Closer. I can feel it in my beard.", "Whoever you are, I'm RIGHT behind you.", "Getting the hang of this running thing.",
-      "Huh. I haven't thought about tax scrolls in an hour.", "Is this... am I having FUN? No. Surely not.", "Something big is up ahead. Wonderful.", "My legs have stopped screaming. Suspicious."],
-    cheer: ["Go get 'em, weird old wizard!", "Nice jammies!", "Run, wizard, run!", "Looking spry, grandpa!", "Love the cap!", "You dropped your dignity back there!", "Wooo! Mystery jogger!", "Is that the tower hermit? RUNNING?", "Knees up, old timer!", "You've got this, pyjama person!"],
-    greet: ["Morning! Don't mind the pyjamas.", "Lovely day for being robbed.", "Seen a thief? Tall? Short? Any size?", "Hello, small woodland citizen.", "Carry on. Wizard business.", "Nice fur. Very... furry.",
-      "Have you seen a library go by?", "You there! Good job existing.", "Out of the way, I'm exercising!", "I'd stop to chat, but, you know. Vengeance."],
-    greetReply: ["...okay?", "He seems nice.", "That man has no trousers.", "Wizards. Honestly.", "Should we tell someone?", "Bye, weird wizard!", "Good luck with... that!"],
-    reply: ["Uh... thanks?", "You were, though.", "Apology noted.", "A bit, yeah.", "Water under the bridge!", "Who ARE you?"],
-    five: ["Up high!", "Yes! Contact!", "Nailed it.", "Skin! Or fur! Whatever!", "Still got the reflexes.", "Best part of my day, honestly.", "Put it there!"],
-    rescue: ["You're safe. Don't make it weird.", "Fine. FINE. You're welcome.", "Out you get. No hugging.", "Freedom! Now scram.", "I'm not crying. It's forest in my eye."],
-    hit: ["Ow, my dignity.", "That's going in my diary.", "Right in the pyjamas!", "I felt that in a previous century.", "Rude!", "My everything hurts."],
-    orb: ["Ooh, that tingles. I remember tingles.", "Whispers! I love gossip.", "Yes. YES. Power. A little bit of it."],
-    grim: ["MY BOOK! ...wait, not mine. Mine now.", "A book! I remember reading.", "Finders keepers, that's the law."],
-    satchel: ["Somebody's mail is late. Too bad."],
-    boss: ["Oh, you're big. I hate that.", "Is that MY HAT?", "That is a LOT of imp."]
-  };
+  /* All story text lives in wizard-story.js (window.WizStory), where the control panel's editor can change it. */
+  var WS = window.WizStory;
+  function applyStory() { try { Site.remote().then(function (r) { WS.apply(r && r.config && r.config.wizardStory); }); } catch (e) {} }
+  applyStory();
   var lastLine = {};
-  function line(k) { var a = CHAT[k], s; do { s = pick(a); } while (a.length > 1 && s === lastLine[k]); lastLine[k] = s; return s; }
+  function line(k) { var a = WS.lines(k), s; do { s = pick(a); } while (a.length > 1 && s === lastLine[k]); lastLine[k] = s; return named(s); }
+  function named(s) { return String(s).replace(/\{Name\}/g, (S && S.wiz.name) || "The Wizard"); }
+  function txt(id) { return named(WS.first(id)); }
 
   /* ---------------- data ---------------- */
   var RAR = [
@@ -843,7 +814,7 @@
       if (f.done || Math.abs(f.x - wx) > 26) return; f.done = true;
       if (R.fiveWin > 0) { R.fiveT = 0.4; R.rem += 3; cnt("fives", 1); chEv("five", 1); sfx("five"); say(line("five")); }
       else if (Math.random() < 0.45) { say(line("cheer"), f, 2); }
-      else if (Math.random() < 0.12 && R.t - (R.sorryT || -99) > 60) { R.sorryT = R.t; cnt("sorry", 1); say("Sorry if I was ever a dick!"); f.reply = 0.9; f.rk = "reply"; }
+      else if (Math.random() < 0.12 && R.t - (R.sorryT || -99) > 60) { R.sorryT = R.t; cnt("sorry", 1); say(line("sorry")); f.reply = 0.9; f.rk = "reply"; }
       else { say(line("greet")); f.reply = 0.9; f.rk = "greetReply"; }
     });
     R.fr.forEach(function (f) { if (f.reply > 0) { f.reply -= dt; if (f.reply <= 0) say(line(f.rk || "reply"), f, 2); } });
@@ -899,9 +870,9 @@
     var res = el("div", {}, kv);
     if (R.loot.length) { var lb = el("div", { class: "wz-chips wz-loot" }); R.loot.forEach(function (it) { lb.appendChild(el("i", { class: "wz-chip is-r" + it.r, text: it.n + "  ·  " + RAR[it.r].n })); }); res.appendChild(lb); }
     MN(g, { kicker: R.mode === "story" ? "Magickal Mad Dash · The Forest Around the Tower" : "Endless · The Forest Around the Tower",
-      title: win ? "Forest Cleared" : "Flattened at " + fmt(m) + " m", sub: win ? "The Grand Mud Imp drops your hat and runs." : "You keep everything you picked up.", body: res, cls: "is-wide",
+      title: win ? "Forest Cleared" : "Flattened at " + fmt(m) + " m", sub: win ? txt("win1") : txt("lose"), body: res, cls: "is-wide",
       items: [
-        first ? { label: "Continue", cls: "is-primary", act: function () { panels(g, STORY.clear1, "After the forest", function () { g.toTitle(); }); } }
+        first ? { label: "Continue", cls: "is-primary", act: function () { panels(g, WS.lines("clear1"), "After the forest", function () { g.toTitle(); }); } }
               : { label: "Run It Again", cls: "is-primary", act: function () { startRun(g, R.mode); } },
         first ? null : { label: "Back To The Tower", act: function () { g.toTitle(); } }
       ] });
@@ -1247,7 +1218,7 @@
   function cyc(v, d, n) { return ((v + d) % n + n) % n; }
   function panels(g, lines, kicker, done, i) {
     i = i || 0;
-    MN(g, { kicker: kicker, cls: "is-wide wz-story", body: lines[i].replace(/\{Name\}/g, S.wiz.name || "The Wizard"),
+    MN(g, { kicker: kicker, cls: "is-wide wz-story", body: named(lines[i]),
       items: [{ label: i < lines.length - 1 ? "Next" : "Onward", cls: "is-primary", act: function () { if (i < lines.length - 1) panels(g, lines, kicker, done, i + 1); else done(); } }] });
   }
   var SHAPEN = ["Twig", "Skinny", "Slim", "Lean", "Average", "Sturdy", "Stout", "Hefty", "Large", "Fairly Large", "Magnificently Round"];
@@ -1300,7 +1271,7 @@
     function go(key, fn) { return function () { goStation(g, key, fn); }; }
     g.setBest(c1 ? "Forest cleared · Wiz Level " + S.lvl : "Wiz Level " + S.lvl);
     MN(g, { cls: "is-side wz-narrow wz-hub", kicker: "Wizard of the Sprint", title: (S.wiz.name || "The Wizard") + "'s Tower",
-      sub: c1 ? "Still no roof, but you have a scroll to hold over your head. The tracks lead on to a tavern (coming next)." : "Robbed, roofless and in your pyjamas. The footprints lead into the forest.", body: tiles, focus: focus,
+      sub: c1 ? txt("hub1") : txt("hub0"), body: tiles, focus: focus,
       items: [
         { label: "Prep Time", ico: "prep", sub: c1 ? "Plan a Magickal Mad Dash" : "Follow the tracks", cls: "is-primary", act: go("prep", function () { prep(g, 0); }) },
         { label: "Equipment", ico: "equip", isNew: nwN ? nwN + " NEW!" : null, sub: nwN ? nwN + " new " + (nwN > 1 ? "items" : "item") + " in the bag" : "Wear or remove your Wizard Drip", cls: S.bag.length ? "is-hot" : "", act: go("equip", function () { equip(g, 0); }) },
@@ -1484,10 +1455,11 @@
     return true;
   }
   function title(g) {
+    applyStory();
     G = g; if (R && !R.over && UI.scene === "run") { bankRun(); g.toast("Run ended. You keep what you picked up."); }
     UI.scene = "hub";
     if (conflict(g)) return;
-    if (!S.made) { creator(g, 0, function () { S.made = true; save(); UI.scene = "hub"; panels(g, STORY.open, "Wizard of the Sprint", function () { hub(g, 0); }); }); return; }
+    if (!S.made) { creator(g, 0, function () { S.made = true; save(); UI.scene = "hub"; panels(g, WS.lines("open"), "Wizard of the Sprint", function () { hub(g, 0); }); }); return; }
     hub(g, 0);
   }
 
