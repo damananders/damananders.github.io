@@ -208,7 +208,7 @@
     S.xp += Math.round(n);
     while (S.lvl < 100 && S.xp >= xpNeed(S.lvl)) {
       S.xp -= xpNeed(S.lvl); S.lvl++;
-      if (g) { g.toast("Wiz Level " + S.lvl, "gold"); if (UNLOCK[S.lvl]) g.toast("Unlocked: " + UNLOCK[S.lvl], "gold"); }
+      if (g) { sfx("lvl"); g.toast("Wiz Level " + S.lvl, "gold"); if (UNLOCK[S.lvl]) g.toast("Unlocked: " + UNLOCK[S.lvl], "gold"); }
     }
   }
   function incSlots() { return 1 + (S.lvl >= 25 ? 1 : 0) + (S.lvl >= 60 ? 1 : 0); }
@@ -284,7 +284,11 @@
         SND.ctx = new AC(); SND.master = SND.ctx.createGain(); SND.master.connect(SND.ctx.destination);
         var len = SND.ctx.sampleRate, buf = SND.ctx.createBuffer(1, len, SND.ctx.sampleRate), d = buf.getChannelData(0);
         for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-        SND.noise = buf;
+        SND.noise = buf; SND.clip = {};
+        ["item", "item-rare", "levelup", "challenge"].forEach(function (n) {          /* the recorded sounds; the synth versions cover until they load */
+          fetch("/assets/arcade/sfx/wz-" + n + ".mp3?v=1").then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
+            .then(function (ab) { return new Promise(function (ok, no) { SND.ctx.decodeAudioData(ab, ok, no); }); }).then(function (bf) { SND.clip[n] = bf; }).catch(function () {});
+        });
       }
       if (SND.ctx.state === "suspended") SND.ctx.resume();
       SND.master.gain.value = 0.5 * S.vol;
@@ -302,7 +306,15 @@
     n.buffer = SND.noise; f.type = ftype; f.frequency.setValueAtTime(f0, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
     env(gn, t, 0.005, peak, dur); n.connect(f); f.connect(gn); gn.connect(SND.master); n.start(t, Math.random() * 0.5); n.stop(t + dur + 0.05);
   }
+  function clip(n) {                                    /* plays a recorded sound; false when it isn't loaded */
+    var c = ac(); if (!c || !SND.clip || !SND.clip[n]) return false;
+    try { var s = c.createBufferSource(), gn = c.createGain(); s.buffer = SND.clip[n]; gn.gain.value = 1.5; s.connect(gn); gn.connect(SND.master); s.start(); return true; } catch (e) { return false; }
+  }
   function sfx(k) {
+    if (k === "loot" && clip("item")) return;
+    if (k === "lootBig" && clip("item-rare")) return;
+    if (k === "ch" && clip("challenge")) return;
+    if (k === "lvl") { if (!clip("levelup")) [523, 659, 784, 1047].forEach(function (f, i) { tone("square", f, 0, 0.16, 0.14, i * 0.12); }); return; }
     if (k === "jump") tone("square", 300, 520, 0.09, 0.12);
     else if (k === "jump2") { tone("square", 420, 760, 0.1, 0.12); noise("highpass", 1800, 4000, 0.12, 0.08); }
     else if (k === "land") noise("lowpass", 300, 120, 0.06, 0.12);
@@ -316,7 +328,7 @@
     else if (k === "rem") tone("sine", 1250 + Math.random() * 250, 0, 0.06, 0.07);
     else if (k === "orb") { tone("sine", 520, 1040, 0.3, 0.2); tone("sine", 780, 1560, 0.3, 0.14, 0.08); }
     else if (k === "grim") { tone("triangle", 392, 0, 0.12, 0.2); tone("triangle", 523, 0, 0.12, 0.2, 0.1); tone("triangle", 659, 0, 0.2, 0.2, 0.2); }
-    /* gear pickups: stand-ins until the real sound files are dropped in */
+    /* synth versions of the recorded pickups, used only if a file fails to load */
     else if (k === "loot") { [784, 988, 1319].forEach(function (f, i) { tone("triangle", f, 0, 0.12, 0.16, i * 0.06); }); noise("highpass", 5000, 8000, 0.1, 0.05); }
     else if (k === "lootBig") { [523, 659, 784, 1047, 1319, 1568].forEach(function (f, i) { tone("square", f, 0, 0.18, 0.13, i * 0.085); tone("sine", f * 2, 0, 0.3, 0.08, i * 0.085); }); tone("sawtooth", 98, 196, 0.5, 0.16); noise("highpass", 4000, 9000, 0.7, 0.07); }
     else if (k === "ch") { tone("square", 660, 0, 0.08, 0.12); tone("square", 990, 0, 0.14, 0.12, 0.08); }
@@ -1050,20 +1062,21 @@
     var cx = 22; cx += chip(ctx, cx, 58, "rem", fmt(R.rem), "#c3c6ff"); cx += chip(ctx, cx, 58, "orb", String(R.orbs), "#c8f6ff"); chip(ctx, cx, 58, "grim", String(R.grim), "#d9c2ff");
     if (R.st.ton > 0) { plate(ctx, 22, 102, 118, 26); bold(ctx, "Pace " + Math.round(100 + R.st.ton * S.speed) + "%", 32, 121, "700 15px " + F.mono, "#f3e6c4"); }
     if (R.boss) {
-      plate(ctx, W / 2 - 270, 16, 540, 40); bar(ctx, W / 2 - 262, 22, 524, 28, R.boss.hp / R.boss.max, "#e02a44", "rgba(0,0,0,.6)"); icoAt(ctx, "skull", W / 2 - 256, 20, 2);
-      bold(ctx, "GRAND MUD IMP", W / 2, 43, "800 18px " + SERIF, "#fff3c4", "center");
+      plate(ctx, W / 2 - 236, 16, 500, 40); bar(ctx, W / 2 - 228, 22, 484, 28, R.boss.hp / R.boss.max, "#e02a44", "rgba(0,0,0,.6)"); icoAt(ctx, "skull", W / 2 - 222, 20, 2);
+      bold(ctx, "GRAND MUD IMP", W / 2 + 14, 43, "800 18px " + SERIF, "#fff3c4", "center");
     } else if (R.mode === "story") {
-      var px0 = W / 2 - 230, pw = 460, f = clamp(R.dist / R.bossAt, 0, 1), wxp = px0 + pw * f, bobY = Math.sin(t * 3) * 2;
-      plate(ctx, px0 - 10, 52, pw + 20, 22, 11);
-      ctx.fillStyle = "#4a8f5a"; D.rr(ctx, px0, 58, Math.max(10, pw * f), 10, 5); ctx.fill(); ctx.fillStyle = "#8fd89a"; ctx.fillRect(px0 + 4, 60, Math.max(2, pw * f - 8), 2);
-      for (i = 1; i < 4; i++) { ctx.fillStyle = "rgba(232,193,90,.7)"; ctx.fillRect(px0 + pw * i / 4 - 1, 56, 2, 14); }
-      icoAt(ctx, "skull", px0 + pw - 2, 47, 2);
+      var px0 = W / 2 - 230, pw = 460, f = clamp(R.dist / R.bossAt, 0, 1), wxp = px0 + pw * f, bobY = Math.sin(t * 3) * 2, by = 80;
+      plate(ctx, px0 - 10, by - 6, pw + 44, 22, 11);
+      ctx.fillStyle = "#4a8f5a"; D.rr(ctx, px0, by, Math.max(10, pw * f), 10, 5); ctx.fill(); ctx.fillStyle = "#8fd89a"; ctx.fillRect(px0 + 4, by + 2, Math.max(2, pw * f - 8), 2);
+      for (i = 1; i < 4; i++) { ctx.fillStyle = "rgba(232,193,90,.7)"; ctx.fillRect(px0 + pw * i / 4 - 1, by - 2, 2, 14); }
+      icoAt(ctx, "skull", px0 + pw + 4, by - 11, 2);
       /* the little wizard on a cloud marks how far along you are */
-      wizSprite(R.look, "sit", t); ctx.imageSmoothingEnabled = false; ctx.drawImage(WC, Math.round(wxp - 21), Math.round(4 + bobY), 38, 53);
-      ctx.fillStyle = "rgba(16,9,5,.5)"; [[-20, 53, 42, 12], [-12, 46, 28, 12]].forEach(function (c) { D.rr(ctx, wxp + c[0] - 2, c[1] + bobY - 1, c[2] + 4, c[3] + 3, 7); ctx.fill(); });
-      ctx.fillStyle = "#ffffff"; [[-20, 53, 42, 12], [-12, 46, 28, 12], [-26, 57, 16, 9], [12, 57, 16, 9]].forEach(function (c) { D.rr(ctx, wxp + c[0], c[1] + bobY, c[2], c[3], 5); ctx.fill(); });
-      ctx.fillStyle = "#d8e6f0"; D.rr(ctx, wxp - 16, 62 + bobY, 34, 4, 2); ctx.fill();
-      plate(ctx, W / 2 - 150, 80, 300, 26); bold(ctx, "The Forest Around the Tower", W / 2, 99, "700 15px " + SERIF, "#f3e6c4", "center");
+      wizSprite(R.look, "sit", t); ctx.imageSmoothingEnabled = false; ctx.drawImage(WC, Math.round(wxp - 32), Math.round(by - 84 + bobY), 64, 88);
+      var cl = [[-26, -6, 54, 15], [-16, -14, 36, 14], [-34, 0, 20, 11], [16, 0, 22, 11]];
+      ctx.fillStyle = "rgba(16,9,5,.55)"; cl.forEach(function (c) { D.rr(ctx, wxp + c[0] - 2, by + c[1] + bobY - 2, c[2] + 4, c[3] + 5, 8); ctx.fill(); });
+      ctx.fillStyle = "#ffffff"; cl.forEach(function (c) { D.rr(ctx, wxp + c[0], by + c[1] + bobY, c[2], c[3], 6); ctx.fill(); });
+      ctx.fillStyle = "#d3e3ee"; D.rr(ctx, wxp - 22, by + 6 + bobY, 44, 4, 2); ctx.fill();
+      plate(ctx, W / 2 - 150, by + 22, 300, 26); bold(ctx, "The Forest Around the Tower", W / 2, by + 41, "700 15px " + SERIF, "#f3e6c4", "center");
     } else { plate(ctx, W / 2 - 150, 18, 300, 36); icoAt(ctx, "skull", W / 2 - 142, 20, 2); bold(ctx, "Endless · boss in " + Math.max(0, Math.ceil((R.bossAt - R.dist) / speedNow())) + "s", W / 2 + 14, 43, "800 17px " + F.mono, "#fff3c4", "center"); }
     /* top right: distance, level and the challenges in play */
     ctx.font = "800 30px " + F.display; var dw = Math.max(150, ctx.measureText(fmt(m) + " m").width + 36);
@@ -1071,8 +1084,8 @@
     plate(ctx, W - 24 - 132, 68, 132, 28); bold(ctx, "Wiz Lv " + S.lvl, W - 38, 88, "800 16px " + F.mono, "#ffe58a", "right");
     S.ch.forEach(function (c, j) {
       var d = chDef(c.id), y = 104 + j * 32, fr = clamp(c.p / d.need, 0, 1);
-      plate(ctx, W - 24 - 300, y, 300, 28); ctx.fillStyle = "rgba(104,211,145,.28)"; D.rr(ctx, W - 322, y + 2, 296 * fr, 24, 5); ctx.fill();
-      bold(ctx, d.n, W - 312, y + 20, "700 14px " + F.mono, "#f3e6c4"); bold(ctx, Math.min(d.need, Math.floor(c.p)) + " / " + d.need, W - 36, y + 20, "800 15px " + F.mono, "#9ae6b4", "right");
+      plate(ctx, W - 24 - 360, y, 360, 28); ctx.fillStyle = "rgba(104,211,145,.28)"; D.rr(ctx, W - 382, y + 2, 356 * fr, 24, 5); ctx.fill();
+      bold(ctx, d.n, W - 372, y + 20, "700 14px " + F.mono, "#f3e6c4"); bold(ctx, Math.min(d.need, Math.floor(c.p)) + " / " + d.need, W - 36, y + 20, "800 15px " + F.mono, "#9ae6b4", "right");
     });
     /* the spell rack: one wand per Incantation */
     var eqd = S.incEq.slice(0, incSlots());
@@ -1213,7 +1226,7 @@
   function slotIco(k) { return /^sim/.test(k) ? "sim" : k === "back" ? "cape" : k; }
   function itemChips(it, extra) {
     var c = [[RAR[it.r].n, "r" + it.r], [slotDef(it.s).n, ""], ["Lv " + it.il, ""]];
-    if (it.l.length) it.l.forEach(function (l) { c.push(["+" + l[1] + STAT[l[0]].u + " " + STAT[l[0]].d, "st"]); }); else c.push(["No stats", "dim"]);
+    if (it.l.length) it.l.forEach(function (l) { var u = STAT[l[0]].u, dn = STAT[l[0]].d; c.push(["+" + l[1] + u + (u.trim() === dn ? "" : " " + dn), "st"]); }); else c.push(["No stats", "dim"]);
     return c.concat(extra || []);
   }
   function MN(g, spec) {                                  /* g.menu, plus an icon, stat chips and a NEW tag on any item that asks */

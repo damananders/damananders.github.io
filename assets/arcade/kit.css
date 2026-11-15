@@ -179,7 +179,7 @@
 
 /* ---- Wizard of the Sprint: carved wood, gilt and parchment on every menu ---- */
 .ak-stage[data-game="wizard-sprint"]{--wz-gold:#e8c15a;--wz-ink:#2a1a0e;--wz-serif:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",Georgia,serif}
-.ak-stage[data-game="wizard-sprint"] .ak-toasts{top:17cqh}
+.ak-stage[data-game="wizard-sprint"] .ak-toasts{top:19.5cqh}
 .ak-stage[data-game="wizard-sprint"] .ak-toast{font-family:var(--wz-serif);background:rgba(34,20,12,.92);border:2px solid var(--wz-gold);color:#fff3c4;border-radius:.4em}
 .ak-stage[data-game="wizard-sprint"] .ak-panel{color:#f6ecd0;border-radius:.45em;border:3px double var(--wz-gold);padding:1.2em 1.3em 1.3em;
   background:repeating-linear-gradient(92deg,rgba(255,220,170,.035) 0 3px,rgba(0,0,0,.05) 3px 9px),linear-gradient(180deg,rgba(66,41,24,.97),rgba(34,20,12,.98));
