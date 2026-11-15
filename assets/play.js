@@ -65,6 +65,25 @@
     { id: "streak",    name: "On a Roll",         desc: "Came back three days in a row.", secret: true },
     { id: "miss5",     name: "Unfivetunately",    desc: "Typed five wrong codes into the hidden door.", secret: true },
     { id: "nightowl",  name: "Night Owl",         desc: "Visited between midnight and four in the morning.", secret: true },
+    { id: "warcraft",  name: "Realm Keeper",      desc: "Found the AndersCraft client stashed in the Locker.", secret: true },
+    { id: "offsite",   name: "Off-Site Backup",   desc: "Grabbed one of the backups from the Locker.", secret: true },
+    { id: "twodoors",  name: "Lockpick",          desc: "Got through both hidden doors — the Vault and the Locker.", secret: true },
+    { id: "arcade",    name: "Insert Coin",       desc: "Dropped by the arcade." },
+    { id: "support",   name: "Keeping the Lights On", desc: "Stopped by the support page." },
+    { id: "clubhouse", name: "Found the Clubhouse", desc: "Visited the Discord page." },
+    { id: "seeyou",    name: "See You There",     desc: "Followed the invite to the Discord server." },
+    { id: "halfway",   name: "Halfway There",     desc: "Earned half of all the trophies." },
+    { id: "grandtour", name: "Grand Tour",        desc: "Visited every page in the menu.", secret: true },
+    { id: "dancefever", name: "Dance Fever",      desc: "Started the disco.", secret: true },
+    { id: "redpill",   name: "Red Pill",          desc: "Followed the white rabbit into the matrix.", secret: true },
+    { id: "snowday",   name: "Snow Day",          desc: "Made it snow.", secret: true },
+    { id: "barrel",    name: "Do a Barrel Roll",  desc: "Did a barrel roll.", secret: true },
+    { id: "freefall",  name: "Free Fall",         desc: "Messed with the site's gravity.", secret: true },
+    { id: "tubelife",  name: "Tube Life",         desc: "Switched on CRT mode.", secret: true },
+    { id: "aesthetic", name: "Aesthetic",         desc: "Went full vaporwave.", secret: true },
+    { id: "fulldeck",  name: "Full Deck",         desc: "Discovered every secret word on the site.", secret: true },
+    { id: "themehop",  name: "Can't Decide",      desc: "Flipped the theme five times.", secret: true },
+    { id: "earlybird", name: "Early Bird",        desc: "Visited between five and seven in the morning.", secret: true },
     { id: "all",       name: "Completionist",     desc: "Earned every other trophy." },
     /* special: sits below Completionist, never counts toward it, and is only given to members Anders has made
        an Admin in Discord. The Rate-O-Pedia pages confirm that with the server and emit "rop:admin". */
@@ -197,6 +216,12 @@
     if (Site.page) { seen[Site.page] = 1; Site.store.set("seen", seen); }
     if (seen.hub && seen.anderscraft && seen.anyps && seen.games && seen.resume) setTimeout(function () { award("explorer"); }, 2600);
     if (seen.links && seen.stream && seen.uses && seen.changelog) setTimeout(function () { award("deepcuts"); }, 3000);
+    if (seen.arcade) setTimeout(function () { award("arcade"); }, 1500);
+    if (seen.support) setTimeout(function () { award("support"); }, 1500);
+    if (seen.discord) setTimeout(function () { award("clubhouse"); }, 1500);
+    /* the grand tour: every page in the menu, secret */
+    var TOUR = ["hub", "anderscraft", "anyps", "games", "resume", "links", "changelog", "uses", "stream", "support", "discord", "arcade"];
+    if (TOUR.every(function (p) { return seen[p]; })) setTimeout(function () { award("grandtour"); }, 3200);
     if (/^\/games\/forum\//.test(location.pathname)) setTimeout(function () { award("forum"); }, 1500);
     try {
       var now = new Date(), day = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(), days = Site.store.get("days", []) || [];
@@ -212,6 +237,7 @@
       }
       if (runMax >= 3) setTimeout(function () { award("streak"); }, 3600);
       if (now.getHours() < 4) setTimeout(function () { award("nightowl"); }, 4200);
+      if (now.getHours() >= 5 && now.getHours() < 7) setTimeout(function () { award("earlybird"); }, 4200);
     } catch (e) {}
     /* skins: only a choice the visitor makes counts, not the calendar */
     Site.on("pref:season", function (v) {
@@ -247,6 +273,7 @@
     if (window.ROP_STATS) setTimeout(function () { ropStats(window.ROP_STATS); }, 2000);
     if (Site.page === "404") setTimeout(function () { award("lost"); }, 1200);
     if (Site.page === "vault" || Site.page === "locker") setTimeout(function () { award("key"); }, 1200);
+    if (seen.vault && seen.locker) setTimeout(function () { award("twodoors"); }, 1300);
     Site.on("pref:soundscape", function (v) { if (v === true || (v && v.detail === true)) award("dj"); });
     Site.on("konami", function () { award("konami"); });
     Site.on("dialog:open", function (d) {
@@ -254,14 +281,20 @@
       if (id === "hb-code") award("door"); else if (id === "hg-box") award("hire"); else if (id === "ax-keys") award("shortcuts");
     });
     Site.on("resume:card", function () { award("card"); });   /* opened a project dropdown on the résumé */
+    /* milestone: earning half of all the trophies. re-checked on every award. */
+    function checkHalf() { if (!got.halfway && count() >= Math.ceil(CORE.length / 2)) award("halfway"); }
+    Site.on("trophy:earned", checkHalf);
+    setTimeout(checkHalf, 2000);
+    var themeFlips = Site.store.get("themeFlips", 0) || 0;
     doc.addEventListener("click", function (e) {
       var t = e.target; if (!t || !t.closest) return;
-      if (t.closest(".ch-theme")) award("theme");
+      if (t.closest(".ch-theme")) { award("theme"); themeFlips++; Site.store.set("themeFlips", themeFlips); if (themeFlips >= 5) award("themehop"); }
       else if (t.closest(".ch-gear")) award("settings");
       else if (t.closest(".ch-share")) award("share");
       else if (t.closest(".ch-menu")) award("menu");
       else if (t.closest(".lk2-go,.lk2-shotlink")) award("linkout");
       else if (t.closest(".lk2-vote")) award("voter");
+      else if (t.closest("a[href*='discord.gg']")) award("seeyou");
     });
     var bottomDone = false;
     window.addEventListener("scroll", function () {
@@ -408,13 +441,18 @@
   var STILL_OK = { crt: 1 };                          /* effects that are fine with reduced motion */
   var NAV = { "404game": "/404.html" };               /* cheat codes that just take you somewhere (digits allowed) */
 
+  /* each secret word has its own trophy (australia awards its own inside CODES.australia) */
+  var CODE_TROPHY = { disco: "dancefever", matrix: "redpill", snow: "snowday", barrelroll: "barrel",
+    moon: "freefall", gravity: "freefall", crt: "tubelife", vaporwave: "aesthetic" };
   function run(word) {
     if (active[word]) { end(word); return; }
     if (Site.reducedMotion && !STILL_OK[word]) { Site.toast("That one needs motion. Turn off 'Reduce Motion' in settings to see it.", { type: "info", ms: 4200 }); return; }
     endAll();
     CODES[word]();
     found[word] = 1; Site.store.set("codes", found);
+    if (CODE_TROPHY[word]) award(CODE_TROPHY[word]);
     if (Object.keys(found).length >= 3) award("codes");
+    if (Object.keys(CODES).every(function (w) { return found[w]; })) award("fulldeck");
   }
   Site.secret = function (word) {
     var raw = String(word || "").toLowerCase().replace(/[^a-z0-9]/g, "");
