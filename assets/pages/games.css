@@ -1162,3 +1162,34 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 @media (max-width:979.98px){.pf-side{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start}}
 .pf-wrap{gap:22px}
 @media (min-width:980px){#pf-root > .pf-side--more{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}}
+
+/* ---------- round 31: earned looks (rw-) + the Rewards card ---------- */
+.pf-ban--rw-dma{background:linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(0deg,rgba(255,255,255,.06) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(135deg,#1b2433,#34465f 55%,#cd4257 130%)}
+.pf-ban--rw-discord{background:radial-gradient(120% 90% at 0% 100%,#99a6ff 0,transparent 55%),radial-gradient(90% 120% at 100% 0%,#eb459e 0,transparent 50%),linear-gradient(135deg,#2b2f8f,#5865f2 60%,#7983f5)}
+.pf-ban--rw-quill{background:radial-gradient(60% 120% at 85% 50%,rgba(255,215,140,.35),transparent 60%),repeating-linear-gradient(180deg,transparent 0 22px,rgba(255,255,255,.06) 22px 23px),linear-gradient(135deg,#1c1209,#4a2e14 60%,#8a5a2f)}
+.pf-ban--rw-tide{background:radial-gradient(140% 60% at 50% 120%,#7fd3ff 0,transparent 55%),repeating-radial-gradient(circle at 50% 160%,transparent 0 18px,rgba(255,255,255,.08) 18px 20px),linear-gradient(180deg,#06213b,#0e4f7a 70%,#1fa2ff)}
+.pf-frame--rw-dma{box-shadow:0 0 0 3px #8fa3bf,0 0 0 6px #1b2433,0 0 0 8px #cd4257}
+.pf-frame--rw-discord{box-shadow:0 0 0 3px #5865f2,0 0 0 6px #0f1216,0 0 0 8px #99a6ff,0 0 20px 3px rgba(88,101,242,.55)}
+.pf-frame--rw-laurel{box-shadow:0 0 0 3px #7bbf5a,0 0 0 6px #0f1216,0 0 0 8px #d9c46a}
+.pf-frame--rw-laurel::after{content:"🌿";position:absolute;bottom:calc(var(--s) * -.08);left:calc(var(--s) * -.06);font-size:calc(var(--s) * .26);transform:rotate(-30deg)}
+.pf-frame--rw-heart{box-shadow:0 0 0 3px #ff5f8a,0 0 18px 3px rgba(255,95,138,.55);animation:pf-beat 1.6s ease-in-out infinite}
+.pf-frame--rw-platinum::before{content:"";position:absolute;inset:-5px;border-radius:50%;z-index:-1;background:conic-gradient(#dfe7f1,#9fb3c8,#ffffff,#b9c7d8,#7d93ad,#dfe7f1);box-shadow:0 0 20px 3px rgba(185,205,230,.5);animation:pf-spin 9s linear infinite}
+@keyframes pf-beat{0%,100%{box-shadow:0 0 0 3px #ff5f8a,0 0 12px 2px rgba(255,95,138,.4)}50%{box-shadow:0 0 0 4px #ff5f8a,0 0 24px 5px rgba(255,95,138,.65)}}
+.pf-fx--rw-ember{background:linear-gradient(180deg,#ffe08a 0,#ff8a3d 55%,#e2342a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 8px rgba(255,120,40,.45))}
+.pf-fx--rw-gilded{background:linear-gradient(100deg,#b8860b 0 30%,#fff3c4 45%,#ffd76a 55%,#b8860b 75%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:pf-shine 4s linear infinite}
+:root[data-motion="reduce"] .pf-frame--rw-heart,:root[data-motion="reduce"] .pf-frame--rw-platinum::before,:root[data-motion="reduce"] .pf-fx--rw-gilded{animation:none}
+
+.pf-rw__sum{margin:0 0 12px;color:var(--sx-muted,#a9adb6)}
+.pf-rw__sum b{color:var(--sx-text,#e8e8ea);font-size:1.05rem}
+.pf-rw__h{margin:16px 0 8px;font:600 .74rem var(--sx-mono,"DM Mono",monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--sx-muted,#a9adb6)}
+.pf-rw__grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.pf-rw__i{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--sx-surface-2,rgba(255,255,255,.04));border:1px solid var(--sx-line,rgba(255,255,255,.1))}
+.pf-rw__i.is-on{border-color:color-mix(in srgb,var(--acc) 60%,transparent);background:color-mix(in srgb,var(--acc) 10%,var(--sx-surface-2,rgba(255,255,255,.04)))}
+.pf-rw__i.is-locked{opacity:.55}
+.pf-rw__i.is-wait{border-style:dashed}
+.pf-rw__ico{font-size:1.4rem;line-height:1;width:1.6em;text-align:center}
+.pf-rw__txt{display:grid;gap:2px;min-width:0}
+.pf-rw__txt b{font-size:.9rem;line-height:1.25}
+.pf-rw__txt small{color:var(--sx-muted,#a9adb6);font-size:.78rem;line-height:1.35}
+.pf-rw__btn{padding:6px 12px;font-size:.8rem;white-space:nowrap}
+.pf-rw__foot{margin:14px 0 0}

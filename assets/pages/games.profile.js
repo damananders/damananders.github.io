@@ -28,9 +28,13 @@ const X_ADMIN = { banners: [["adm-crimson", "Crimson ops"], ["adm-alert", "Red a
   frames: [["adm-shield", "Shield"], ["adm-pulse", "Pulse"]], fx: [["adm-alert", "Alert"], ["adm-stamp", "Stamped"]], page: [["adm-scan", "Scanlines"]] };
 const X_OWNER = { banners: [["own-throne", "Throne room"], ["own-cosmos", "Cosmos"], ["own-royale", "Royale"]],
   frames: [["own-crown", "Crown"], ["own-halo", "Halo"]], fx: [["own-royal", "Royal"], ["own-holo", "Holo"]], page: [["own-embers", "Embers"], ["own-stars", "Starfall"], ["own-aurora", "Aurora"]] };
-const ALL_BANNERS = [...BANNERS, ...X_ADMIN.banners, ...X_OWNER.banners];
-const ALL_FRAMES = [...FRAMES, ...X_ADMIN.frames, ...X_OWNER.frames];
-const ALL_FX = [...NAME_FX, ...X_ADMIN.fx, ...X_OWNER.fx];
+/* earned looks (round 31): unlocked through the rewards bank, worn from the Rewards card; the database checks */
+const X_REWARD = { banners: [["rw-dma", "Slate Circuit"], ["rw-discord", "Blurple Wave"], ["rw-quill", "Ink & Quill"], ["rw-tide", "High Tide"]],
+  frames: [["rw-dma", "Slate ring"], ["rw-discord", "Blurple ring"], ["rw-laurel", "Laurel"], ["rw-heart", "Heartbeat"], ["rw-platinum", "Platinum"]],
+  fx: [["rw-ember", "Ember"], ["rw-gilded", "Gilded"]] };
+const ALL_BANNERS = [...BANNERS, ...X_ADMIN.banners, ...X_OWNER.banners, ...X_REWARD.banners];
+const ALL_FRAMES = [...FRAMES, ...X_ADMIN.frames, ...X_OWNER.frames, ...X_REWARD.frames];
+const ALL_FX = [...NAME_FX, ...X_ADMIN.fx, ...X_OWNER.fx, ...X_REWARD.fx];
 const PAGE_FX = [["none", "None"], ...X_ADMIN.page, ...X_OWNER.page];
 const ACCENT_NAMES = { maroon: "Maroon", white: "White", gray: "Gray", red: "Red", orange: "Orange", gold: "Gold", yellow: "Yellow", green: "Green", teal: "Teal", blue: "Blue", purple: "Purple", pink: "Pink" };
 const STATUS_EMOJI = ["🎮", "🔥", "🏆", "😴", "💀", "🎧", "🍿", "🧠", "😤", "🥳", "📺", "🛠️", "🌙", "☕", "❤️", "👾"];
@@ -246,7 +250,8 @@ async function render() {
    * account box on wide screens, and stay under the header on narrow ones; see placeSide() */
   const side = el("div", { class: "pf-side" }, ...[aboutBox, nowBox, statsBox, linkBox, raBox].filter(Boolean));
   const side2 = el("div", { class: "pf-side pf-side--more" }, ...[heartBox, listsBox, postsBox, revBox].filter(Boolean));
-  root.replaceChildren(...[head, side, showBox, badgeBox, blBox, wallBox, side2, mine ? syncCard() : null].filter(Boolean));
+  const rewBox = mine ? rewardsCard() : null;
+  root.replaceChildren(...[head, side, rewBox, showBox, badgeBox, blBox, wallBox, side2, mine ? syncCard() : null].filter(Boolean));
   side2.dataset.where = plus ? "aside" : "main";
   placeSide(side, side2);
   adminPanel(p.handle);
@@ -502,6 +507,66 @@ function syncCard() {
     el("p", { class: "gm-note", text: "Enter this code on the site in any other browser or device to bring your trophies and arcade progress along. Keep it to yourself: anyone with it can sync to your progress." }),
     el("div", { class: "pf-sync__row" }, val, showB, copyB, newB));
   sb.rpc("my_sync_code").then(({ data, error }) => { if (error || !data) return; code = data; box.hidden = false; }, () => {});
+  return box;
+}
+
+/* ---------------- rewards bank (round 31): only on your own profile ----------------
+ * Opening your profile claims anything you've reached (site trophies and arcade scores included), then lists the bank:
+ * Discord roles (1 name colour + up to 3 badges worn) and earned profile looks. Hidden until the database update is in. */
+let claimedOnce = false;
+const REW_KIND = { banner: "Banner", frame: "Frame", name_fx: "Name style" };
+function rewardsCard() {
+  const box = el("section", { class: "pf-card pf-sec pf-sec--rewards", hidden: true });
+  const body = el("div", { class: "pf-rw" });
+  const checkB = el("button", { class: "linkbtn", type: "button", text: "Check for new rewards", onclick: () => claim(true).then(load) });
+  box.append(el("h2", { class: "gm-head pf-h" }, el("span", { text: "Rewards" }), el("span", { class: "pf-hiddenTag", text: "Only you see this" })), body,
+    el("p", { class: "gm-note pf-rw__foot" }, "Discord roles show up in the server within a minute or so. ", checkB));
+  async function claim(loud) {
+    const r = await sb.rpc("claim_rewards").then((x) => x, () => ({ error: true }));
+    if (r.error || !r.data || !r.data.ok) { if (loud) toast("Couldn't check right now", "err"); return false; }
+    const got = r.data.earned || [], wait = r.data.pending || [];
+    got.forEach((g) => toast("Reward unlocked: " + (g.icon ? g.icon + " " : "") + g.name, "ok"));
+    if (wait.length) toast(wait.length === 1 ? wait[0].name + " is waiting for a quick review" : wait.length + " rewards are waiting for a quick review", "info");
+    if (r.data.limited) toast("That's the daily limit for self-reported rewards. The rest unlock tomorrow.", "info");
+    if (loud && !got.length && !wait.length && !r.data.limited) toast("Nothing new yet", "info");
+    return true;
+  }
+  async function load() {
+    const r = await sb.rpc("my_rewards").then((x) => x, () => ({ error: true }));
+    if (r.error || !r.data || !r.data.ok) { box.hidden = true; return; }
+    box.hidden = false;
+    const all = r.data.rewards || [];
+    const held = (x) => ["earned", "granted", "locked_on", "grandfathered"].includes(x.state);
+    const tile = (x) => {
+      const has = held(x), pend = x.state === "pending", off = x.state === "locked_off";
+      const tag = x.slot === "fixed" ? "Always on" : x.slot === "color" ? "Name colour" : x.slot === "badge" ? "Badge role" : REW_KIND[x.kind] || "";
+      let act = null;
+      if (has && x.slot !== "fixed" && x.self_select && x.state !== "locked_on") {
+        act = el("button", { class: "btn gm-btn pf-rw__btn" + (x.equipped ? " ghost" : ""), type: "button", text: x.equipped ? "Take off" : "Wear",
+          onclick: async (e) => {
+            e.currentTarget.disabled = true;
+            const q = await sb.rpc("equip_reward", { p_id: x.id, p_on: !x.equipped });
+            if (q.error || !q.data || !q.data.ok) { toast((q.data && q.data.error) || (q.error && q.error.message) || "Couldn't change that", "err"); e.currentTarget.disabled = false; return; }
+            sfx("tap");
+            if (x.kind !== "discord_role") render(); else load();
+          } });
+      }
+      const state = pend ? "Waiting for review" : off ? "Unavailable" : x.state === "locked_on" ? "Locked on" : has ? (x.equipped ? "Wearing" : "Unlocked") : "Locked";
+      return el("li", { class: "pf-rw__i" + (has ? "" : " is-locked") + (x.equipped ? " is-on" : "") + (pend ? " is-wait" : ""), title: x.hint || null },
+        el("span", { class: "pf-rw__ico", "aria-hidden": "true", text: x.icon || "★" }),
+        el("span", { class: "pf-rw__txt" }, el("b", { text: x.name }), el("small", { text: tag + " · " + (has || pend ? state : (x.hint || "Locked")) })),
+        act);
+    };
+    const roles = all.filter((x) => x.kind === "discord_role" && (held(x) || !x.hidden));
+    const looks = all.filter((x) => x.kind !== "discord_role");
+    const n = all.filter(held).length;
+    const grid = (rows) => el("ul", { class: "pf-rw__grid" }, ...rows.sort((a, b) => (held(b) - held(a))).map(tile));
+    body.replaceChildren(
+      el("p", { class: "pf-rw__sum" }, el("b", { text: n + " / " + all.length }), el("span", { text: " unlocked · wear 1 name colour and up to 3 badge roles at a time" })),
+      roles.length ? el("h3", { class: "pf-rw__h", text: "Discord roles" }) : null, roles.length ? grid(roles) : null,
+      looks.length ? el("h3", { class: "pf-rw__h", text: "Profile looks" }) : null, looks.length ? grid(looks) : null);
+  }
+  (claimedOnce ? Promise.resolve() : claim(false)).then(() => { claimedOnce = true; load(); });
   return box;
 }
 
