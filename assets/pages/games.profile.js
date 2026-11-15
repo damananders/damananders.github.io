@@ -135,7 +135,11 @@ async function render() {
     sb.from("member_profiles").select("*").eq("handle", handle).maybeSingle(),
     sb.from("voter_stats").select("handle").order("votes", { ascending: false }).limit(3)]);
   if (error) return notice("Profiles are almost here", "Custom profiles switch on as soon as the site's database update goes in. Check back soon.");
-  if (!p) { notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Rate-O-Pedia" })); adminPanel(handle); return; }
+  if (!p) {
+    // a handle the member has since replaced forwards to their current one (round 32)
+    const fwd = await sb.rpc("resolve_handle", { p_handle: handle }).then((r) => r.data, () => null);
+    if (fwd && typeof fwd === "string" && fwd !== handle) { location.replace(profileUrl(fwd) + location.hash); return; }
+    notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Rate-O-Pedia" })); adminPanel(handle); return; }
   const mine = !!(me.profile && me.profile.handle === p.handle);
   const plus = "banner" in p;      // round 15 is in
   const rank = ((top.data || []).findIndex((x) => x.handle === p.handle)) + 1;
