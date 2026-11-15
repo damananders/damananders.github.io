@@ -1,4 +1,4 @@
-/* pages/games.common.js: shared pieces for every Rate-O-Pedia page (/games/, /games/forum/, /games/profile/, /games/station/).
+/* pages/games.common.js: shared pieces for every Rate-O-Pedia page (/games/, /games/forum/, /games/profile/, the owner station).
  * One Supabase client, the Discord sign-in pill, the Ratings / Forums / Profile tabs, avatars, dates and motto colours.
  * The key below is Supabase's publishable key: it is meant to be public. Every permission is enforced by the database.
  */
@@ -233,7 +233,7 @@ export function authPill(box, opts) {
     el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
   if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
-  if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/station/", text: "Operation Station" }));
+  if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/ti3c20mi/", text: "Operation Station" }));
   btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
   box.append(btns);
   if (!handle) { [rB, pB, cB].forEach((x) => { x.textContent = "0"; }); return; }

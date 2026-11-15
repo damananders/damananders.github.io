@@ -1,9 +1,9 @@
-/* pages/games.station.js: the Operation Station (/games/station/), the site owner's moderation desk. Prefix op-.
+/* pages/games.station.js: the Operation Station (the owner's private page under /games/), the site owner's moderation desk. Prefix op-.
  * The page itself is not the lock: every read here is allowed only by the database's is_admin() policies, and every
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=19";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=20";
 
 const root = $("op-root");
 const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"], ["visitors", "Visitors"], ["health", "Health"]];
