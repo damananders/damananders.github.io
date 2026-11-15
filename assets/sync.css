@@ -24,6 +24,15 @@
 :root[data-theme="light"] .sy-linked strong{filter:none}
 .sy-tick{width:22px;height:22px;flex:none;color:var(--sx-ok);margin-top:1px}
 
+/* Continue with Discord — the primary sign-in action (Discord blurple) */
+.btn.sy-btn--discord{width:100%;gap:10px;background:#5865f2;color:#fff;border:0;font-size:1.02rem}
+.btn.sy-btn--discord:hover{filter:brightness(1.08)}
+.btn.sy-btn--discord:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sy-dc{display:block;flex:none}
+/* "or paste a sync code" divider */
+.sy-or{display:flex;align-items:center;gap:12px;color:var(--sx-muted);font-size:.84rem;text-transform:uppercase;letter-spacing:.06em}
+.sy-or::before,.sy-or::after{content:"";height:1px;flex:1;background:var(--sx-line-2)}
+
 .sy-status{min-height:1.3em;margin:0;font-size:.9rem;color:var(--sx-muted)}
 .sy-status--ok{color:var(--sx-ok)}
 .sy-status--err{color:var(--sx-err)}
