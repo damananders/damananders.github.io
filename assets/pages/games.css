@@ -432,6 +432,7 @@ dialog.sx-modal.gi-lb:not([open]){display:none}
   .wrap:has(> #gm-auth):has(> header.hero) > #gm-auth{grid-row:2 / span 2}
   .wrap:has(> #gm-auth):has(> header.hero) > header.hero{grid-column:1;grid-row:3}
   .wrap:has(> #gm-auth):not(:has(> header.hero)) > #gm-auth{grid-row:2 / span 2}
+  .wrap:has(> #gm-auth):has(> header.hero) > main{grid-column:1}
   .wrap:has(> #gm-auth):not(:has(> header.hero)) > main{grid-column:1;grid-row:3}
 }
 .gm-auth.rop-me{display:grid;gap:12px;margin:18px 0 10px;padding:16px;border-radius:18px;font-size:.9rem;
@@ -1069,3 +1070,77 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .pf-admin .btn.pf-admin__warn{background:#b7791f}
 .pf-admin .btn.pf-admin__bad{background:#c53030}
 .pf-admin .btn.pf-admin__soft{background:transparent;border:1px solid currentColor}
+
+/* ---------------- breathing room pass (Nov 15): calmer wrapping, cards that don't stretch their contents ---------------- */
+.pf-card,.gm-sidecard,.gm-card,.gm-more{align-content:start}
+.pf-cols{gap:20px}
+.pf-card{padding:20px 22px;gap:12px}
+.pf-list{gap:14px}
+.pf-list li{line-height:1.4}
+.pf-snip{line-height:1.5;margin-top:4px}
+.gm-note,.gm-empty{line-height:1.5}
+/* hero: identity on the left, actions on the right, follower counts in their own bar */
+.pf-hero__body{grid-template-columns:auto minmax(0,1fr) auto;align-items:end;gap:14px 26px;padding-bottom:18px}
+.pf-hero .pf-id{gap:8px}
+.pf-hero .pf-actions{display:flex;gap:10px;align-items:center;align-self:end;justify-content:flex-end}
+.pf-hero .pf-actions .btn{white-space:nowrap}
+.pf-status{padding:6px 14px 6px 10px;line-height:1.35;max-width:min(100%,520px)}
+.pf-sub{gap:8px 12px}
+.pf-hero.pf-card{padding:0;gap:0}
+.pf-hero__bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;padding:12px 24px 16px;border-top:1px solid var(--sx-line,rgba(255,255,255,.08));font-size:.92rem;color:var(--sx-muted,#a8abb3)}
+.pf-hero__bar .pf-xp{flex:1 1 320px;padding:0;border:0}
+.pf-fcount{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:.92rem;opacity:1}
+.pf-fcount b{color:var(--sx-text,#e8e8ea);font-family:var(--sx-mono,"DM Mono",monospace)}
+.pf-fcount__dot{opacity:.5}
+.pf-fcount .linkbtn{font-weight:600;padding:0;margin:0;line-height:inherit}
+@media (max-width:700px){.pf-hero .pf-actions{grid-column:1/-1;grid-row:auto;justify-content:flex-start}.pf-hero__bar{padding:10px 16px}}
+/* badges: wider tiles, icon centred against two lines of text */
+.pf-badges{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.pf-badge{column-gap:12px;row-gap:2px;padding:12px 14px;align-content:center;min-height:62px;box-sizing:border-box}
+.pf-badge__i{align-self:center;width:1.6em;text-align:center}
+.pf-badge b{font-size:.92rem;line-height:1.25}
+.pf-badge small{font-size:.78rem;line-height:1.35}
+/* stats tiles */
+.pf-statgrid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+.pf-statgrid li{padding:12px 14px}
+.pf-statgrid span{font-size:.8rem;line-height:1.3}
+/* leaderboard badges: name over its reason, never wrapped beside it */
+.gm-vblist{gap:10px}
+.gm-vblist li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:1px;align-items:center}
+.gm-vblist li .gm-vb{grid-row:1/3}
+.gm-vblist b{font-size:.9rem;line-height:1.25}
+.gm-vblist__w{font-size:.8rem;line-height:1.35;color:var(--sx-muted,#a8abb3)}
+.gm-vprofile{padding:2px 18px 16px;gap:14px}
+.gm-vprofile dl{gap:6px 16px}
+.gm-side .gm-vprofile dl{grid-template-columns:auto 1fr}
+/* forum category pills sit in a row (the platform rule above turned every .gm-tabs into a column) */
+.gm-tabs.fr-cats{display:flex;flex-wrap:wrap;gap:8px}
+.fr-tools{gap:12px}
+/* score guide: the chip stays put and its explanation wraps beside it */
+.gm-howto p{flex-wrap:nowrap;align-items:flex-start;gap:10px;line-height:1.45;margin:8px 0}
+.gm-howto p > :first-child{flex:none}
+/* this week: titles get two lines instead of being cut off */
+.gm-week__list{gap:8px}
+.gm-week__list li{align-items:flex-start;line-height:1.3}
+.gm-week__list li::before,.gm-week__n{padding-top:2px}
+.gm-week__list a{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow-wrap:anywhere}
+.gm-week__list .gm-console,.gm-week__list .rop-console{flex:none}
+/* account box */
+.rop-me__btn{white-space:nowrap;padding:8px 10px}
+/* following feed: no empty art column, chip and title spaced, rating on one line */
+.fd-item{padding:14px 18px;gap:16px}
+.fd-item:has(> .fd-art:empty){grid-template-columns:1fr}
+.fd-art:empty{display:none}
+.fd-main{gap:8px}
+.fd-line{gap:6px}
+.fd-game{display:inline-flex;align-items:center;gap:8px;justify-self:start;flex-wrap:wrap}
+.fd-stars{display:inline-flex;justify-self:start;gap:8px}
+.fd-stars > *{flex:none}
+.fd-body{line-height:1.55}
+/* lists */
+.ls-card__b{gap:8px;padding:14px 16px}
+.ls-card__b > :last-child{line-height:1.45}
+.ls-item{padding:12px 16px}
+.fd-stars{align-items:center}
+.fd-stars .rop-chip__svg{display:grid;place-items:center;width:26px;height:26px}
+.fd-stars .rop-chip__svg svg{width:26px;height:26px}

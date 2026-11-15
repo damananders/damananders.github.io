@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged } from "./games.common.js?v=20";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged } from "./games.common.js?v=21";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -165,13 +165,13 @@ async function render() {
         status,
         p.motto ? el("p", { class: "pf-motto " + colorClass(p.motto_color), text: "“" + p.motto + "”" }) : (mine ? el("p", { class: "pf-motto pf-motto--none", text: "No motto yet." }) : null)),
       el("div", { class: "pf-actions" },
-        mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : followBtn(p),
-        followCounts(p, mine),
-        el("button", { class: "linkbtn", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") }))),
+        el("button", { class: "btn ghost gm-btn pf-share", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") }),
+        mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : followBtn(p))),
+    el("div", { class: "pf-hero__bar" }, followCounts(p, mine),
     el("div", { class: "pf-xp", title: fmt(lv.xp) + " XP · " + fmt(lv.next) + " to level " + (lv.lvl + 1) },
       el("span", { class: "pf-xp__l", text: "Level " + lv.lvl }),
       el("span", { class: "pf-xp__bar" }, el("span", { class: "pf-xp__fill", style: "width:" + lv.pct + "%" })),
-      el("span", { class: "pf-xp__n", text: fmt(lv.xp) + " XP" })));
+      el("span", { class: "pf-xp__n", text: fmt(lv.xp) + " XP" }))));
 
   /* ---- stats ---- */
   const stat = (n, label, title) => n == null ? null : el("li", { title: title || null }, el("b", { text: fmt(n) }), el("span", { text: label }));
@@ -495,8 +495,10 @@ function followCounts(p, mine) {
   const box = el("span", { class: "pf-fcount", hidden: true });
   sb.rpc("follow_info", { p_handle: p.handle }).then(({ data, error }) => {
     if (error || !data || !data[0]) return;
-    box.replaceChildren(el("b", { class: "pf-fcount__n", text: String(data[0].followers) }), " followers · ", el("b", { text: String(data[0].following) }), " following",
-      mine ? el("a", { class: "linkbtn", href: "/games/feed/", text: " · Feed →" }) : "");
+    const f = +data[0].followers || 0, g = +data[0].following || 0;
+    box.replaceChildren(el("span", null, el("b", { class: "pf-fcount__n", text: String(f) }), f === 1 ? " follower" : " followers"),
+      el("span", { class: "pf-fcount__dot", "aria-hidden": "true", text: "·" }), el("span", null, el("b", { text: String(g) }), " following"),
+      mine ? el("span", { class: "pf-fcount__dot", "aria-hidden": "true", text: "·" }) : "", mine ? el("a", { class: "linkbtn", href: "/games/feed/", text: "Your feed →" }) : "");
     box.hidden = false;
   }, () => {});
   return box;

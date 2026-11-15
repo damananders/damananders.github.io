@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged } from "./games.common.js?v=20";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged } from "./games.common.js?v=21";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -434,7 +434,7 @@ async function voters() {
         el("div", { class: "gm-vprofile" },
           el("dl", null, ...stats),
           bs.length
-            ? el("ul", { class: "gm-vblist" }, ...bs.map((k) => el("li", null, vb(k), el("b", { text: BADGES[k].name }), " — " + BADGES[k].why)))
+            ? el("ul", { class: "gm-vblist" }, ...bs.map((k) => el("li", null, vb(k), el("b", { text: BADGES[k].name }), el("span", { class: "gm-vblist__w", text: BADGES[k].why }))))
             : el("p", { class: "gm-note", text: "No badges yet. Keep rating." }),
           v.handle ? el("a", { class: "linkbtn gm-vopen", href: profileUrl(v.handle), text: "Open full profile →" }) : null)));
     });

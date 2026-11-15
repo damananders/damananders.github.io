@@ -234,7 +234,7 @@ export function authPill(box, opts) {
   if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
   if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/ti3c20mi/", text: "Operation Station" }));
-  btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
+  btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out", title: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
   box.append(btns);
   if (!handle) { [rB, pB, cB].forEach((x) => { x.textContent = "0"; }); return; }
   // counts and the top-3 voter medal, filled in as they arrive
