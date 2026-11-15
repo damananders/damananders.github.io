@@ -459,7 +459,7 @@
     ["games", "/games/", "Rate-O-Pedia", "Rate & review games"], ["forum", "/games/forum/", "Forums", "Talk games & projects"],
     ["links", "/links/", "Links I Like", "Sites I actually use"], ["stream", "/stream/", "Stream", "Watch me live"],
     ["discord", "/discord/", "Discord", "Join the community"], ["arcade", "/arcade/", "Arcade", "Little browser games"],
-    ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"],
+    ["projects", "/projects/", "Projects", "What I'm working on"], ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"],
     ["support", "/support/", "Support", "Keep the projects online"]
   ];
   /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from

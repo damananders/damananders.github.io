@@ -9,7 +9,8 @@
         "http://localhost/anderscraft/index.html",
         "http://localhost/anyps/index.html",
         "http://localhost/games/index.html",
-        "http://localhost/uses/index.html"
+        "http://localhost/uses/index.html",
+        "http://localhost/projects/index.html"
       ],
       "settings": { "onlyCategories": ["performance", "accessibility", "best-practices", "seo"] }
     },

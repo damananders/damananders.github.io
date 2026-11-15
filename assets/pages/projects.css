@@ -1,0 +1,17 @@
+/* pages/projects.css — /projects/ ("What I'm working on"). Prefix pj-. */
+.pj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;align-items:start}
+.pj-card{margin:0;border-top:3px solid var(--pj,var(--sx-accent));display:grid;gap:12px}
+.pj-card--lead{grid-column:1/-1}
+.pj-card p{margin:0;color:var(--sx-text);line-height:1.55}
+.pj-head{display:grid;gap:8px;justify-items:start}
+.pj-head h2{margin:0}
+.pj-pill{font:500 .68rem/1 var(--sx-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--pj,var(--sx-accent)) 55%,transparent);color:var(--pj,var(--sx-accent))}
+.pj-facts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.pj-facts li{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:10px 0 0;border-top:1px solid var(--sx-line)}
+.pj-facts strong{font:600 .9rem var(--sx-display);color:var(--pj,var(--sx-accent))}
+.pj-facts span{color:var(--sx-muted);font-size:.93rem}
+.pj-card p.pj-foot{color:var(--sx-muted);font-size:.88rem}
+.pj-foot a{color:var(--pj,var(--sx-accent));font-weight:600;text-decoration:none;white-space:nowrap}
+.pj-foot a:hover{text-decoration:underline}
+@media (max-width:520px){.pj-facts li{grid-template-columns:1fr;gap:2px}}
