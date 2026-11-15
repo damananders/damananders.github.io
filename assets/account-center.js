@@ -45,7 +45,7 @@
 
   /* ---------- state ---------- */
   var S = null;          /* the last my_settings() result */
-  var dlg = null, paneEl = null, tabsEl = null, savedEl = null;
+  var dlg = null, paneEl = null, tabsEl = null, tablistEl = null, railHeadEl = null, railFootEl = null, savedEl = null;
   var activeTab = "profile";
   var loadingState = "idle"; /* idle | loading | ready | error */
 
@@ -126,6 +126,7 @@
   /* ========================================================================== TABS */
   var TABS = [
     { id: "profile", label: "Profile", icon: "M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-5 0-9 2.5-9 6v2h18v-2c0-3.5-4-6-9-6Z" },
+    { id: "edit", label: "Edit", icon: "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z" },
     { id: "look", label: "Look", icon: "M12 3a9 9 0 1 0 0 18c1 0 1.7-.8 1.7-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7Zm-5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" },
     { id: "privacy", label: "Privacy", icon: "M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Zm0 6a2.5 2.5 0 0 1 2.5 2.5c0 1-.6 1.9-1.5 2.3V15h-2v-2.2a2.5 2.5 0 0 1-1.5-2.3A2.5 2.5 0 0 1 12 8Z" },
     { id: "notify", label: "Alerts", icon: "M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6-1.5-1.8V9.5A5.5 5.5 0 0 0 13 4.1V3.5a1 1 0 1 0-2 0v.6A5.5 5.5 0 0 0 6.5 9.5v4.7L5 16a1 1 0 0 0 .8 1.6h12.4A1 1 0 0 0 19 16Z" },
@@ -134,15 +135,39 @@
   ];
 
   function renderTabs() {
-    tabsEl.replaceChildren();
+    tablistEl.replaceChildren();
     TABS.forEach(function (t) {
       var b = el("button", { type: "button", class: "ac2-tab" + (t.id === activeTab ? " is-on" : ""), "data-tab": t.id, "aria-selected": t.id === activeTab ? "true" : "false" },
         svgPath(t.icon), el("span", { text: t.label }));
       if (t.id === "social") { var badge = el("span", { class: "ac2-tab__badge", hidden: true }); b._badge = badge; b.appendChild(badge); }
       b.addEventListener("click", function () { activeTab = t.id; renderTabs(); renderPane(); });
-      tabsEl.appendChild(b);
+      tablistEl.appendChild(b);
     });
     paintSocialBadge();
+  }
+
+  /* rail header (mini identity, top) + footer (status, bottom) — fills the rail so tabs don't float */
+  function renderRail() {
+    if (!railHeadEl || !railFootEl) return;
+    if (!S) { railHeadEl.hidden = true; railFootEl.hidden = true; return; }
+    var p = S.profile || {}, a = S.account || {};
+    var accent = ACCENTS[p.accent] || ACCENTS.maroon;
+    var name = p.name || p.discord_name || a.handle || "You";
+    railHeadEl.style.setProperty("--ac2-accent", accent);
+    railHeadEl.replaceChildren();
+    var av = el("div", { class: "ac2-railav" });
+    if (p.avatar) av.appendChild(el("img", { class: "ac2-railav__img", src: p.avatar, alt: "" }));
+    else { av.classList.add("is-initial"); av.textContent = (name.replace(/[^A-Za-z0-9]/g, "")[0] || "★").toUpperCase(); }
+    railHeadEl.appendChild(av);
+    railHeadEl.appendChild(el("div", { class: "ac2-railid" },
+      el("span", { class: "ac2-railid__name", text: name }),
+      a.handle ? el("span", { class: "ac2-railid__handle", text: "@" + a.handle }) : null));
+    railHeadEl.hidden = false;
+
+    railFootEl.replaceChildren();
+    if (a.verified) railFootEl.appendChild(el("span", { class: "ac2-railfoot__v", text: "✓ Verified" }));
+    if (a.supporter) railFootEl.appendChild(el("span", { class: "ac2-railfoot__s", text: "💛 Supporter" }));
+    railFootEl.hidden = !railFootEl.childNodes.length;
   }
   function svgPath(d) { var s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true"); var p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("fill", "currentColor"); p.setAttribute("d", d); s.appendChild(p); return s; }
 
@@ -164,12 +189,79 @@
         el("a", { class: "btn ghost", href: "/account/", text: "Go to your account" })));
       return;
     }
-    ({ profile: tabProfile, look: tabLook, privacy: tabPrivacy, notify: tabNotify, social: tabSocial, account: tabAccount })[activeTab]();
+    ({ profile: tabProfile, edit: tabEdit, look: tabLook, privacy: tabPrivacy, notify: tabNotify, social: tabSocial, account: tabAccount })[activeTab]();
   }
 
-  /* ---------- PROFILE ---------- */
+  /* ---------- PROFILE (view only — summary + links) ---------- */
   function tabProfile() {
     var p = S.profile || {}, a = S.account || {};
+    var sp = (Site.sync && Site.sync.profile && Site.sync.profile()) || {};
+    var accent = ACCENTS[p.accent] || ACCENTS.maroon;
+    var name = p.name || p.discord_name || a.handle || "You";
+
+    var card = el("div", { class: "ac2-view" });
+    card.style.setProperty("--ac2-accent", accent);
+    card.appendChild(el("div", { class: "ac2-view__banner", "aria-hidden": "true" }));
+
+    var av = el("div", { class: "ac2-view__av" });
+    if (p.avatar) av.appendChild(el("img", { class: "ac2-view__img", src: p.avatar, alt: "" }));
+    else { av.classList.add("is-initial"); av.textContent = (name.replace(/[^A-Za-z0-9]/g, "")[0] || "★").toUpperCase(); }
+    card.appendChild(av);
+
+    var nameline = el("div", { class: "ac2-view__nameline" }, el("span", { class: "ac2-view__name", text: name }));
+    if (a.flair) nameline.appendChild(el("span", { class: "ac2-view__flair", text: a.flair.toUpperCase() }));
+    card.appendChild(nameline);
+
+    var meta = el("div", { class: "ac2-view__meta" });
+    if (a.handle) meta.appendChild(el("span", { class: "ac2-view__handle", text: "@" + a.handle }));
+    if (p.pronouns) meta.appendChild(el("span", { class: "ac2-view__pron", text: p.pronouns }));
+    if (meta.childNodes.length) card.appendChild(meta);
+
+    var st = [p.status_emoji, p.status_text].filter(Boolean).join(" ");
+    if (st) card.appendChild(el("div", { class: "ac2-view__status", text: st }));
+    if (p.motto) { var mv = el("div", { class: "ac2-view__motto", text: p.motto }); if (p.motto_color && ACCENTS[p.motto_color]) mv.style.color = ACCENTS[p.motto_color]; card.appendChild(mv); }
+
+    var badges = el("div", { class: "ac2-view__badges" });
+    if (a.verified) badges.appendChild(factChip("Verified", "ok"));
+    if (a.supporter) badges.appendChild(factChip("Supporter 💛", "gold"));
+    if (a.cooldown_until) badges.appendChild(factChip("New account", "warn"));
+    if (a.restricted) badges.appendChild(factChip("Restricted", "err"));
+    if (badges.childNodes.length) card.appendChild(badges);
+
+    if (p.bio) card.appendChild(el("p", { class: "ac2-view__bio", text: p.bio }));
+    if (p.now_playing) card.appendChild(el("div", { class: "ac2-view__np" }, el("span", { class: "ac2-view__nplabel", text: "Now playing" }), el("span", { class: "ac2-view__npval", text: p.now_playing })));
+
+    var stats = sp.stats || {};
+    var statDefs = [["Ratings", stats.ratings], ["Reviews", stats.reviews], ["Lists", stats.lists], ["Followers", stats.followers], ["Following", stats.following]];
+    if (statDefs.some(function (s) { return s[1] != null; })) {
+      var sg = el("div", { class: "ac2-view__stats" });
+      statDefs.forEach(function (s) { if (s[1] == null) return; sg.appendChild(el("div", { class: "ac2-stat" }, el("b", { text: Site.fmtNum(s[1]) }), el("span", { text: s[0] }))); });
+      card.appendChild(sg);
+    }
+    if (a.member_since) card.appendChild(el("p", { class: "ac2-view__since", text: "Member since " + Site.fmtDate(a.member_since) }));
+    paneEl.appendChild(card);
+
+    /* action links */
+    var acts = el("div", { class: "ac2-view__acts" });
+    var editBtn = el("button", { type: "button", class: "btn ac2-view__edit", text: "Edit profile" });
+    editBtn.addEventListener("click", function () { activeTab = "edit"; renderTabs(); renderPane(); });
+    acts.appendChild(editBtn);
+    acts.appendChild(el("a", { class: "btn ghost", href: a.handle ? "/games/profile/?u=" + encodeURIComponent(a.handle) : "/games/profile/", text: "View public profile" }));
+    paneEl.appendChild(acts);
+
+    if (a.handle) {
+      var copy = el("button", { type: "button", class: "ac2-view__copy", text: "Copy profile link" });
+      copy.addEventListener("click", function () {
+        try { navigator.clipboard.writeText(location.origin + "/games/profile/?u=" + encodeURIComponent(a.handle)); copy.textContent = "Copied ✓"; setTimeout(function () { copy.textContent = "Copy profile link"; }, 1500); } catch (e) {}
+      });
+      paneEl.appendChild(copy);
+    }
+  }
+
+  /* ---------- EDIT PROFILE (the fields, with live preview) ---------- */
+  function tabEdit() {
+    var p = S.profile || {}, a = S.account || {};
+    paneEl.appendChild(el("p", { class: "ac2-lead", text: "Changes save as you type. The card below shows how your profile reads." }));
     /* live preview */
     preview = el("div", { class: "ac2-pv" },
       el("div", { class: "ac2-pv__av is-initial", "aria-hidden": "true" }),
@@ -371,6 +463,10 @@
     if (dlg) { Site.dialog.close(dlg); dlg.remove(); dlg = null; }
     var shell = el("div", { class: "ac2-shell" });
     tabsEl = el("nav", { class: "ac2-tabs", "aria-label": "Settings sections" });
+    railHeadEl = el("div", { class: "ac2-railhead", hidden: true });
+    tablistEl = el("div", { class: "ac2-tablist" });
+    railFootEl = el("div", { class: "ac2-railfoot", hidden: true });
+    tabsEl.appendChild(railHeadEl); tabsEl.appendChild(tablistEl); tabsEl.appendChild(railFootEl);
     paneEl = el("div", { class: "ac2-pane" });
     savedEl = el("span", { class: "ac2-saved" });
     shell.appendChild(tabsEl);
@@ -383,7 +479,7 @@
     rpc("my_settings").then(function (res) {
       var d = res && res.data;
       if (!d || d.ok === false || !d.profile) { loadingState = "error"; renderPane(); return; }
-      S = d; loadingState = "ready"; renderPane(); paintSocialBadge(); pushChipFromSettings();
+      S = d; loadingState = "ready"; renderRail(); renderPane(); paintSocialBadge(); pushChipFromSettings();
     }).catch(function () { loadingState = "error"; renderPane(); });
     return true;
   }
