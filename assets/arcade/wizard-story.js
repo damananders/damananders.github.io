@@ -1,269 +1,30 @@
 /* arcade/wizard-story.js — every story beat and line of dialogue in Wizard of the Sprint, in one place.
- * The game reads its text from here. The control panel's Wizard Story page reads the same list to build its editor, so a
- * beat added here shows up there with no other change. The owner's edits are saved in the site config under "wizardStory"
- * ({ beatId: [lines] }) and laid over these defaults. When a level or a new kind of line is added to the game, add its
- * beat here: id, title, when it plays, how it is shown, a continuity tip, and the default lines. */
+ * GENERATED. The readable source is kept out of the public repo; this file holds the list scrambled so the story is not
+ * readable at a glance. The game reads its text from here, and the control panel's Wizard Story page reads the same list
+ * to build its editor, so a new beat shows up there with no other change. The owner's edits are saved in the site config
+ * under "wizardStory" as { z: <scrambled { beatId: [lines] }> } and laid over these defaults. */
 (function () {
   "use strict";
-  var GROUPS = [], BEATS = [], BY = {};
-  function group(title, note) { GROUPS.push({ title: title, note: note, beats: [] }); }
-  function beat(id, title, when, how, tip, lines) { var b = { id: id, title: title, when: when, how: how, tip: tip, lines: lines }; GROUPS[GROUPS.length - 1].beats.push(b); BEATS.push(b); BY[id] = b; }
-
-
-  group("Story panels", "The big beats. These tell the plot, so they are the ones to write first.");
-  beat("open", "Opening",
-    "Once, right after the wizard is created, before the tower hub first appears.",
-    "Full-screen parchment panel. Each line is its own panel, shown in order with a Next button.",
-    "Has to land: all-knowing and bored, the nap, the theft, waking in sleep cap and skivvies, footprints leading out, fear turning into motivation. The wizard starts out pompous, so there is room to soften later. Keep the thief unseen and unnamed.",
-    [
-      "{Name} the All-Knowing had nothing left to learn, nobody worth fearing, and nobody worth caring about. So {Name} took a nap. A long, magickal one.",
-      "SNAP.  FLASH.  BOOM.",
-      "Morning. The tomes: gone. The robes: shredded. The wands, swords and bows: missing or melted. There is a hole in the tower where the library used to be.",
-      "{Name} is wearing a sleep cap, a stained tunic and some deeply questionable skivvies. In the mud by the hole is a trail of footprints.",
-      "For the first time in centuries, {Name} is afraid. And furious. And... motivated?"
-    ]);
-  beat("clear1", "After the forest (level 1)",
-    "Once, after the Grand Mud Imp is beaten for the first time, when you press Continue on the results screen.",
-    "Full-screen parchment panel. Each line is its own panel, shown in order with a Next button.",
-    "Has to land: hat won back from a mud imp, the tracks point to a tavern (level 2), the tower still has no roof and a scroll held overhead is the first repair. The thief stays unseen.",
-    [
-      "Your hat, back from a mud imp! The tracks lead on, toward a tavern.",
-      "Back home it is still raining through the roof you do not have. You hold a soggy scroll over your head. It's a start."
-    ]);
-
-  group("Wizard speech during a run", "Short bubbles the wizard says while running. Keep each under about 60 characters so it fits the bubble.");
-  beat("early", "Idle chatter, first half",
-    "Every 16 to 28 seconds while running, when no other bubble is showing and no boss is out. Used in the first half of level 1 and in Endless (mixed half and half with the next list).",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Grumpy, pampered, shocked to be outdoors. Early in the story he is still pompous.",
-    [
-      "I used to have SO many hats.",
-      "Running. Me. Disgusting.",
-      "Whoever did this is getting a strongly worded hex.",
-      "My feet are touching MUD.",
-      "I have not jogged since the Third Age.",
-      "These skivvies were not built for speed.",
-      "Is this what 'cardio' is? I hate it.",
-      "I knew everything yesterday. EVERYTHING.",
-      "Footprints. Rude, muddy footprints.",
-      "A nap. One nap. And THIS.",
-      "My knees are filing a complaint.",
-      "I could have teleported. I HAD a spell for that.",
-      "Note to self: lock the tower.",
-      "The forest smells like... outside.",
-      "Fresh air. Ugh."
-    ]);
-  beat("mid", "Idle chatter, mixed in",
-    "Same timing as above. Shares the first half of level 1 and all of Endless with the list above.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Complaining, but starting to notice the world.",
-    [
-      "Do imps always look this smug?",
-      "I am sweating. Wizards do not sweat.",
-      "That squirrel judged me. I felt it.",
-      "Somewhere, someone is wearing my robes.",
-      "I miss my chair.",
-      "Left foot, right foot. Riveting.",
-      "If I find my wand I'm never putting it down.",
-      "Who steals a whole LIBRARY?",
-      "I had a tome for blisters. HAD.",
-      "The audacity. The sheer audacity.",
-      "I'd turn them into a newt if I remembered how.",
-      "Poof. Poof. Is that all I've got? Poof?",
-      "Still got it. Sort of. A bit.",
-      "Mud between the toes. Delightful. No.",
-      "This is fine. I'm fine. Everything is fine."
-    ]);
-  beat("late", "Idle chatter, second half",
-    "Same timing, but only in the second half of level 1 as the boss gets close.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "The tracks are fresher. First hints he is enjoying himself and softening.",
-    [
-      "The tracks are fresher here.",
-      "I can smell my own hat. Don't ask.",
-      "Closer. I can feel it in my beard.",
-      "Whoever you are, I'm RIGHT behind you.",
-      "Getting the hang of this running thing.",
-      "Huh. I haven't thought about tax scrolls in an hour.",
-      "Is this... am I having FUN? No. Surely not.",
-      "Something big is up ahead. Wonderful.",
-      "My legs have stopped screaming. Suspicious."
-    ]);
-  beat("greet", "Greeting a friendly",
-    "When the wizard runs past a deer, squirrel or forager without high-fiving. About half of those passes (the rest are the creature cheering, or rarely the apology).",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Awkward small talk from someone who has not spoken to anyone in centuries.",
-    [
-      "Morning! Don't mind the pyjamas.",
-      "Lovely day for being robbed.",
-      "Seen a thief? Tall? Short? Any size?",
-      "Hello, small woodland citizen.",
-      "Carry on. Wizard business.",
-      "Nice fur. Very... furry.",
-      "Have you seen a library go by?",
-      "You there! Good job existing.",
-      "Out of the way, I'm exercising!",
-      "I'd stop to chat, but, you know. Vengeance."
-    ]);
-  beat("sorry", "The apology",
-    "Rare. About 1 pass in 15, and never more than once a minute. The creature answers with a line from 'Reply to the apology'.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Your line. It is the seed of him becoming kinder, so it should stay rare.",
-    [
-      "Sorry if I was ever a dick!"
-    ]);
-  beat("five", "High five landed",
-    "When you press High Five as you pass a friendly and it connects.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Pure delight. He likes this more than he expected.",
-    [
-      "Up high!",
-      "Yes! Contact!",
-      "Nailed it.",
-      "Skin! Or fur! Whatever!",
-      "Still got the reflexes.",
-      "Best part of my day, honestly.",
-      "Put it there!"
-    ]);
-  beat("rescue", "Freed a caged squirrel family",
-    "When the wizard touches a cage on the path.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Gruff outside, soft inside.",
-    [
-      "You're safe. Don't make it weird.",
-      "Fine. FINE. You're welcome.",
-      "Out you get. No hugging.",
-      "Freedom! Now scram.",
-      "I'm not crying. It's forest in my eye."
-    ]);
-  beat("hit", "Took a hit and survived",
-    "When an enemy or hazard hurts the wizard but does not end the run.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "Wounded pride more than pain.",
-    [
-      "Ow, my dignity.",
-      "That's going in my diary.",
-      "Right in the pyjamas!",
-      "I felt that in a previous century.",
-      "Rude!",
-      "My everything hurts."
-    ]);
-  beat("orb", "Picked up the first Whisper Orb",
-    "Once per save, on the first Whisper Orb, when the first buff is unlocked.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "",
-    [
-      "Ooh, that tingles. I remember tingles.",
-      "Whispers! I love gossip.",
-      "Yes. YES. Power. A little bit of it."
-    ]);
-  beat("grim", "Picked up a Grimoire",
-    "Half of the time a Grimoire is collected.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "He misses his books.",
-    [
-      "MY BOOK! ...wait, not mine. Mine now.",
-      "A book! I remember reading.",
-      "Finders keepers, that's the law."
-    ]);
-  beat("satchel", "Found the lost satchel",
-    "When the very rare satchel is collected (it gives the Ward incantation).",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "",
-    [
-      "Somebody's mail is late. Too bad."
-    ]);
-  beat("boss", "The boss arrives",
-    "When the Grand Mud Imp walks in at the end of level 1, and each time it returns in Endless. Shown a little longer than other bubbles.",
-    "Speech bubble over the wizard for about 2 seconds. One line is picked at random each time, never the same one twice in a row.",
-    "The imp is wearing his hat.",
-    [
-      "Oh, you're big. I hate that.",
-      "Is that MY HAT?",
-      "That is a LOT of imp."
-    ]);
-
-  group("Friendly creatures", "What the deer, squirrels and foragers say back.");
-  beat("cheer", "Creature cheers him on",
-    "When the wizard passes a friendly without a high five. A bit under half of those passes.",
-    "Speech bubble over the friendly creature for about 2 seconds. One line is picked at random each time.",
-    "They find him funny, not scary. He is in his pyjamas.",
-    [
-      "Go get 'em, weird old wizard!",
-      "Nice jammies!",
-      "Run, wizard, run!",
-      "Looking spry, grandpa!",
-      "Love the cap!",
-      "You dropped your dignity back there!",
-      "Wooo! Mystery jogger!",
-      "Is that the tower hermit? RUNNING?",
-      "Knees up, old timer!",
-      "You've got this, pyjama person!"
-    ]);
-  beat("greetReply", "Reply to his greeting",
-    "About a second after one of the wizard's greeting lines.",
-    "Speech bubble over the friendly creature for about 2 seconds. One line is picked at random each time.",
-    "Baffled.",
-    [
-      "...okay?",
-      "He seems nice.",
-      "That man has no trousers.",
-      "Wizards. Honestly.",
-      "Should we tell someone?",
-      "Bye, weird wizard!",
-      "Good luck with... that!"
-    ]);
-  beat("reply", "Reply to the apology",
-    "About a second after the apology line.",
-    "Speech bubble over the friendly creature for about 2 seconds. One line is picked at random each time.",
-    "They have no idea who he is.",
-    [
-      "Uh... thanks?",
-      "You were, though.",
-      "Apology noted.",
-      "A bit, yeah.",
-      "Water under the bridge!",
-      "Who ARE you?"
-    ]);
-
-  group("Screen text", "Story-flavoured text on menus.");
-  beat("hub0", "Tower menu, before the forest is cleared",
-    "Under the tower's name on the main menu, until level 1 is beaten.",
-    "Small text under the title of a menu. Only the first line is used.",
-    "",
-    [
-      "Robbed, roofless and in your pyjamas. The footprints lead into the forest."
-    ]);
-  beat("hub1", "Tower menu, after the forest is cleared",
-    "Under the tower's name on the main menu, once level 1 is beaten.",
-    "Small text under the title of a menu. Only the first line is used.",
-    "Update this as later levels arrive.",
-    [
-      "Still no roof, but you have a scroll to hold over your head. The tracks lead on to a tavern (coming next)."
-    ]);
-  beat("win1", "Results screen, forest cleared",
-    "Under 'Forest Cleared' when the boss is beaten.",
-    "Small text under the title of a menu. Only the first line is used.",
-    "",
-    [
-      "The Grand Mud Imp drops your hat and runs."
-    ]);
-  beat("lose", "Results screen, run ended",
-    "Under 'Flattened at ... m' when a run ends without beating the boss.",
-    "Small text under the title of a menu. Only the first line is used.",
-    "",
-    [
-      "You keep everything you picked up."
-    ]);
+  var K = "mudimp-took-the-hat";
+  function bytes(s) { return new TextEncoder().encode(s); }
+  function mix(b) { var k = bytes(K); for (var i = 0; i < b.length; i++) b[i] ^= k[i % k.length] ^ (i * 7 & 255); return b; }
+  function enc(str) { var b = mix(bytes(str)), s = ""; for (var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return "wz1:" + btoa(s); }
+  function dec(str) { var s = atob(String(str).slice(4)), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return new TextDecoder().decode(mix(b)); }
+  var GROUPS = JSON.parse(dec("wz1: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"));
+  var BEATS = [], BY = {};
+  GROUPS.forEach(function (g) { g.beats.forEach(function (b) { BEATS.push(b); BY[b.id] = b; }); });
 
   var over = {};
   function clean(v) { return Array.isArray(v) ? v.map(function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim().slice(0, 600); }).filter(Boolean).slice(0, 60) : null; }
+  /* saved edits arrive scrambled ({ z: "wz1:..." }); a plain { beatId: [lines] } object is accepted too */
+  function open(o) { if (o && typeof o.z === "string" && o.z.slice(0, 4) === "wz1:") { try { return JSON.parse(dec(o.z)); } catch (e) { return {}; } } return o && typeof o === "object" ? o : {}; }
   window.WizStory = {
     groups: GROUPS, beats: BEATS,
-    /* the owner's saved edits: { beatId: [lines] }. Anything missing, empty or malformed falls back to the default. */
-    apply: function (o) { over = {}; if (o && typeof o === "object") for (var k in o) { var c = clean(o[k]); if (BY[k] && c && c.length) over[k] = c; } },
+    /* the owner's saved edits. Anything missing, empty or malformed falls back to the default. */
+    apply: function (o) { over = {}; o = open(o); for (var k in o) { var c = clean(o[k]); if (BY[k] && c && c.length) over[k] = c; } },
     lines: function (id) { return over[id] || (BY[id] ? BY[id].lines : [""]); },
     first: function (id) { return this.lines(id)[0] || ""; },
-    clean: clean
+    clean: clean, open: open,
+    seal: function (edits) { return edits && Object.keys(edits).length ? { z: enc(JSON.stringify(edits)) } : {}; }
   };
 })();
