@@ -1,6 +1,6 @@
 /* Trophy Cabinet (/trophies/). Prefix tr-. Uses the hub tokens (--panel --line --text --muted).
- * Tier accents: common silver, secret purple, platinum cyan, special gold. */
-:root{--tr-gold:#ffcf52;--tr-common:#9aa3ad;--tr-rare:#b98bff;--tr-plat:#46d6ff;--tr-special:#ffcf52}
+ * Rarity accents: common silver · uncommon green · rare blue · epic purple · legendary gold · platinum cyan · special pink. */
+:root{--tr-gold:#ffcf52;--tr-common:#9aa3ad;--tr-uncommon:#56c98a;--tr-rare:#5aa9ff;--tr-epic:#b98bff;--tr-legendary:#ffbe3d;--tr-plat:#46d6ff;--tr-special:#ff7ec8}
 
 .tr-hero{position:relative}
 .tr-prog{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:22px}
@@ -32,7 +32,8 @@
 .tr-card.is-got:hover{transform:translateY(-3px);border-color:var(--tr-c,var(--line-2));box-shadow:0 20px 44px -26px var(--tr-c,#000)}
 .tr-card.is-locked{opacity:.64}
 .tr-card.is-locked:hover{opacity:.82;border-color:var(--line-2)}
-.tr-common{--tr-c:var(--tr-common)} .tr-rare{--tr-c:var(--tr-rare)} .tr-platinum{--tr-c:var(--tr-plat)} .tr-special{--tr-c:var(--tr-special)}
+.tr-common{--tr-c:var(--tr-common)} .tr-uncommon{--tr-c:var(--tr-uncommon)} .tr-rare{--tr-c:var(--tr-rare)}
+.tr-epic{--tr-c:var(--tr-epic)} .tr-legendary{--tr-c:var(--tr-legendary)} .tr-platinum{--tr-c:var(--tr-plat)} .tr-special{--tr-c:var(--tr-special)}
 
 .tr-ico{flex:none;width:50px;height:50px;display:grid;place-items:center;border-radius:14px;
   color:var(--tr-c,var(--tr-common));background:color-mix(in srgb,var(--tr-c,var(--tr-common)) 14%,transparent);border:1px solid color-mix(in srgb,var(--tr-c,var(--tr-common)) 34%,transparent)}
@@ -51,7 +52,8 @@
 .tr-date--locked{opacity:.7}
 
 /* the special trophy sits apart, like a plaque */
-.tr-card.tr-special{background:linear-gradient(120deg,rgba(255,207,82,.1),var(--panel) 60%);grid-column:1/-1}
+.tr-card.tr-special{background:linear-gradient(120deg,rgba(255,126,200,.12),var(--panel) 60%);grid-column:1/-1}
+.tr-card.tr-platinum{grid-column:1/-1;background:linear-gradient(120deg,rgba(70,214,255,.1),var(--panel) 62%)}
 .tr-card.tr-special.is-locked{opacity:.7}
 
 .tr-empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:26px;border:1px dashed var(--line-2);border-radius:14px}
