@@ -8,6 +8,7 @@ const CARDS = [
   { file: "hub", kicker: "DaManAnders", title: "Choose your avenue", sub: "The AndersCraft WoW server, the AnyPS PlayStation launcher and Rate-O-Pedia game ratings — fan projects, built for fun.", accent: "#cd4257", bg: "assets/hub-bg.jpg" },
   { file: "resume", kicker: "Interactive résumé", title: "Anders", sub: "Compliance & Sales Lead. Builder and reverse-engineer after hours.", accent: "#cd4257" },
   { file: "changelog", kicker: "Changelog", title: "What's new", sub: "Every update across the hub, AnyPS, AndersCraft and the game ratings.", accent: "#cd4257" },
+  { file: "projects", kicker: "Projects", title: "What I'm working on", sub: "AnyPS going native, Wizard of the Sprint, this site, AndersCraft and more.", accent: "#cd4257" },
   { file: "uses", kicker: "Uses", title: "What I build with", sub: "The machine, the tools and the stack behind the projects.", accent: "#cd4257" },
   { file: "stream", kicker: "Stream", title: "Live from the workbench", sub: "Coding, reverse engineering, servers and game dev, live.", accent: "#9146ff" },
   { file: "links", kicker: "Links I like", title: "Sites I actually use", sub: "Places on the internet worth your click, ranked by me and by you.", accent: "#cd4257" },

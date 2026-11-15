@@ -257,5 +257,6 @@ window.SITE_EXTRA = {
     uiSounds: true,      // optional UI sounds (always start off)
     konami: true,        // easter egg
     accounts: true,      // native DMA Account sign-up at /account/ — ON (Supabase backend live, Turnstile key set 2026-11-15)
+    projectFeedback: true, // verified-member upvotes + comments on /projects/ — ON (SQL 34 run 2026-11-15)
   },
 };
