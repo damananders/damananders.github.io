@@ -274,5 +274,14 @@
 .ak-stage[data-game="wizard-sprint"] .wz-equip .wz-new{display:none}   /* the glowing is-new border already marks a slot with new drops */
 /* prep: tighter rows so headers read as groups */
 .ak-stage[data-game="wizard-sprint"] .wz-prep .ak-btn{min-height:0;padding:.4em .7em}
-/* the rummage-sale wallet strip */
-.ak-stats.wz-wallet{grid-template-columns:repeat(4,minmax(0,1fr));margin:.2em 0 .5em}
+/* prep: the challenges in play, as cards that pop */
+.ak-stage[data-game="wizard-sprint"] .wz-chal{display:flex;flex-direction:column;gap:.4em;margin:.5em 0 .3em}
+.ak-stage[data-game="wizard-sprint"] .wz-chal__row{padding:.5em .65em;border-radius:.3em;border:1px solid rgba(232,193,90,.4);border-left:3px solid var(--wz-gold);
+  background:linear-gradient(180deg,rgba(62,40,20,.62),rgba(30,18,9,.62));box-shadow:inset 0 0 1em rgba(0,0,0,.35)}
+.wz-chal__top{display:flex;justify-content:space-between;align-items:baseline;gap:.6em}
+.wz-chal__top>b{font:700 1.02em var(--wz-serif);color:#fff3d0;letter-spacing:.01em}
+.wz-chal__top>em{font:800 .82em var(--mono);font-style:normal;color:#ffe08a;white-space:nowrap}
+.wz-chal__bar{height:.5em;border-radius:1em;background:rgba(0,0,0,.5);overflow:hidden;margin:.4em 0 .35em;border:1px solid rgba(0,0,0,.4)}
+.wz-chal__bar>i{display:block;height:100%;border-radius:1em;background:linear-gradient(90deg,#4caf6e,#9ae6b4);box-shadow:0 0 .4em rgba(127,220,156,.6)}
+.wz-chal__d{display:block;font:600 .76em var(--mono);color:#e4d4a8;line-height:1.35}
+.wz-chal__r{display:block;margin-top:.2em;font:800 .74em var(--mono);color:#8fe0a4;letter-spacing:.02em}
