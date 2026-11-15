@@ -133,6 +133,10 @@
         return { id: String(x.id || ""), title: String(x.title || ""), url: String(x.url || ""), founded: String(x.founded || ""), color: /^#[0-9a-f]{6}$/i.test(x.color) ? x.color : "#cd4257", image: String(x.image || ""), video: String(x.video || ""), blurb: String(x.blurb || ""), _old: true };
       });
       $("cp-login").hidden = true; $("cp-lead").textContent = "Changes go live when you press Save. Visitors see them within about five minutes.";
+      /* A confirmed sign-in IS the owner on this browser: turn owner view on so the Dashboard and other
+         owner-only surfaces work everywhere, in every tab, without hunting for the ?owner switch. It persists
+         (localStorage) and can still be turned off from Sign-in's "Owner view" box or with ?owner=0. */
+      try { Site.store.set("owner", true); if (document.documentElement) document.documentElement.setAttribute("data-owner", ""); } catch (e) {}
       build(); if (fresh) { Site.sfx("success"); Site.toast("Signed in as site admin.", { type: "ok" }); }
       if (!sess.linked) show("security");
     }).catch(function (err) { console.error("[control]", err); var m = $("cp-login-msg"); if (m) m.textContent = "Signed in, but the panel could not open (" + (err && err.message) + "). Reload the page with Ctrl+Shift+R and try again."; });
