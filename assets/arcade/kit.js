@@ -343,6 +343,12 @@
     cv.addEventListener("pointercancel", function (e) { g.pointer.down = false; pt(e, "up"); });
     cv.addEventListener("pointerleave", function () { g.pointer.inside = false; });
     cv.addEventListener("contextmenu", function (e) { if (g.state === "play") e.preventDefault(); });
+    /* a click on the menu backdrop (the game scene behind a side panel) can be handled by the game */
+    menuLayer.addEventListener("pointerdown", function (e) {
+      if (!menuSpec || !def.backdropClick) return;
+      if (e.target && e.target.closest && e.target.closest(".ak-panel, .ak-btn, input, textarea, select, button, a")) return;
+      var p = g.toGame(e.clientX, e.clientY); def.backdropClick(g, p.x, p.y);
+    });
 
     /* ---- loop ---- */
     function paint() {

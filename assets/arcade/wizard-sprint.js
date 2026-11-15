@@ -147,7 +147,7 @@
       wiz: { name: "", body: 0, skin: 6, head: 0, shape: 0.4, age: 104, hair: 2, hairCol: 0, brow: 1, beard: 0, height: 0.5 },
       rem: 0, orbs: 0, grim: 0, syl: 0, xp: 0, lvl: 1, rank: 0, cleared: {}, tower: 0, story: {},
       inc: { poof: { k: 0 } }, incEq: ["poof"], buffs: {}, buffEq: [], ranks: {}, bag: [], eq: starter(), bagCap: 12, speed: 1,
-      binds: {}, pad: {}, snd: true, vol: 0.7, comfort: false, cos: {}, cnt: {}, best: {}, ch: [], shop: { slot: 0, items: [] }, nid: 10 };
+      binds: {}, pad: {}, snd: true, vol: 0.7, flashOn: true, comfort: false, cos: {}, cnt: {}, best: {}, ch: [], shop: { slot: 0, items: [] }, nid: 10 };
   }
   function load() {
     var s = store.get(SKEY, null), f = fresh(); S = f;
@@ -229,12 +229,13 @@
   }
 
   /* ---------------- controls ---------------- */
-  var ACTS = [["jump", "Jump / Hold To Glide"], ["drop", "Drop Through Platform"], ["c1", "Incantation 1"], ["c2", "Incantation 2"], ["c3", "Incantation 3"], ["five", "High Five"], ["slow", "Run Slower"], ["fast", "Run Faster"]];
-  var DEFK = { jump: ["Space", "KeyW", "ArrowUp"], drop: ["KeyS", "ArrowDown"], c1: ["KeyJ"], c2: ["KeyK"], c3: ["KeyL"], five: ["KeyF"], slow: ["Digit1"], fast: ["Digit2"] };
-  var DEFP = { jump: "a", drop: "down", c1: "x", c2: "y", c3: "b", five: "rb", slow: "lt", fast: "rt" };
+  var ACTS = [["jump", "Jump / Hold To Glide"], ["drop", "Drop Through Platform"], ["flash", "Illusion Flash (dodge)"], ["c1", "Incantation 1"], ["c2", "Incantation 2"], ["c3", "Incantation 3"], ["five", "High Five"], ["slow", "Run Slower"], ["fast", "Run Faster"]];
+  var DEFK = { jump: ["Space", "KeyW", "ArrowUp"], drop: ["KeyS", "ArrowDown"], flash: ["ShiftLeft"], c1: ["KeyJ"], c2: ["KeyK"], c3: ["KeyL"], five: ["KeyF"], slow: ["Digit1"], fast: ["Digit2"] };
+  var DEFP = { jump: "a", drop: "down", flash: "lb", c1: "x", c2: "y", c3: "b", five: "rb", slow: "lt", fast: "rt" };
+  var FLASHCD = 3.2, FLASHDUR = 0.5;                     /* Illusion Flash: a short dodge of i-frames on a cooldown */
   function keysOf(a) { return S.binds[a] ? [S.binds[a]] : DEFK[a]; }
   function padOf(a) { return S.pad[a] || DEFP[a]; }
-  function keyName(c) { return c.replace(/^Key|^Digit/, "").replace(/^Arrow/, "Arrow ").replace("Space", "Space"); }
+  function keyName(c) { if (/^Shift/.test(c)) return "Shift"; if (/^Control/.test(c)) return "Ctrl"; return c.replace(/^Key|^Digit/, "").replace(/^Arrow/, "Arrow ").replace("Space", "Space"); }
   function isDown(g, a) {
     var ks = keysOf(a); for (var i = 0; i < ks.length; i++) if (g.key(ks[i])) return true;
     if (g.pad && g.pad.btn[padOf(a)]) return true;
@@ -305,6 +306,7 @@
     else if (k === "ch") { tone("square", 660, 0, 0.08, 0.12); tone("square", 990, 0, 0.14, 0.12, 0.08); }
     else if (k === "five") { noise("highpass", 1500, 3000, 0.05, 0.3); }
     else if (k === "slap") { noise("lowpass", 1700, 500, 0.05, 0.5); noise("highpass", 2600, 1200, 0.04, 0.18); tone("sine", 240, 90, 0.07, 0.2); }
+    else if (k === "flash") { tone("sine", 900, 1700, 0.14, 0.14); tone("sine", 1400, 2600, 0.12, 0.08, 0.02); noise("highpass", 3200, 7000, 0.12, 0.09); }
     else if (k === "boss") { tone("sawtooth", 110, 55, 0.6, 0.3); }
     else if (k === "win") { [523, 659, 784, 1047].forEach(function (f, i) { tone("square", f, 0, 0.16, 0.14, i * 0.12); }); }
     else if (k === "lose") { [392, 330, 262, 196].forEach(function (f, i) { tone("triangle", f, 0, 0.2, 0.2, i * 0.14); }); }
@@ -550,36 +552,91 @@
       x = i * 140 + hash(i) * 60 - fo; px(x, 338, 26, 22, "#245a34"); px(x + 6, 330, 6, 10, "#2f6b3d"); px(x + 16, 334, 5, 6, "#2f6b3d"); px(x - 6, 346, 8, 14, "#2f6b3d");
     }
   }
-  /* the tower: a boxy house with the tower on its left, a hole blown in the side, and no roof (stage 0 and 1) */
+  /* the tower: a tall witch's-hat tower, cut away so you see its floors — a foyer with the stations, a dining room, an attic study */
   var HOX = 170, SPOT = { crate: 300, read: 262, dig: 392, prep: 452, equip: 350, condenser: 138, armoire: 232 };
+  var APEX = 305, WL = 150, WR = 462;                    /* roof apex x, and the tower's left / right outer walls */
+  function hubHotspots(stage) {                           /* clickable station zones, in the hub's drawing coords */
+    var h = [{ key: "prep", name: "Prep Time", x: 420, y: 232, w: 50, h: 66, lx: 445 },
+             { key: "equip", name: "Equipment", x: 332, y: 232, w: 44, h: 64, lx: 354 }];
+    if (stage >= 1) { h.push({ key: "armoire", name: "Wardrobe", x: 212, y: 244, w: 40, h: 54, lx: 232 });
+      h.push({ key: "condenser", name: "Condenser", x: 70, y: 244, w: 78, h: 54, lx: 109 }); }
+    return h;
+  }
   function drawHub(t, stage) {
-    var i, x;
-    for (i = 0; i < 9; i++) px(-HOX, i * 40, BW + HOX, 40, ["#3a4658", "#414e61", "#49566a", "#515f73", "#5a687c", "#627085", "#627085", "#627085", "#627085"][i]);
-    for (x = -HOX - 6; x < BW; x += 8) { var c0 = x / 8, hh = 30 + hash(c0 + 40) * 28 + Math.sin(c0 * 0.4) * 8; px(x, 230 - hh, 8, hh + 80, "#2c4a3c"); }
-    px(-HOX, 300, BW + HOX, 60, "#4c3d2b"); px(-HOX, 300, BW + HOX, 2, "#5d4c36");
-    for (x = -HOX; x < BW; x += 6) if (hash(x + 700) > 0.5 && (x < 186 || x > 470)) px(x, 296 - (hash(x + 1) * 3 | 0), 6, 5, "#2f5d36");
-    /* back wall of the house, and the tower above its left half */
-    px(196, 170, 266, 130, "#3b3944"); px(206, 44, 92, 130, "#3b3944");
-    for (i = 0; i < 40; i++) { var bx = 200 + hash(i * 3) * 250, by = 176 + hash(i * 7) * 116; px(bx, by, 12, 5, "#45434f"); }
-    for (i = 0; i < 16; i++) px(210 + hash(i * 5) * 78, 50 + hash(i * 9) * 116, 12, 5, "#45434f");
-    px(236, 80, 14, 22, "#1c2230"); px(238, 82, 10, 18, "#55647a");                 /* tower window */
-    /* the hole in the tower's side, and the jagged top where the roof was */
-    for (i = 0; i < 12; i++) { px(262 + i * 3, 96 + Math.abs(i - 5) * 4, 3, 52 - Math.abs(i - 5) * 8, "#55647a"); }
-    for (i = 0; i < 12; i++) px(206 + i * 8, 44 - (hash(i * 2.2) * 12 | 0), 8, 14, i % 3 ? "#3b3944" : "#515f73");
-    for (i = 0; i < 34; i++) px(196 + i * 8, 170 - (hash(i * 1.3) * 9 | 0), 8, 10, (i < 13) ? "#3b3944" : (hash(i) > 0.4 ? "#3b3944" : "#515f73"));
-    /* side walls: the left one stands, the right one is mostly gone */
-    px(190, 150, 10, 150, "#5a5866"); px(190, 250, 10, 50, "#2a2832");
-    for (i = 0; i < 9; i++) px(456 + (hash(i) * 6 | 0), 300 - i * 9 - 9, 12 - i, 9, "#5a5866");
-    px(430, 292, 30, 8, "#5a5866"); px(470, 294, 16, 6, "#4d4b58"); px(492, 296, 9, 4, "#5a5866"); px(408, 295, 12, 5, "#4d4b58");
-    /* what is left inside */
-    px(SPOT.crate - 4, 291, 20, 9, "#7a5a3a"); px(SPOT.crate - 4, 291, 20, 2, "#8f6d48"); px(SPOT.crate + 5, 291, 2, 9, "#5c4530");
-    px(SPOT.equip - 12, 288, 24, 12, "#6b4a2e"); px(SPOT.equip - 12, 288, 24, 3, "#8a6a44"); px(SPOT.equip - 1, 291, 3, 3, "#f0c23a");
-    px(SPOT.dig - 4, 292, 30, 8, "#4d4b58"); px(SPOT.dig + 2, 287, 14, 6, "#5a5866"); px(SPOT.dig + 10, 290, 6, 3, "#efe2b8"); px(SPOT.dig - 2, 294, 5, 2, "#8a3f22");
-    px(250, 282, 5, 18, "#5c4530"); px(246, 296, 14, 4, "#5c4530"); px(244, 280, 16, 3, "#7a5a3a"); px(247, 277, 8, 3, "#efe2b8");   /* a lectern with a scroll */
-    px(404, 262, 14, 30, "#2b3340"); px(405, 263, 12, 28, "#6d7f96"); px(409, 263, 1, 12, "#2b3340"); px(410, 274, 5, 1, "#2b3340");   /* the cracked mirror */
+    var i, x, y, L3 = !!S.cleared[3];                     /* the chandelier is mended once the third level is cleared */
+    /* sky */
+    for (i = 0; i < 10; i++) px(-HOX, i * 31, BW + HOX, 31, ["#20304a", "#283a56", "#2f4360", "#374d6a", "#405873", "#4a627c", "#536b85", "#5c738b", "#657b90", "#6d8294"][i]);
+    for (i = 0; i < 20; i++) { var sx = -HOX + hash(i * 9) * (BW + HOX), sy = hash(i * 5) * 150; px(sx, sy, 2, 2, "rgba(255,247,220,.7)"); }
+    /* far treeline behind the tower */
+    for (x = -HOX - 6; x < BW; x += 8) { var hh = 24 + hash(x * 1.3 + 40) * 22 + Math.sin(x * 0.05) * 6; px(x, 236 - hh, 8, hh + 70, "#223a2c"); }
+    /* ground: dirt yard, with a grassy fringe outside the tower */
+    px(-HOX, 300, BW + HOX, 60, "#4a3b29"); px(-HOX, 300, BW + HOX, 2, "#5d4c36"); px(-HOX, 305, BW + HOX, 1, "#3a2d1f");
+    for (x = -HOX; x < BW; x += 6) if (hash(x + 700) > 0.55 && (x < WL - 8 || x > WR + 4)) px(x, 296 - (hash(x + 1) * 3 | 0), 6, 5, "#315f36");
+    /* ---- the tower shell: stone body and a pointed witch's hat ---- */
+    px(WL, 70, WR - WL, 230, "#39414f");                                            /* stone body */
+    for (i = 0; i < 70; i++) { var bx = WL + 6 + hash(i * 3) * (WR - WL - 16), by = 80 + hash(i * 7) * 210; px(bx, by, 13, 6, "#424b5b"); px(bx, by + 6, 13, 1, "#2c333f"); }
+    px(WL, 70, 8, 230, "#2c3340"); px(WR - 8, 70, 8, 230, "#4a5466");               /* shaded / lit outer edges */
+    /* the roof: a tall pointed hat with shingle rows and a bent, belled tip */
+    var eaveY = 74, eaveL = 116, eaveR = 494;
+    for (y = eaveY; y > 12; y -= 4) { var fr = (eaveY - y) / (eaveY - 12), lx = Math.round(eaveL + (APEX - 8 - eaveL) * fr), rx2 = Math.round(eaveR - (eaveR - (APEX + 8)) * fr); px(lx, y - 4, rx2 - lx, 5, ((eaveY - y) >> 2) % 2 ? "#3a2560" : "#301c50"); }
+    px(eaveL - 6, eaveY, eaveR - eaveL + 12, 7, "#4a2f78"); px(eaveL - 6, eaveY + 5, eaveR - eaveL + 12, 3, "#2a1848");   /* overhanging eave */
+    for (i = 0; i < 8; i++) px(eaveL - 2 + i * (eaveR - eaveL) / 7, eaveY + 7, 4, 5 + (i % 2) * 3, "#2a1848");           /* eave teeth */
+    /* the belled, bent tip */
+    px(APEX - 6, 20, 12, 10, "#301c50"); px(APEX - 3, 10, 10, 10, "#3a2560"); px(APEX + 5, 6, 7, 7, "#4a2f78"); px(APEX + 9, 4, 4, 4, "#f0c23a"); px(APEX + 9, 1, 2, 4, "#3a2560");
+    /* a lit arched window up in the roof */
+    px(APEX - 10, 46, 20, 22, "#1a1226"); px(APEX - 7, 49, 14, 18, Math.sin(t * 2) > -0.6 ? "#ffd874" : "#d9a94a"); px(APEX - 1, 49, 2, 18, "#1a1226"); px(APEX - 7, 49, 14, 2, "#1a1226");
+    /* ---- cut-away interior ---- */
+    var IL = WL + 10, IR = WR - 10;                                                 /* interior left / right */
+    px(IL, 78, IR - IL, 222, "#241f2e");                                            /* back wall, in shadow */
+    for (i = 0; i < 46; i++) { var px2 = IL + 4 + hash(i * 3 + 2) * (IR - IL - 14), py2 = 84 + hash(i * 7 + 1) * 206; px(px2, py2, 12, 5, "#2b2636"); }
+    px(IL, 150, IR - IL, 6, "#4a3826"); px(IL, 150, IR - IL, 2, "#5e4a30");         /* attic / dining floor */
+    px(IL, 226, IR - IL, 6, "#4a3826"); px(IL, 226, IR - IL, 2, "#5e4a30");         /* dining / foyer floor */
+    px(IL, 293, IR - IL, 7, "#4c3d2b"); px(IL, 293, IR - IL, 2, "#6a5636");         /* foyer floorboards */
+    for (x = IL; x < IR; x += 18) px(x, 293, 1, 7, "#3a2d1f");
+    /* --- attic study (top floor): a round window, a bookshelf, a candle --- */
+    px(IL + 14, 96, 24, 24, "#120d1c"); for (i = 0; i < 24; i++) { var aa = i / 24 * TAU; px(IL + 26 + Math.cos(aa) * 11, 108 + Math.sin(aa) * 11, 2, 2, "#2a2038"); } px(IL + 18, 100, 16, 16, "#36507a"); px(IL + 25, 100, 2, 16, "#243a5e"); px(IL + 18, 107, 16, 2, "#243a5e");
+    x = IR - 66; px(x, 104, 58, 40, "#3a2a1a"); px(x, 104, 58, 3, "#52381f"); px(x, 122, 58, 2, "#52381f"); for (i = 0; i < 14; i++) px(x + 3 + i * 4, 107 + (i % 3) * 18, 3, 13, ["#7b2f3e", "#2f5d6b", "#6a5a2a", "#4a3a6a"][i % 4]);
+    px(IL + 46, 132, 4, 12, "#6b4a22"); px(IL + 44, 128, 8, 5, "#f4ecd8"); px(IL + 47, 123, 2, 5, "#ffd874"); if (Math.sin(t * 9) > 0) px(IL + 47, 120, 2, 3, "#ffe9a8");
+    /* --- dining room (middle floor): a long table with chairs and plates, and a chandelier --- */
+    var tL = IL + 36, tR = IR - 36;
+    for (i = 0; i < 2; i++) { var cxz = i ? tR - 10 : tL + 2; px(cxz, 186, 8, 38, "#5c4530"); px(cxz + (i ? -2 : 8), 172, 3, 20, "#6b4a2e"); px(cxz + (i ? -4 : 6), 170, 7, 4, "#7a5a3a"); }   /* chairs */
+    px(tL, 206, tR - tL, 8, "#7a5733"); px(tL, 206, tR - tL, 2, "#956e42"); px(tL, 214, tR - tL, 1, "#4a3420"); px(tL + 6, 214, 5, 10, "#5c4530"); px(tR - 11, 214, 5, 10, "#5c4530");   /* long table */
+    for (i = 0; i < 4; i++) { var dpx = tL + 22 + i * (tR - tL - 44) / 3; px(dpx - 5, 203, 10, 3, "#dfe6ee"); px(dpx - 3, 202, 6, 2, "#b9c2cd"); }                                    /* plates */
+    px(tL + 30, 198, 4, 8, "#f0c23a"); px(tL + 29, 196, 6, 3, "#ffe08a"); px(tR - 40, 199, 3, 7, "#c23a4a"); px(tR - 41, 197, 5, 3, "#ff6676");                                        /* a goblet and a bottle */
+    /* chandelier: hangs from the dining-room ceiling, broken (dark, tilted) until the third level is cleared */
+    var chx = (tL + tR) / 2, chy = 158, tilt = L3 ? 0 : 3;
+    px(chx - 1, 150, 2, chy - 150, "#2a2232"); px(chx - 16, chy + tilt, 34, 3, L3 ? "#e8c15a" : "#6b5a3a"); px(chx - 2, chy + tilt - 2, 4, 6, L3 ? "#e8c15a" : "#6b5a3a");
+    for (i = -1; i <= 1; i++) { var ax = chx + i * 13, ay = chy + tilt + (i === 0 ? 0 : Math.abs(i) * 1) + (L3 ? 0 : (i < 0 ? 4 : 0)); px(ax - 1, ay - 6, 2, 6, L3 ? "#e8c15a" : "#5a4a2a"); if (L3) { px(ax - 1, ay - 10, 3, 4, "#f4ecd8"); px(ax, ay - 13, 1, 3, "#ffd874"); if (Math.sin(t * 8 + i) > 0) px(ax, ay - 15, 1, 2, "#ffe9a8"); } else if (i > 0) { px(ax - 1, ay - 9, 2, 3, "#3a3026"); } }
+    if (!L3) { px(chx + 14, chy + 10, 3, 3, "#2a2232"); px(chx + 15, chy + 13, 2, 8, "#5a4a2a"); }   /* a fallen arm dangling */
+    /* --- foyer (ground floor) --- */
+    px(IL, 232, IR - IL, 30, "#2e2838"); for (x = IL; x < IR; x += 20) px(x, 232, 10, 30, "#332c3e");   /* wainscot panels */
+    px(258, 296, 150, 4, "#7b2f3e"); px(258, 296, 150, 1, "#a8465a"); for (x = 262; x < 406; x += 14) px(x, 297, 7, 2, "#5e1826");   /* a runner rug */
+    /* the left side: an arched doorway out to the caravan, and a dim back hallway with a lit room */
+    px(IL, 236, 22, 64, "#15111d"); px(IL, 236, 22, 4, "#2a2236"); px(IL + 22, 250, 18, 50, "#1b1626");    /* hallway mouth */
+    px(IL + 26, 262, 10, 30, Math.sin(t * 1.5) > -0.3 ? "#caa35a" : "#9a7a40"); px(IL + 28, 266, 6, 22, "#e8c988");   /* lit back room at the end */
+    px(IL + 24, 250, 2, 50, "#0d0a14"); px(IL + 38, 250, 2, 50, "#0d0a14");
+    /* the right side: the entrance arch, open to daylight and the tracks */
+    px(WR - 30, 232, 30, 68, "#121820"); for (i = 0; i < 8; i++) px(WR - 30 + i * 4, 232 - (i < 4 ? i : 7 - i) * 2, 4, 6, "#39414f"); px(WR - 26, 244, 22, 56, "#7b8a63"); px(WR - 24, 250, 18, 50, "#9ab07a");
+    px(WR - 14, 262, 6, 38, "#2a1a0e");   /* a door, ajar */
+    /* ---- the stations, as proper furniture ---- */
+    /* reading nook at SPOT.read: a cushioned stool and a little stack of books */
+    px(SPOT.read - 7, 286, 14, 10, "#5a3f6a"); px(SPOT.read - 7, 284, 14, 3, "#7a5a8a"); px(SPOT.read + 8, 288, 6, 8, "#3a2a4a"); px(SPOT.read + 8, 288, 6, 2, "#7b2f3e"); px(SPOT.read + 8, 291, 6, 2, "#2f5d6b");
+    /* lectern + scroll at 250 */
+    px(250, 276, 5, 24, "#5c4530"); px(246, 296, 14, 4, "#5c4530"); px(243, 272, 18, 4, "#7a5a3a"); px(244, 268, 16, 3, "#efe2b8"); px(248, 265, 8, 4, "#efe2b8");
+    /* a side table with a candle, between the crate and the mirror */
+    px(332, 280, 20, 4, "#6b4a2e"); px(333, 284, 3, 12, "#5c4530"); px(348, 284, 3, 12, "#5c4530"); px(340, 272, 3, 8, "#f4ecd8"); px(340, 269, 2, 4, "#ffd874"); if (Math.sin(t * 7) > 0) px(340, 266, 2, 3, "#ffe9a8");
+    /* the dressing/equipment stand (a mannequin) at SPOT.equip */
+    px(SPOT.equip - 3, 262, 6, 30, "#5c4530"); px(SPOT.equip - 10, 290, 20, 4, "#6b4a2e"); px(SPOT.equip - 9, 258, 18, 10, "#6a5a8a"); px(SPOT.equip - 6, 250, 12, 9, "#caa35a"); px(SPOT.equip - 2, 252, 4, 4, "#2a1a0e");
+    /* the cracked mirror at 404 */
+    px(402, 258, 18, 36, "#8a6a3a"); px(404, 260, 14, 32, "#2b3340"); px(405, 261, 12, 30, "#6d7f96"); px(410, 261, 1, 16, "#2b3340"); px(411, 272, 5, 1, "#2b3340"); px(405, 261, 5, 3, "rgba(255,255,255,.25)");
+    /* the dig patch at 392: loose floorboards and a glint */
+    px(SPOT.dig - 6, 294, 30, 6, "#3a2d1f"); px(SPOT.dig + 2, 290, 14, 5, "#5a4632"); px(SPOT.dig + 10, 292, 5, 3, "#efe2b8"); px(SPOT.dig - 2, 296, 5, 2, "#8a3f22");
+    /* the crate the wizard sits on at SPOT.crate */
+    px(SPOT.crate - 9, 282, 22, 18, "#7a5a3a"); px(SPOT.crate - 9, 282, 22, 3, "#8f6d48"); px(SPOT.crate - 9, 299, 22, 2, "#5c4530"); px(SPOT.crate - 2, 282, 2, 18, "#5c4530"); px(SPOT.crate - 7, 286, 18, 1, "#5c4530");
     if (stage >= 1) {
-      px(SPOT.armoire - 16, 252, 26, 48, "#5c4530"); px(SPOT.armoire - 14, 254, 10, 44, "#7a5a3a"); px(SPOT.armoire - 2, 254, 10, 44, "#7a5a3a"); px(SPOT.armoire - 5, 276, 2, 3, "#f0c23a"); px(SPOT.armoire - 1, 276, 2, 3, "#f0c23a");
-      /* the caravan that rolls up outside */
+      /* the Wizard Drip Armoire (a tall wardrobe) at SPOT.armoire */
+      px(SPOT.armoire - 20, 246, 40, 52, "#4a3420"); px(SPOT.armoire - 18, 248, 17, 48, "#6b4a2e"); px(SPOT.armoire + 1, 248, 17, 48, "#6b4a2e"); px(SPOT.armoire - 20, 246, 40, 3, "#8a6a44"); px(SPOT.armoire - 2, 250, 2, 44, "#3a2a1a"); px(SPOT.armoire - 5, 270, 2, 4, "#f0c23a"); px(SPOT.armoire + 2, 270, 2, 4, "#f0c23a");
+      /* the Magickal Condenser caravan, rolled up outside the left door */
       x = SPOT.condenser - 60;
       px(x, 262, 64, 30, "#7b2f3e"); px(x, 258, 64, 5, "#f0c23a"); px(x + 4, 248, 56, 10, "#5e1826"); px(x + 8, 268, 20, 14, "#ffd76b"); px(x + 10, 270, 16, 10, "#3a2a1a");
       px(x + 40, 268, 14, 24, "#3a2a1a"); px(x + 6, 290, 12, 12, "#2a2018"); px(x + 9, 293, 6, 6, "#7a5a3a"); px(x + 46, 290, 12, 12, "#2a2018"); px(x + 49, 293, 6, 6, "#7a5a3a");
@@ -608,7 +665,7 @@
     R = { mode: mode, t: 0, dist: 0, y: GY, vy: 0, ground: true, plat: null, jumps: 0, dropT: 0, glide: false, hp: st.hp, maxhp: st.hp, inv: 0, st: st, look: lookOf(false),
       plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], cds: {},
       nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
-      bossAt: (mode === "story" ? 300 : 390) * BASE, win: 0, over: false, revived: false, fiveT: 0, fiveWin: 0, shake: 0, mud: 0, chat: 5, tap: false,
+      bossAt: (mode === "story" ? 300 : 390) * BASE, win: 0, over: false, revived: false, fiveT: 0, fiveWin: 0, shake: 0, mud: 0, chat: 5, tap: false, flashCd: 0, flashT: 0,
       nextOrb: rnd(40, 60) * BASE, nextGrim: rnd(110, 170) * BASE, nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12 };
     S.incEq.forEach(function (id) { R.cds[id] = { t: 0.8, ch: 3, r: 0 }; });
     UI.scene = "run"; cnt("runs", 1);
@@ -780,6 +837,10 @@
       if (R.y >= GY) { R.y = GY; R.vy = 0; if (!R.ground) sfx("land"); R.ground = true; R.plat = null; R.jumps = 0; }
     } else if (R.plat && (wx < R.plat.x - 4 || wx > R.plat.x + R.plat.w + 4)) { R.ground = false; R.plat = null; R.jumps = 1; }
     if (R.inv > 0) R.inv -= dt; if (R.shake > 0) R.shake -= dt; if (R.fiveT > 0) R.fiveT -= dt; if (R.buffT > 0) R.buffT -= dt;
+    if (R.flashCd > 0) R.flashCd -= dt; if (R.flashT > 0) R.flashT -= dt;
+    if (S.flashOn && isHit(g, "flash") && R.flashCd <= 0 && !R.over && !R.win) {   /* a dark-souls dodge: ~0.5s of i-frames you trigger on purpose */
+      R.inv = Math.max(R.inv, FLASHDUR); R.flashT = FLASHDUR; R.flashCd = FLASHCD; sfx("flash"); fxAdd("flash", wx, R.y - 20, { d: FLASHDUR }); cnt("flash", 1);
+    }
     if (isHit(g, "five")) { R.fiveWin = 0.45; R.fiveT = 0.35; } if (R.fiveWin > 0) R.fiveWin -= dt;
     /* spawn */
     while (R.nx < R.dist + BW + 140) chunk();
@@ -962,6 +1023,7 @@
       else if (f.k === "cone") { for (i = 0; i < 14; i++) { var fx2 = x + (i / 14) * f.len * (0.4 + q * 0.6); px(fx2, f.y - 2 - i * 0.9 + (hash(i + t) * 6 | 0), 5, 4 + (i * 1.4 | 0), i % 3 ? "#ff9a2e" : "#ffd76b"); } }
       else if (f.k === "splat") { px(x - 6 - q * 4, f.y - 2, 12 + q * 8, 3, "#4a3722"); }
       else if (f.k === "slap") { for (i = 0; i < 7; i++) { var sa = i / 7 * TAU, sr = 4 + q * 16; px(x + Math.cos(sa) * sr - 1, f.y + Math.sin(sa) * sr - 1, 3, 3, i % 2 ? "#fff3c4" : "#ffd76b"); } if (q < 0.5) px(x - 5, f.y - 5, 10, 10, "rgba(255,247,196," + (1 - q * 2) + ")"); }
+      else if (f.k === "flash") { var fr = 1 - q; for (i = 0; i < 16; i++) { var fa = i / 16 * TAU; px(x + Math.cos(fa) * (10 + q * 26) - 1, f.y + Math.sin(fa) * (12 + q * 26) - 1, 2, 2, "rgba(190,225,255," + fr.toFixed(2) + ")"); } px(x - 14, f.y - 24, 28, 44, "rgba(150,210,255," + (fr * 0.5).toFixed(2) + ")"); }
     });
     drawFore(d);
     b.restore();
@@ -1063,7 +1125,14 @@
       wand(ctx, x + 14, y + 43, 200, f, RAR[I.r].c === "rb" ? "#ffd84a" : RAR[I.r].c, t + j);
     });
     if (R.buffT > 0 && R.buff) { plate(ctx, 22, H - 126, 250, 40); bar(ctx, 30, H - 104, 234, 12, R.buffT / R.buffMax, "#7fe3ff"); icoAt(ctx, "wing", 28, H - 126, 1.3); bold(ctx, BUFF[R.buff].n + "  " + R.buffT.toFixed(1) + "s", 54, H - 108, "800 14px " + F.mono, "#c8f6ff"); }
-    if (R.t < 9 && !(S.cnt.runs > 2)) { ctx.font = "700 18px " + F.display; var hs = keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down   ·   " + keyName(keysOf("five")[0]) + ": high five", hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center"); }
+    if (S.flashOn) {                                      /* Illusion Flash readiness, bottom-right */
+      var fx0 = W - 24 - 196, fy0 = H - 70, rdy = R.flashCd <= 0, ff = rdy ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1);
+      plate(ctx, fx0, fy0, 196, 46); icoAt(ctx, "flash", fx0 + 8, fy0 + 8, 1.8);
+      bold(ctx, "Illusion Flash", fx0 + 42, fy0 + 20, "800 14px " + F.mono, rdy ? "#bfe3ff" : "#9aa6b4");
+      bar(ctx, fx0 + 42, fy0 + 28, 146, 9, ff, rdy ? "#7fdcff" : "#4a6f88");
+      bold(ctx, rdy ? keyName(keysOf("flash")[0]) + " : dodge" : r1(R.flashCd) + "s", fx0 + 188, fy0 + 20, "700 12px " + F.mono, rdy ? "#e6f4ff" : "#8d98a6", "right");
+    }
+    if (R.t < 9 && !(S.cnt.runs > 2)) { ctx.font = "700 18px " + F.display; var hs = keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five", hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center"); }
     R.fx.forEach(function (f) { if (f.k === "num") bold(ctx, f.s, (f.x - R.dist) * 2, (f.y - f.t * 30) * 2, "800 19px " + F.mono, "#fff", "center"); });
     R.bub.forEach(function (q) { if (q.at) bubble(ctx, (q.at.x - R.dist) * 2, (GY - 44) * 2, q.s); else bubble(ctx, WX * 2 + 30, (R.y - 66) * 2, q.s); });
   }
@@ -1083,6 +1152,37 @@
     if (Site.reducedMotion || Math.abs(Hb.tx - Hb.x) <= 1) { Hb.x = Hb.tx; fn(); return; }
     Hb.then = fn; g.wake && g.wake();
   }
+  /* a persistent HUD over the menus: Wiz level as an XP bar up top, the four currencies top-right, the bag bottom-right.
+     Shown on every menu scene except the dressing chamber and the Settings pages. */
+  function chipR(ctx, right, y, ico, s, col) {
+    ctx.font = "800 20px " + F.mono; var w = 48 + ctx.measureText(s).width, x = right - w;
+    plate(ctx, x, y, w, 38); icoAt(ctx, ico, x + 6, y + 3, 2); bold(ctx, s, x + 40, y + 26, "800 20px " + F.mono, col); return x;
+  }
+  function menuHud(ctx) {
+    /* a Wiz-level XP bar, up top in the clear band to the right of the side panel */
+    var ebw = 344, ex = 560, ey = 16, need = xpNeed(S.lvl), max = S.lvl >= 100, f = max ? 1 : clamp(S.xp / need, 0, 1);
+    plate(ctx, ex - 10, ey, ebw + 20, 44, 10);
+    bold(ctx, "WIZ LEVEL", ex + 6, ey + 18, "800 11px " + F.mono, "#e8c15a");
+    bold(ctx, String(S.lvl), ex + 92, ey + 20, "800 18px " + SERIF, "#fff3c4", "left");
+    bold(ctx, max ? "MAX" : fmt(S.xp) + " / " + fmt(need) + " XP", ex + ebw - 2, ey + 18, "700 12px " + F.mono, "#dccb9f", "right");
+    var by = ey + 26, bw = ebw;
+    ctx.fillStyle = "rgba(0,0,0,.55)"; D.rr(ctx, ex, by, bw, 11, 5); ctx.fill();
+    ctx.fillStyle = "#e8c15a"; D.rr(ctx, ex, by, Math.max(7, bw * f), 11, 5); ctx.fill();
+    ctx.fillStyle = "#fff3c4"; ctx.fillRect(ex + 3, by + 2, Math.max(2, bw * f - 6), 2);
+    for (var i = 1; i < 4; i++) { ctx.fillStyle = "rgba(16,9,5,.5)"; ctx.fillRect(ex + bw * i / 4 - 1, by, 2, 11); }
+    /* top right: the four currencies */
+    var right = W - 24;
+    right = chipR(ctx, right, 16, "syl", fmt(S.syl), "#e4caff") - 8;
+    right = chipR(ctx, right, 16, "grim", fmt(S.grim), "#d9c2ff") - 8;
+    right = chipR(ctx, right, 16, "orb", fmt(S.orbs), "#c8f6ff") - 8;
+    chipR(ctx, right, 16, "rem", fmt(S.rem), "#c9ccff");
+    /* bottom right: the bag */
+    var full = S.bag.length >= S.bagCap, nw = S.bag.filter(function (q) { return q.nw; }).length;
+    ctx.font = "800 20px " + F.mono; var bs = S.bag.length + " / " + S.bagCap, bgw = 50 + ctx.measureText(bs).width, bgx = W - 24 - bgw, bgy = H - 24 - 42;
+    plate(ctx, bgx, bgy, bgw, 42); icoAt(ctx, "equip", bgx + 7, bgy + 6, 1.9);
+    bold(ctx, bs, bgx + 42, bgy + 28, "800 20px " + F.mono, full ? "#ff9aa5" : "#f6ecd0");
+    if (nw) { ctx.fillStyle = "#ffd84a"; D.rr(ctx, bgx - 6, bgy - 6, 14, 14, 4); ctx.fill(); bold(ctx, String(nw), bgx + 1, bgy + 5, "800 11px " + F.mono, "#2a1a0e", "center"); }
+  }
   function drawHubScene(g, ctx) {
     var t = Hb.t, st = S.tower || 0;
     b.save(); b.translate(HOX, 0); drawHub(t, st);
@@ -1093,6 +1193,32 @@
     b.restore();
     if (st < 2) drawRain(t);
     ctx.imageSmoothingEnabled = false; ctx.drawImage(BUF, 0, 0, W, H);
+    /* name tags over each station, so you can click the tower itself to open it; the picked one glows */
+    if (UI.menu === "hub" && g.menuOpen()) {
+      var selK = null; try { var pn = document.querySelector('.ak-stage[data-game="wizard-sprint"] .ak-panel'), sb = pn && pn.querySelector(".ak-btn.is-sel"); selK = sb && sb.dataset ? sb.dataset.wzSlot : null; } catch (e) {}
+      hubHotspots(st).forEach(function (hs) {
+        var lx = (hs.lx + HOX) * 2, ly = (hs.y - 8) * 2, on = hs.key === selK;
+        ctx.font = "800 14px " + F.mono; var w = ctx.measureText(hs.name).width + 26, px0 = lx - w / 2, py0 = ly - 26;
+        if (on) { ctx.strokeStyle = "rgba(255,224,138,.8)"; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.strokeRect((hs.x + HOX) * 2, hs.y * 2, hs.w * 2, hs.h * 2); ctx.setLineDash([]); }
+        ctx.fillStyle = on ? "rgba(90,48,12,.96)" : "rgba(22,13,8,.82)"; D.rr(ctx, px0, py0, w, 24, 6); ctx.fill();
+        ctx.strokeStyle = on ? "#ffe08a" : "rgba(232,193,90,.55)"; ctx.lineWidth = on ? 2 : 1.5; D.rr(ctx, px0 + 1, py0 + 1, w - 2, 22, 5); ctx.stroke();
+        bold(ctx, hs.name, lx, py0 + 17, "800 14px " + F.mono, on ? "#fff3c4" : "#e8d5a8", "center");
+        ctx.fillStyle = on ? "#ffe08a" : "rgba(232,193,90,.6)"; ctx.beginPath(); ctx.moveTo(lx - 5, py0 + 24); ctx.lineTo(lx + 5, py0 + 24); ctx.lineTo(lx, py0 + 30); ctx.fill();
+      });
+    }
+  }
+  function hubClick(g, gx, gy) {                          /* a click on the tower picks the station there */
+    if (UI.menu !== "hub" || UI.scene !== "hub" || !g.menuOpen()) return;
+    var tx = gx / 2 - HOX, ty = gy / 2, hit = null;
+    hubHotspots(S.tower || 0).forEach(function (hs) { if (tx >= hs.x && tx <= hs.x + hs.w && ty >= hs.y && ty <= hs.y + hs.h) hit = hs; });
+    if (!hit) return;
+    var c1 = !!S.cleared[1];
+    if ((hit.key === "condenser" || hit.key === "armoire") && !c1) { g.toast("Locked · clear the forest first"); return; }
+    sfx("buy");
+    if (hit.key === "prep") goStation(g, "prep", function () { prep(g, 0); });
+    else if (hit.key === "equip") goStation(g, "equip", function () { equip(g, 0); });
+    else if (hit.key === "condenser") goStation(g, "condenser", function () { condenser(g, 0); });
+    else if (hit.key === "armoire") goStation(g, "armoire", function () { armoire(g, 0); });
   }
   function ell(ctx, x, y, rx, ry, c) { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, TAU); ctx.fill(); }
   function drawCreator(g, ctx) {                        /* the dressing chamber: a gilt mirror, drapes and candles */
@@ -1186,6 +1312,8 @@
   };
   ICO.cape = function (r) { r(5, 1, 6, 2, "#e8c15a"); r(3, 3, 10, 9, "#a8324a"); r(2, 12, 12, 2, "#7a2230"); r(5, 4, 1, 8, "#7a2230"); r(9, 4, 1, 8, "#7a2230"); };
   ICO.back = function (r) { r(2, 7, 12, 2, "#e8c15a"); r(4, 5, 2, 6, "#e8c15a"); r(6, 3, 2, 10, "#e8c15a"); r(3, 6, 1, 4, "#e8c15a"); };
+  ICO.flash = function (r) { r(8, 1, 3, 6, "#bfe3ff"); r(5, 6, 4, 3, "#bfe3ff"); r(6, 7, 3, 7, "#7fd0ff"); r(9, 5, 2, 4, "#e6f6ff"); r(3, 8, 2, 2, "#e6f6ff"); r(12, 4, 2, 2, "#e6f6ff"); r(7, 8, 2, 3, "#fff"); };
+  ICO.syl = function (r) { r(5, 1, 6, 2, "#6a45c2"); r(4, 3, 3, 10, "#8f6bff"); r(9, 3, 3, 6, "#6a45c2"); r(8, 9, 4, 5, "#8f6bff"); r(6, 6, 4, 2, "#c9b3ff"); r(5, 4, 1, 7, "#3d2575"); r(10, 10, 1, 3, "#3d2575"); r(2, 7, 2, 2, "#f0c23a"); r(13, 11, 2, 2, "#f0c23a"); };
   function icoEl(k) { var c = el("canvas", { class: "wz-ico", width: "16", height: "16", "aria-hidden": "true" }), x = c.getContext("2d"); (ICO[k] || ICO.spark)(function (a, b2, w, h, col) { x.fillStyle = col; x.fillRect(a, b2, w, h); }); return c; }
   function icoAt(ctx, k, x, y, s) { ICO[k](function (a, b2, w, h, col) { ctx.fillStyle = col; ctx.fillRect(x + a * s, y + b2 * s, w * s, h * s); }); }
   function slotIco(k) { return /^sim/.test(k) ? "sim" : k === "back" ? "cape" : k; }
@@ -1218,7 +1346,7 @@
   }
   var SHAPEN = ["Twig", "Skinny", "Slim", "Lean", "Average", "Sturdy", "Stout", "Hefty", "Large", "Fairly Large", "Magnificently Round"];
   function creator(g, focus, done) {
-    UI.scene = "creator";
+    UI.scene = "creator"; UI.menu = "creator";
     var a = S.wiz, items = [];
     function row(label, val, fn) { var idx = items.length; items.push({ label: label, sub: "‹  " + val + "  ›", adj: function (d) { fn(d); creator(g, idx, done); }, act: function () { fn(1); creator(g, idx, done); } }); }
     var input = el("input", { type: "text", class: "wz-input", maxlength: "16", placeholder: "Name your wizard", value: a.name, "aria-label": "Wizard name" });
@@ -1259,37 +1387,36 @@
     if (UI.ageTxt != null) ageCheck();
   }
   function hub(g, focus) {
-    UI.scene = "hub"; Hb.busy = false; Hb.idleT = Math.min(Hb.idleT, 3);
-    var st = calc(), c1 = !!S.cleared[1], nwN = S.bag.filter(function (q) { return q.nw; }).length;
-    var tiles = el("div", { class: "ak-stats" }, tile("Wiz Level", S.lvl, fmt(S.xp) + " / " + fmt(xpNeed(S.lvl)) + " XP"), tile("Remnants", fmt(S.rem)), tile("Whisper Orbs", S.orbs),
-      tile("Grimoires", S.grim), tile("Bag", S.bag.length + " / " + S.bagCap), tile("Health", r1(st.hp) + " HP"));
+    UI.scene = "hub"; UI.menu = "hub"; Hb.busy = false; Hb.idleT = Math.min(Hb.idleT, 3);
+    var c1 = !!S.cleared[1], nwN = S.bag.filter(function (q) { return q.nw; }).length;
     function go(key, fn) { return function () { goStation(g, key, fn); }; }
     g.setBest(c1 ? "Forest cleared · Wiz Level " + S.lvl : "Wiz Level " + S.lvl);
     MN(g, { cls: "is-side wz-narrow wz-hub", kicker: "Wizard of the Sprint", title: (S.wiz.name || "The Wizard") + "'s Tower",
-      sub: c1 ? txt("hub1") : txt("hub0"), body: tiles, focus: focus,
+      sub: c1 ? txt("hub1") : txt("hub0"), focus: focus,
       items: [
-        { label: "Prep Time", ico: "prep", sub: c1 ? "Plan a Magickal Mad Dash" : "Follow the tracks", cls: "is-primary", act: go("prep", function () { prep(g, 0); }) },
-        { label: "Equipment", ico: "equip", isNew: nwN ? nwN + " NEW!" : null, sub: nwN ? nwN + " new " + (nwN > 1 ? "items" : "item") + " in the bag" : "Wear or remove your Wizard Drip", cls: S.bag.length ? "is-hot" : "", act: go("equip", function () { equip(g, 0); }) },
-        { label: "Magickal Condenser", ico: c1 ? "condenser" : "lock", sub: c1 ? "Upgrades and wares for Remnants" : "Locked · clear the forest to open the caravan", disabled: !c1, act: go("condenser", function () { condenser(g, 0); }) },
-        { label: "Wizard Drip Armoire", ico: c1 ? "hat" : "lock", sub: c1 ? "Comfort wear and your hat" : "Locked · clear the forest to win back your hat", disabled: !c1, act: go("armoire", function () { armoire(g, 0); }) },
+        { label: "Prep Time", ico: "prep", tag: "prep", sub: c1 ? "Plan a Magickal Mad Dash" : "Follow the tracks", cls: "is-primary", act: go("prep", function () { prep(g, 0); }) },
+        { label: "Equipment", ico: "equip", tag: "equip", isNew: nwN ? nwN + " NEW!" : null, sub: nwN ? nwN + " new " + (nwN > 1 ? "items" : "item") + " in the bag" : "Wear or remove your Wizard Drip", cls: S.bag.length ? "is-hot" : "", act: go("equip", function () { equip(g, 0); }) },
+        { label: "Magickal Condenser", ico: c1 ? "condenser" : "lock", tag: c1 ? "condenser" : null, sub: c1 ? "Upgrades and wares for Remnants" : "Locked · clear the forest to open the caravan", disabled: !c1, act: go("condenser", function () { condenser(g, 0); }) },
+        { label: "Wizard Drip Armoire", ico: c1 ? "hat" : "lock", tag: c1 ? "armoire" : null, sub: c1 ? "Comfort wear and your hat" : "Locked · clear the forest to win back your hat", disabled: !c1, act: go("armoire", function () { armoire(g, 0); }) },
         { label: "Still Locked", ico: "lock", sub: "Mirror of Distortion and Brags (clear 2 levels) · Bookshelf (3) · Incantation Study (4)", disabled: true },
         { label: "Settings", ico: "gear", sub: "Sound and controls", act: function () { settings(g, 0); } },
         { label: "How To Play", ico: "scroll", sub: "The short version", act: function () { how(g); } }
       ] });
   }
   function prep(g, focus) {
+    UI.scene = "hub"; UI.menu = "prep";
     var c1 = !!S.cleared[1], st = calc(), items = [], owned = Object.keys(S.inc).filter(function (k) { return INC[k]; });
     function eidx() { var n = 0; items.forEach(function (x) { if (!x.head && !x.disabled) n++; }); return n; }   /* the focus index (enabled buttons only) the next pushed row will have */
-    items.push({ head: "Go for a run" });
-    items.push({ label: c1 ? "Run The Forest Again" : "Follow The Tracks", ico: "tree", sub: c1 ? "About 5 minutes, then the boss" : "About 5 minutes, then a boss", cls: "is-primary", act: function () { save(); startRun(g, "story"); } });
-    if (c1) items.push({ label: "Endless Forest", ico: "inf", sub: "Farm gear · boss every 6.5 min · best " + fmt(S.best.endless1 || 0) + " m", cls: "is-gold", act: function () { save(); startRun(g, "endless"); } });
-    items.push({ head: "Equip your spells" });
+    items.push({ head: "Set off" });
+    items.push({ label: c1 ? "Run The Forest Again" : "Follow The Tracks", ico: "tree", sub: c1 ? "The story run · about 5 minutes, then the boss" : "The story run · about 5 minutes, then a boss", cls: "is-primary", act: function () { save(); startRun(g, "story"); } });
+    if (c1) items.push({ label: "Endless Forest", ico: "inf", sub: "No end · a boss every 6.5 min · best so far " + fmt(S.best.endless1 || 0) + " m", cls: "is-gold", act: function () { save(); startRun(g, "endless"); } });
+    items.push({ head: "Your spells" });
     for (var i = 0; i < incSlots(); i++) (function (slot) {
       var idx = eidx(), id = S.incEq[slot] || "poof", I = INC[id];
       function turn(d) { var free = owned.filter(function (k) { return S.incEq.indexOf(k) < 0 || S.incEq[slot] === k; }), at = free.indexOf(id); S.incEq[slot] = free[cyc(at < 0 ? 0 : at, d, free.length)]; prep(g, idx); }
-      items.push({ label: "Slot " + (slot + 1) + ": " + I.n, ico: "spark", sub: (owned.length > 1 ? "‹ change ›  ·  " : "") + I.cast + "  ·  mastery " + mlvl(id), cls: "wz-r" + I.r, adj: turn, act: function () { turn(1); } });
+      items.push({ label: "Spell " + (slot + 1) + ":  " + I.n, ico: "spark", sub: (owned.length > 1 ? "‹ swap ›   " : "") + I.cast + "   ·   Mastery " + mlvl(id), cls: "wz-r" + I.r, adj: turn, act: function () { turn(1); } });
     })(i);
-    items.push({ label: "What each Incantation does", ico: "grim", sub: owned.length + " owned", act: function () { incList(g); } });
+    items.push({ label: "What each spell does", ico: "grim", sub: owned.length + " Incantation" + (owned.length > 1 ? "s" : "") + " owned · read them all", act: function () { incList(g); } });
     items.push({ head: "Buff and pace" });
     var bid = S.buffEq[0];
     if (bid) {
@@ -1297,13 +1424,20 @@
       items.push({ label: "Buff: " + BUFF[bid].n + "  " + pips(rk, 5), ico: "wing", sub: rk >= 5 ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s · " + cost + " Whisper Orbs to upgrade (" + S.orbs + ")",
         cls: rk < 5 && S.orbs >= cost ? "is-hot" : "", act: function () { if (rk >= 5) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
     } else items.push({ label: "Buff", ico: "wing", sub: "Pick up a Whisper Orb on a run to earn one", disabled: true });
-    if (st.ton > 0) { var pi = eidx(); items.push({ label: "Run Pace", ico: "prep", sub: "‹  " + Math.round(100 + st.ton * S.speed) + "%  ›  of base speed", adj: function (d) { S.speed = clamp(S.speed + d * 0.25, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : S.speed + 0.25; prep(g, pi); } }); }
-    items.push({ label: "Back", act: function () { save(); hub(g, 0); } });
-    var kv = el("div", { class: "ak-kv" });
-    S.ch.forEach(function (c) { var d = chDef(c.id); kv.appendChild(el("span", { text: d.n, title: d.d })); kv.appendChild(el("b", { text: Math.min(d.need, Math.floor(c.p)) + " / " + d.need })); kv.appendChild(el("em", { class: "wz-note", text: d.d })); });
-    MN(g, { cls: "is-side wz-narrow wz-prep", kicker: "Prep Time", title: "Plan The Dash", sub: "Challenges in play, 100 XP and 25 Remnants each:", body: kv, items: items, focus: focus, back: function () { save(); hub(g, 0); } });
+    if (st.ton > 0) { var pi = eidx(); items.push({ label: "Run Pace: " + Math.round(100 + st.ton * S.speed) + "%", ico: "prep", sub: "‹ left and right ›  ·  how fast you run, up to " + Math.round(100 + st.ton) + "%", adj: function (d) { S.speed = clamp(S.speed + d * 0.25, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : S.speed + 0.25; prep(g, pi); } }); }
+    items.push({ label: "Back To The Tower", ico: "back", act: function () { save(); hub(g, 0); } });
+    /* the challenges in play, as cards that pop */
+    var chal = el("div", { class: "wz-chal" });
+    S.ch.forEach(function (c) { var d = chDef(c.id), done = Math.min(d.need, Math.floor(c.p)), fr = clamp(done / d.need, 0, 1);
+      chal.appendChild(el("div", { class: "wz-chal__row" },
+        el("div", { class: "wz-chal__top" }, el("b", { text: d.n }), el("em", { text: done + " / " + d.need })),
+        el("div", { class: "wz-chal__bar" }, el("i", { style: { width: Math.round(fr * 100) + "%" } })),
+        el("span", { class: "wz-chal__d", text: d.d }),
+        el("span", { class: "wz-chal__r", text: "+100 XP  ·  +25 Remnants" }))); });
+    MN(g, { cls: "is-side wz-narrow wz-prep", kicker: "Prep Time", title: "Plan The Dash", sub: "Three challenges run alongside the dash. Finish one for its reward:", body: chal, items: items, focus: focus, back: function () { save(); hub(g, 0); } });
   }
   function incList(g) {
+    UI.scene = "hub"; UI.menu = "prep";
     var items = Object.keys(S.inc).filter(function (k) { return INC[k]; }).map(function (id) { var I = INC[id], n = mnext(id);
       return { label: I.n, ico: "spark", sub: I.d + " " + I.m, more: [[RAR[I.r].n, "r" + I.r], [I.cast, ""], ["Mastery " + mlvl(id) + " / 10", "st"], [n == null ? "Maxed" : n + " kills to next", n == null ? "r4" : ""]], cls: "wz-r" + I.r, act: function () {} }; });
     items.push({ label: "Back", cls: "is-primary", act: function () { prep(g, 0); } });
@@ -1311,7 +1445,7 @@
   }
   function slotName(k) { var sd = slotDef(k); return /^sim/.test(k) ? "Simulacrum " + k.slice(3) : sd.n; }
   function equip(g, focus) {
-    UI.scene = "equip";
+    UI.scene = "equip"; UI.menu = "equip";
     var open = openSlots();
     var items = open.map(function (k, i) { var it = S.eq[k], kind = /^sim/.test(k) ? "sim" : k, fit = S.bag.filter(function (q) { return q.s === kind; }), nn = fit.filter(function (q) { return q.nw; }).length;
       var sub = it ? RAR[it.r].n + (it.l.length ? "  ·  " + it.l.map(function (l) { return "+" + l[1] + STAT[l[0]].u; }).join(" ") : "") : "Empty";
@@ -1320,10 +1454,10 @@
     var nb = S.bag.filter(function (q) { return q.nw; }).length;
     items.push({ label: "Rummage In The Bag", ico: "equip", sub: (nb ? nb + " new · " : "") + S.bag.length + " / " + S.bagCap + " carried", cls: "wz-slotrow" + (nb ? " is-new" : ""), act: function () { bag(g, 0, function () { equip(g, open.length); }); } });
     items.push({ label: "Back", ico: "back", cls: "wz-slotrow", act: function () { hub(g, 1); } });
-    MN(g, { cls: "is-side wz-narrow wz-equip", kicker: "Wizard Drip", title: "Equipment", sub: "The wizard and your stats are shown to the right. Slots open as your Wiz Level rises.", items: items, focus: focus, back: function () { hub(g, 1); } });
+    MN(g, { cls: "is-side wz-narrow wz-equip", kicker: "Wizard Drip", title: "Equipment", sub: "The selected slot shows below the wizard; your stats sit on the right. Slots open as your Wiz Level rises.", items: items, focus: focus, back: function () { hub(g, 1); } });
   }
   function slotMenu(g, k, focus, backF) {
-    UI.scene = "bag";
+    UI.scene = "bag"; UI.menu = "slot";
     var kind = /^sim/.test(k) ? "sim" : k, cur = S.eq[k];
     function leave() { S.bag.forEach(function (q) { if (q.s === kind) delete q.nw; }); save(); equip(g, backF); }
     var items = S.bag.filter(function (q) { return q.s === kind; }).sort(function (x, y) { return (y.nw || 0) - (x.nw || 0) || y.r - x.r || y.il - x.il; }).map(function (it) {
@@ -1334,7 +1468,7 @@
     MN(g, { cls: "is-side is-wide wz-bag", kicker: "Inside the bag", title: slotName(k), sub: cur ? "" : "Nothing worn here yet.", body: body, items: items, focus: focus, back: leave });
   }
   function bag(g, focus, back) {
-    UI.scene = "bag";
+    UI.scene = "bag"; UI.menu = "bag";
     function leave() { S.bag.forEach(function (q) { delete q.nw; }); save(); back(); }
     var list = S.bag.slice().sort(function (x, y) { return (y.nw || 0) - (x.nw || 0); });
     var items = list.map(function (it, i) { return { label: it.n, ico: slotIco(it.s), chips: itemChips(it, [["Sells ◆ " + sellPrice(it), "rem"]]), isNew: !!it.nw, cls: "wz-r" + it.r,
@@ -1342,8 +1476,7 @@
         { label: "Sell", ico: "coin", cls: "is-primary", act: function () { S.bag.splice(S.bag.indexOf(it), 1); S.rem += sellPrice(it); save(); sfx("buy"); bag(g, Math.min(i, S.bag.length), back); } },
         { label: "Keep It", act: function () { bag(g, i, back); } }], focus: 1, back: function () { bag(g, i, back); } }); } }; });
     items.push({ label: "Back", cls: "is-primary", act: leave });
-    var wallet = el("div", { class: "ak-stats wz-wallet" }, tile("Remnants", fmt(S.rem), "from selling"), tile("Whisper Orbs", S.orbs), tile("Grimoires", S.grim), tile("Syllables", S.syl));
-    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Rummage sale  ·  " + S.bag.length + " / " + S.bagCap + " carried", title: "The Bag", sub: S.bag.length ? "Select an item to sell it for Remnants. Wear things from the slots." : "Empty. Enemies drop Wizard Drip now and then.", body: wallet, items: items, focus: focus, back: leave });
+    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Rummage sale  ·  " + S.bag.length + " / " + S.bagCap + " carried", title: "The Bag", sub: S.bag.length ? "Select an item to sell it for Remnants. Your wallet is up top. Wear things from the slots." : "Empty. Enemies drop Wizard Drip now and then.", items: items, focus: focus, back: leave });
   }
   function drawBagScene(g, ctx) {                        /* looking down into one enormous bag */
     var t = Hb.t, i, x, y, an;
@@ -1369,60 +1502,65 @@
   }
   function statWord(k) { return STAT[k].d.split(" ")[0]; }
   function drawEquipScene(g, ctx) {
-    var t = Hb.t, i, cx = 716, cy = 372, footY = 516, open = openSlots();
+    var t = Hb.t, i, open = openSlots(), cx = 672, cy = 326, footY = 520;
     /* an armory alcove: warm stone, a shaft of light on the wizard */
     ctx.fillStyle = "#1a1620"; ctx.fillRect(0, 0, W, H);
     for (i = 0; i < 90; i++) { ctx.fillStyle = i % 2 ? "rgba(255,210,150,.04)" : "rgba(0,0,0,.10)"; var bx = (i * 73) % W, by = (i * 97) % H; ctx.fillRect(bx, by, 46 + (i % 3) * 22, 3); }
-    var gl = ctx.createRadialGradient(cx, cy + 20, 50, cx, cy + 20, 430); gl.addColorStop(0, "rgba(255,214,130,.22)"); gl.addColorStop(1, "rgba(255,214,130,0)"); ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+    var gl = ctx.createRadialGradient(cx, cy + 40, 50, cx, cy + 40, 470); gl.addColorStop(0, "rgba(255,214,130,.20)"); gl.addColorStop(1, "rgba(255,214,130,0)"); ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
     ell(ctx, cx, footY + 6, 118, 20, "rgba(0,0,0,.4)");
-    /* which slot the menu has selected, so its node lights up */
+    /* which slot the menu has selected, so its node and the detail card light up */
     var sel = null; try { var pn = document.querySelector('.ak-stage[data-game="wizard-sprint"] .ak-panel'), sb = pn && pn.querySelector(".ak-btn.is-sel"); sel = sb && sb.dataset ? sb.dataset.wzSlot : null; } catch (e) {}
-    /* radial equipment nodes around the wizard */
-    /* fan the slots in an arc around the right of the wizard, clear of the menu; odd ones ride an inner ring so neighbours don't overlap */
-    var n = open.length, nodes = [], A0 = -132 * Math.PI / 180, A1 = 132 * Math.PI / 180;
-    open.forEach(function (k, i2) {
-      var an = n <= 1 ? 0 : A0 + i2 / (n - 1) * (A1 - A0), rr = (i2 % 2 && n > 6) ? 0.72 : 1, nx = Math.round(cx + Math.cos(an) * 212 * rr), ny = Math.round(cy + Math.sin(an) * 276 * (0.5 + rr * 0.5));
-      nodes.push({ k: k, x: nx, y: ny });
-    });
+    /* a clean ring of small icon tiles around the wizard: no text to crowd or cut off, so it stays tidy even fully unlocked */
+    var n = open.length, rx = 236, ry = 232, nodes = [];
+    open.forEach(function (k, i2) { var an = -Math.PI / 2 + (n ? i2 / n : 0) * TAU; nodes.push({ k: k, x: Math.round(cx + Math.cos(an) * rx), y: Math.round(cy + Math.sin(an) * ry) }); });
+    nodes.forEach(function (nd) { if (nd.k !== sel) return; ctx.strokeStyle = "#ffe08a"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, cy + 8); ctx.lineTo(nd.x, nd.y); ctx.stroke(); });
     nodes.forEach(function (nd) {
-      var on = nd.k === sel;
-      ctx.strokeStyle = on ? "#ffe08a" : "rgba(232,193,90,.22)"; ctx.lineWidth = on ? 2 : 1;
-      ctx.beginPath(); ctx.moveTo(cx, cy + 10); ctx.lineTo(nd.x, nd.y); ctx.stroke();
-    });
-    nodes.forEach(function (nd) {
-      var it = S.eq[nd.k], on = nd.k === sel, col = it ? RAR[it.r].c : "#5f564a", w = 98, h = 46, x = nd.x - w / 2, y = nd.y - h / 2;
-      ctx.fillStyle = on ? "rgba(44,28,14,.98)" : "rgba(24,16,9,.92)"; D.rr(ctx, x, y, w, h, 6); ctx.fill();
-      ctx.strokeStyle = on ? "#ffe08a" : col; ctx.lineWidth = on ? 3 : 1.5; D.rr(ctx, x + 1, y + 1, w - 2, h - 2, 5); ctx.stroke();
-      ctx.save(); ctx.imageSmoothingEnabled = false;
-      if (!it) ctx.globalAlpha = 0.5; icoAt(ctx, slotIco(nd.k), x + 6, y + 8, 1.9); ctx.globalAlpha = 1;
-      ctx.restore();
-      D.text(ctx, slotName(nd.k), x + 40, y + 14, "700 10px " + F.mono, on ? "#fff3c4" : "#cdb98a", "left");
-      if (it) {
-        var lines = it.l.slice(0, 2).map(function (l) { return "+" + l[1] + STAT[l[0]].u.trim() + " " + statWord(l[0]); });
-        if (!lines.length) lines = ["no stats"];
-        lines.forEach(function (s, li) { D.text(ctx, s, x + 40, y + 27 + li * 10, "600 9px " + F.mono, col, "left"); });
-      } else D.text(ctx, "empty", x + 40, y + 29, "600 9px " + F.mono, "#8a7f6e", "left");
+      var it = S.eq[nd.k], on = nd.k === sel, col = it ? RAR[it.r].c : "#5f564a", s = on ? 27 : 22, w = s * 2, x = nd.x - s, y = nd.y - s;
+      if (on) { ctx.fillStyle = "rgba(255,224,138,.18)"; ctx.beginPath(); ctx.arc(nd.x, nd.y, s + 7, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = on ? "rgba(46,30,15,.98)" : "rgba(20,13,7,.92)"; D.rr(ctx, x, y, w, w, 9); ctx.fill();
+      ctx.strokeStyle = on ? "#ffe08a" : col; ctx.lineWidth = on ? 3 : 2; D.rr(ctx, x + 1, y + 1, w - 2, w - 2, 8); ctx.stroke();
+      ctx.save(); ctx.imageSmoothingEnabled = false; if (!it) ctx.globalAlpha = 0.45; var isc = (w - 14) / 16; icoAt(ctx, slotIco(nd.k), x + 7, y + 7, isc); ctx.globalAlpha = 1; ctx.restore();
     });
     /* the wizard in the middle */
     wizSprite(lookOf(S.comfort), (t % 8) < 5 ? "stand" : (t % 8) < 6.5 ? "five" : "stand", t);
-    ctx.imageSmoothingEnabled = false; blitWiz(ctx, cx, footY, 4.6);
-    /* right-hand stat stack: base value, then the value with gear */
+    ctx.imageSmoothingEnabled = false; blitWiz(ctx, cx, footY, 4.2);
+    /* the selected slot, roomy and uncut, at the bottom: big category name, the worn item and its full stats */
+    var dx = 356, dy = 598, dw = 628, dh = 112;
+    plate(ctx, dx, dy, dw, dh, 10);
+    if (sel) {
+      var it2 = S.eq[sel], col2 = it2 ? RAR[it2.r].c : "#8a7f6e";
+      ctx.save(); ctx.imageSmoothingEnabled = false; if (!it2) ctx.globalAlpha = 0.5; icoAt(ctx, slotIco(sel), dx + dw - 64, dy + 22, 3.4); ctx.globalAlpha = 1; ctx.restore();
+      D.text(ctx, slotName(sel), dx + 18, dy + 32, "800 23px " + SERIF, "#fff3c4", "left");
+      if (it2) {
+        D.text(ctx, it2.n, dx + 18, dy + 56, "700 16px " + SERIF, col2, "left");
+        D.text(ctx, RAR[it2.r].n + "  ·  Item Lv " + it2.il, dx + 18, dy + 74, "700 11px " + F.mono, col2, "left");
+        var lns = it2.l.length ? it2.l.map(function (l) { return "+" + l[1] + STAT[l[0]].u.trim() + "  " + STAT[l[0]].d; }) : ["No stats on this piece"];
+        var shown = lns.slice(0, 4); if (lns.length > 4) shown[3] = "+" + (lns.length - 3) + " more stats";
+        shown.forEach(function (ln, li) { D.text(ctx, ln, dx + 18 + (li % 2) * 306, dy + 93 + Math.floor(li / 2) * 15, "700 12px " + F.mono, it2.l.length ? "#9ff0b4" : "#b9a780", "left"); });
+      } else {
+        D.text(ctx, "Empty", dx + 18, dy + 58, "700 15px " + F.mono, "#b9a780", "left");
+        D.text(ctx, "Pick a piece from the bag on the left to fill this slot.", dx + 18, dy + 80, "600 12px " + F.mono, "#8a7f6e", "left");
+      }
+    } else {
+      D.text(ctx, "Select a slot on the left", dx + 18, dy + 42, "700 17px " + SERIF, "#dccb9f", "left");
+      D.text(ctx, "The gear worn there, and its stats, show here.", dx + 18, dy + 68, "600 12px " + F.mono, "#9a8f7a", "left");
+    }
+    /* right-hand stat stack: a base number, with a green bump from whatever gear is on */
     var tot = calc(), base = {}; SK.forEach(function (k) { base[k] = Math.min(STAT[k].cap, r1((S.ranks[k] || 0) * STAT[k].rank)); });
-    var px0 = 996, pw = 272, py0 = 150, rh = 40, bcx = px0 + pw - 104, tcx = px0 + pw - 36;
-    plate(ctx, px0, py0 - 44, pw, 36); D.text(ctx, "Wizard Stats", px0 + pw / 2, py0 - 20, "700 19px " + SERIF, "#f3e6c4", "center");
-    D.text(ctx, "base", bcx, py0 - 1, "700 10px " + F.mono, "#9a8f7a", "center");
-    D.text(ctx, "with gear", tcx, py0 - 1, "700 10px " + F.mono, "#9a8f7a", "center");
+    var px0 = 996, pw = 272, py0 = 132, rh = 50;
+    plate(ctx, px0, py0 - 42, pw, 34); D.text(ctx, "Wizard Stats", px0 + pw / 2, py0 - 19, "700 19px " + SERIF, "#f3e6c4", "center");
     SK.forEach(function (k, i3) {
-      var y = py0 + 6 + i3 * rh, bv = k === "vit" ? 10 + base.vit : base[k], tv = k === "vit" ? tot.hp : tot[k], up = tv > bv, u = k === "vit" ? " HP" : STAT[k].u;
-      plate(ctx, px0, y, pw, rh - 6, 6);
-      D.text(ctx, STAT[k].d, px0 + 12, y + 15, "700 13px " + SERIF, "#f0e4c4", "left");
-      D.text(ctx, STAT[k].n, px0 + 12, y + 27, "600 8px " + F.mono, "#9a8f7a", "left");
-      D.text(ctx, r1(bv) + u, bcx, y + 21, "700 11px " + F.mono, "#cdb98a", "center");
-      D.text(ctx, r1(tv) + u, tcx, y + 21, "800 12px " + F.mono, up ? "#7fdc9c" : "#e8e4d4", "center");
+      var y = py0 + i3 * rh, bv = k === "vit" ? 10 + base.vit : base[k], tv = k === "vit" ? tot.hp : tot[k], u = k === "vit" ? "" : STAT[k].u, dl = r1(tv - bv);
+      plate(ctx, px0, y, pw, rh - 8, 6);
+      D.text(ctx, STAT[k].d, px0 + 12, y + 18, "700 14px " + SERIF, "#f0e4c4", "left");
+      D.text(ctx, STAT[k].n, px0 + 12, y + 32, "600 8px " + F.mono, "#9a8f7a", "left");
+      D.text(ctx, r1(bv) + u, px0 + pw - 12, y + 17, "800 16px " + F.mono, "#f6ecd0", "right");
+      if (dl > 0.0001) D.text(ctx, "+" + dl + u + " gear", px0 + pw - 12, y + 33, "800 11px " + F.mono, "#7fdc9c", "right");
+      else D.text(ctx, "no gear bonus", px0 + pw - 12, y + 33, "600 9px " + F.mono, "#7a7161", "right");
     });
   }
   function condenser(g, focus) {
-    UI.scene = "hub";
+    UI.scene = "hub"; UI.menu = "condenser";
     var left = 1800 - Math.floor(Date.now() / 1000) % 1800;
     MN(g, { cls: "is-side wz-narrow", kicker: "The caravan out front", title: "Magickal Condenser", body: el("div", { class: "ak-stats" }, tile("Remnants", fmt(S.rem), "to spend"), tile("Bag", S.bag.length + " / " + S.bagCap), tile("Wiz Level", S.lvl)), focus: focus, back: function () { hub(g, 2); },
       items: [
@@ -1433,6 +1571,7 @@
       ] });
   }
   function upgrades(g, focus) {
+    UI.scene = "hub"; UI.menu = "condenser";
     var items = RANKS.map(function (u, i) {
       var l = S.ranks[u.k] || 0, cost = rankCost(l), mx = l >= u.max, can = !mx && S.rem >= cost;
       return { label: u.n + "  " + (u.max <= 10 ? pips(l, u.max) : l + " / " + u.max), chips: mx ? [[u.d(l), "st"], ["Maxed", "r4"]] : [[u.d(l), ""], ["→ " + u.d(l + 1), "st"], ["◆ " + fmt(cost), can ? "rem" : "no"]], cls: can ? "is-hot" : mx ? "is-owned" : "",
@@ -1442,6 +1581,7 @@
     MN(g, { cls: "is-side is-wide", kicker: "Magickal Condenser", title: "Upgrades", body: el("div", { class: "ak-stats" }, tile("Remnants", fmt(S.rem), "to spend")), grid: true, items: items, focus: focus, back: function () { condenser(g, 0); } });
   }
   function wares(g, focus) {
+    UI.scene = "hub"; UI.menu = "condenser";
     var st = stock(), items = st.map(function (it, i) { var pr = buyPrice(it);
       return { label: it.n, ico: slotIco(it.s), chips: itemChips(it, [["◆ " + fmt(pr), S.rem >= pr ? "rem" : "no"]]), cls: "wz-r" + it.r + (S.rem >= pr ? " is-hot" : ""),
         act: function () { if (S.rem < pr) { g.toast("Not enough Remnants"); return; } if (S.bag.length >= S.bagCap) { g.toast("The bag is full"); return; } S.rem -= pr; cnt("spent", pr); st.splice(st.indexOf(it), 1); it.nw = 1; S.bag.push(it); save(); sfx("buy"); wares(g, Math.min(i, st.length)); } }; });
@@ -1452,6 +1592,7 @@
     MN(g, { cls: "is-side is-wide", kicker: "Magickal Condenser", title: "Wares", sub: "Bought items go to the bag.", body: el("div", { class: "ak-stats" }, tile("Remnants", fmt(S.rem), "to spend"), tile("Bag", S.bag.length + " / " + S.bagCap)), items: items, focus: focus, back: function () { condenser(g, 1); } });
   }
   function armoire(g, focus) {
+    UI.scene = "hub"; UI.menu = "armoire";
     MN(g, { cls: "is-side wz-narrow", kicker: "Wizard Drip Armoire", title: "The Armoire", sub: "What you wear around the tower. Runs always show your equipped gear.", focus: focus, back: function () { hub(g, 3); },
       items: [
         { label: "Around The Tower: " + (S.comfort ? "Comfort Wear" : "Equipped Gear"), ico: "chest", sub: "Comfort wear is the sleep cap, tunic and skivvies", act: function () { S.comfort = !S.comfort; save(); armoire(g, 0); } },
@@ -1460,23 +1601,25 @@
       ] });
   }
   function settings(g, focus) {
+    UI.scene = "hub"; UI.menu = "settings";
     MN(g, { cls: "is-side wz-narrow", kicker: "Wizard of the Sprint", title: "Settings", focus: focus, back: function () {  hub(g, 4); },
       items: [
         { label: "Game Sound: " + (S.snd ? "On" : "Off"), ico: "sound", act: function () { S.snd = !S.snd; save(); sfx("buy"); settings(g, 0); } },
         { label: "Volume: " + Math.round(S.vol * 100) + "%", ico: "sound", sub: "‹  left and right  ›", adj: function (d) { S.vol = clamp(Math.round(S.vol * 10 + d) / 10, 0.1, 1); save(); sfx("rem"); settings(g, 1); }, act: function () { S.vol = S.vol >= 1 ? 0.1 : Math.round(S.vol * 10 + 1) / 10; save(); sfx("rem"); settings(g, 1); } },
+        { label: "Illusion Flash: " + (S.flashOn ? "On" : "Off"), ico: "flash", sub: S.flashOn ? "Press " + keyName(keysOf("flash")[0]) + " mid-run for a half-second dodge" : "A half-second i-frame dodge you trigger on demand", act: function () { S.flashOn = !S.flashOn; save(); sfx("buy"); settings(g, 2); } },
         { label: "Keyboard Controls", ico: "keys", sub: "Rebind any action", act: function () { controls(g, "key", 0); } },
         { label: "Controller Controls", ico: "pad", sub: "Rebind any action", act: function () { controls(g, "pad", 0); } },
         { label: "Start Over", ico: "skull", sub: "Erase this wizard and everything they own", act: function () { MN(g, { kicker: "Start over", title: "Erase Everything?", sub: "Your wizard, gear, currencies and progress are deleted on this device, and on your account at the next sync. This can't be undone.",
-          items: [{ label: "Keep My Wizard", cls: "is-primary", act: function () { settings(g, 4); } }, { label: "Erase And Start Over", act: function () { var kb = S.binds, pb = S.pad; S = fresh(); S.binds = kb; S.pad = pb; fillCh(); save(); title(g); } }], back: function () { settings(g, 4); } }); } },
+          items: [{ label: "Keep My Wizard", cls: "is-primary", act: function () { settings(g, 5); } }, { label: "Erase And Start Over", act: function () { var kb = S.binds, pb = S.pad; S = fresh(); S.binds = kb; S.pad = pb; fillCh(); save(); title(g); } }], back: function () { settings(g, 5); } }); } },
         { label: "Back", act: function () {  hub(g, 4); } }
       ] });
   }
   function controls(g, kind, focus) {
-    UI.scene = "hub"; UI.bind = null;
+    UI.scene = "hub"; UI.menu = "controls"; UI.bind = null;
     var items = ACTS.map(function (a, i) { return { label: a[1], sub: kind === "key" ? keysOf(a[0]).map(keyName).join(" or ") : padOf(a[0]).toUpperCase(), act: function () { UI.scene = "rebind"; UI.bind = { a: a[0], kind: kind, i: i, name: a[1] }; g.closeMenu(); g.paint(); g.wake && g.wake(); } }; });
     items.push({ label: "Reset To Defaults", act: function () { if (kind === "key") S.binds = {}; else S.pad = {}; save(); controls(g, kind, items.length - 2); } });
-    items.push({ label: "Back", act: function () { settings(g, kind === "key" ? 2 : 3); } });
-    MN(g, { cls: "is-side is-wide", kicker: "Settings", title: kind === "key" ? "Keyboard Controls" : "Controller Controls", sub: "Select an action, then press the " + (kind === "key" ? "key" : "button") + " for it. Esc and P stay as pause.", grid: true, items: items, focus: focus, back: function () { settings(g, kind === "key" ? 2 : 3); } });
+    items.push({ label: "Back", act: function () { settings(g, kind === "key" ? 3 : 4); } });
+    MN(g, { cls: "is-side is-wide", kicker: "Settings", title: kind === "key" ? "Keyboard Controls" : "Controller Controls", sub: "Select an action, then press the " + (kind === "key" ? "key" : "button") + " for it. Esc and P stay as pause.", grid: true, items: items, focus: focus, back: function () { settings(g, kind === "key" ? 3 : 4); } });
   }
   function setBind(kind, a, code) {
     var g = G, i = UI.bind ? UI.bind.i : 0;
@@ -1488,11 +1631,13 @@
     controls(g, kind, i);
   }
   function how(g) {
+    UI.scene = "hub"; UI.menu = "how";
     MN(g, { cls: "is-side is-wide", kicker: "Wizard of the Sprint", title: "How To Play", back: function () { hub(g, 5); },
       body: el("div", { class: "ak-panel__body" },
         el("p", { text: "You run on your own. Jump with " + keyName(keysOf("jump")[0]) + " and hold it to glide. Your jump is pitiful at first: it reaches low and middle platforms, and you climb to the high ones from a middle one. " + keyName(keysOf("drop")[0]) + " drops you through a platform." }),
         el("p", { text: "Incantations do the fighting. Magick Poof casts by itself; keyed ones use " + keyName(keysOf("c1")[0]) + ". Kills raise an Incantation's mastery." }),
         el("p", { text: "You start with 10 HP and most hits do 10, so one hit ends a run until you add Vitality or Confidence. You keep everything you collected either way." }),
+        el("p", { text: "Illusion Flash (" + keyName(keysOf("flash")[0]) + ") blinks you out for about half a second, long enough to dodge a hit. It then needs a few seconds to recharge. Turn it off in Settings if you'd rather not have it." }),
         el("p", { text: "Remnants buy upgrades. A Whisper Orb fires your buff for 10 seconds. Grimoires are rare, and 10 of them buy a revive. Enemies sometimes drop Wizard Drip: wear it from Equipment." }),
         el("p", { text: "Press " + keyName(keysOf("five")[0]) + " as you pass a friendly for a high five. Clear the forest's boss to unlock the Condenser, the Armoire and Endless mode." })),
       items: [{ label: "Back", cls: "is-primary", act: function () { hub(g, 5); } }] });
@@ -1523,7 +1668,7 @@
     tags: ["Runner", "RPG loot", "Campaign"],
     tagline: "A robbed arch-wizard in pyjamas chases a trail of footprints. Run, jump, cast, loot, and rebuild your tower.",
     about: "A left-to-right runner with spell combat and loot. Build your wizard, follow the tracks through the forest, fight with Incantations that level up as you use them, pick up Wizard Drip in six rarities, and spend Remnants on upgrades back at your ruined tower. This is the first level: clear its boss to unlock the shop, the wardrobe and Endless mode. More levels are on the way.",
-    controls: [["Jump, hold to glide", "Space, W or Up (A)"], ["Drop through a platform", "S or Down"], ["Keyed Incantation", "J (X)"], ["High five", "F (RB)"], ["Run pace", "1 and 2 (LT, RT)"], ["Pause", "Esc, P or Start"], ["Rebind", "Settings, inside the game"]],
+    controls: [["Jump, hold to glide", "Space, W or Up (A)"], ["Drop through a platform", "S or Down"], ["Illusion Flash (dodge)", "Shift (LB)"], ["Keyed Incantation", "J (X)"], ["High five", "F (RB)"], ["Run pace", "1 and 2 (LT, RT)"], ["Pause", "Esc, P or Start"], ["Rebind", "Settings, inside the game"]],
     stats: function () { return [["Wiz Level", S.lvl], ["Forest", S.cleared[1] ? "Cleared" : "Not cleared yet"], ["Best Endless", fmt(S.best.endless1 || 0) + " m"], ["Remnants", fmt(S.rem)], ["Incantations", Object.keys(S.inc).length + " / 20"], ["Enemies defeated", fmt(S.cnt.kills || 0)]]; },
     poster: function (x, w, h, t) { drawForest(t * 150, t); wizSprite(lookOf(true), "run", t); blitWiz(b, 200, GY, 1); px(330 - (t * 40 % 60), GY - 12, 14, 10, "#7a5536"); drawFore(t * 150); x.imageSmoothingEnabled = false; x.drawImage(BUF, 0, 0, w, h); },
     blurb: "Run, cast and loot your way after whoever robbed your tower.",
@@ -1541,13 +1686,15 @@
       setBind("key", UI.bind.a, e.code); return true;
     },
     pointer: function (g, type) { if (type === "down" && g.state === "play" && R) R.tap = true; },
+    backdropClick: function (g, x, y) { hubClick(g, x, y); },
     restart: function (g) { if (R) startRun(g, R.mode); },
     draw: function (g, ctx) {
       if (R && (g.state === "play" || g.state === "paused" || g.state === "over") && UI.scene === "run") { drawRun(g, ctx); return; }
       if (UI.scene === "creator") { drawCreator(g, ctx); return; }
-      if (UI.scene === "equip") { drawEquipScene(g, ctx); return; }
-      if (UI.scene === "bag") { drawBagScene(g, ctx); return; }
+      if (UI.scene === "equip") { drawEquipScene(g, ctx); menuHud(ctx); return; }
+      if (UI.scene === "bag") { drawBagScene(g, ctx); menuHud(ctx); return; }
       drawHubScene(g, ctx);
+      if (UI.scene === "hub" && UI.menu !== "settings" && UI.menu !== "controls") menuHud(ctx);
       if (UI.scene === "rebind" && UI.bind) {
         ctx.fillStyle = "rgba(4,8,14,.78)"; ctx.fillRect(0, 0, W, H);
         D.text(ctx, "Press a " + (UI.bind.kind === "key" ? "key" : "controller button") + " for", W / 2, H / 2 - 30, "600 26px " + F.display, "#b9c2cd", "center");
