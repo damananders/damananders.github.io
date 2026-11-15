@@ -61,6 +61,30 @@
   };
   function why(r) { return ERR[r && r.error] || "That did not work (" + ((r && r.error) || "unknown") + ")."; }
 
+  /* ---------- extension folders ----------
+     Other files can add a folder to the rail without editing this one (e.g. control-rewards.js, owned by the
+     rewards work). They push { id, label, desc, icon, after, draw(pane, api), member(u, api) } onto Site.cpExt
+     before sign-in finishes. draw() renders the folder; member() may return a node for a member's card in Users. */
+  var EXT = {};
+  Site.cpExt = Site.cpExt || [];
+  var API = {
+    rpc: rpc, why: why, el: el,
+    token: function () { return token; },
+    when: function (s) { return when(s); },
+    sure: function (b, l, run) { return sure(b, l, run); },
+    show: function (id) { if (query) { var s = $("cp-app").querySelector(".cp-search"); if (s) s.value = ""; query = ""; } show(id); }
+  };
+  Site.cpApi = API;
+  function addExt() {
+    Site.cpExt.forEach(function (x) {
+      if (!x || !x.id || EXT[x.id]) return;
+      EXT[x.id] = x;
+      var at = CATS.length;
+      for (var i = 0; i < CATS.length; i++) if (CATS[i][0] === x.after) at = i + 1;
+      CATS.splice(at, 0, [x.id, x.label, x.desc || "", x.icon || "", "ext"]);
+    });
+  }
+
   /* ---------- small helpers ---------- */
   function isObj(v) { return v && typeof v === "object" && !Array.isArray(v); }
   function get(o, path) { var p = path.split("."); for (var i = 0; i < p.length; i++) { if (!isObj(o)) return undefined; o = o[p[i]]; } return o; }
@@ -235,6 +259,7 @@
     paintLive(); if (!liveTimer) liveTimer = setInterval(paintLive, 30000);
 
     /* rail of folders + the content column */
+    addExt();
     var rail = el("nav", { class: "cp-rail", "aria-label": "Control panel sections" });
     CATS.forEach(function (c) {
       var num = el("span", { class: "cp-cat__n", "aria-hidden": "true" });
@@ -290,6 +315,7 @@
     else if (c[4] === "advanced") drawAdvanced(content);
     else if (c[4] === "security") drawSecurity(content);
     else if (c[4] === "wizard") drawWizard(content);
+    else if (c[4] === "ext" && EXT[cur]) { try { EXT[cur].draw(content, API); } catch (err) { console.error("[control]", err); content.appendChild(el("p", { class: "cp-empty", text: "This folder could not open (" + (err && err.message) + ")." })); } }
   }
 
   /* ---------- Wizard of the Sprint story editor ----------
@@ -726,6 +752,8 @@
       wrow.appendChild(b);
     });
     box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Wipe content (deletes it — each button is its own trigger)" }), wrow));
+
+    Object.keys(EXT).forEach(function (k) { if (EXT[k].member) { try { var n = EXT[k].member(u, API); if (n) box.appendChild(n); } catch (err) { console.error("[control]", err); } } });
 
     box.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Verified " + (when(u.verified_since) || "—") + (u.last_seen ? " · last seen " + when(u.last_seen) : "") }));
     return box;
