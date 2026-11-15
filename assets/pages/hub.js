@@ -293,7 +293,7 @@
      protected by Drive's Restricted sharing, not by the code. ---- */
   Site.ready(function () {
     var btn = document.getElementById("hb-door"); if (!btn) return;
-    var DOORS = { "fabd43b9d8c7ac6e8e88b9bfeb7479dc68b55540d41e5c0a3492011f9b240fed": "/vault/", "57548c4cdac3905a5f2e7ad5a00d2eb03f2204a28ac962664a94e64e3ceebd13": "/locker/" };
+    var DOORS = { "fabd43b9d8c7ac6e8e88b9bfeb7479dc68b55540d41e5c0a3492011f9b240fed": "/q9w2z7r5/", "57548c4cdac3905a5f2e7ad5a00d2eb03f2204a28ac962664a94e64e3ceebd13": "/n6h3y8c4/" };
     var n = 0, timer = 0, dlg = null, input = null, msg = null, form = null;
     function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
     function open() {

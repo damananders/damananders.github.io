@@ -500,7 +500,7 @@
     function draw(info) {
       if (pill) { pill.remove(); pill = null; }
       if (!info) return;
-      pill = el("a", { class: "ch-admin", href: "/control/", "data-level": info.twofa ? "full" : "pass", title: "Open the control panel",
+      pill = el("a", { class: "ch-admin", href: "/a7f3k9q2/", "data-level": info.twofa ? "full" : "pass", title: "Open the control panel",
         "aria-label": "You are signed in as site admin" + (info.twofa ? ", verified with password and authenticator" : ", password only") + ". Open the control panel." },
         el("i", { "aria-hidden": "true" }), el("span", { text: "Site Admin" }), el("b", { text: "Live" }));
       document.body.appendChild(pill);
@@ -714,7 +714,7 @@
       var out = PAGES.map(function (p) { return { label: p[2], href: p[1], kind: "Page", key: (p[0] + " " + p[2]).toLowerCase() }; });
       out.push({ label: "Trophy Cabinet", href: "/trophies/", kind: "Page", key: "trophies trophy cabinet achievements" });
       out.push({ label: "Résumé", href: "/resume/", kind: "Page", key: "resume cv hire work with me" });
-      if (Site.owner) out.push({ label: "Dashboard", href: "/dash/", kind: "Owner", key: "dashboard owner stats" });
+      if (Site.owner) out.push({ label: "Dashboard", href: "/b4m8t1v6/", kind: "Owner", key: "dashboard owner stats" });
       return out;
     }
     function score(it, q) {
@@ -802,7 +802,7 @@
     var repo = "damananders/damananders.github.io";
     var stamp = el("p", { class: "ch-stamp" });
     var here = Site.page, links = el("p", { class: "ch-links" });
-    [["links", "/links/", "Links I Like"], ["changelog", "/changelog/", "What's New"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/dash/", "Dashboard"]].forEach(function (l) {
+    [["links", "/links/", "Links I Like"], ["changelog", "/changelog/", "What's New"], ["uses", "/uses/", "Uses"], ["stream", "/stream/", "Stream"], ["dash", "/b4m8t1v6/", "Dashboard"]].forEach(function (l) {
       if (l[0] === here || (l[0] === "dash" && !Site.owner)) return;
       if (links.firstChild) links.appendChild(document.createTextNode("  ·  "));
       links.appendChild(el("a", { href: l[1], text: l[2] }));
