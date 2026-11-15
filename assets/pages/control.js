@@ -133,6 +133,15 @@
         return { id: String(x.id || ""), title: String(x.title || ""), url: String(x.url || ""), founded: String(x.founded || ""), color: /^#[0-9a-f]{6}$/i.test(x.color) ? x.color : "#cd4257", image: String(x.image || ""), video: String(x.video || ""), blurb: String(x.blurb || ""), _old: true };
       });
       $("cp-login").hidden = true; $("cp-lead").textContent = "Changes go live when you press Save. Visitors see them within about five minutes.";
+      /* A confirmed sign-in IS the owner on this browser: turn owner view on so the Dashboard and other
+         owner-only surfaces work everywhere, in every tab, without hunting for the ?owner switch. It persists
+         (localStorage) and can still be turned off from Sign-in's "Owner view" box or with ?owner=0. */
+      try { Site.store.set("owner", true); if (document.documentElement) document.documentElement.setAttribute("data-owner", ""); } catch (e) {}
+      /* Sign-in marker for stricter owner-only previews (e.g. the arcade Wizard beta) that don't want the
+         plain ?owner switch to unlock them. Raw localStorage key (not Site.store) holding the session's expiry
+         in ms; a reader treats a future value as "signed in recently on this browser". Cleared on sign-out and
+         when the session is found expired. */
+      try { localStorage.setItem("site.adminSeen", String(new Date(info.expires).getTime())); } catch (e) {}
       build(); if (fresh) { Site.sfx("success"); Site.toast("Signed in as site admin.", { type: "ok" }); }
       if (!sess.linked) show("security");
     }).catch(function (err) { console.error("[control]", err); var m = $("cp-login-msg"); if (m) m.textContent = "Signed in, but the panel could not open (" + (err && err.message) + "). Reload the page with Ctrl+Shift+R and try again."; });
@@ -217,7 +226,7 @@
     saveMsg = el("span", { class: "cp-msg", role: "status", "aria-live": "polite" });
     saveBtn.addEventListener("click", save);
     var out = el("button", { type: "button", class: "btn ghost", text: "Sign out" });
-    out.addEventListener("click", function () { dirty.config = dirty.links = false; out.disabled = true; Site.admin.signOut().then(function () { location.reload(); }); });
+    out.addEventListener("click", function () { dirty.config = dirty.links = false; out.disabled = true; try { localStorage.removeItem("site.adminSeen"); } catch (e) {} Site.admin.signOut().then(function () { location.reload(); }); });
     app.appendChild(el("div", { class: "cp-live", id: "cp-live", role: "status" }));
     app.appendChild(el("div", { class: "cp-top" },
       el("div", { class: "cp-search__wrap" }, Site.svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>'), search),
@@ -252,7 +261,7 @@
   function paintLive() {
     var box = $("cp-live"); if (!box || !sess) return;
     var left = Math.max(0, new Date(sess.expires).getTime() - Date.now()), h = Math.floor(left / 36e5), m = Math.floor(left % 36e5 / 6e4);
-    if (!left) { Site.admin.clear(); location.reload(); return; }
+    if (!left) { try { localStorage.removeItem("site.adminSeen"); } catch (e) {} Site.admin.clear(); location.reload(); return; }
     box.textContent = ""; box.setAttribute("data-level", sess.twofa ? "full" : "pass");
     box.appendChild(el("span", { class: "cp-live__dot", "aria-hidden": "true" }));
     box.appendChild(el("span", { class: "cp-live__shield", "aria-hidden": "true" }, Site.svg('<path d="M12 3l7 3v5c0 4.6-3 8.3-7 10-4-1.700-7-5.400-7-10V6z"/><path d="M9 12l2.200 2.200L15.500 10"/>')));
