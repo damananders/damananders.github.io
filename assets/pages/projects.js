@@ -88,7 +88,16 @@ function onVote(key) {
     c.countEl.textContent = Site.fmtNum(d.votes || 0);
     c.voteBtn.setAttribute("aria-pressed", d.voted ? "true" : "false");
     c.voteBtn.classList.toggle("is-on", !!d.voted);
-    if (d.voted) { try { Site.sfx && Site.sfx("toggle"); } catch (e) {} }
+    if (d.voted) {
+      try { Site.sfx && Site.sfx("toggle"); } catch (e) {}
+      try {
+        if (Site.trophy) {
+          Site.trophy("pj-vote");
+          var pv = Site.store.get("pjVotes", {}) || {}; pv[key] = 1; Site.store.set("pjVotes", pv);
+          if (Object.keys(pv).length >= 3) Site.trophy("pj-vote3");
+        }
+      } catch (e) {}
+    }
   }).catch(function () { c.voteBtn.disabled = false; toast("Couldn't register that vote.", "err"); });
 }
 
@@ -194,6 +203,7 @@ function composer(key, parentId, done) {
       btn.disabled = false; var d = res && res.data;
       if (!d || d.ok === false) { msg.textContent = (d && d.error) || "Couldn't post that."; return; }
       ta.value = ""; msg.textContent = ""; done && done();
+      try { if (Site.trophy) Site.trophy(parentId ? "pj-reply" : "pj-comment"); } catch (e) {}
     }).catch(function () { btn.disabled = false; msg.textContent = "Couldn't post — try again."; });
   });
   box.appendChild(ta); box.appendChild(el("div", { class: "pj-composer__row" }, btn, msg));
