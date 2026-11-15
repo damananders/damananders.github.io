@@ -164,3 +164,15 @@
 .ak-btn.is-owned b{color:#9ae6b4}
 .ak-pips{letter-spacing:.15em;color:var(--ak-accent)}
 @media (max-width:700px){.ak-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Wizard of the Sprint: rarity colours on item rows, the name box, story panels */
+.ak-btn.wz-r1 b{color:#4ed16a}.ak-btn.wz-r2 b{color:#4aa3ff}.ak-btn.wz-r3 b{color:#b46bff}.ak-btn.wz-r4 b{color:#ff9a2e}
+.ak-btn.wz-r5 b{background:linear-gradient(90deg,#ff5a5a,#ffb02e,#f5e663,#4ed16a,#4aa3ff,#b46bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wz-namebox{margin:.3em 0 .5em}
+.wz-input{width:100%;box-sizing:border-box;padding:.55em .7em;border-radius:.6em;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.35);color:#fff;font:600 1em var(--display)}
+.wz-input:focus{outline:2px solid var(--ak-accent);outline-offset:1px}
+.ak-panel.wz-story .ak-panel__body{font-size:1.05em;line-height:1.6;color:#eef0f3;max-width:34em}
+.ak-panel.is-side.wz-narrow{width:min(25em,100%)}
+.ak-panel.wz-narrow .ak-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ak-panel.wz-narrow .ak-panel__title{font-size:2em}
+.ak-kv .wz-note{grid-column:1/-1;font:500 .82em var(--mono);font-style:normal;color:#8d98a6;margin-top:-.3em}
