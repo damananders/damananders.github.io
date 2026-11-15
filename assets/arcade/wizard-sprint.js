@@ -304,6 +304,7 @@
     else if (k === "lootBig") { [523, 659, 784, 1047, 1319, 1568].forEach(function (f, i) { tone("square", f, 0, 0.18, 0.13, i * 0.085); tone("sine", f * 2, 0, 0.3, 0.08, i * 0.085); }); tone("sawtooth", 98, 196, 0.5, 0.16); noise("highpass", 4000, 9000, 0.7, 0.07); }
     else if (k === "ch") { tone("square", 660, 0, 0.08, 0.12); tone("square", 990, 0, 0.14, 0.12, 0.08); }
     else if (k === "five") { noise("highpass", 1500, 3000, 0.05, 0.3); }
+    else if (k === "slap") { noise("lowpass", 1700, 500, 0.05, 0.5); noise("highpass", 2600, 1200, 0.04, 0.18); tone("sine", 240, 90, 0.07, 0.2); }
     else if (k === "boss") { tone("sawtooth", 110, 55, 0.6, 0.3); }
     else if (k === "win") { [523, 659, 784, 1047].forEach(function (f, i) { tone("square", f, 0, 0.16, 0.14, i * 0.12); }); }
     else if (k === "lose") { [392, 330, 262, 196].forEach(function (f, i) { tone("triangle", f, 0, 0.2, 0.2, i * 0.14); }); }
@@ -495,6 +496,10 @@
     var fo = dist * 0.12, tx = 250 - fo;
     if (tx > -60) { px(tx, 96, 26, 110, "#6a7482"); px(tx - 14, 150, 54, 56, "#6a7482"); px(tx + 6, 86, 6, 10, "#6a7482"); px(tx + 16, 90, 5, 6, "#6a7482"); px(tx + 8, 118, 9, 12, "#39424f"); }
     for (x = -((fo) % 8); x < BW; x += 8) { var c0 = Math.floor((x + fo) / 8), hh = 34 + hash(c0) * 30 + Math.sin(c0 * 0.35) * 10; px(x, 204 - hh, 8, hh + 90, "#4f8f68"); if (hash(c0 + 9) > 0.6) px(x + 2, 200 - hh, 4, 4, "#5d9d76"); }
+    /* a slow river across the far distance, sitting in the very back behind the trees */
+    var rvo = dist * 0.06, ry = 198;
+    for (x = 0; x < BW; x += 4) { var rw = Math.sin((x + rvo) * 0.028) * 2; px(x, ry + rw, 4, 10, "#4f9fd0"); px(x, ry + rw, 4, 3, "#79c0e8"); px(x, ry + rw + 10, 4, 2, "#3f7faa"); }
+    for (i = 0; i < 44; i++) { var gx = ((i * 71 - rvo * 1.4) % (BW + 40) + BW + 40) % (BW + 40) - 20, gw = Math.sin((gx + rvo) * 0.028) * 2; px(gx, ry + 2 + (i % 4) * 2 + gw, 5, 1, "#d8f2ff"); }
     /* a hazier row of trees behind, so the wood has depth */
     var ho = dist * 0.26;
     for (i = Math.floor(ho / 58) - 1; i < Math.floor((ho + BW) / 58) + 2; i++) {
@@ -502,12 +507,6 @@
       px(x + 8, GY - hh2, 5, hh2, "#3d5f4c");
       if (pine) { for (var q = 0; q < 5; q++) px(x + 2 - q * 3, GY - hh2 - 26 + q * 12, 17 + q * 6, 12, "#34674a"); }
       else { px(x - 10, GY - hh2 - 22, 40, 30, "#3f7d58"); px(x - 4, GY - hh2 - 32, 28, 12, "#3f7d58"); px(x - 6, GY - hh2 - 16, 16, 8, "#4a8a63"); }
-    }
-    /* a brook winding out of the trees now and then; it crosses the path under a plank bridge further down */
-    for (i = Math.floor((dist - 80) / 1500); i <= Math.floor((dist + BW + 80) / 1500); i++) {
-      if (hash(i * 8.3) < 0.35) continue; x = i * 1500 + 300 + hash(i * 1.9) * 700 - dist;
-      for (var r2 = 0; r2 < 22; r2++) { var wy = GY - 44 + r2 * 2, ww = 6 + r2 * 1.3, wxo = Math.sin(r2 * 0.45) * 7; px(x + wxo - ww / 2, wy, ww, 2, r2 % 5 === 2 ? "#8fd0ee" : "#4f9fd0"); }
-      px(x - 3 + Math.sin(t * 3) * 3, GY - 22, 4, 1, "#d8f2ff"); px(x + 4 - Math.sin(t * 2.3) * 4, GY - 10, 5, 1, "#d8f2ff");
     }
     /* middle trees: thick oaks, medium trees, thin birches, the odd orange one, apple trees and pines */
     var mo = dist * 0.45;
@@ -541,15 +540,8 @@
     }
     /* the muddy path, with the footprints you are following */
     px(0, GY, BW, BH - GY, "#6b5237"); px(0, GY, BW, 2, "#7d6244"); px(0, GY + 26, BW, BH - GY - 26, "#59432c");
-    var BROOKS = [];
-    for (i = Math.floor((dist - 80) / 1500); i <= Math.floor((dist + BW + 80) / 1500); i++) { if (hash(i * 8.3) < 0.35) continue; BROOKS.push(Math.round(i * 1500 + 300 + hash(i * 1.9) * 700 - dist)); }
     for (x = -(dist % 5); x < BW; x += 5) { var m0 = Math.floor((x + dist) / 5); if (hash(m0 * 2.3) > 0.72) px(x, GY + 4 + (hash(m0) * 50 | 0), 3, 1, "#59432c"); }
     for (i = Math.floor(dist / 46) - 1; i < Math.floor((dist + BW) / 46) + 1; i++) { x = i * 46 - dist; px(x, GY + 8 + (i % 2) * 6, 5, 2, "#4a3722"); px(x + 5, GY + 8 + (i % 2) * 6, 1, 1, "#4a3722"); }
-    BROOKS.forEach(function (bx) {                         /* the brook under its plank bridge: scenery only */
-      px(bx - 22, GY + 1, 44, BH - GY, "#3f8cc0"); px(bx - 22, GY + 1, 3, BH - GY, "#2f6f9c"); px(bx + 19, GY + 1, 3, BH - GY, "#2f6f9c");
-      for (var k3 = 0; k3 < 5; k3++) px(bx - 16 + ((k3 * 13 + t * 14) % 30), GY + 22 + k3 * 10, 7, 1, "#bfe6fa");
-      px(bx - 30, GY - 1, 60, 6, "#8a6a44"); px(bx - 30, GY + 5, 60, 2, "#5c4530"); for (k3 = 0; k3 < 6; k3++) px(bx - 30 + k3 * 10, GY - 1, 1, 6, "#5c4530"); px(bx - 28, GY + 7, 4, 9, "#5c4530"); px(bx + 24, GY + 7, 4, 9, "#5c4530");
-    });
   }
   function drawFore(dist) {
     var fo = dist * 1.35, i, x;
@@ -812,12 +804,12 @@
     for (i = R.picks.length - 1; i >= 0; i--) { var pk = R.picks[i]; if (Math.abs(pk.x - wx) < 14 && pk.y > top - 8 && pk.y - 14 < R.y + 2) { R.picks.splice(i, 1); collect(pk); } }
     R.fr.forEach(function (f) {
       if (f.done || Math.abs(f.x - wx) > 26) return; f.done = true;
-      if (R.fiveWin > 0) { R.fiveT = 0.4; R.rem += 3; cnt("fives", 1); chEv("five", 1); sfx("five"); say(line("five")); }
+      if (R.fiveWin > 0) { R.fiveT = 0.4; R.rem += 3; cnt("fives", 1); chEv("five", 1); sfx("slap"); f.hi = 0.6; fxAdd("slap", f.x, GY - 20, { d: 0.4 }); say(line("five")); }
       else if (Math.random() < 0.45) { say(line("cheer"), f, 2); }
       else if (Math.random() < 0.12 && R.t - (R.sorryT || -99) > 60) { R.sorryT = R.t; cnt("sorry", 1); say(line("sorry")); f.reply = 0.9; f.rk = "reply"; }
       else { say(line("greet")); f.reply = 0.9; f.rk = "greetReply"; }
     });
-    R.fr.forEach(function (f) { if (f.reply > 0) { f.reply -= dt; if (f.reply <= 0) say(line(f.rk || "reply"), f, 2); } });
+    R.fr.forEach(function (f) { if (f.hi > 0) f.hi -= dt; if (f.reply > 0) { f.reply -= dt; if (f.reply <= 0) say(line(f.rk || "reply"), f, 2); } });
     /* enemies */
     R.en.forEach(function (e2) {
       if (e2.dead) return;
@@ -921,9 +913,10 @@
     }
   }
   function friendBody(f, x, GY) {
-    if (f.k === "deer") { px(x - 11, GY - 22, 22, 10, "#a8763f"); px(x - 9, GY - 12, 3, 12, "#8a5f30"); px(x + 6, GY - 12, 3, 12, "#8a5f30"); px(x - 16, GY - 30, 8, 9, "#a8763f"); px(x - 15, GY - 35, 2, 6, "#e8d9b8"); px(x - 11, GY - 36, 2, 7, "#e8d9b8"); px(x - 15, GY - 27, 1, 1, "#1a1420"); px(x + 10, GY - 23, 3, 3, "#f4efe6"); }
-    else if (f.k === "squirrel") { px(x - 4, GY - 9, 8, 8, "#a0562a"); px(x - 6, GY - 13, 6, 5, "#a0562a"); px(x + 3, GY - 15, 5, 12, "#c07a44"); px(x - 5, GY - 12, 1, 1, "#1a1420"); px(x - 4, GY - 1, 3, 1, "#7a3f1e"); }
-    else { px(x - 4, GY - 20, 8, 13, "#7b6aa8"); px(x - 3, GY - 7, 3, 7, "#4a3a2a"); px(x + 1, GY - 7, 3, 7, "#4a3a2a"); px(x - 3, GY - 27, 7, 7, "#eabf98"); px(x - 5, GY - 29, 11, 3, "#c9a26b"); px(x - 9, GY - 14, 6, 6, "#a67c52"); px(x - 2, GY - 25, 1, 1, "#1a1420"); }
+    var hi = f.hi > 0, bob = hi ? -2 : 0;                 /* a high-fived friendly hops and throws up a paw */
+    if (f.k === "deer") { px(x - 11, GY - 22 + bob, 22, 10, "#a8763f"); px(x - 9, GY - 12, 3, 12, "#8a5f30"); px(x + 6, GY - 12, 3, 12, "#8a5f30"); px(x - 16, GY - 30 + bob, 8, 9, "#a8763f"); px(x - 15, GY - 35 + bob, 2, 6, "#e8d9b8"); px(x - 11, GY - 36 + bob, 2, 7, "#e8d9b8"); px(x - 15, GY - 27 + bob, 1, 1, "#1a1420"); px(x + 10, GY - 23 + bob, 3, 3, "#f4efe6"); if (hi) { px(x + 9, GY - 34, 3, 12, "#8a5f30"); px(x + 9, GY - 37, 4, 4, "#a8763f"); } }
+    else if (f.k === "squirrel") { px(x - 4, GY - 9 + bob, 8, 8, "#a0562a"); px(x - 6, GY - 13 + bob, 6, 5, "#a0562a"); px(x + 3, GY - 15 + bob, 5, 12, "#c07a44"); px(x - 5, GY - 12 + bob, 1, 1, "#1a1420"); px(x - 4, GY - 1, 3, 1, "#7a3f1e"); if (hi) { px(x + 1, GY - 20, 3, 9, "#a0562a"); px(x + 1, GY - 23, 4, 4, "#a0562a"); } }
+    else { px(x - 4, GY - 20 + bob, 8, 13, "#7b6aa8"); px(x - 3, GY - 7, 3, 7, "#4a3a2a"); px(x + 1, GY - 7, 3, 7, "#4a3a2a"); px(x - 3, GY - 27 + bob, 7, 7, "#eabf98"); px(x - 5, GY - 29 + bob, 11, 3, "#c9a26b"); if (hi) { px(x + 3, GY - 30, 3, 10, "#eabf98"); px(x + 3, GY - 33, 4, 4, "#eabf98"); } else px(x - 9, GY - 14, 6, 6, "#a67c52"); px(x - 2, GY - 25 + bob, 1, 1, "#1a1420"); }
   }
   function drawRun(g, ctx) {
     var d = R.dist, t = R.t, i, x, y, wx = WX;
@@ -968,6 +961,7 @@
       else if (f.k === "bolt") { for (i = 0; i < 8; i++) px(x + ((i % 2) ? 2 : -2), f.y - i * 9, 2, 9, "#fff7b0"); }
       else if (f.k === "cone") { for (i = 0; i < 14; i++) { var fx2 = x + (i / 14) * f.len * (0.4 + q * 0.6); px(fx2, f.y - 2 - i * 0.9 + (hash(i + t) * 6 | 0), 5, 4 + (i * 1.4 | 0), i % 3 ? "#ff9a2e" : "#ffd76b"); } }
       else if (f.k === "splat") { px(x - 6 - q * 4, f.y - 2, 12 + q * 8, 3, "#4a3722"); }
+      else if (f.k === "slap") { for (i = 0; i < 7; i++) { var sa = i / 7 * TAU, sr = 4 + q * 16; px(x + Math.cos(sa) * sr - 1, f.y + Math.sin(sa) * sr - 1, 3, 3, i % 2 ? "#fff3c4" : "#ffd76b"); } if (q < 0.5) px(x - 5, f.y - 5, 10, 10, "rgba(255,247,196," + (1 - q * 2) + ")"); }
     });
     drawFore(d);
     b.restore();
@@ -1205,7 +1199,8 @@
     var panel = document.querySelector('.ak-stage[data-game="wizard-sprint"] .ak-panel'); if (!panel) return;
     var btns = panel.querySelectorAll(".ak-panel__items > .ak-btn"), j = 0;
     (spec.items || []).forEach(function (it) {
-      if (!it) return; var bt = btns[j++]; if (!bt) return;
+      if (!it || it.head) return; var bt = btns[j++]; if (!bt) return;
+      if (it.tag) bt.dataset.wzSlot = it.tag;
       var ic = it.ico || (/^Back\b/.test(it.label) ? "back" : null);
       if (ic) { bt.insertBefore(icoEl(ic), bt.firstChild); bt.classList.add("has-ico"); }
       if (it.chips) { var box = el("span", { class: "wz-chips" }); it.chips.forEach(function (c) { box.appendChild(el("i", { class: "wz-chip " + (c[1] ? "is-" + c[1] : ""), text: c[0] })); }); var sp = bt.querySelector("span"); if (sp) bt.replaceChild(box, sp); else bt.appendChild(box); }
@@ -1275,8 +1270,8 @@
       items: [
         { label: "Prep Time", ico: "prep", sub: c1 ? "Plan a Magickal Mad Dash" : "Follow the tracks", cls: "is-primary", act: go("prep", function () { prep(g, 0); }) },
         { label: "Equipment", ico: "equip", isNew: nwN ? nwN + " NEW!" : null, sub: nwN ? nwN + " new " + (nwN > 1 ? "items" : "item") + " in the bag" : "Wear or remove your Wizard Drip", cls: S.bag.length ? "is-hot" : "", act: go("equip", function () { equip(g, 0); }) },
-        { label: "Magickal Condenser", ico: c1 ? "condenser" : "lock", sub: c1 ? "Upgrades and wares for Remnants" : "Locked: clear the forest", disabled: !c1, act: go("condenser", function () { condenser(g, 0); }) },
-        { label: "Wizard Drip Armoire", ico: c1 ? "hat" : "lock", sub: c1 ? "Comfort wear and your hat" : "Locked: clear the forest", disabled: !c1, act: go("armoire", function () { armoire(g, 0); }) },
+        { label: "Magickal Condenser", ico: c1 ? "condenser" : "lock", sub: c1 ? "Upgrades and wares for Remnants" : "Locked · clear the forest to open the caravan", disabled: !c1, act: go("condenser", function () { condenser(g, 0); }) },
+        { label: "Wizard Drip Armoire", ico: c1 ? "hat" : "lock", sub: c1 ? "Comfort wear and your hat" : "Locked · clear the forest to win back your hat", disabled: !c1, act: go("armoire", function () { armoire(g, 0); }) },
         { label: "Still Locked", ico: "lock", sub: "Mirror of Distortion and Brags (clear 2 levels) · Bookshelf (3) · Incantation Study (4)", disabled: true },
         { label: "Settings", ico: "gear", sub: "Sound and controls", act: function () { settings(g, 0); } },
         { label: "How To Play", ico: "scroll", sub: "The short version", act: function () { how(g); } }
@@ -1284,25 +1279,29 @@
   }
   function prep(g, focus) {
     var c1 = !!S.cleared[1], st = calc(), items = [], owned = Object.keys(S.inc).filter(function (k) { return INC[k]; });
-    items.push({ label: c1 ? "Run The Forest Again" : "Follow The Tracks", ico: "tree", sub: "The Forest Around the Tower · about 5 minutes, then a boss", cls: "is-primary", act: function () { save(); startRun(g, "story"); } });
-    if (c1) items.push({ label: "Endless Forest", ico: "inf", sub: "Farm currency and gear. The boss returns every 6.5 minutes. Best " + fmt(S.best.endless1 || 0) + " m", cls: "is-gold", act: function () { save(); startRun(g, "endless"); } });
+    function eidx() { var n = 0; items.forEach(function (x) { if (!x.head && !x.disabled) n++; }); return n; }   /* the focus index (enabled buttons only) the next pushed row will have */
+    items.push({ head: "Go for a run" });
+    items.push({ label: c1 ? "Run The Forest Again" : "Follow The Tracks", ico: "tree", sub: c1 ? "About 5 minutes, then the boss" : "About 5 minutes, then a boss", cls: "is-primary", act: function () { save(); startRun(g, "story"); } });
+    if (c1) items.push({ label: "Endless Forest", ico: "inf", sub: "Farm gear · boss every 6.5 min · best " + fmt(S.best.endless1 || 0) + " m", cls: "is-gold", act: function () { save(); startRun(g, "endless"); } });
+    items.push({ head: "Equip your spells" });
     for (var i = 0; i < incSlots(); i++) (function (slot) {
-      var idx = items.length, id = S.incEq[slot] || "poof", I = INC[id];
+      var idx = eidx(), id = S.incEq[slot] || "poof", I = INC[id];
       function turn(d) { var free = owned.filter(function (k) { return S.incEq.indexOf(k) < 0 || S.incEq[slot] === k; }), at = free.indexOf(id); S.incEq[slot] = free[cyc(at < 0 ? 0 : at, d, free.length)]; prep(g, idx); }
-      items.push({ label: "Incantation " + (slot + 1), ico: "spark", sub: (owned.length > 1 ? "‹  " + I.n + "  ›" : I.n) + " · " + I.cast + " · mastery " + mlvl(id), cls: "wz-r" + I.r, adj: turn, act: function () { turn(1); } });
+      items.push({ label: "Slot " + (slot + 1) + ": " + I.n, ico: "spark", sub: (owned.length > 1 ? "‹ change ›  ·  " : "") + I.cast + "  ·  mastery " + mlvl(id), cls: "wz-r" + I.r, adj: turn, act: function () { turn(1); } });
     })(i);
+    items.push({ label: "What each Incantation does", ico: "grim", sub: owned.length + " owned", act: function () { incList(g); } });
+    items.push({ head: "Buff and pace" });
     var bid = S.buffEq[0];
     if (bid) {
-      var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], bi = items.length;
-      items.push({ label: "Buff: " + BUFF[bid].n + "  " + pips(rk, 5), ico: "wing", sub: rk >= 5 ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s · upgrade for " + cost + " Whisper Orbs (you have " + S.orbs + ")",
+      var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], bi = eidx();
+      items.push({ label: "Buff: " + BUFF[bid].n + "  " + pips(rk, 5), ico: "wing", sub: rk >= 5 ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s · " + cost + " Whisper Orbs to upgrade (" + S.orbs + ")",
         cls: rk < 5 && S.orbs >= cost ? "is-hot" : "", act: function () { if (rk >= 5) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
-    } else items.push({ label: "Buff", sub: "Pick up your first Whisper Orb on a run to earn one", disabled: true });
-    if (st.ton > 0) { var pi = items.length; items.push({ label: "Run Pace", sub: "‹  " + Math.round(100 + st.ton * S.speed) + "%  ›  of base speed", adj: function (d) { S.speed = clamp(S.speed + d * 0.25, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : S.speed + 0.25; prep(g, pi); } }); }
-    items.push({ label: "Incantations", ico: "grim", sub: owned.length + " owned · what each one does", act: function () { incList(g); } });
+    } else items.push({ label: "Buff", ico: "wing", sub: "Pick up a Whisper Orb on a run to earn one", disabled: true });
+    if (st.ton > 0) { var pi = eidx(); items.push({ label: "Run Pace", ico: "prep", sub: "‹  " + Math.round(100 + st.ton * S.speed) + "%  ›  of base speed", adj: function (d) { S.speed = clamp(S.speed + d * 0.25, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : S.speed + 0.25; prep(g, pi); } }); }
     items.push({ label: "Back", act: function () { save(); hub(g, 0); } });
     var kv = el("div", { class: "ak-kv" });
     S.ch.forEach(function (c) { var d = chDef(c.id); kv.appendChild(el("span", { text: d.n, title: d.d })); kv.appendChild(el("b", { text: Math.min(d.need, Math.floor(c.p)) + " / " + d.need })); kv.appendChild(el("em", { class: "wz-note", text: d.d })); });
-    MN(g, { cls: "is-side wz-narrow", kicker: "Prep Time", title: "Plan The Dash", sub: "Challenges in play, 100 XP and 25 Remnants each:", body: kv, items: items, focus: focus, back: function () { save(); hub(g, 0); } });
+    MN(g, { cls: "is-side wz-narrow wz-prep", kicker: "Prep Time", title: "Plan The Dash", sub: "Challenges in play, 100 XP and 25 Remnants each:", body: kv, items: items, focus: focus, back: function () { save(); hub(g, 0); } });
   }
   function incList(g) {
     var items = Object.keys(S.inc).filter(function (k) { return INC[k]; }).map(function (id) { var I = INC[id], n = mnext(id);
@@ -1312,17 +1311,16 @@
   }
   function slotName(k) { var sd = slotDef(k); return /^sim/.test(k) ? "Simulacrum " + k.slice(3) : sd.n; }
   function equip(g, focus) {
-    UI.scene = "bag";
-    var st = calc(), open = openSlots();
+    UI.scene = "equip";
+    var open = openSlots();
     var items = open.map(function (k, i) { var it = S.eq[k], kind = /^sim/.test(k) ? "sim" : k, fit = S.bag.filter(function (q) { return q.s === kind; }), nn = fit.filter(function (q) { return q.nw; }).length;
-      var chips = it ? itemChips(it) : [[slotName(k), ""], ["Nothing worn", "dim"]]; if (it) chips[1] = [slotName(k), ""];
-      if (fit.length) chips.push([fit.length + " in the bag fit", "hot"]);
-      return { label: it ? it.n : "Empty", ico: slotIco(k), chips: chips, isNew: nn ? nn + " NEW!" : null, cls: (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
+      var sub = it ? RAR[it.r].n + (it.l.length ? "  ·  " + it.l.map(function (l) { return "+" + l[1] + STAT[l[0]].u; }).join(" ") : "") : "Empty";
+      if (fit.length) sub += "  ·  " + fit.length + " fit";
+      return { label: slotName(k), ico: slotIco(k), sub: (nn ? "● " : "") + sub, tag: k, cls: "wz-slotrow " + (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : "") + (nn ? " is-new" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
     var nb = S.bag.filter(function (q) { return q.nw; }).length;
-    items.push({ label: "Rummage In The Bag", ico: "equip", isNew: nb ? nb + " NEW!" : null, chips: [[S.bag.length + " / " + S.bagCap + " carried", ""], ["Sell what you don't need", "dim"]], act: function () { bag(g, 0, function () { equip(g, items.length - 2); }); } });
-    items.push({ label: "Back", act: function () { hub(g, 1); } });
-    var tiles = el("div", { class: "ak-stats wz-stats4" }); SK.forEach(function (k) { tiles.appendChild(tile(STAT[k].n, (k === "vit" ? r1(st.hp) + " HP" : "+" + st[k] + STAT[k].u), STAT[k].d)); });
-    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Inside the bag", title: "Wizard Drip", sub: "More slots open as your Wiz Level rises. Enemies only drop gear for slots you have.", body: tiles, grid: true, items: items, focus: focus, back: function () { hub(g, 1); } });
+    items.push({ label: "Rummage In The Bag", ico: "equip", sub: (nb ? nb + " new · " : "") + S.bag.length + " / " + S.bagCap + " carried", cls: "wz-slotrow" + (nb ? " is-new" : ""), act: function () { bag(g, 0, function () { equip(g, open.length); }); } });
+    items.push({ label: "Back", ico: "back", cls: "wz-slotrow", act: function () { hub(g, 1); } });
+    MN(g, { cls: "is-side wz-narrow wz-equip", kicker: "Wizard Drip", title: "Equipment", sub: "The wizard and your stats are shown to the right. Slots open as your Wiz Level rises.", items: items, focus: focus, back: function () { hub(g, 1); } });
   }
   function slotMenu(g, k, focus, backF) {
     UI.scene = "bag";
@@ -1344,7 +1342,8 @@
         { label: "Sell", ico: "coin", cls: "is-primary", act: function () { S.bag.splice(S.bag.indexOf(it), 1); S.rem += sellPrice(it); save(); sfx("buy"); bag(g, Math.min(i, S.bag.length), back); } },
         { label: "Keep It", act: function () { bag(g, i, back); } }], focus: 1, back: function () { bag(g, i, back); } }); } }; });
     items.push({ label: "Back", cls: "is-primary", act: leave });
-    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Inside the bag  ·  " + S.bag.length + " / " + S.bagCap, title: "The Bag", sub: S.bag.length ? "Select an item to sell it. Wear things from the slots." : "Empty. Enemies drop Wizard Drip now and then.", items: items, focus: focus, back: leave });
+    var wallet = el("div", { class: "ak-stats wz-wallet" }, tile("Remnants", fmt(S.rem), "from selling"), tile("Whisper Orbs", S.orbs), tile("Grimoires", S.grim), tile("Syllables", S.syl));
+    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Rummage sale  ·  " + S.bag.length + " / " + S.bagCap + " carried", title: "The Bag", sub: S.bag.length ? "Select an item to sell it for Remnants. Wear things from the slots." : "Empty. Enemies drop Wizard Drip now and then.", body: wallet, items: items, focus: focus, back: leave });
   }
   function drawBagScene(g, ctx) {                        /* looking down into one enormous bag */
     var t = Hb.t, i, x, y, an;
@@ -1367,6 +1366,60 @@
     for (i = 0; i < 12; i++) { an = -Math.PI + (i + 0.5) / 12 * Math.PI; x = 640 + Math.cos(an) * 652; y = 380 + Math.sin(an) * 370; if (y < 8) continue; ell(ctx, x, y, 13, 13, "#e8c15a"); ell(ctx, x, y, 7, 7, "#1a0f08"); }
     ctx.strokeStyle = "#d9c08a"; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(1150, 40); ctx.quadraticCurveTo(1230, 90 + Math.sin(t) * 4, 1200, 190); ctx.quadraticCurveTo(1180, 250, 1236, 300); ctx.stroke(); ell(ctx, 1238, 306, 12, 16, "#b98a4e");
     plate(ctx, 890, 34, 300, 40); D.text(ctx, (S.wiz.name || "The Wizard") + "  ·  Wiz Lv " + S.lvl, 1040, 61, "700 20px " + SERIF, "#f3e6c4", "center");
+  }
+  function statWord(k) { return STAT[k].d.split(" ")[0]; }
+  function drawEquipScene(g, ctx) {
+    var t = Hb.t, i, cx = 716, cy = 372, footY = 516, open = openSlots();
+    /* an armory alcove: warm stone, a shaft of light on the wizard */
+    ctx.fillStyle = "#1a1620"; ctx.fillRect(0, 0, W, H);
+    for (i = 0; i < 90; i++) { ctx.fillStyle = i % 2 ? "rgba(255,210,150,.04)" : "rgba(0,0,0,.10)"; var bx = (i * 73) % W, by = (i * 97) % H; ctx.fillRect(bx, by, 46 + (i % 3) * 22, 3); }
+    var gl = ctx.createRadialGradient(cx, cy + 20, 50, cx, cy + 20, 430); gl.addColorStop(0, "rgba(255,214,130,.22)"); gl.addColorStop(1, "rgba(255,214,130,0)"); ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+    ell(ctx, cx, footY + 6, 118, 20, "rgba(0,0,0,.4)");
+    /* which slot the menu has selected, so its node lights up */
+    var sel = null; try { var pn = document.querySelector('.ak-stage[data-game="wizard-sprint"] .ak-panel'), sb = pn && pn.querySelector(".ak-btn.is-sel"); sel = sb && sb.dataset ? sb.dataset.wzSlot : null; } catch (e) {}
+    /* radial equipment nodes around the wizard */
+    /* fan the slots in an arc around the right of the wizard, clear of the menu; odd ones ride an inner ring so neighbours don't overlap */
+    var n = open.length, nodes = [], A0 = -132 * Math.PI / 180, A1 = 132 * Math.PI / 180;
+    open.forEach(function (k, i2) {
+      var an = n <= 1 ? 0 : A0 + i2 / (n - 1) * (A1 - A0), rr = (i2 % 2 && n > 6) ? 0.72 : 1, nx = Math.round(cx + Math.cos(an) * 212 * rr), ny = Math.round(cy + Math.sin(an) * 276 * (0.5 + rr * 0.5));
+      nodes.push({ k: k, x: nx, y: ny });
+    });
+    nodes.forEach(function (nd) {
+      var on = nd.k === sel;
+      ctx.strokeStyle = on ? "#ffe08a" : "rgba(232,193,90,.22)"; ctx.lineWidth = on ? 2 : 1;
+      ctx.beginPath(); ctx.moveTo(cx, cy + 10); ctx.lineTo(nd.x, nd.y); ctx.stroke();
+    });
+    nodes.forEach(function (nd) {
+      var it = S.eq[nd.k], on = nd.k === sel, col = it ? RAR[it.r].c : "#5f564a", w = 98, h = 46, x = nd.x - w / 2, y = nd.y - h / 2;
+      ctx.fillStyle = on ? "rgba(44,28,14,.98)" : "rgba(24,16,9,.92)"; D.rr(ctx, x, y, w, h, 6); ctx.fill();
+      ctx.strokeStyle = on ? "#ffe08a" : col; ctx.lineWidth = on ? 3 : 1.5; D.rr(ctx, x + 1, y + 1, w - 2, h - 2, 5); ctx.stroke();
+      ctx.save(); ctx.imageSmoothingEnabled = false;
+      if (!it) ctx.globalAlpha = 0.5; icoAt(ctx, slotIco(nd.k), x + 6, y + 8, 1.9); ctx.globalAlpha = 1;
+      ctx.restore();
+      D.text(ctx, slotName(nd.k), x + 40, y + 14, "700 10px " + F.mono, on ? "#fff3c4" : "#cdb98a", "left");
+      if (it) {
+        var lines = it.l.slice(0, 2).map(function (l) { return "+" + l[1] + STAT[l[0]].u.trim() + " " + statWord(l[0]); });
+        if (!lines.length) lines = ["no stats"];
+        lines.forEach(function (s, li) { D.text(ctx, s, x + 40, y + 27 + li * 10, "600 9px " + F.mono, col, "left"); });
+      } else D.text(ctx, "empty", x + 40, y + 29, "600 9px " + F.mono, "#8a7f6e", "left");
+    });
+    /* the wizard in the middle */
+    wizSprite(lookOf(S.comfort), (t % 8) < 5 ? "stand" : (t % 8) < 6.5 ? "five" : "stand", t);
+    ctx.imageSmoothingEnabled = false; blitWiz(ctx, cx, footY, 4.6);
+    /* right-hand stat stack: base value, then the value with gear */
+    var tot = calc(), base = {}; SK.forEach(function (k) { base[k] = Math.min(STAT[k].cap, r1((S.ranks[k] || 0) * STAT[k].rank)); });
+    var px0 = 996, pw = 272, py0 = 150, rh = 40, bcx = px0 + pw - 104, tcx = px0 + pw - 36;
+    plate(ctx, px0, py0 - 44, pw, 36); D.text(ctx, "Wizard Stats", px0 + pw / 2, py0 - 20, "700 19px " + SERIF, "#f3e6c4", "center");
+    D.text(ctx, "base", bcx, py0 - 1, "700 10px " + F.mono, "#9a8f7a", "center");
+    D.text(ctx, "with gear", tcx, py0 - 1, "700 10px " + F.mono, "#9a8f7a", "center");
+    SK.forEach(function (k, i3) {
+      var y = py0 + 6 + i3 * rh, bv = k === "vit" ? 10 + base.vit : base[k], tv = k === "vit" ? tot.hp : tot[k], up = tv > bv, u = k === "vit" ? " HP" : STAT[k].u;
+      plate(ctx, px0, y, pw, rh - 6, 6);
+      D.text(ctx, STAT[k].d, px0 + 12, y + 15, "700 13px " + SERIF, "#f0e4c4", "left");
+      D.text(ctx, STAT[k].n, px0 + 12, y + 27, "600 8px " + F.mono, "#9a8f7a", "left");
+      D.text(ctx, r1(bv) + u, bcx, y + 21, "700 11px " + F.mono, "#cdb98a", "center");
+      D.text(ctx, r1(tv) + u, tcx, y + 21, "800 12px " + F.mono, up ? "#7fdc9c" : "#e8e4d4", "center");
+    });
   }
   function condenser(g, focus) {
     UI.scene = "hub";
@@ -1466,7 +1519,7 @@
   /* ---------------- register ---------------- */
   load();
   var DEF = {
-    id: "wizard-sprint", name: "Wizard of the Sprint", icon: "🧙", accent: "#8f6bff", W: W, H: H, order: 0.5, badge: "New",
+    id: "wizard-sprint", name: "Wizard of the Sprint", icon: "🧙", accent: "#8f6bff", W: W, H: H, order: 0.5, badge: "Beta",
     tags: ["Runner", "RPG loot", "Campaign"],
     tagline: "A robbed arch-wizard in pyjamas chases a trail of footprints. Run, jump, cast, loot, and rebuild your tower.",
     about: "A left-to-right runner with spell combat and loot. Build your wizard, follow the tracks through the forest, fight with Incantations that level up as you use them, pick up Wizard Drip in six rarities, and spend Remnants on upgrades back at your ruined tower. This is the first level: clear its boss to unlock the shop, the wardrobe and Endless mode. More levels are on the way.",
@@ -1492,6 +1545,7 @@
     draw: function (g, ctx) {
       if (R && (g.state === "play" || g.state === "paused" || g.state === "over") && UI.scene === "run") { drawRun(g, ctx); return; }
       if (UI.scene === "creator") { drawCreator(g, ctx); return; }
+      if (UI.scene === "equip") { drawEquipScene(g, ctx); return; }
       if (UI.scene === "bag") { drawBagScene(g, ctx); return; }
       drawHubScene(g, ctx);
       if (UI.scene === "rebind" && UI.bind) {
@@ -1502,11 +1556,6 @@
       }
     }
   };
-  /* Owner preview: the game only appears while a control panel session is live and the server confirms it. */
-  var S0 = window.Site;
-  /* A control panel sign-in leaves "site.adminSeen" (its session end, in ms) on this browser, so the preview
-     also shows in other tabs until that session would have ended. Signing out removes it. */
-  var seen = 0; try { seen = +localStorage.getItem("site.adminSeen") || 0; } catch (e) {}
-  if (seen > Date.now()) A.register(DEF);
-  else if (S0 && S0.admin && S0.admin.get()) S0.admin.check().then(function (r) { if (r && r.ok) A.register(DEF); });
+  /* Public beta: the owner-only preview gate was lifted on the owner's go-ahead. The card is badged Beta. */
+  A.register(DEF);
 })();
