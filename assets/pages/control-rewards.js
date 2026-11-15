@@ -30,7 +30,7 @@
   var SLOTS = [["badge", "Badge (wear up to 3)"], ["color", "Name colour (wear 1)"], ["fixed", "Fixed (always on)"]];
   var STATES = { earned: "Earned", granted: "Granted", pending: "Waiting for review", locked_on: "Locked on", locked_off: "Locked off", grandfathered: "Grandfathered" };
   var HELD = { earned: 1, granted: 1, locked_on: 1, grandfathered: 1 };
-  var TRIGGERS = ["ratings", "reviews", "review_helpful", "lists", "followers", "forum_posts", "forum_reactions_received", "member_days", "supporter", "supporter_monthly", "ra_masteries", "anderscraft_level", "anderscraft_hardcore", "trophies_all", "trophies_platinum", "trophy:", "arcade:row-home/best", "arcade:supreme-lobbing/cleared", "arcade:supreme-lobbing/pcleared", "arcade:supreme-lobbing/bestWave", "arcade:review-score/best.easy", "arcade:review-score/best.medium", "arcade:review-score/best.hard", "arcade:review-score/best.harder", "arcade:review-score/best.harderer"];
+  var TRIGGERS = ["ratings", "reviews", "forum_posts", "followers", "following", "lists", "hearts", "helpful", "forum_reactions", "member_days", "supporter", "supporter_monthly", "ra_masteries", "login:dma", "login:discord", "trophies", "trophies_all", "trophies_platinum", "arcade:row-home/best", "arcade:supreme-lobbing/cleared", "arcade:supreme-lobbing/pcleared", "arcade:supreme-lobbing/bestWave", "arcade:review-score/best.easy", "arcade:review-score/best.medium", "arcade:review-score/best.hard", "arcade:review-score/best.harder", "arcade:review-score/best.harderer"];
   var ICON = '<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/>';
 
   var api = null, tab = "member", who = "", catalog = null;
@@ -58,7 +58,7 @@
   function unset(r) { return r && (r.error === "unset" || /could not find the function|does not exist/i.test(r.error || "")); }
   function say(node, txt, kind) { node.textContent = txt || ""; node.setAttribute("data-kind", kind || ""); }
   function fail(node, r, round) {
-    if (unset(r)) say(node, round === 29 ? "This part switches on with the next Rate-O-Pedia rewards update (rules and review). Nothing to do here until then." : "Rewards aren't switched on yet. Run 28_rewards_core.sql in the Supabase SQL Editor, then press Refresh.", "warn");
+    if (unset(r)) say(node, round === 29 ? "This part switches on with 31_rewards_rules.sql. Run it in the Supabase SQL Editor, then press Refresh." : "Rewards aren't switched on yet. Run 28_rewards_core.sql in the Supabase SQL Editor, then press Refresh.", "warn");
     else say(node, why(r), "err");
     Site.sfx("error");
   }
@@ -170,16 +170,20 @@
   }
   /* profile cosmetics + name: later round (site_admin_member_profile_set). Blank fields are left alone. */
   function profileEditor(msg) {
-    var F = [["forced_name", "Forced name (blank clears)", "text", 24], ["banner", "Banner", "text", 60], ["frame", "Avatar frame", "text", 60], ["accent", "Accent colour (#rrggbb)", "text", 7], ["flair", "Flair", "text", 60], ["motto", "Motto", "text", 140]];
+    var F = [["forced_name", "Forced name (blank clears)", 24], ["name", "Display name", 24], ["banner", "Banner (e.g. rw-tide)", 60], ["frame", "Avatar frame (e.g. rw-laurel)", 60], ["name_fx", "Name style (e.g. rw-gilded)", 60], ["accent", "Accent (name or #rrggbb)", 24], ["flair", "Custom flair (blank + tick clears)", 60], ["motto", "Motto", 140]];
     var ins = {}, grid = el("div", { class: "cp-grid" });
-    F.forEach(function (f) { ins[f[0]] = el("input", { type: "text", maxlength: String(f[3]), placeholder: f[0] === "forced_name" ? "" : "unchanged" }); grid.appendChild(el("label", { class: "cp-field" }, el("span", { text: f[1] }), ins[f[0]])); });
+    F.forEach(function (f) { ins[f[0]] = el("input", { type: "text", maxlength: String(f[2]), placeholder: f[0] === "forced_name" ? "" : "unchanged" }); grid.appendChild(el("label", { class: "cp-field" }, el("span", { text: f[1] }), ins[f[0]])); });
     var av = el("input", { type: "checkbox" });
     var m2 = el("span", { class: "cp-msg rw-msg", role: "status" });
     var save = el("button", { type: "button", class: "btn ghost", text: "Save profile changes" });
     save.addEventListener("click", function () {
       var patch = {}, n = 0;
-      F.forEach(function (f) { var v = ins[f[0]].value.trim(); if (v || f[0] === "forced_name") { if (f[0] === "forced_name" && !v && !ins[f[0]].dataset.touched) return; patch[f[0]] = v; n++; } });
-      if (patch.accent && !/^#[0-9a-f]{6}$/i.test(patch.accent)) { say(m2, "Accent colour must look like #cd4257.", "err"); return; }
+      F.forEach(function (f) {
+        var k = f[0], v = ins[k].value.trim();
+        if (v) { patch[k] = v; n++; }
+        else if ((k === "forced_name" || k === "flair") && ins[k].dataset.touched) { patch[k] = null; n++; }   /* emptied on purpose: clear it */
+      });
+      if (patch.accent && !/^(#[0-9a-f]{6}|[a-z][a-z0-9-]{0,23})$/i.test(patch.accent)) { say(m2, "Accent must be a colour name or look like #cd4257.", "err"); return; }
       if (av.checked) { patch.avatar_reset = true; n++; }
       if (!n) { say(m2, "Nothing to change yet."); return; }
       save.disabled = true; say(m2, "Saving…");
@@ -189,7 +193,7 @@
         Site.sfx("success"); say(m2, "Saved. Their Discord nickname follows within a minute.", "ok");
       });
     });
-    ins.forced_name.addEventListener("input", function () { ins.forced_name.dataset.touched = "1"; });
+    ["forced_name", "flair"].forEach(function (k) { ins[k].addEventListener("input", function () { ins[k].dataset.touched = "1"; }); });
     return el("details", { class: "rw-prof" }, el("summary", { text: "Edit profile cosmetics and name" }),
       el("p", { class: "cp-fine", text: "Fill only what you want to change. A forced name also becomes their Discord nickname." }),
       grid, el("label", { class: "cp-switch" }, av, el("span", { text: "Reset their avatar to their Discord picture" })),
@@ -239,7 +243,7 @@
         say(msg, "Deleting…");
         call(R.del, { p_id: x.id }).then(function (r) { if (!r || !r.ok) { fail(msg, r); return; } say(msg, "Deleted. Taken from " + (r.holders_removed || 0) + " member(s).", "ok"); load(); });
       });
-      var rule = x.trigger ? x.trigger + (x.threshold != null ? " ≥ " + x.threshold : "") + (x.trust === "self" ? " (self-reported)" : "") : "Owner only";
+      var rule = x.trigger ? x.trigger + (x.threshold != null ? " ≥ " + x.threshold : "") + (x.cap != null ? " (cap " + x.cap + ")" : "") + (x.trust === "self" ? " (self-reported)" : "") : "Owner only";
       return el("li", { class: "rw-item" + (x.enabled ? "" : " is-off") },
         el("span", { class: "rw-ic", "aria-hidden": "true", text: x.icon || "★" }),
         el("span", { class: "rw-txt" }, el("strong", { text: x.name }),
@@ -268,8 +272,8 @@
       inp("icon", "Icon (emoji)", { max: "8" }), inp("value", "Cosmetic value (profiles)", { max: "60", ph: "gold-laurel" }),
       inp("discord_role_id", "Discord role id", { max: "25", ph: "filled by the Discord side" }), inp("sort", "Sort order", { type: "number" }),
       inp("hint", "How to earn (shown greyed in the bank)", { max: "120", wide: true }),
-      inp("trigger", "Rule (blank = owner only)", { list: "rw-triggers", ph: "reviews, arcade:row-home/best, trophy:<id>…" }), inp("threshold", "Threshold", { type: "number" }),
-      inp("trust", "Trust", { opts: [["verified", "Verified (checked in the database)"], ["self", "Self-reported (trophies, arcade)"]] }), el("span", {}));
+      inp("trigger", "Rule (blank = owner only)", { list: "rw-triggers", ph: "reviews, arcade:row-home/best, trophy:<id>…" }), inp("threshold", "Threshold (blank = true / more than 0)", { type: "number" }), inp("cap", "Cap (self-reported: above this goes to review)", { type: "number" }),
+      inp("trust", "Trust", { opts: [["verified", "Verified (checked in the database)"], ["self", "Self-reported (trophies, arcade)"]] }));
     var sw = el("div", { class: "cp-switches" }, inp("enabled", "Enabled", { bool: 1 }), inp("hidden", "Hidden until earned", { bool: 1 }), inp("self_select", "Member can equip/unequip it", { bool: 1 }), inp("needs_review", "Needs my review before it's granted", { bool: 1 }));
     function syncSlot() { var role = f.kind.value === "discord_role"; f.slot.disabled = !role; f.discord_role_id.disabled = !role; f.value.disabled = role; if (!role) f.slot.value = ""; else if (!f.slot.value) f.slot.value = "badge"; }
     f.kind.addEventListener("change", syncSlot); syncSlot();
@@ -283,6 +287,7 @@
       ["id", "name", "kind", "slot", "icon", "value", "discord_role_id", "hint", "trigger", "trust"].forEach(function (k) { var v = f[k].disabled ? "" : f[k].value.trim(); row[k] = v === "" ? null : v; });
       row.sort = parseInt(f.sort.value, 10) || 0;
       row.threshold = f.threshold.value === "" ? null : +f.threshold.value;
+      row.cap = f.cap.value === "" ? null : +f.cap.value;
       ["enabled", "hidden", "self_select", "needs_review"].forEach(function (k) { row[k] = f[k].checked; });
       if (!row.id || !/^[a-z0-9][a-z0-9-]{0,47}$/.test(row.id)) { say(m2, "The id needs lowercase letters, numbers and dashes.", "err"); return; }
       if (!row.name) { say(m2, "Give it a name.", "err"); return; }
@@ -336,12 +341,12 @@
         rows.forEach(function (q) {
           function decide(yes) { return function () { say(msg, "Working…"); call(R.decide, { p_handle: q.handle, p_reward: q.reward, p_approve: yes }).then(function (r2) { if (!r2 || !r2.ok) { fail(msg, r2, 29); return; } Site.sfx(yes ? "success" : "toggle"); load(); }); }; }
           var ok = el("button", { type: "button", class: "cp-mini", text: "Approve" }); ok.addEventListener("click", decide(true));
-          var no = el("button", { type: "button", class: "cp-danger", text: "Deny" }); no.addEventListener("click", decide(false));
+          var no = el("button", { type: "button", class: "cp-danger", text: "Deny", title: "Locks it off so it can't be claimed again. Unlock in their bank to undo." }); no.addEventListener("click", decide(false));
           var open = el("button", { type: "button", class: "cp-mini", text: "Bank" }); open.addEventListener("click", function () { who = q.handle; tab = "member"; api.show("rewards"); });
           ul.appendChild(el("li", { class: "rw-item" },
             el("span", { class: "rw-ic", "aria-hidden": "true", text: q.icon || "★" }),
             el("span", { class: "rw-txt" }, el("strong", { text: (q.reward_name || q.reward) + " → " + (q.name || q.handle) }),
-              el("small", { text: "@" + q.handle + " · " + api.when(q.at) + (q.detail ? " · " + JSON.stringify(q.detail).slice(0, 140) : "") })),
+              el("small", { text: "@" + q.handle + " · " + api.when(q.at) + (q.detail ? " · " + (q.detail.trigger ? q.detail.trigger + (q.detail.value != null ? " = " + q.detail.value : "") : JSON.stringify(q.detail).slice(0, 140)) : "") })),
             el("span", { class: "cp-act__row" }, ok, no, open)));
         });
         list.appendChild(ul);
