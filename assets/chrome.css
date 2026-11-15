@@ -510,6 +510,19 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
 .ch-radial[data-layout="neat"] .ch-rad__card:hover .ch-rad__in,.ch-radial[data-layout="neat"] .ch-rad__card:focus-visible .ch-rad__in{transform:scale(1.03)}
 .ch-radial[data-layout="neat"] .ch-rad__center{position:fixed;top:14px;right:14px;left:auto;margin:0}
 
+/* page settings folded into the menu (chrome:menu): a top view switch, and an in-overlay settings panel */
+.ch-rad__views{position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:6;display:inline-flex;gap:3px;padding:4px;
+  border-radius:999px;background:var(--sx-surface);border:1px solid var(--sx-line-2);box-shadow:0 12px 32px -14px rgba(0,0,0,.75);
+  opacity:0;transition:opacity .3s}
+.ch-radial.is-open .ch-rad__views{opacity:1}
+.ch-radial[data-view="settings"] .ch-rad__wheel{display:none}
+.ch-radial[data-view="settings"] .ch-rad__seg{display:none}
+.ch-rad__settings{display:none;position:relative;z-index:4;width:min(390px,92vw)}
+.ch-radial[data-view="settings"] .ch-rad__settings{display:block}
+.ch-panel.ch-panel--rad{position:static;top:auto;right:auto;left:auto;width:100%;max-width:none;
+  max-height:min(72vh,640px);opacity:1;transform:none;transform-origin:center}
+@media (max-width:720px){.ch-rad__settings{width:min(360px,90vw)}.ch-panel.ch-panel--rad{max-height:72vh}}
+
 @media print{.ch-menu__box,.ch-radial{display:none}}
 
 /* site search palette (chrome:search) */

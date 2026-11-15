@@ -26,3 +26,18 @@
 .sy-status--err{color:var(--sx-err)}
 .sy-help{font-size:.9rem;color:var(--sx-accent);text-decoration:none}
 .sy-help:hover{text-decoration:underline}
+
+/* profile chip in the header tool rail — the account's home in the top-right corner */
+.sy-profile.sx-iconbtn{width:auto;min-width:36px;padding:0 11px 0 6px;gap:7px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center}
+:root.ch-scrolled .sx-tools .sy-profile.sx-iconbtn{width:auto;height:36px;border-radius:999px;padding:0 10px 0 5px}
+.sy-av{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sx-surface-2);color:var(--sx-muted);overflow:hidden}
+.sy-av svg{width:17px;height:17px}
+.sy-av--initial{background:var(--sx-accent);color:var(--sx-on-accent,#fff);font:800 .8rem/1 var(--sx-display);text-transform:uppercase}
+.sy-name{font:600 .86rem/1 var(--sx-display);color:var(--sx-text);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sy-profile.is-linked{border-color:color-mix(in srgb,var(--sx-ok) 50%,var(--sx-line-2))}
+.sy-profile.is-linked .sy-av:not(.sy-av--initial){color:var(--sx-ok)}
+@media (max-width:560px){
+  .sy-profile .sy-name{display:none}
+  .sy-profile.sx-iconbtn{padding:0;width:40px}
+  :root.ch-scrolled .sx-tools .sy-profile.sx-iconbtn{width:36px;padding:0}
+}
