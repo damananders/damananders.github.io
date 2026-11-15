@@ -420,6 +420,7 @@
    * ==================================================================================================== */
   Site.ready(function () {
     if (!feat("shareButton")) return;
+    if (feat("navMenu")) return;   /* when the radial menu exists, Share lives inside it (tucked out of the header) */
     var tools = Site.tools(); if (!tools) return;
     var btn = el("button", { type: "button", class: "sx-iconbtn ch-share", style: { order: "5" }, "aria-label": "Share this page", title: "Share this page" }, svg(ICON.share));
     btn.addEventListener("click", function () {
@@ -480,6 +481,18 @@
       svg('<circle cx="12" cy="12" r="2.1"/><circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/>', { fill: "currentColor", stroke: "none" }));
     var box = el("div", { class: "ch-menu__box" }, btn);
     nav.insertBefore(box, nav.firstChild);
+    /* a dedicated Settings gear sitting directly under the menu button, visible on every page (including the
+       landing page) — it opens the radial straight to the Settings view. The in-overlay toggle still works too. */
+    var gearBtn = null;
+    if (feat("settingsPanel")) {
+      gearBtn = el("button", { type: "button", class: "sx-iconbtn ch-menu__gear", "aria-label": "Site settings", title: "Settings" }, svg(ICON.gear));
+      gearBtn.addEventListener("click", function () {
+        pendingView = "settings";
+        if (open) { showView("settings"); setTimeout(function () { try { focusQuietly(settings.box.querySelector("[data-ch-key]:not([aria-disabled='true'])") || setClose); } catch (e) {} }, 20); }
+        else { set(true); sfx("open"); }
+      });
+      box.appendChild(gearBtn);
+    }
 
     /* overlay lives on <body> so position:fixed centres on the viewport, not a transformed ancestor */
     var wheel = el("div", { class: "ch-rad__wheel", role: "menu", "aria-label": "Site pages" });
@@ -566,6 +579,18 @@
     var bar = el("div", { class: "ch-rad__bar" }, seg);
     overlay.appendChild(bar);
     applyMode(mode, false);
+
+    /* Share lives here now (tucked out of the crowded header). Native share sheet, or copy the link. */
+    if (feat("shareButton")) {
+      var shareBtn = el("button", { type: "button", class: "ch-rad__settingsbtn ch-rad__sharebtn" }, svg(ICON.share), el("span", { text: "Share page" }));
+      shareBtn.addEventListener("click", function () {
+        sfx("nav");
+        var url = location.href, title = document.title || "Anders";
+        if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+        if (Site.copy) Site.copy(url, "Link copied to clipboard");
+      });
+      bar.appendChild(shareBtn);
+    }
 
     /* ---- page settings, reached by a Settings button sitting under the radial navigation menu ---- */
     var hasSettings = feat("settingsPanel"), settings = null, settingsDrawn = false, view = "pages", pendingView = "pages";
