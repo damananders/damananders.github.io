@@ -196,7 +196,7 @@
         set: function (k, v) { Site.store.set("arcade." + def.id + "." + k, v); }
       }
     };
-    var full = false, open = false, raf = 0, last = 0, menuSpec = null, menuBtns = [], menuSel = 0;
+    var full = false, open = false, raf = 0, last = 0, menuSpec = null, menuBtns = [], menuIts = [], menuSel = 0;
 
     /* ---- sizing ---- */
     function fit() {
@@ -284,7 +284,7 @@
 
     /* ---- menus (real buttons) ---- */
     g.menu = function (spec) {
-      menuSpec = spec; menuLayer.textContent = ""; menuBtns = [];
+      menuSpec = spec; menuLayer.textContent = ""; menuBtns = []; menuIts = [];
       var panel = el("div", { class: "ak-panel " + (spec.cls || ""), role: "dialog", "aria-label": spec.title || def.name });
       if (spec.kicker) panel.appendChild(el("div", { class: "ak-panel__kicker", text: spec.kicker }));
       if (spec.title) panel.appendChild(el("h3", { class: "ak-panel__title", text: spec.title }));
@@ -297,7 +297,7 @@
           el("b", { text: it.label }), it.sub ? el("span", { text: it.sub }) : null);
         b.addEventListener("click", function () { if (it.disabled) return; Site.sfx("tap"); it.act && it.act(); });
         b.addEventListener("mouseenter", function () { var i = menuBtns.indexOf(b); if (i >= 0) { menuSel = i; mark(); } });
-        list.appendChild(b); if (!it.disabled) menuBtns.push(b);
+        list.appendChild(b); if (!it.disabled) { menuBtns.push(b); menuIts.push(it); }
       });
       panel.appendChild(list);
       if (spec.foot) panel.appendChild(typeof spec.foot === "string" ? el("p", { class: "ak-panel__foot", text: spec.foot }) : spec.foot);
@@ -305,7 +305,7 @@
       menuSel = Math.max(0, Math.min(menuBtns.length - 1, spec.focus || 0));
       mark(); focusSel(); paint();
     };
-    g.closeMenu = function () { menuSpec = null; menuBtns = []; menuLayer.hidden = true; menuLayer.textContent = ""; };
+    g.closeMenu = function () { menuSpec = null; menuBtns = []; menuIts = []; menuLayer.hidden = true; menuLayer.textContent = ""; };
     g.menuOpen = function () { return !!menuSpec; };
     function mark() { menuBtns.forEach(function (b, i) { b.classList.toggle("is-sel", i === menuSel); }); }
     function focusSel() { var b = menuBtns[menuSel]; if (b && open && (full || captured(g) || stage.contains(doc.activeElement))) try { b.focus({ preventScroll: true }); } catch (e) {} }
@@ -313,6 +313,8 @@
     function menuBack() { if (menuSpec && menuSpec.back) { Site.sfx("close"); menuSpec.back(); } }
     function menuOk() { var b = menuBtns[menuSel]; if (b) b.click(); }
     g._menuKey = function (k) {
+      var cur = menuIts[menuSel];
+      if ((k === "left" || k === "right") && cur && cur.adj) { Site.sfx("tap"); cur.adj(k === "left" ? -1 : 1); return; }   /* a value row: left / right change it */
       if (k === "up" || k === "left") moveSel(-1); else if (k === "down" || k === "right") moveSel(1);
       else if (k === "ok") menuOk(); else if (k === "back") menuBack();
     };
@@ -384,6 +386,7 @@
   doc.addEventListener("keydown", function (e) {
     var g = active; if (!g || !g.isOpen() || sheet) return;
     var t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    if (g.def.rawKey && g.def.rawKey(g, e)) { e.preventDefault(); e.stopPropagation(); return; }   /* a game listening for a key to bind */
     var cap = captured(g), inStage = g.stage.contains(doc.activeElement);
     if (!cap && !inStage) return;
     var k = e.key;
@@ -480,6 +483,7 @@
     if (a == null) return b; if (b == null) return a;
     if (t === "max") return Math.max(+a || 0, +b || 0);
     if (t === "or") return !!(a || b);
+    if (t === "newest") return ((b && b.ts) || 0) > ((a && a.ts) || 0) ? b : a;   /* a whole save: the later one wins */
     if (t === "union") {
       var out = (Array.isArray(a) ? a : []).slice();
       (Array.isArray(b) ? b : []).forEach(function (v) { if (out.indexOf(v) < 0) out.push(v); });
@@ -508,6 +512,7 @@
       var v = Site.store.get(sp.s, sp.d == null ? null : sp.d);
       if (syEmpty(v) || syEq(v, SY.sent[key])) return;
       patch[key] = v; SY.sent[key] = v; n++;
+      if (sp.t === "newest") Site.store.set(sp.s + ".synced", (v && v.ts) || 0);
     });
     if (n) Site.emit("arcade:save", patch);
   }
@@ -519,6 +524,14 @@
     syEach(function (g, sp, key) {
       if (!(key in state)) return;
       var rv = state[key], lv = Site.store.get(sp.s, null), m = syMerge(sp.t, lv, rv);
+      if (sp.t === "newest") {                    /* both copies moved on since they last agreed: keep the loser as a backup and say so */
+        var base = Site.store.get(sp.s + ".synced", 0) || 0, lt = (lv && lv.ts) || 0, rt = (rv && rv.ts) || 0;
+        if (lt && rt && lt > base && rt !== base && rt !== lt) {
+          Site.store.set(sp.s + ".backup", m === rv ? lv : rv);
+          Site.store.set(sp.s + ".conflict", { at: Date.now(), kept: m === rv ? "account" : "device" });
+        }
+        Site.store.set(sp.s + ".synced", (m && m.ts) || 0);
+      }
       SY.sent[key] = rv;                          /* what the account holds now */
       if (!syEq(m, lv)) { Site.store.set(sp.s, m); if (touched.indexOf(g) < 0) touched.push(g); }
     });
