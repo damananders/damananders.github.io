@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged } from "./games.common.js?v=21";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps } from "./games.common.js?v=22";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -176,7 +176,9 @@ async function render() {
         p.motto ? el("p", { class: "pf-motto " + colorClass(p.motto_color), text: "“" + p.motto + "”" }) : (mine ? el("p", { class: "pf-motto pf-motto--none", text: "No motto yet." }) : null)),
       el("div", { class: "pf-actions" },
         el("button", { class: "btn ghost gm-btn pf-share", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") }),
-        mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : followBtn(p))),
+        mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : followBtn(p),
+        mine ? el("a", { class: "btn ghost gm-btn", href: "/games/buddies/", text: "Buddies & messages" }) : null,
+        mine ? null : socialBtns(p))),
     el("div", { class: "pf-hero__bar" }, followCounts(p, mine),
     el("div", { class: "pf-xp", title: fmt(lv.xp) + " XP · " + fmt(lv.next) + " to level " + (lv.lvl + 1) },
       el("span", { class: "pf-xp__l", text: "Level " + lv.lvl }),
@@ -249,7 +251,8 @@ async function render() {
   /* who-they-are cards (about, now playing, tags, RetroAchievements, stats) go in the right-hand column under the
    * account box on wide screens, and stay under the header on narrow ones; see placeSide() */
   const side = el("div", { class: "pf-side" }, ...[aboutBox, nowBox, statsBox, linkBox, raBox].filter(Boolean));
-  const side2 = el("div", { class: "pf-side pf-side--more" }, ...[heartBox, listsBox, postsBox, revBox].filter(Boolean));
+  const budBox = buddiesBox(p, mine);
+  const side2 = el("div", { class: "pf-side pf-side--more" }, ...[budBox, heartBox, listsBox, postsBox, revBox].filter(Boolean));
   const rewBox = mine ? rewardsCard() : null;
   root.replaceChildren(...[head, side, rewBox, showBox, badgeBox, blBox, wallBox, side2, mine ? syncCard() : null].filter(Boolean));
   side2.dataset.where = plus ? "aside" : "main";
@@ -567,6 +570,70 @@ function rewardsCard() {
       looks.length ? el("h3", { class: "pf-rw__h", text: "Profile looks" }) : null, looks.length ? grid(looks) : null);
   }
   (claimedOnce ? Promise.resolve() : claim(false)).then(() => { claimedOnce = true; load(); });
+  return box;
+}
+
+/* ---------------- Buddies, Opps and messages (round 33) ---------------- */
+// Add buddy / Accept / Message, and a ⋯ menu with Opps. Hidden until the database update is in, or when signed out.
+function socialBtns(p) {
+  const wrap = el("span", { class: "pf-social", hidden: true });
+  let st = null;
+  const act = async (fn, args, ok) => {
+    const r = await sb.rpc(fn, args);
+    if (r.error || (r.data && r.data.ok === false)) { toast((r.data && r.data.error) || r.error.message, "err"); return false; }
+    if (ok) toast(ok, "ok"); return true;
+  };
+  async function load() {
+    const r = await sb.rpc("social_status", { p_handle: p.handle }).then((x) => x, () => ({ error: true }));
+    if (r.error || !r.data || !r.data.ok || r.data.self) { wrap.hidden = true; return; }
+    st = r.data; draw();
+  }
+  function draw() {
+    const kids = [];
+    if (st.opp) {
+      kids.push(el("span", { class: "pf-oppTag", text: "In your Opps" }));
+    } else if (st.buddy) {
+      kids.push(el("span", { class: "pf-budTag", title: "You're buddies", text: "🤝 Buddies" }));
+    } else if (st.incoming) {
+      kids.push(el("button", { class: "btn gm-btn", type: "button", text: "Accept buddy request", onclick: async () => { if (await act("buddy_respond", { p_handle: p.handle, p_accept: true }, "You're buddies now")) { sfx("success"); load(); } } }));
+    } else if (st.outgoing) {
+      kids.push(el("button", { class: "btn ghost gm-btn", type: "button", text: "Requested", title: "Cancel the request", onclick: async () => { if (await act("buddy_remove", { p_handle: p.handle })) load(); } }));
+    } else if (me.member) {
+      kids.push(el("button", { class: "btn gm-btn", type: "button", text: "＋ Add buddy", onclick: async () => { if (await act("buddy_request", { p_handle: p.handle }, "Buddy request sent")) load(); } }));
+    }
+    if (st.can_dm) kids.push(el("a", { class: "btn ghost gm-btn", href: "/games/buddies/?dm=" + encodeURIComponent(p.handle), text: "Message" }));
+    const menu = el("div", { class: "pf-more__menu", hidden: true, role: "menu" },
+      st.buddy ? el("button", { type: "button", role: "menuitem", text: "Remove buddy", onclick: async () => { if (confirm("Remove " + p.name + " from your buddies?") && await act("buddy_remove", { p_handle: p.handle }, "Removed")) load(); } }) : null,
+      st.opp ? el("button", { type: "button", role: "menuitem", text: "Remove from Opps", onclick: async () => { if (await act("opp_remove", { p_handle: p.handle }, "Removed from Opps")) { opps.delete(p.handle); load(); } } })
+        : el("button", { type: "button", role: "menuitem", class: "gm-bad", text: "Add to Opps", onclick: async () => {
+            if (!confirm("Add " + p.name + " to your Opps? They won't be able to message you, add you, follow you or sign your guestbook, and you won't see what they post. They aren't told.")) return;
+            if (await act("opp_add", { p_handle: p.handle }, "Added to your Opps")) { opps.add(p.handle); load(); } } }));
+    const more = el("button", { class: "btn ghost gm-btn pf-more", type: "button", "aria-haspopup": "menu", "aria-label": "More", text: "⋯",
+      onclick: (e) => { e.stopPropagation(); menu.hidden = !menu.hidden; } });
+    if (!wrap.dataset.closer) { wrap.dataset.closer = "1"; document.addEventListener("click", () => { wrap.querySelectorAll(".pf-more__menu").forEach((m) => { m.hidden = true; }); }); }
+    kids.push(el("span", { class: "pf-more__wrap" }, more, menu));
+    wrap.replaceChildren(...kids); wrap.hidden = false;
+  }
+  if (me.user) load();
+  return wrap;
+}
+
+// their buddies (unless they hid the list)
+function buddiesBox(p, mine) {
+  const box = el("section", { class: "pf-card pf-sec pf-sec--buddies", hidden: true },
+    el("h2", { class: "gm-head pf-h" }, el("span", { text: "Buddies" })));
+  sb.rpc("buddies_of", { p_handle: p.handle }).then(({ data, error }) => {
+    if (error || !data || !data.ok) return;
+    if (data.hidden && !mine) return;
+    const list = data.buddies || [];
+    if (!list.length && !mine) return;
+    box.querySelector(".pf-h span").textContent = "Buddies" + (data.total ? " (" + data.total + ")" : "");
+    if (data.hidden) box.querySelector(".pf-h").append(el("span", { class: "pf-hiddenTag", text: "Hidden from visitors" }));
+    box.append(list.length ? el("div", { class: "pf-buds" }, ...list.map((b) => el("a", { class: "pf-bud", href: "/games/profile/?u=" + encodeURIComponent(b.handle), title: b.name },
+        el("span", { class: "pf-avw pf-frame--" + (b.frame || "none"), style: "--s:44px" }, avatar(b.avatar, b.name, 44, "pf-av")), el("span", { class: "pf-bud__n", text: b.name }))))
+      : el("p", { class: "gm-note" }, "No buddies yet. ", el("a", { href: "/games/buddies/", text: "Find your people →" })));
+    box.hidden = false;
+  }, () => {});
   return box;
 }
 

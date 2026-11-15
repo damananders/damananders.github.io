@@ -179,6 +179,7 @@ export async function loadMe(session, skipVerify) {
   // Admin bubble (set server-side from the Discord role); tells the site trophies about it once per page load
   if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
   if (me.ready && !me.banned) syncTrophies();
+  if (me.ready) loadOpps();
   if (!me.banned) emitStats();
   if (me.staff && !staffSent) { staffSent = true; window.ROP_ADMIN = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
   return me;
@@ -233,6 +234,7 @@ export function authPill(box, opts) {
     el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
   if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
+  if (handle) btns.append(buddiesBtn());
   if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/ti3c20mi/", text: "Operation Station" }));
   btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out", title: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
   box.append(btns);
@@ -247,6 +249,46 @@ export function authPill(box, opts) {
     if (i >= 0) flair.append(el("span", { class: "rop-me__medal rop-me__medal--" + ["gold", "silver", "bronze"][i], title: "Top " + (i + 1) + " voter on the leaderboard", text: ["1st", "2nd", "3rd"][i] }));
   }, () => {});
 }
+/* ---------------- Buddies, Opps and messages (round 33) ----------------
+ * Opps: members you've blocked. Anything they wrote (reviews, posts, comments, guestbook notes) is hidden from you on
+ * every Rate-O-Pedia page. Pages opt a box out with data-no-opp-hide (the Buddies page's own Opps list, for one). */
+export const opps = new Set();
+let oppObs = null;
+async function loadOpps() {
+  try {
+    const r = await sb.rpc("my_opp_handles");
+    opps.clear(); if (!r.error && Array.isArray(r.data)) r.data.forEach((h) => opps.add(h));
+  } catch (e) {}
+  hideOpps(document.body);
+  if (!oppObs && typeof MutationObserver !== "undefined") {
+    oppObs = new MutationObserver((ms) => { if (!opps.size) return; ms.forEach((m) => m.addedNodes.forEach((n) => { if (n.nodeType === 1) hideOpps(n); })); });
+    oppObs.observe(document.body, { childList: true, subtree: true });
+  }
+}
+export const isOpp = (handle) => !!handle && opps.has(handle);
+export function hideOpps(root) {
+  if (!opps.size || !root || !root.querySelectorAll) return;
+  const links = [...root.querySelectorAll('a.rop-name[href^="/games/profile/?u="]')];
+  if (root.matches && root.matches('a.rop-name[href^="/games/profile/?u="]')) links.push(root);
+  links.forEach((a) => {
+    const h = decodeURIComponent((a.getAttribute("href").split("u=")[1] || "").split(/[&#]/)[0]);
+    if (!opps.has(h) || a.closest("[data-no-opp-hide]")) return;
+    const box = a.closest(".gm-review, .pf-note, .fd-item, .fr-c, .fr-post, article, li");
+    if (box && !box.hidden) { box.hidden = true; box.dataset.opp = "1"; }
+  });
+}
+export function unreadBadge(node) {
+  const b = el("span", { class: "rop-badge", hidden: true });
+  node.append(b);
+  const tick = () => sb.rpc("dm_unread").then(({ data, error }) => {
+    if (error) return; const n = +data || 0; b.hidden = !n; b.textContent = n > 99 ? "99+" : String(n);
+    node.setAttribute("aria-label", "Buddies and messages" + (n ? ", " + n + " unread" : ""));
+  }, () => {});
+  tick(); setInterval(() => { if (!document.hidden) tick(); }, 60000);
+  return node;
+}
+function buddiesBtn() { return unreadBadge(el("a", { class: "rop-me__btn rop-me__bud", href: "/games/buddies/", text: "Buddies & messages" })); }
+
 function discordSvg() {
   const ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
   s.setAttribute("viewBox", "0 0 127.14 96.36"); s.setAttribute("fill", "currentColor");
@@ -521,8 +563,10 @@ const NOTE_TEXT = {
   follow: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more followed you" : " followed you"),
   list_like: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more liked" : " liked") + " your list",
   wall: (n, who) => (who || "Someone") + (n > 1 ? " and others left " + n + " notes" : " signed") + " your guestbook",
+  buddy: (n, who, snip) => (who || "Someone") + " " + (snip || "wants to be buddies"),
+  dm: (n, who) => (n > 1 ? n + " new messages from " : "New message from ") + (who || "someone"),
 };
-const NOTE_ICON = { reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥" };
+const NOTE_ICON = { reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥", buddy: "🤝", dm: "✉️" };
 let bellTimer = 0;
 export function bell() {
   const count = el("span", { class: "rop-bell__n", hidden: true });
@@ -538,8 +582,8 @@ export function bell() {
     panel.replaceChildren(el("p", { class: "rop-bell__h", text: "Notifications" }),
       rows.length ? el("ul", { class: "rop-bell__list" }, ...rows.map((r) => el("li", { class: r.read ? "" : "is-new" },
         el("a", { href: r.link }, el("span", { class: "rop-bell__i", "aria-hidden": "true", text: NOTE_ICON[r.kind] || "•" }),
-          el("span", { class: "rop-bell__t" }, el("b", { text: (NOTE_TEXT[r.kind] || (() => "Something happened"))(r.n, r.actor_name) }),
-            r.snippet ? el("span", { class: "rop-bell__s", text: r.snippet }) : null,
+          el("span", { class: "rop-bell__t" }, el("b", { text: (NOTE_TEXT[r.kind] || (() => "Something happened"))(r.n, r.actor_name, r.snippet) }),
+            r.snippet && r.kind !== "buddy" ? el("span", { class: "rop-bell__s", text: r.snippet }) : null,
             el("span", { class: "rop-bell__when", text: ago(r.created_at) }))))))
         : el("p", { class: "gm-note", text: "Nothing yet. Reactions, replies and guestbook notes show up here." }));
   };
