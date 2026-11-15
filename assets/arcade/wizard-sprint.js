@@ -1213,5 +1213,6 @@
   };
   /* Owner preview: the game only appears while a control panel session is live and the server confirms it. */
   var S0 = window.Site;
-  if (S0 && S0.admin && S0.admin.get()) S0.admin.check().then(function (r) { if (r && r.ok) A.register(DEF); });
+  if (S0 && S0.owner) A.register(DEF);          /* owner flag: set by a confirmed control panel sign-in, lasts across tabs */
+  else if (S0 && S0.admin && S0.admin.get()) S0.admin.check().then(function (r) { if (r && r.ok) A.register(DEF); });
 })();
