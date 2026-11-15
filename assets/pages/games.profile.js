@@ -102,6 +102,7 @@ const BADGES = [
 const earned = (p, x) => BADGES.filter((b) => { try { return !!b[4](p, x); } catch (e) { return false; } });
 
 function notice(title, body, ...extra) {
+  if (sideNow) { sideNow.remove(); side2Now.remove(); sideNow = side2Now = null; }
   root.replaceChildren(el("section", { class: "pf-card pf-notice" }, el("h2", { text: title }), body ? el("p", { text: body }) : null, ...extra));
 }
 const isHidden = (p, k) => Array.isArray(p.hidden_sections) && p.hidden_sections.includes(k);
@@ -128,6 +129,7 @@ async function render() {
     return notice("Profiles are almost here", "Custom profiles switch on as soon as the site's database update goes in. Check back soon.");
   }
   if (!wanted) history.replaceState(null, "", profileUrl(handle));
+  if (sideNow) { sideNow.remove(); side2Now.remove(); sideNow = side2Now = null; }
   root.replaceChildren(el("p", { class: "gm-empty", text: "Loading profile…" }));
   const [{ data: p, error }, top] = await Promise.all([
     sb.from("member_profiles").select("*").eq("handle", handle).maybeSingle(),
@@ -236,11 +238,13 @@ async function render() {
   const postsBox = section(p, mine, "posts", "Recent forum posts", el("p", { class: "gm-empty", text: "Loading…" }));
   const revBox = section(p, mine, "reviews", "Recent reviews", el("p", { class: "gm-empty", text: "Loading…" }));
 
-  root.replaceChildren(...[head,
-    el("div", { class: "pf-cols pf-cols--top" }, el("div", { class: "pf-col" }, aboutBox, linkBox), el("div", { class: "pf-col" }, nowBox, raBox, statsBox)),
-    showBox, listsBox, badgeBox, blBox, heartBox, wallBox, mine ? syncCard() : null,
-    el("div", { class: "pf-cols" }, postsBox, revBox)].filter(Boolean));
-  root.querySelectorAll(".pf-col:empty").forEach((c) => c.remove());
+  /* who-they-are cards (about, now playing, tags, RetroAchievements, stats) go in the right-hand column under the
+   * account box on wide screens, and stay under the header on narrow ones; see placeSide() */
+  const side = el("div", { class: "pf-side" }, ...[aboutBox, nowBox, statsBox, linkBox, raBox].filter(Boolean));
+  const side2 = el("div", { class: "pf-side pf-side--more" }, ...[heartBox, listsBox, postsBox, revBox].filter(Boolean));
+  root.replaceChildren(...[head, side, showBox, badgeBox, blBox, wallBox, side2, mine ? syncCard() : null].filter(Boolean));
+  side2.dataset.where = plus ? "aside" : "main";
+  placeSide(side, side2);
   adminPanel(p.handle);
   if (mine && params.has("edit")) editor(p);
 
@@ -391,6 +395,32 @@ function supporterTag(p) {
   }, () => t.remove());
   return t;
 }
+
+/* ---------------- wide screens: a real second column ----------------
+ * The account box and the profile's side cards share one right-hand column (aside#pf-aside), so the page is
+ * balanced instead of everything stacking down the left. Narrow screens put both back where they were. */
+const WIDE = matchMedia("(min-width: 980px)");
+let sideNow = null, side2Now = null, authSpot = null;
+function placeSide(side, side2) {
+  sideNow = side; side2Now = side2;
+  const wrap = document.querySelector(".wrap"), auth = $("gm-auth");
+  if (!wrap || !auth) return;
+  if (!authSpot) { authSpot = document.createComment("gm-auth"); auth.before(authSpot); }
+  let aside = $("pf-aside");
+  if (WIDE.matches) {
+    if (!aside) { aside = el("aside", { id: "pf-aside", class: "pf-aside", "aria-label": "Account and profile details" }); authSpot.after(aside); }
+    aside.replaceChildren(auth, side);
+    // a short profile keeps its recent activity in the main column so neither side runs long
+    if (side2.dataset.where === "aside") aside.append(side2); else { const sync = root.querySelector(".pf-sync"); if (sync) sync.before(side2); else root.append(side2); }
+  } else {
+    authSpot.after(auth);
+    const head = root.querySelector(".pf-hero"), sync = root.querySelector(".pf-sync");
+    if (head) head.after(side); else root.prepend(side);
+    if (sync) sync.before(side2); else root.append(side2);
+    if (aside) aside.remove();
+  }
+}
+WIDE.addEventListener("change", () => { if (sideNow) placeSide(sideNow, side2Now); });
 
 /* ---------------- site-admin tools on a profile ----------------
  * Drawn ONLY when the viewer is the site admin (me.admin) AND this tab holds a live control-panel session

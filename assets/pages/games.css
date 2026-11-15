@@ -1144,3 +1144,21 @@ a.fd-list{font:600 1.05rem var(--sx-display,"Space Grotesk",sans-serif)}
 .fd-stars{align-items:center}
 .fd-stars .rop-chip__svg{display:grid;place-items:center;width:26px;height:26px}
 .fd-stars .rop-chip__svg svg{width:26px;height:26px}
+/* profile, wide screens: account box + about/now playing/stats/tags in one right-hand column (aside#pf-aside) */
+@media (min-width:980px){
+  .wrap:has(> #pf-aside){display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-template-rows:auto auto 1fr auto;column-gap:26px;align-items:start}
+  .wrap:has(> #pf-aside) > *{grid-column:1/-1}
+  .wrap:has(> #pf-aside) > #rop-tabs{grid-column:1;grid-row:2}
+  .wrap:has(> #pf-aside) > main{grid-column:1;grid-row:3}
+  .wrap:has(> #pf-aside) > #pf-aside{grid-column:2;grid-row:2 / span 2}
+  .wrap:has(> #pf-aside) > footer{grid-row:4}
+  .pf-aside{display:grid;gap:20px;align-content:start}
+  .pf-aside .gm-auth.rop-me{margin:0}
+  .pf-wrap{max-width:none}
+}
+.pf-side{display:grid;gap:20px;align-content:start}
+.pf-side .pf-statgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pf-side .pf-card{padding:18px 20px}
+@media (max-width:979.98px){.pf-side{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start}}
+.pf-wrap{gap:22px}
+@media (min-width:980px){#pf-root > .pf-side--more{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}}
