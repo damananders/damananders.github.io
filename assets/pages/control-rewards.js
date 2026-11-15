@@ -35,12 +35,31 @@
 
   var api = null, tab = "member", who = "", catalog = null;
   function kindLabel(k) { for (var i = 0; i < KINDS.length; i++) if (KINDS[i][0] === k) return KINDS[i][1]; return k; }
-  function call(name, extra) { var b = { p_token: api.token() }; for (var k in extra) b[k] = extra[k]; return api.rpc(name, b); }
+  /* Own fetch (not control.js's rpc) so a server error shows its real message instead of "http-400". */
+  var SB = Site.sb || { url: "https://zjhlhkruqzfendvbglsb.supabase.co", key: "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk" };
+  function call(name, extra) {
+    var b = { p_token: api.token() }; for (var k in extra) b[k] = extra[k];
+    return fetch(SB.url + "/rest/v1/rpc/" + name, { method: "POST", headers: { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" }, body: JSON.stringify(b) })
+      .then(function (r) {
+        if (r.status === 404) return { ok: false, error: "unset" };
+        return r.json().catch(function () { return null; }).then(function (j) {
+          if (r.ok) return j;
+          var m = (j && (j.message || j.hint)) || ("http-" + r.status);
+          console.error("[rewards]", name, r.status, j);
+          return { ok: false, error: "server", message: m, code: j && j.code };
+        });
+      })
+      .catch(function () { return { ok: false, error: "offline" }; });
+  }
+  function why(r) {
+    if (r && r.error === "server") return /read-only transaction/i.test(r.message || "") ? "The server refused this read. Run rewards_panel_fix.sql in the Supabase SQL Editor (one-time fix), then press Refresh." : "The server said: " + r.message;
+    return api.why(r);
+  }
   function unset(r) { return r && (r.error === "unset" || /could not find the function|does not exist/i.test(r.error || "")); }
   function say(node, txt, kind) { node.textContent = txt || ""; node.setAttribute("data-kind", kind || ""); }
   function fail(node, r, round) {
     if (unset(r)) say(node, round === 29 ? "This part switches on with the next Rate-O-Pedia rewards update (rules and review). Nothing to do here until then." : "Rewards aren't switched on yet. Run 28_rewards_core.sql in the Supabase SQL Editor, then press Refresh.", "warn");
-    else say(node, api.why(r), "err");
+    else say(node, why(r), "err");
     Site.sfx("error");
   }
 
