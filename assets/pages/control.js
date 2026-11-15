@@ -191,6 +191,7 @@
     ["social", "Social & counting", "Channels, Twitch, Discord, analytics", '<path d="M4 11a8 8 0 0 1 8-8M4 11a8 8 0 0 0 8 8M4 11h16"/><circle cx="12" cy="11" r="8"/>', "sections"],
     ["users", "Users", "Members, moderation and bans", '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6.1M17.5 19a5.5 5.5 0 0 0-3-4.9"/>', "users"],
     ["features", "Features", "Turn any part of the site on or off", '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><path d="M5 16h4M15 8h4"/>', "sections"],
+    ["wizard", "Wizard Story", "Story beats and dialogue for Wizard of the Sprint", '<path d="M15 3.5l1.1 2.6 2.6 1.1-2.6 1.1L15 10.9l-1.1-2.6L11.3 7.2l2.6-1.1z"/><path d="M12.8 9.2 4 18v2h2l8.8-8.8"/>', "wizard"],
     ["secrets", "Secrets", "Every cheat code, for reference", '<circle cx="9" cy="12" r="4"/><path d="M13 12h8M18 12v3M15 12v2"/>', "cheats"],
     ["advanced", "Advanced", "Raw settings and this browser", '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>', "advanced"],
     ["security", "Sign-in", "Authenticator app and password", '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', "security"]
@@ -288,6 +289,54 @@
     else if (c[4] === "cheats") drawCheats(content);
     else if (c[4] === "advanced") drawAdvanced(content);
     else if (c[4] === "security") drawSecurity(content);
+    else if (c[4] === "wizard") drawWizard(content);
+  }
+
+  /* ---------- Wizard of the Sprint story editor ----------
+     The editor itself lives in the games thread's arcade modules; this page only hosts it. We lazy-load the two
+     scripts once, then mount the editor into the content column. It reads/writes the config key "wizardStory"
+     (an object of beat id -> array of lines) through our ov object, so changes flow through the normal Save
+     button and ship with the rest of the config. The game reads Site.remote().config.wizardStory. */
+  var wizLoad = null;
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var have = document.querySelector('script[data-wiz="' + src + '"]');
+      if (have) {
+        if (have.getAttribute("data-ok") === "1") return resolve();
+        have.addEventListener("load", function () { resolve(); });
+        have.addEventListener("error", function () { reject(new Error(src)); });
+        return;
+      }
+      var s = document.createElement("script"); s.src = src; s.setAttribute("data-wiz", src);
+      s.addEventListener("load", function () { s.setAttribute("data-ok", "1"); resolve(); });
+      s.addEventListener("error", function () { reject(new Error(src)); });
+      document.head.appendChild(s);
+    });
+  }
+  function ensureWiz() {
+    if (!wizLoad) {
+      wizLoad = loadScript("/assets/arcade/wizard-story.js?v=1")
+        .then(function () { return loadScript("/assets/arcade/wizard-story-admin.js?v=1"); })
+        .then(function () { if (!window.WizStoryAdmin || typeof window.WizStoryAdmin.mount !== "function") throw new Error("WizStoryAdmin missing"); })
+        .catch(function (e) { wizLoad = null; throw e; });
+    }
+    return wizLoad;
+  }
+  function drawWizard(box) {
+    box.appendChild(el("p", { class: "cp-fine", text: "Loading the story editor…" }));
+    ensureWiz().then(function () {
+      if (cur !== "wizard") return;
+      box.textContent = "";
+      window.WizStoryAdmin.mount(box, {
+        get: function () { return ov.wizardStory || {}; },
+        set: function (v) { if (v && Object.keys(v).length) ov.wizardStory = v; else delete ov.wizardStory; mark("config"); }
+      });
+    }).catch(function (err) {
+      console.error("[control] wizard story editor", err);
+      if (cur !== "wizard") return;
+      box.textContent = "";
+      box.appendChild(el("p", { class: "cp-fine", text: "The story editor could not load. Reload the page with Ctrl+Shift+R and try again." }));
+    });
   }
 
   /* ---------- search across every setting ---------- */
