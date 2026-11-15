@@ -1175,7 +1175,7 @@
 
   /* ---------------- register ---------------- */
   load();
-  A.register({
+  var DEF = {
     id: "wizard-sprint", name: "Wizard of the Sprint", icon: "🧙", accent: "#8f6bff", W: W, H: H, order: 0.5, badge: "New",
     tags: ["Runner", "RPG loot", "Campaign"],
     tagline: "A robbed arch-wizard in pyjamas chases a trail of footprints. Run, jump, cast, loot, and rebuild your tower.",
@@ -1210,5 +1210,8 @@
         D.text(ctx, "Esc cancels", W / 2, H / 2 + 70, "500 18px " + F.mono, "#b9c2cd", "center");
       }
     }
-  });
+  };
+  /* Owner preview: the game only appears while a control panel session is live and the server confirms it. */
+  var S0 = window.Site;
+  if (S0 && S0.admin && S0.admin.get()) S0.admin.check().then(function (r) { if (r && r.ok) A.register(DEF); });
 })();
