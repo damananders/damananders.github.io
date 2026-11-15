@@ -190,29 +190,37 @@
     ],
     content: [
       { type: "values", title: "Hub headline", fields: [["hero.lines", "Typing phrases, one per line (blank uses the built-in set; keep each to about 31 characters)", "lines"]] },
-      { type: "values", title: "Support (Ko-fi & donations)", fields: [["kofi.url", "Ko-fi page", "url"], ["kofi.goal.title", "Goal title", "text"], ["kofi.goal.current", "Raised so far this month", "number"], ["kofi.goal.target", "Monthly target", "number"]] },
-      { type: "values", title: "AndersCraft", fields: [["anderscraft.statusUrl", "Live status address (blank hides realm counts)", "url"]] },
+      { type: "values", title: "Support (Ko-fi & donations)", fields: [["kofi.url", "Ko-fi page", "url"], ["kofi.goal.title", "Goal title", "text"], ["kofi.goal.current", "Raised so far this month", "number"], ["kofi.goal.target", "Monthly target", "number"], ["kofi.goal.currency", "Currency symbol", "text"]] },
+      { type: "values", title: "AndersCraft", fields: [["anderscraft.statusUrl", "Live status address (blank hides realm counts)", "url"], ["anderscraft.apiUrl", "Sign-up API address (the register.php endpoint)", "url"]] },
+      { type: "values", title: "Personal Vault", desc: "The hidden /vault/ page. A passphrase hash turns on a cosmetic gate (the real lock is Drive's Restricted sharing).", fields: [["vault.passphraseSha256", "Passphrase hash (SHA-256 hex; blank = no gate)", "text"], ["vault.hideOnHub", "Hide the Vault card on the hub until opened with ?owner", "bool"]] },
       { type: "values", title: "AnyPS", fields: [["anyps.githubRepo", "GitHub releases repo, as owner/name", "text"], ["anyps.sha256", "Download checksum (64-bit)", "text"], ["anyps.sha256_32", "Download checksum (32-bit)", "text"]] },
       { type: "values", title: "Résumé", fields: [["resume.pdfUrl", "Downloadable PDF address (blank hides the button)", "url"], ["resume.contactEndpoint", "Contact form address", "url"]] }
     ],
     social: [
       { type: "values", title: "Channels (blank hides the badge)", fields: [["channels.youtube", "YouTube", "url"], ["channels.instagram", "Instagram", "url"], ["channels.tiktok", "TikTok", "url"], ["channels.x", "X", "url"], ["channels.bluesky", "Bluesky", "url"]] },
       { type: "values", title: "Twitch & Discord", fields: [["twitch.channel", "Twitch channel name", "text"], ["twitch.live", "Live badge", "live"], ["discord.invite", "Discord invite code", "text"], ["discord.showCount", "Show member count", "bool"]] },
-      { type: "values", title: "Visitor counting", fields: [["counter.provider", "Retro visitor counter", "counter"], ["analytics.goatcounter", "GoatCounter site code (blank is off)", "text"]] }
+      { type: "values", title: "Visitor counting", fields: [["counter.provider", "Retro visitor counter", "counter"], ["counter.namespace", "Counter namespace", "text"], ["counter.key", "Counter key", "text"], ["analytics.goatcounter", "GoatCounter site code (blank is off)", "text"]] }
     ],
     features: [
       { type: "switches", title: "Whole site", items: [["navMenu", "Page menu at the top left"], ["settingsPanel", "Visitor settings panel"], ["themeToggle", "Light and dark theme button"], ["shareButton", "Share button"], ["stickyHeader", "Header stays on screen while scrolling"], ["scrollProgress", "Scroll progress line"], ["backToTop", "Back-to-top button"], ["footerLinks", "Footer page links"], ["channelBadges", "Footer channel badges"], ["lastUpdated", "Footer last-updated stamp"], ["visitorCounter", "Retro visitor counter"], ["serviceWorker", "Offline copy and instant repeat visits"], ["analytics", "Analytics (when a code is set)"]] },
       { type: "switches", title: "Easter eggs & play", items: [["play", "Trophies and secret-words layer"], ["trophies", "Trophies"], ["secretCodes", "Typed secret words"], ["padCombo", "Controller button combo"], ["konami", "Classic cheat code"], ["intro", "Boot intro on the hub"], ["seasons", "Seasonal effects"], ["game404", "Mini-game on the not-found page"], ["uiSounds", "Interface sounds (visitors turn them on)"], ["soundscape", "Hub soundscape (starts muted)"]] },
       { type: "switches", title: "Accessibility", items: [["a11y", "Accessibility options (text size, contrast, reading font)"], ["skipLink", "Skip-to-content link"]] }
+    ],
+    accounts: [
+      { type: "switches", title: "Accounts & member feedback", items: [["accounts", "DMA account sign-up & sign-in (/account/)"], ["projectFeedback", "Upvotes & comments on /projects/"]] },
+      { type: "values", title: "Sign-up captcha", desc: "Cloudflare Turnstile PUBLIC site key for the /account/ forms. Blank skips the captcha. The matching secret key lives in Supabase, never here.", fields: [["captcha.turnstile", "Turnstile site key", "text"]] }
     ]
   };
 
   /* The folders down the rail. Each has an id, a label, a short line, an icon path, and how it renders. */
   var CATS = [
+    ["overview", "Overview", "Your panel at a glance", '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>', "overview"],
     ["appearance", "Appearance", "Colour, hub visuals and motion", '<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.1 0-1 .8-1.7 1.7-1.7H16a6 6 0 0 0 6-6c0-4.9-4.5-8.3-10-8.3Z"/>', "sections"],
     ["content", "Content", "Headline, support, pages and résumé", '<path d="M4 5h16M4 10h16M4 15h10M4 20h7"/>', "sections"],
     ["links", "Links I Like", "The ranked list on /links/", '<path d="M9.5 13.5a4 4 0 0 0 5.7.3l2.5-2.5a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14.5 10.5a4 4 0 0 0-5.7-.3l-2.5 2.5a4 4 0 0 0 5.7 5.7l1.4-1.4"/>', "links"],
+    ["locker", "PS Locker", "Shelves, games and backups in the Locker store", '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 14h4"/>', "locker"],
     ["social", "Social & counting", "Channels, Twitch, Discord, analytics", '<path d="M4 11a8 8 0 0 1 8-8M4 11a8 8 0 0 0 8 8M4 11h16"/><circle cx="12" cy="11" r="8"/>', "sections"],
+    ["accounts", "Accounts", "Member sign-ups, captcha and feedback", '<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>', "sections"],
     ["users", "Users", "Members, moderation and bans", '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6.1M17.5 19a5.5 5.5 0 0 0-3-4.9"/>', "users"],
     ["features", "Features", "Turn any part of the site on or off", '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><path d="M5 16h4M15 8h4"/>', "sections"],
     ["wizard", "Wizard Story", "Story beats and dialogue for Wizard of the Sprint", '<path d="M15 3.5l1.1 2.6 2.6 1.1-2.6 1.1L15 10.9l-1.1-2.6L11.3 7.2l2.6-1.1z"/><path d="M12.8 9.2 4 18v2h2l8.8-8.8"/>', "wizard"],
@@ -234,7 +242,7 @@
   })();
 
   /* ---------- the panel ---------- */
-  var saveBtn, saveMsg, railBtns = {}, railNums = {}, content, cur = "appearance", query = "";
+  var saveBtn, saveMsg, railBtns = {}, railNums = {}, content, cur = "overview", query = "";
   function paintSave() {
     if (!saveBtn) return;
     var n = (dirty.config ? 1 : 0) + (dirty.links ? 1 : 0);
@@ -308,8 +316,10 @@
     if (query) { drawResults(); return; }
     var c; for (var i = 0; i < CATS.length; i++) if (CATS[i][0] === cur) c = CATS[i];
     if (!c) return;
-    if (c[4] === "sections") drawSections(content, cur);
+    if (c[4] === "overview") drawOverview(content);
+    else if (c[4] === "sections") drawSections(content, cur);
     else if (c[4] === "links") drawLinks(content);
+    else if (c[4] === "locker") drawLocker(content);
     else if (c[4] === "users") drawUsers(content);
     else if (c[4] === "cheats") drawCheats(content);
     else if (c[4] === "advanced") drawAdvanced(content);
@@ -491,18 +501,53 @@
     p.appendChild(el("h2", { class: "cp-pane__h", text: c[1] }));
     p.appendChild(el("p", { class: "cp-fine", text: c[0] === "features" ? "Turn any part of the site off for everyone. Off here means off for every visitor." : c[0] === "appearance" ? "Colour and motion for the whole site. The accent colour shows everywhere; the switches are for the hub." : "These sit on top of the site's settings file. Everything saved here can be read by visitors, so keep private links and keys out of it." }));
     SECTIONS[cid].forEach(function (sec) {
-      p.appendChild(el("h3", { class: "cp-h3", text: sec.title }));
-      if (sec.desc) p.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: sec.desc }));
+      var card = el("section", { class: "cp-section" });
+      card.appendChild(el("h3", { class: "cp-h3", text: sec.title }));
+      if (sec.desc) card.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: sec.desc }));
       if (sec.type === "values") {
         var grid = el("div", { class: "cp-grid" });
         sec.fields.forEach(function (f) { grid.appendChild(valField(f)); });
-        p.appendChild(grid);
+        card.appendChild(grid);
       } else {
         var box = el("div", { class: "cp-switches" });
         sec.items.forEach(function (it) { box.appendChild(switchRow(it)); });
-        p.appendChild(box);
+        card.appendChild(box);
       }
+      p.appendChild(card);
     });
+  }
+
+  /* ---------- folder: overview (the dashboard front page) ---------- */
+  function leafCount(o) { var n = 0; (function walk(x) { if (isObj(x)) Object.keys(x).forEach(function (k) { walk(x[k]); }); else if (Array.isArray(x)) n++; else n++; })(o); return n; }
+  function featOff() { var f = isObj(ov.features) ? ov.features : {}, n = 0; Object.keys(f).forEach(function (k) { if (f[k] === false) n++; }); return n; }
+  function drawOverview(p) {
+    p.textContent = "";
+    if (!lockCats) lockLoad();
+    p.appendChild(el("div", { class: "cp-ov__hero" },
+      el("span", { class: "cp-ov__eyebrow", text: "Control panel" }),
+      el("h2", { class: "cp-ov__title", text: "Everything, in your hands" }),
+      el("p", { class: "cp-ov__sub", text: "Change any part of the site without touching code. Edits go live for visitors within about five minutes of pressing Save." })));
+    var tiles = [
+      ["Settings changed", String(leafCount(ov)), "on top of the file", "advanced"],
+      ["Links I Like", String(links.length), "ranked sites", "links"],
+      ["Locker shelves", String(lockCats.length), "in the store", "locker"],
+      ["Features off", String(featOff()), "turned off site-wide", "features"]
+    ];
+    var grid = el("div", { class: "cp-tiles" });
+    tiles.forEach(function (t) {
+      var b = el("button", { type: "button", class: "cp-tile" },
+        el("b", { class: "cp-tile__n", text: t[1] }),
+        el("span", { class: "cp-tile__lab", text: t[0] }),
+        el("span", { class: "cp-tile__sub", text: t[2] }));
+      b.addEventListener("click", function () { API.show(t[3]); Site.sfx("toggle"); });
+      grid.appendChild(b);
+    });
+    p.appendChild(grid);
+    p.appendChild(el("h3", { class: "cp-h3", text: "Jump to" }));
+    var jumps = [["appearance", "Appearance"], ["content", "Content"], ["accounts", "Accounts"], ["locker", "PS Locker"], ["links", "Links I Like"], ["users", "Users"], ["features", "Features"], ["security", "Sign-in"]];
+    var qa = el("div", { class: "cp-ov__jumps" });
+    jumps.forEach(function (j) { var b = el("button", { type: "button", class: "cp-mini", text: j[1] }); b.addEventListener("click", function () { API.show(j[0]); Site.sfx("toggle"); }); qa.appendChild(b); });
+    p.appendChild(qa);
   }
 
   /* ---------- folder: links ---------- */
@@ -896,5 +941,123 @@
       el("p", { class: "cp-fine", text: "To move to a new phone, unlink here and then link the new app. Unlinking needs your password and a current code." }),
       el("div", { class: "cp-grid" }, field("Password", pw), field("Code from the app", code)), el("p", { class: "pg-actions" }, off, msg));
     p.appendChild(d);
+  }
+
+  /* ---------- folder: PS Locker store ----------
+     Edits locker.intro + locker.categories (shelves of game / backup downloads) as a config override, so the
+     owner can add shelves, games and links from here instead of hand-editing assets/site-config.js. The whole
+     structure is written back through ov and ships with the Save button, same as every other config change. */
+  var LICONS = ["bios", "ps1", "ps2", "psp", "ps3", "vita", "disc", "handheld"];
+  var lockCats = null, lockIntro = "", lockOpen = {};
+  function lockLoad() {
+    var src = val("locker.categories", []);
+    lockCats = Array.isArray(src) ? JSON.parse(JSON.stringify(src)) : [];
+    lockIntro = String(val("locker.intro", "") || "");
+  }
+  function lockSave() {
+    if (lockIntro.trim()) set(ov, "locker.intro", lockIntro.trim()); else unset(ov, "locker.intro");
+    if (lockCats.length) set(ov, "locker.categories", lockCats); else unset(ov, "locker.categories");
+    mark("config");
+  }
+  function lf(label, obj, key, opts) {
+    opts = opts || {};
+    var inp;
+    if (opts.sel) { inp = el("select", {}); opts.sel.forEach(function (o) { inp.appendChild(el("option", { value: o, text: o || "— list —" })); }); }
+    else if (opts.area) inp = el("textarea", { rows: opts.rows || "2", maxlength: "4000", placeholder: opts.ph || null });
+    else inp = el("input", { type: opts.type || "text", maxlength: opts.max || "300", min: opts.type === "number" ? "0" : null, placeholder: opts.ph || null });
+    var cur = obj[key]; inp.value = cur == null ? "" : String(cur);
+    inp.addEventListener(opts.sel ? "change" : "input", function () {
+      var v = inp.value; if (opts.type === "number") v = v === "" ? undefined : Math.max(0, parseFloat(v) || 0);
+      else { v = v.trim(); if (v === "") v = undefined; }
+      if (v === undefined) delete obj[key]; else obj[key] = v;
+      lockSave(); if (opts.after) opts.after(v);
+    });
+    return el("label", { class: "cp-field" + (opts.wide ? " cp-field--wide" : "") }, el("span", { text: label }), inp);
+  }
+  /* DLC as one "name | url | size" per line, so it stays no-code without a third level of UI */
+  function dlcText(arr) { return (arr || []).map(function (d) { return [d.name || "", d.url || "", d.size || ""].join(" | ").replace(/( \| )+$/, ""); }).join("\n"); }
+  function parseDlc(s) {
+    return String(s || "").split("\n").map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+      var p = l.split("|").map(function (x) { return x.trim(); }); var d = { name: p[0] || "" }; if (p[1]) d.url = p[1]; if (p[2]) d.size = p[2]; return d;
+    }).filter(function (d) { return d.name; });
+  }
+  function moveIn(arr, i, dir, redraw) { var j = i + dir; if (j < 0 || j >= arr.length) return; arr.splice(j, 0, arr.splice(i, 1)[0]); lockSave(); redraw(); }
+  function miniBtns(arr, i, redraw, delLabel) {
+    var up = el("button", { type: "button", class: "cp-mini", title: "Move up", disabled: i === 0 ? true : null }, Site.svg('<path d="M6 14l6-6 6 6"/>'));
+    var dn = el("button", { type: "button", class: "cp-mini", title: "Move down", disabled: i === arr.length - 1 ? true : null }, Site.svg('<path d="M6 10l6 6 6-6"/>'));
+    up.addEventListener("click", function () { moveIn(arr, i, -1, redraw); }); dn.addEventListener("click", function () { moveIn(arr, i, 1, redraw); });
+    var del = el("button", { type: "button", class: "cp-danger", text: delLabel, "data-label": delLabel });
+    sure(del, "Press again", function () { arr.splice(i, 1); lockSave(); redraw(); });
+    return [up, dn, del];
+  }
+  function itemCard(cat, it, i, redraw) {
+    var isPack = cat.mode === "pack";
+    var head = el("strong", { class: "cp-link__title", text: it.name || "New title" });
+    var grid = el("div", { class: "cp-grid" },
+      lf("Title", it, "name", { max: "120", after: function (v) { head.textContent = v || "New title"; } }),
+      lf("Year", it, "year", { type: "number", max: "4" }),
+      lf("Region", it, "region", { max: "20", ph: "NTSC-U" }),
+      lf("Genre", it, "genre", { max: "40" }),
+      lf("Size", it, "size", { max: "20", ph: "4.2 GB" }),
+      isPack ? null : lf("Download URL", it, "url", { type: "url", ph: "https://drive.google.com/…" }),
+      lf("Note (optional)", it, "note", { wide: true }),
+      lf("Cover image (optional)", it, "image", { wide: true, ph: "/assets/og/name.jpg or https://…" }));
+    var dlc = el("textarea", { rows: "2", maxlength: "4000", placeholder: "One per line:  Name | https://… | 1.2 GB" }); dlc.value = dlcText(it.dlc);
+    dlc.addEventListener("input", function () { var a = parseDlc(dlc.value); if (a.length) it.dlc = a; else delete it.dlc; lockSave(); });
+    var mb = miniBtns(isPack ? cat.games : cat.entries, i, redraw, "Remove title");
+    return el("div", { class: "cp-shelf__item" },
+      el("div", { class: "cp-shelf__ihead" }, head, el("span", { class: "cp-shelf__mb" }, mb[0], mb[1], mb[2])),
+      grid, el("label", { class: "cp-field cp-field--wide" }, el("span", { text: "DLC (optional) — one per line: Name | URL | Size" }), dlc));
+  }
+  function shelfCard(cat, ci, p) {
+    function redraw() { drawLocker(p); }
+    var isPack = cat.mode === "pack";
+    var head = el("strong", { class: "cp-link__title", text: cat.name || "New shelf" });
+    var count = isPack ? (cat.games || []).length : (cat.entries || []).length;
+    var mb = miniBtns(lockCats, ci, redraw, "Remove shelf");
+    var top = el("div", { class: "cp-shelf__head" }, head,
+      el("span", { class: "cp-link__stat", text: count + (count === 1 ? " title" : " titles") }),
+      el("span", { class: "cp-shelf__mb" }, mb[0], mb[1], mb[2]));
+    var openB = el("button", { type: "button", class: "cp-mini cp-edit", "aria-expanded": String(!!lockOpen[ci]), text: lockOpen[ci] ? "Close" : "Edit" });
+    top.appendChild(openB);
+    var body = el("div", { class: "cp-shelf__body", hidden: lockOpen[ci] ? null : true });
+    openB.addEventListener("click", function () { lockOpen[ci] = !lockOpen[ci]; body.hidden = !lockOpen[ci]; openB.textContent = lockOpen[ci] ? "Close" : "Edit"; openB.setAttribute("aria-expanded", String(!!lockOpen[ci])); });
+
+    body.appendChild(el("div", { class: "cp-grid" },
+      lf("Shelf name", cat, "name", { max: "80", after: function (v) { head.textContent = v || "New shelf"; } }),
+      lf("URL id (?c=…)", cat, "id", { max: "40", ph: "ps2" }),
+      lf("Console label", cat, "console", { max: "60", ph: "PlayStation 2" }),
+      lf("Icon", cat, "icon", { sel: LICONS }),
+      lf("Mode", cat, "mode", { sel: ["list", "pack"], after: function () { redraw(); } }),
+      lf("Total size", cat, "size", { max: "20", ph: "42 GB" }),
+      isPack ? lf("Pack download URL", cat, "url", { type: "url", wide: true, ph: "https://drive.google.com/…" }) : null,
+      lf("Blurb", cat, "blurb", { area: true, wide: true }),
+      lf("Shelf cover image (optional)", cat, "image", { wide: true, ph: "/assets/og/name.jpg or https://…" })));
+
+    var listKey = isPack ? "games" : "entries";
+    if (!Array.isArray(cat[listKey])) cat[listKey] = [];
+    body.appendChild(el("h4", { class: "cp-shelf__sub", text: isPack ? "Games inside the pack" : "Downloads on this shelf" }));
+    var items = el("div", { class: "cp-shelf__items" });
+    cat[listKey].forEach(function (it, i) { items.appendChild(itemCard(cat, it, i, redraw)); });
+    body.appendChild(items);
+    var addI = el("button", { type: "button", class: "cp-mini", text: "+ Add a title" });
+    addI.addEventListener("click", function () { cat[listKey].push({ name: "" }); lockSave(); redraw(); });
+    body.appendChild(el("p", { class: "pg-actions" }, addI));
+    return el("div", { class: "cp-shelf" }, top, body);
+  }
+  function drawLocker(p) {
+    if (!lockCats) lockLoad();
+    p.textContent = "";
+    p.appendChild(el("h2", { class: "cp-pane__h", text: "PS Locker store" }));
+    p.appendChild(el("p", { class: "cp-fine", text: "The hidden /locker/ storefront. Add shelves and the game/backup downloads on each — links, sizes, covers and DLC — then press Save changes. Keep every Drive item on Restricted sharing; that is the real lock." }));
+    var intro = el("textarea", { rows: "3", maxlength: "600", class: "cp-raw" }); intro.value = lockIntro;
+    intro.addEventListener("input", function () { lockIntro = intro.value; lockSave(); });
+    p.appendChild(el("label", { class: "cp-field cp-field--wide" }, el("span", { text: "Storefront intro line" }), intro));
+    p.appendChild(el("h3", { class: "cp-h3", text: "Shelves" }));
+    if (!lockCats.length) p.appendChild(el("p", { class: "cp-empty", text: "No shelves yet. Add one to start the store." }));
+    lockCats.forEach(function (cat, ci) { p.appendChild(shelfCard(cat, ci, p)); });
+    var add = el("button", { type: "button", class: "btn ghost", text: "+ Add a shelf" });
+    add.addEventListener("click", function () { lockCats.push({ name: "", mode: "list", icon: "disc", entries: [] }); lockOpen[lockCats.length - 1] = true; lockSave(); drawLocker(p); });
+    p.appendChild(el("p", { class: "pg-actions" }, add));
   }
 })();
