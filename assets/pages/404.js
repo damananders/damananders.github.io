@@ -34,7 +34,7 @@
     var pick = null;
     if (/^\/games(\/|$)/.test(p) || p.indexOf("vault") >= 0) {
       /* the old /games/ address: only the owner hears about the vault */
-      if (Site.owner) pick = { key: "vault", lead: "The games page moved. It is now your ", label: "Personal Vault", href: "/vault/" };
+      if (Site.owner) pick = { key: "vault", lead: "The games page moved. It is now your ", label: "Personal Vault", href: "/q9w2z7r5/" };
     }
     if (!pick && /craft|wow|signup|register|account/.test(p)) pick = { key: "craft", lead: "Looking for the WoW server? Try ", label: "AndersCraft", href: "/anderscraft/" };
     if (!pick && /any|ps/.test(p)) pick = { key: "anyps", lead: "Looking for the launcher? Try ", label: "AnyPS", href: "/anyps/" };
