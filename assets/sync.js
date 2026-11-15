@@ -26,6 +26,12 @@
   var CODE_KEY = "syncCode", HANDLE_KEY = "syncHandle";
   var LINK = '<path d="M9.5 14.5 14.5 9.5"/><path d="M11 7l1.2-1.2a3.5 3.5 0 0 1 5 5L16 12"/><path d="M13 17l-1.2 1.2a3.5 3.5 0 0 1-5-5L8 12"/>';
   var PERSON = '<circle cx="12" cy="8.2" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>';
+  /* Discord mark (filled) — rendered via a dedicated <svg> so it keeps its own fill independent of the stroke icons */
+  function discordMark() {
+    var s = "<svg class='sy-dc' viewBox='0 0 24 24' width='18' height='18' aria-hidden='true' focusable='false'>" +
+      "<path fill='currentColor' d='M20.3 4.5A19 19 0 0 0 15.6 3l-.2.5a17 17 0 0 1 4.2 1.4A13.5 13.5 0 0 0 4.4 4.9 17 17 0 0 1 8.6 3.5L8.4 3a19 19 0 0 0-4.7 1.5C.9 8.7.1 12.8.5 16.9a19.2 19.2 0 0 0 5.8 2.9l.5-1.3a12.4 12.4 0 0 1-2-1l.5-.4a13.7 13.7 0 0 0 11.6 0l.5.4a12.4 12.4 0 0 1-2 1l.5 1.3a19.1 19.1 0 0 0 5.8-2.9c.5-4.8-.8-8.9-3.3-12.4ZM8.5 14.5c-1.1 0-2-1-2-2.3s.9-2.3 2-2.3 2 1 2 2.3-.9 2.3-2 2.3Zm7 0c-1.1 0-2-1-2-2.3s.9-2.3 2-2.3 2 1 2 2.3-.9 2.3-2 2.3Z'/></svg>";
+    var w = document.createElement("span"); w.className = "sy-dc-wrap"; w.innerHTML = s; return w.firstChild;
+  }
 
   function code() { return String(Site.store.get(CODE_KEY, "") || ""); }
   function linked() { return !!code(); }
@@ -155,7 +161,60 @@
     }).catch(function () { return null; });
   }
 
-  Site.sync = { code: code, linked: linked, handle: handle, link: link, unlink: unlink, pull: pull, push: push, pretty: pretty, profile: profileData, fetchProfile: fetchProfile };
+  /* ---- Discord sign-in (shared Supabase session) ----
+     The Rate-O-Pedia side (/games/) signs people in with Discord through the Supabase JS client. Because the hub
+     and /games/ are the SAME origin, that sign-in leaves a session in localStorage we can read here — so someone
+     already signed in on /games/ shouldn't have to sign in again. When we spot that session we quietly fetch their
+     sync code (my_sync_code(), signed-in only) and link this browser, so all the code-based machinery just works.
+     The client is only loaded on demand (a session exists, or they click "Continue with Discord"), so pages with
+     no signed-in visitor pay nothing. Supabase only allows /games/ as a Discord redirect, so that's where sign-in
+     lands; from there every hub page shows them signed in. */
+  var SUPA_REF = (String(SB.url || "").match(/^https:\/\/([a-z0-9-]+)\.supabase/i) || [])[1] || "";
+  var AUTH_LS = SUPA_REF ? "sb-" + SUPA_REF + "-auth-token" : "";
+  function hasDiscordSession() {
+    if (!AUTH_LS) return false;
+    try { var raw = localStorage.getItem(AUTH_LS); if (!raw) return false; var s = JSON.parse(raw); var sess = (s && s.currentSession) || s; return !!(sess && sess.access_token); } catch (e) { return false; }
+  }
+  var _sb = null, _sbLoad = null;
+  function supaClient() {
+    if (_sb) return Promise.resolve(_sb);
+    if (_sbLoad) return _sbLoad;
+    if (!SB.url || !SB.key) return Promise.resolve(null);
+    _sbLoad = import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm")
+      .then(function (m) { _sb = m.createClient(SB.url, SB.key); return _sb; })
+      .catch(function () { return null; });
+    return _sbLoad;
+  }
+  /* If signed in via Discord but not yet linked, adopt their sync code so the chip + sync light up. Returns the
+     code (now stored) or null. Never auto-unlinks — the code is a durable cross-device link independent of auth. */
+  function adoptDiscordSession() {
+    if (linked() || !hasDiscordSession()) return Promise.resolve(null);
+    return supaClient().then(function (sb) {
+      if (!sb) return null;
+      return sb.auth.getSession().then(function (res) {
+        var session = res && res.data && res.data.session;
+        if (!session) return null;
+        return sb.rpc("my_sync_code").then(function (r) {
+          var sc = r && r.data;
+          if (sc && typeof sc === "string" && normalize(sc).length >= 12 && !linked()) {
+            Site.store.set(CODE_KEY, pretty(normalize(sc))); Site.emit("sync:changed"); return code();
+          }
+          return null;
+        }, function () { return null; });
+      }, function () { return null; });
+    });
+  }
+  /* Start Discord OAuth. Supabase's allow-list only knows /games/, so that's the return address (matches ROP). */
+  function signInDiscord() {
+    return supaClient().then(function (sb) {
+      if (!sb) return false;
+      try { localStorage.setItem("site.syncReturn", location.pathname + location.search); } catch (e) {}
+      sb.auth.signInWithOAuth({ provider: "discord", options: { scopes: "identify guilds.members.read", redirectTo: location.origin + "/games/" } });
+      return true;
+    });
+  }
+
+  Site.sync = { code: code, linked: linked, handle: handle, link: link, unlink: unlink, pull: pull, push: push, pretty: pretty, profile: profileData, fetchProfile: fetchProfile, hasDiscordSession: hasDiscordSession, signInDiscord: signInDiscord, adoptDiscordSession: adoptDiscordSession };
 
   /* A tiny status line used inside the dialog. */
   var statusEl = null;
@@ -214,14 +273,25 @@
         /* no profile data cached yet (first open, or RPC just went live) — fetch and repaint */
         if (!p) fetchProfile().then(function (np) { if (np && dlgOpen) paint(); });
       } else {
-        body.appendChild(el("p", { class: "sy-note", text: "Link this browser to carry your trophies and arcade progress across devices. On your home browser, sign in with Discord on your Rate-O-Pedia profile to get a secret sync code, then paste it below." }));
+        body.appendChild(el("p", { class: "sy-note", text: "Sign in with Discord to carry your profile, trophies and arcade progress across devices. If you're already signed in on Rate-O-Pedia, this picks that up automatically." }));
+
+        /* primary: Continue with Discord (same sign-in Rate-O-Pedia uses; the session is shared across the site) */
+        var dc = el("button", { type: "button", class: "btn sy-btn sy-btn--discord" }, discordMark(), el("span", { text: "Continue with Discord" }));
+        dc.addEventListener("click", function () {
+          say("Opening Discord…"); dc.disabled = true;
+          signInDiscord().then(function (ok) { if (!ok) { dc.disabled = false; say("Couldn't start Discord sign-in. Try the sync code below instead.", "err"); } });
+        });
+        body.appendChild(dc);
+
+        /* fallback: paste a sync code (for a browser where you can't sign in, e.g. a shared device) */
+        body.appendChild(el("div", { class: "sy-or" }, el("span", { text: "or paste a sync code" })));
         var input = el("input", { type: "text", class: "sy-input", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "XXXX-XXXX-XXXX-XXXX", "aria-label": "Sync code" });
         input.addEventListener("input", function () {
           var p = input.selectionStart === input.value.length;
           input.value = pretty(input.value).slice(0, 19);
           if (p) try { input.setSelectionRange(input.value.length, input.value.length); } catch (e) {}
         });
-        var go = el("button", { type: "button", class: "btn btn--primary sy-btn", text: "Link this browser" });
+        var go = el("button", { type: "button", class: "btn sy-btn sy-btn--ghost", text: "Link" });
         function submit() {
           var v = input.value;
           if (normalize(v).length < 12) { say("That doesn't look like a full code yet.", "err"); input.focus(); return; }
@@ -283,8 +353,12 @@
       tools.appendChild(btn);
     }
 
-    /* when linked, pull progress AND refresh the profile (name/pic/accent/stats) once on load */
-    if (linked()) setTimeout(function () { pull({ loud: false }); fetchProfile(); }, 1500);
+    /* on load: if already linked, pull + refresh the profile; otherwise, if signed in via Discord on /games/,
+       adopt that session (fetch the sync code) so the chip reflects it without a second sign-in */
+    setTimeout(function () {
+      if (linked()) { pull({ loud: false }); fetchProfile(); }
+      else adoptDiscordSession().then(function (sc) { if (sc) { pull({ loud: false }); fetchProfile(); } });
+    }, 1500);
 
     /* live: a trophy earned on this browser goes up to the account */
     Site.on("trophy:earned", function (v) {

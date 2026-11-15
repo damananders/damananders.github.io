@@ -842,6 +842,6 @@
     } catch (e) {}
     load("a11y", 2, "a11y");
     load("seasons", 3, "seasons");
-    load("sync", 3, "sync");
+    load("sync", 4, "sync");
   }, "add-on loader");
 })();
