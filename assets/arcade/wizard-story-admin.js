@@ -113,7 +113,7 @@
       var sec = el("section", { class: "wsa-group" }, el("div", { class: "wsa-ghead" }, el("h3", { text: g.title }), el("p", { text: g.note })));
       g.beats.forEach(function (b) {
         var kind = kindOf(b), lim = LIMIT[kind];
-        var ta = el("textarea", { spellcheck: "true", "aria-label": b.title + " lines", rows: String(Math.min(12, Math.max(2, b.lines.length + 1))) });
+        var ta = el("textarea", { spellcheck: "true", "aria-label": b.title + " lines", rows: String(kind === "panel" ? 10 : Math.min(12, Math.max(2, b.lines.length + 1))) });
         var snip = el("span", { class: "wsa-snip" }), state = el("span", { class: "wsa-state" }), info = el("span"), warn = el("span", { class: "wsa-warn" });
         var prev = el("ul", { class: "wsa-prev is-" + kind, "aria-label": "Preview" });
         var reset = el("button", { type: "button", class: "wsa-btn", text: "Reset" });
