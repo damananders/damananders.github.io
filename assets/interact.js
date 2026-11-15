@@ -842,6 +842,8 @@
     } catch (e) {}
     load("a11y", 2, "a11y");
     load("seasons", 3, "seasons");
-    load("sync", 5, "sync");
+    load("sync", 6, "sync");
+    /* account settings center — opt-in, loaded only when native accounts are switched on */
+    if (f.accounts === true) load("account-center", 1, "accounts");
   }, "add-on loader");
 })();
