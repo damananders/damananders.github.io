@@ -169,7 +169,7 @@
     var bClose = el("button", { type: "button", class: "ak-hb ak-hb--close", title: "Close (keeps your run paused)", "aria-label": "Close game" }, "✕");
     if (!(doc.fullscreenEnabled || doc.webkitFullscreenEnabled)) bFs.hidden = true;
     var hb = el("div", { class: "ak-hbs" }, bPause, bFs, bSize, bClose);
-    var stage = el("div", { class: "ak-stage", style: { "--ak-ar": W + " / " + H, "--ak-accent": def.accent || "#cd4257" } }, cv, menuLayer, toasts, hb);
+    var stage = el("div", { class: "ak-stage", "data-game": def.id, style: { "--ak-ar": W + " / " + H, "--ak-accent": def.accent || "#cd4257" } }, cv, menuLayer, toasts, hb);
     var shelf = el("div", { class: "ak-shelf", hidden: "" }, stage);
 
     /* the launcher card */
