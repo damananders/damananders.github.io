@@ -27,6 +27,10 @@
 .ak-tile__tags span{font:600 .72rem var(--mono);letter-spacing:.04em;padding:3px 9px;border-radius:999px;color:#dfe5ec;
   background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
 .ak-tile__best{font:600 .82rem var(--mono);color:color-mix(in srgb,var(--ak-accent) 70%,#fff);min-height:1.2em}
+.ak-tile__stats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:-2px}
+.ak-tile__stats[hidden]{display:none}
+.ak-tile__stat{font:600 .74rem var(--mono);letter-spacing:.02em;color:#9aa6b4;display:inline-flex;align-items:baseline;gap:4px}
+.ak-tile__stat b{font-weight:800;color:#e7edf4}
 .ak-tile__row{display:flex;gap:10px;margin-top:auto;padding-top:6px}
 .ak-play{flex:1;min-height:54px;border-radius:14px;border:0;cursor:pointer;font:800 1.15rem var(--display);letter-spacing:.02em;color:#fff;
   background:linear-gradient(180deg,color-mix(in srgb,var(--ak-accent) 92%,#fff 8%),color-mix(in srgb,var(--ak-accent) 78%,#000));

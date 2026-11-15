@@ -24,6 +24,44 @@
   var games = [], active = null, wrap = null, grid = null, filters = null, fullHost = null, sheet = null;
   var DPR_CAP = 2, PAD_DEAD = 0.18, ROUTE = Site.page === "arcade";
 
+  /* ---- public play counters: total plays and combined playtime per game, shared across everyone via Supabase ---- */
+  var SB = (Site.sb && Site.sb.url) ? Site.sb : null, STAT = {}, statTimer = 0;
+  function sbHeaders() { return { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" }; }
+  function sbRpc(name, body, keepalive) {
+    if (!SB) return Promise.resolve(null);
+    return fetch(SB.url + "/rest/v1/rpc/" + name, { method: "POST", headers: sbHeaders(), body: JSON.stringify(body || {}), cache: "no-store", keepalive: !!keepalive })
+      .then(function (r) { return r.ok ? r.json().catch(function () { return null; }) : null; }).catch(function () { return null; });
+  }
+  function fmtPlays(n) { n = n || 0; return n >= 10000 ? Math.round(n / 1000) + "k" : n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(n); }
+  function fmtTime(s) { s = Math.round(s || 0); if (s < 60) return (s || 0) + "s"; var m = Math.floor(s / 60); if (m < 60) return m + "m"; var h = Math.floor(m / 60); return h >= 100 ? h + "h" : h + "h " + (m % 60) + "m"; }
+  function paintStat(g) {
+    if (!g.statEl) return; var s = STAT[g.id];
+    if (!s) { g.statEl.hidden = true; return; }
+    g.statEl.hidden = false; g.statEl.textContent = "";
+    g.statEl.appendChild(el("span", { class: "ak-tile__stat", title: "Times anyone has played" }, el("b", { text: fmtPlays(s.plays) }), " plays"));
+    g.statEl.appendChild(el("span", { class: "ak-tile__stat", title: "Everyone's playtime, combined" }, el("b", { text: fmtTime(s.secs) }), " played"));
+  }
+  function loadStats() {
+    if (!SB) return;
+    fetch(SB.url + "/rest/v1/arcade_stats?select=game_id,plays,play_secs", { headers: sbHeaders(), cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) { if (!rows) return; rows.forEach(function (x) { var c = STAT[x.game_id] || (STAT[x.game_id] = { plays: 0, secs: 0 }); c.plays = x.plays || 0; c.secs = x.play_secs || 0; }); games.forEach(paintStat); })
+      .catch(function () {});
+  }
+  function scheduleStats() { if (!SB || statTimer) return; statTimer = setTimeout(function () { statTimer = 0; loadStats(); }, 300); }
+  function bumpPlay(g) {
+    if (!SB) return; var s = STAT[g.id] || (STAT[g.id] = { plays: 0, secs: 0 }); s.plays++; paintStat(g);
+    sbRpc("arcade_add_play", { p_game: g.id }).then(function (r) { if (r && r[0]) { s.plays = r[0].plays; s.secs = r[0].play_secs; paintStat(g); } });
+  }
+  function flushTime(g, keepalive) {
+    if (!SB) return; var d = Math.round((g.time || 0) - (g._tflush || 0)); if (d < 1) return; g._tflush = g.time;
+    var s = STAT[g.id] || (STAT[g.id] = { plays: 0, secs: 0 }); s.secs += d; paintStat(g);
+    sbRpc("arcade_add_time", { p_game: g.id, p_secs: d }, keepalive).then(function (r) { if (r && r[0]) { s.plays = r[0].plays; s.secs = r[0].play_secs; paintStat(g); } });
+  }
+  function flushAll(keepalive) { games.forEach(function (g) { flushTime(g, keepalive); }); }
+  window.addEventListener("pagehide", function () { flushAll(true); });
+  doc.addEventListener("visibilitychange", function () { if (doc.hidden) flushAll(true); });
+
   function host() {
     if (wrap) return wrap;
     var h = doc.querySelector(".nf-arcade") || doc.querySelector(".nf-hero");
@@ -174,6 +212,7 @@
 
     /* the launcher card */
     var bestEl = el("span", { class: "ak-tile__best" });
+    var statEl = el("div", { class: "ak-tile__stats", hidden: "" });
     var posterCv = el("canvas", { class: "ak-tile__poster", "aria-hidden": "true" });
     var playBtn = el("button", { type: "button", class: "ak-play", "aria-label": "Play " + def.name, text: "Play" });
     var infoBtn = el("button", { type: "button", class: "ak-info", "aria-label": "About " + def.name, title: "How to play and your progress", text: "i" });
@@ -183,12 +222,13 @@
       el("div", { class: "ak-tile__body" },
         el("h2", { class: "ak-tile__name", text: def.name }),
         el("p", { class: "ak-tile__pitch", text: def.tagline || def.blurb || "" }),
-        tags, bestEl,
+        tags, bestEl, statEl,
         el("div", { class: "ak-tile__row" }, playBtn, infoBtn)));
 
     var ctx = cv.getContext("2d");
     var g = {
       id: def.id, def: def, W: W, H: H, ctx: ctx, canvas: cv, stage: stage, tile: tile, posterCv: posterCv, playBtn: playBtn,
+      statEl: statEl, _tflush: 0,
       state: "title", time: 0, view: { s: 1, ox: 0, oy: 0, cw: 0, ch: 0, dpr: 1 },
       keys: {}, keyHits: {}, pointer: { x: W / 2, y: H / 2, down: false, inside: false, type: "mouse" }, pad: pollPad(null),
       store: {
@@ -243,6 +283,7 @@
     g.close = function (quiet, fromRoute) {
       if (!open) return;
       if (g.state === "play") g.pause();
+      flushTime(g);
       exitFs();
       open = false; full = false; shelf.appendChild(stage); fullHost.hidden = true;
       layout();
@@ -366,7 +407,7 @@
       var dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
       g.pad = pollPad(g.pad);
       if (g.pad.hit.start && captured(g) && !menuSpec) { if (g.state === "play") g.pause(); }
-      if (g.state === "play") { g.time += dt; try { def.update(g, dt); } catch (e) { console.error("[arcade] update", e); } }
+      if (g.state === "play") { g.time += dt; if (g.time - (g._tflush || 0) >= 30) flushTime(g); try { def.update(g, dt); } catch (e) { console.error("[arcade] update", e); } }
       else if (def.idle) { try { def.idle(g, dt); } catch (e) {} }
       paint();
       g.keyHits = {};
@@ -378,7 +419,7 @@
     g.hit = function (code) { return !!g.keyHits[code]; };
 
     host(); grid.appendChild(tile); wrap.appendChild(shelf);
-    playBtn.addEventListener("click", function () { if (open) g.full(true); else g.open(); });
+    playBtn.addEventListener("click", function () { if (open) g.full(true); else { bumpPlay(g); g.open(); } });
     infoBtn.addEventListener("click", function () { Site.sfx("open"); openSheet(g); });
     tile.querySelector(".ak-tile__art").addEventListener("click", function () { playBtn.click(); });
     tile.addEventListener("pointerenter", function () { g.posterOn(true); });
@@ -574,7 +615,7 @@
       g.setState("title");
       if (def.title) def.title(g);
       games.slice().sort(function (a, b) { return (a.def.order || 99) - (b.def.order || 99); }).forEach(function (x) { grid.appendChild(x.tile); });
-      paintFilters(); paintContinue();
+      paintFilters(); paintContinue(); scheduleStats();
       if (ROUTE && location.hash === "#" + g.id) setTimeout(function () { if (!g.isOpen()) g.open({ fromRoute: true }); }, 0);
       if (def.sync) sySoon(4000);                 /* after sync.js's own pull on page load */
       return g;
