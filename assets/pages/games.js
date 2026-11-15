@@ -84,7 +84,7 @@ function card(g, rank, group) {
   function sync(open) {
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     toggle.replaceChildren(
-      el("span", { class: "gm-toggle__i gm-toggle__i--" + (open ? "o" : "x"), "aria-hidden": "true", text: open ? "○" : "✕" }),
+      ico("talk", "gm-toggle__i" + (open ? " is-open" : "")),
       el("span", { class: "gm-toggle__t", text: open ? "Hide reviews" : "Reviews" }),
       el("span", { class: "gm-toggle__n" + (n ? "" : " is-zero"), text: String(n) }));
   }
@@ -324,19 +324,34 @@ function addBox(q, data) {
  * Until that view exists the section falls back to reviewers, from the public reviews.
  * #1 / #2 / #3 wear gold / silver / bronze medal flair. The right side of each row is the member's motto in the
  * colour they chose on their profile. The earned badges live inside the opened row. */
+/* badge icons: simple line drawings in the site's warm palette (maroon, amber, gold, rose) */
+const ICO = {
+  crown:  '<path d="M4 17l-1-9 5 4 4-6 4 6 5-4-1 9z"/><path d="M5 20h14"/>',
+  quill:  '<path d="M20 4c-7 1-11 6-13 13l-2 3"/><path d="M20 4c0 6-4 10-10 11"/><path d="M9 10h5"/>',
+  flag:   '<path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/>',
+  sun:    '<path d="M3 18h18"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 8V5M5.6 10.6 4 9M18.4 10.6 20 9"/>',
+  stack:  '<rect x="4" y="13" width="16" height="6" rx="1.5"/><path d="M6 13V9h12v4"/><path d="M8 9V6h8v3"/>',
+  ballot: '<rect x="4" y="11" width="16" height="9" rx="1.5"/><path d="M9 11V4h6v7"/><path d="M8 15h8"/>',
+  heart:  '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  ice:    '<path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/><path d="M10 5l2 2 2-2M10 19l2-2 2 2"/>',
+  pen:    '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',
+  talk:   '<path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-7l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M8 9h8M8 12h5"/>',
+};
+const ico = (k, cls) => { const s = document.createElement("span"); s.className = cls; s.setAttribute("aria-hidden", "true");
+  s.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ICO[k] + '</svg>'; return s; };
 const BADGES = {
-  topVoter:  { g: "△", c: "tri", name: "Top Voter",    why: "more votes than anyone else" },
-  topCritic: { g: "○", c: "cir", name: "Top Critic",   why: "more reviews than anyone else" },
-  founder:   { g: "✕", c: "crs", name: "First In",     why: "cast the very first vote" },
-  early:     { g: "✕", c: "crs", name: "Early Bird",   why: "one of the first ten voters" },
-  founderR:  { g: "✕", c: "crs", name: "First In",     why: "wrote the very first review" },
-  earlyR:    { g: "✕", c: "crs", name: "Early Bird",   why: "one of the first ten reviewers" },
-  c100:      { g: "□", c: "sqr", name: "Centurion",    why: "100 or more votes" },
-  c50:       { g: "□", c: "sqr", name: "Half-Century", why: "50 or more votes" },
-  c10:       { g: "□", c: "sqr", name: "Regular",      why: "10 or more votes" },
-  writer:    { g: "○", c: "cir", name: "Wordsmith",    why: "5 or more reviews" },
-  generous:  { g: "△", c: "tri", name: "Big Heart",    why: "handed out 10 or more perfect 5/5 scores" },
-  tough:     { g: "△", c: "tri", name: "Tough Crowd",  why: "gave 3 or more 0/5 scores" },
+  topVoter:  { g: "crown",  c: "gold",  name: "Top Voter",    why: "more votes than anyone else" },
+  topCritic: { g: "quill",  c: "gold",  name: "Top Critic",   why: "more reviews than anyone else" },
+  founder:   { g: "flag",   c: "amber", name: "First In",     why: "cast the very first vote" },
+  early:     { g: "sun",    c: "amber", name: "Early Bird",   why: "one of the first ten voters" },
+  founderR:  { g: "flag",   c: "amber", name: "First In",     why: "wrote the very first review" },
+  earlyR:    { g: "sun",    c: "amber", name: "Early Bird",   why: "one of the first ten reviewers" },
+  c100:      { g: "stack",  c: "rose",  name: "Centurion",    why: "100 or more votes" },
+  c50:       { g: "stack",  c: "rose",  name: "Half-Century", why: "50 or more votes" },
+  c10:       { g: "ballot", c: "rose",  name: "Regular",      why: "10 or more votes" },
+  writer:    { g: "pen",    c: "rose",  name: "Wordsmith",    why: "5 or more reviews" },
+  generous:  { g: "heart",  c: "red",   name: "Big Heart",    why: "handed out 10 or more perfect 5/5 scores" },
+  tough:     { g: "ice",    c: "ice",   name: "Tough Crowd",  why: "gave 3 or more 0/5 scores" },
 };
 function badgesFor(v, ctx) {
   const b = [];
@@ -349,7 +364,7 @@ function badgesFor(v, ctx) {
   if (v.zeros >= 3) b.push("tough");
   return b;
 }
-const vb = (k) => el("span", { class: "gm-vb gm-vb--" + BADGES[k].c, "aria-hidden": "true", text: BADGES[k].g });
+const vb = (k) => ico(BADGES[k].g, "gm-vb gm-vb--" + BADGES[k].c);
 
 const MEDALS = [null, { cls: "gold", label: "Gold medal, first place" }, { cls: "silver", label: "Silver medal, second place" }, { cls: "bronze", label: "Bronze medal, third place" }];
 let medalN = 0;

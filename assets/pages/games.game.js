@@ -7,7 +7,6 @@ import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameL
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
-const SHAPES = ["△", "○", "✕", "□", "△"];
 const EMU = { PS1: "DuckStation", PS2: "PCSX2", PSP: "PPSSPP", PS3: "RPCS3", Vita: "Vita3K", PS4: "shadPS4", PS5: "AnyPS5" };
 const EMU_SRC = { DuckStation: "https://github.com/stenzek/duckstation", PCSX2: "https://pcsx2.net/compat/", RPCS3: "https://rpcs3.net/compatibility", Vita3K: "https://vita3k.org/compatibility.html", shadPS4: "https://github.com/shadps4-emu/shadps4-game-compatibility" };
 const TIERS = ["Nothing", "Boots", "Menus", "In-game", "Playable", "Perfect"];

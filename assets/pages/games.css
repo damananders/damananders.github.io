@@ -69,13 +69,10 @@
 .gm-tab[data-c="PS1"]{color:#9aa6b4}.gm-tab[data-c="PS2"]{color:#3f83ff}.gm-tab[data-c="PSP"]{color:#1ec5b3}.gm-tab[data-c="PS3"]{color:#f0a93b}.gm-tab[data-c="Vita"]{color:#c069ff}.gm-tab[data-c="PS4"]{color:#6c7bff}.gm-tab[data-c="PS5"]{color:#ff6076}
 .gm-tab.is-on{color:#06080c}
 
-/* Reviews toggle: "Reviews (N)" with a face-button indicator (cross collapsed, circle expanded) */
+/* Reviews toggle: "Reviews (N)" with a speech-bubble icon */
 .gm-toggle{display:inline-flex;align-items:center;gap:.1em}
-.gm-toggle__i{font-weight:700;font-size:1.02em;line-height:1}
-.gm-toggle__i--x{color:#84b2ff}
-.gm-toggle__i--o{color:#f47882}
 
-/* Top voters: member profiles and badges (badge glyphs = the four face buttons in their PlayStation colours) */
+/* Top voters: member profiles and badges (line icons in the site palette) */
 .gm-voters{display:grid;gap:8px;margin-top:22px}
 .gm-vlist{display:grid;gap:8px}
 .gm-voters:not(.gm-voters--all) .gm-vcard--more{display:none}
@@ -88,8 +85,9 @@
 .gm-vav--txt{display:grid;place-items:center;font:700 .95rem var(--sx-display,"Space Grotesk",sans-serif);color:var(--sx-text,#e8e8ea)}
 .gm-vname{font:600 1rem var(--sx-display,"Space Grotesk",sans-serif);color:var(--sx-text,#e8e8ea)}
 .gm-vcount{font-size:.85rem;color:var(--sx-muted,#a8abb3)}
-.gm-vb{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;border:1px solid currentColor;font-weight:700;font-size:.82rem;line-height:1}
-.gm-vb--tri{color:#8ce2ac}.gm-vb--cir{color:#f47882}.gm-vb--crs{color:#84b2ff}.gm-vb--sqr{color:#ec8ac8}
+.gm-vb{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;flex:none;color:var(--b);background:color-mix(in srgb,var(--b) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--b) 45%,transparent)}
+.gm-vb svg{width:16px;height:16px}
+.gm-vb--gold{--b:#f2c14e}.gm-vb--amber{--b:#f0954a}.gm-vb--rose{--b:#e8798f}.gm-vb--red{--b:#cd4257}.gm-vb--ice{--b:#9fc4e8}
 .gm-vprofile{padding:0 16px 14px 16px;display:grid;gap:10px}
 .gm-vprofile dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;font-size:.88rem}
 .gm-vprofile dt{color:var(--sx-muted,#a8abb3)}.gm-vprofile dd{margin:0;color:var(--sx-text,#e8e8ea)}
@@ -397,14 +395,13 @@ dialog.sx-modal.gi-lb:not([open]){display:none}
 .gm-card--silver .gm-title__a{color:#e6ebf1}.gm-card--bronze .gm-title__a{color:#e7a76a}
 .gm-card .gm-medal{width:34px;height:42px}
 
-/* ---------------- reviews: a proper face-button toggle and roomier review cards ---------------- */
+/* ---------------- reviews: the toggle and roomier review cards ---------------- */
 .gm-toggle{all:unset;cursor:pointer;justify-self:start;display:inline-flex;align-items:center;gap:9px;padding:6px 8px 6px 6px;border-radius:999px;border:1px solid var(--sx-line-2,rgba(255,255,255,.16));background:var(--sx-surface-2,rgba(255,255,255,.04));font:600 .9rem var(--sx-display,"Space Grotesk",sans-serif);color:var(--sx-text,#e8e8ea);transition:border-color .15s,background .15s,transform .15s}
-.gm-toggle:hover{transform:translateY(-1px);border-color:#84b2ff}
-.gm-toggle[aria-expanded="true"]:hover{border-color:#f47882}
+.gm-toggle:hover{transform:translateY(-1px);border-color:var(--sx-accent,#cd4257)}
 .gm-toggle:focus-visible{outline:2px solid var(--sx-accent,#cd4257);outline-offset:2px}
-.gm-toggle__i{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;font-size:.95rem;font-weight:800;line-height:1;background:radial-gradient(circle at 35% 30%,#3a3f4a,#15181e 70%);box-shadow:inset 0 -2px 3px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(255,255,255,.06)}
-.gm-toggle__i--x{color:#84b2ff;text-shadow:0 0 8px rgba(132,178,255,.6)}
-.gm-toggle__i--o{color:#f47882;text-shadow:0 0 8px rgba(244,120,130,.6)}
+.gm-toggle__i{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;color:#f2c14e;background:color-mix(in srgb,#f2c14e 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,#f2c14e 40%,transparent);transition:color .15s,background .15s}
+.gm-toggle__i svg{width:15px;height:15px}
+.gm-toggle__i.is-open{color:#fff;background:var(--sx-accent,#cd4257);box-shadow:none}
 .gm-toggle__n{min-width:1.6em;padding:1px 8px;border-radius:999px;text-align:center;font:700 .78rem var(--sx-mono,"DM Mono",monospace);background:var(--sx-accent,#cd4257);color:var(--sx-on-accent,#fff)}
 .gm-toggle__n.is-zero{background:var(--sx-line-2,rgba(255,255,255,.16));color:var(--sx-muted,#a8abb3)}
 .gm-more{gap:10px;padding:12px;border-radius:14px;background:color-mix(in srgb,var(--sx-surface-2,#151a20) 70%,transparent);border:1px solid var(--sx-line,rgba(255,255,255,.08))}
