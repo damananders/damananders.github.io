@@ -89,7 +89,7 @@ window.SITE_EXTRA = {
         image: "/assets/og/anderscraft.jpg",
         blurb: "My ready-to-play World of Warcraft 3.3.5a (Wrath of the Lich King) client, set up for the AndersCraft private server. Unzip and run.",
         entries: [
-          { name: "AndersCraft client (WotLK 3.3.5a)", genre: "MMORPG", year: 2010, size: "", added: "2026-11-15",
+          { name: "AndersCraft client (WotLK 3.3.5a)", genre: "MMORPG", year: 2010, size: "23.35 GB", added: "2026-11-15",
             note: "Full WotLK 3.3.5a (build 12340) client for AndersCraft. Unzip and launch Wow.exe.",
             image: "/assets/og/anderscraft.jpg",
             url: "https://drive.google.com/file/d/1XeyrgjUSD5PfMDavzps024Hpvpg32IEv/view?usp=drive_link" },
