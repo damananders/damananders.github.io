@@ -1556,11 +1556,6 @@
       }
     }
   };
-  /* Owner preview: the game only appears while a control panel session is live and the server confirms it. */
-  var S0 = window.Site;
-  /* A control panel sign-in leaves "site.adminSeen" (its session end, in ms) on this browser, so the preview
-     also shows in other tabs until that session would have ended. Signing out removes it. */
-  var seen = 0; try { seen = +localStorage.getItem("site.adminSeen") || 0; } catch (e) {}
-  if (seen > Date.now()) A.register(DEF);
-  else if (S0 && S0.admin && S0.admin.get()) S0.admin.check().then(function (r) { if (r && r.ok) A.register(DEF); });
+  /* Public beta: the owner-only preview gate was lifted on the owner's go-ahead. The card is badged Beta. */
+  A.register(DEF);
 })();
