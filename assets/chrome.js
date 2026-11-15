@@ -562,16 +562,18 @@
       if (save) { try { Site.store.set("menu.layout", mode); } catch (e) {} }
     }
     segBtns.forEach(function (b) { b.addEventListener("click", function () { applyMode(b.getAttribute("data-m"), true); sfx("tap"); }); });
-    overlay.appendChild(seg);
+    /* the bar sits UNDER the page wheel: the layout toggle, plus (below) a Settings button */
+    var bar = el("div", { class: "ch-rad__bar" }, seg);
+    overlay.appendChild(bar);
     applyMode(mode, false);
 
-    /* ---- page settings, folded into the menu so one button covers navigation and settings ---- */
+    /* ---- page settings, reached by a Settings button sitting under the radial navigation menu ---- */
     var hasSettings = feat("settingsPanel"), settings = null, settingsDrawn = false, view = "pages", pendingView = "pages";
-    var vPages = null, vSet = null, setClose = null;
+    var vToggle = null, vIco = null, vLabel = null, setClose = null;
     if (hasSettings) {
       settings = makeSettingsRows();
-      setClose = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Close settings" }, svg(ICON.close));
-      setClose.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
+      setClose = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Back to pages" }, svg(ICON.close));
+      setClose.addEventListener("click", function () { showView("pages"); sfx("close"); try { (wheel.querySelector(".is-current") || nodes[0]).focus(); } catch (e) {} });
       var setPanel = el("div", { class: "ch-panel ch-panel--rad", role: "group", "aria-label": "Settings" },
         el("div", { class: "ch-panel__head" }, el("h2", { class: "ch-panel__title", text: "Settings" }), setClose),
         settings.box);
@@ -580,14 +582,21 @@
       /* keys that drive a slider stay inside the panel (pages have their own arrow shortcuts) */
       setPanel.addEventListener("keydown", function (e) { if (/^(Arrow|Home$|End$|Page)/.test(e.key)) e.stopPropagation(); });
 
-      /* view switch (top of the overlay): Pages ↔ Settings */
-      vPages = el("button", { type: "button", class: "ch-rad__segb", "data-v": "pages", "aria-pressed": "true" },
-        svg('<circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/><circle cx="12" cy="12" r="2.1"/>', { fill: "currentColor", stroke: "none" }), el("span", { text: "Pages" }));
-      vSet = el("button", { type: "button", class: "ch-rad__segb", "data-v": "settings", "aria-pressed": "false" }, svg(ICON.gear), el("span", { text: "Settings" }));
-      var vseg = el("div", { class: "ch-rad__views", role: "group", "aria-label": "Menu view" }, vPages, vSet);
-      overlay.appendChild(vseg);
-      vPages.addEventListener("click", function () { showView("pages"); sfx("tap"); try { (wheel.querySelector(".is-current") || nodes[0] || center).focus(); } catch (e) {} });
-      vSet.addEventListener("click", function () { showView("settings"); sfx("tap"); setTimeout(function () { focusQuietly(settings.box.querySelector("[data-ch-key]:not([aria-disabled='true'])") || setClose); }, 20); });
+      /* a single Settings button beneath the wheel; it flips to "Pages" while settings are open */
+      var GEAR_ICO = svg(ICON.gear), PAGES_ICO = svg('<circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/><circle cx="12" cy="12" r="2.1"/>', { fill: "currentColor", stroke: "none" });
+      vIco = el("span", { class: "ch-rad__vico" }, GEAR_ICO); vLabel = el("span", { text: "Settings" });
+      vToggle = el("button", { type: "button", class: "ch-rad__settingsbtn", "aria-pressed": "false" }, vIco, vLabel);
+      vToggle.addEventListener("click", function () {
+        var toSettings = view !== "settings";
+        showView(toSettings ? "settings" : "pages"); sfx("tap");
+        setTimeout(function () {
+          try {
+            if (toSettings) focusQuietly(settings.box.querySelector("[data-ch-key]:not([aria-disabled='true'])") || setClose);
+            else (wheel.querySelector(".is-current") || nodes[0] || center).focus();
+          } catch (e) {}
+        }, 20);
+      });
+      bar.appendChild(vToggle);
 
       Site.on("settings:changed", function () { settingsDrawn = false; if (view === "settings" && open) { settings.draw(); settingsDrawn = true; } });
       function resync() { if (view === "settings" && open) settings.syncAll(); }
@@ -597,8 +606,14 @@
     function showView(v) {
       view = (v === "settings" && hasSettings) ? "settings" : "pages";
       overlay.setAttribute("data-view", view);
-      if (vPages) { vPages.classList.toggle("is-on", view === "pages"); vPages.setAttribute("aria-pressed", String(view === "pages")); }
-      if (vSet) { vSet.classList.toggle("is-on", view === "settings"); vSet.setAttribute("aria-pressed", String(view === "settings")); }
+      if (vToggle) {
+        var onSet = view === "settings";
+        vToggle.setAttribute("aria-pressed", String(onSet));
+        vToggle.classList.toggle("is-on", onSet);
+        vLabel.textContent = onSet ? "Pages" : "Settings";
+        vIco.replaceChildren(onSet ? PAGES_ICO : GEAR_ICO);
+        vToggle.title = onSet ? "Back to the pages" : "Site settings";
+      }
       if (view === "settings" && settings) {
         if (!settingsDrawn) { settings.draw(); settingsDrawn = true; } else settings.syncAll();
         Site.emit("ui:settings-shown");                                 /* play.js awards the "Tinkerer" trophy on this */
@@ -609,9 +624,9 @@
     function focusables() {
       if (view === "settings" && hasSettings) {
         var rows = Array.prototype.slice.call(settings.box.querySelectorAll("[data-ch-key]:not([aria-disabled='true'])"));
-        return [vPages, vSet].concat(rows).concat([setClose]);
+        return rows.concat([setClose, vToggle]);
       }
-      return [center].concat(nodes).concat(segBtns).concat(vPages ? [vPages, vSet] : []);
+      return [center].concat(nodes).concat(segBtns).concat(vToggle ? [vToggle] : []);
     }
     function set(on) {
       if (on === open) return;

@@ -12,9 +12,12 @@
 .sy-input::placeholder{color:var(--sx-muted);letter-spacing:.06em}
 .sy-input:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px;border-color:var(--sx-accent)}
 .sy-btn{cursor:pointer}
-.sy-actions{display:flex;gap:10px;flex-wrap:wrap}
-.sy-btn--ghost{background:transparent;border:1px solid var(--sx-line-2);color:var(--sx-muted)}
-.sy-btn--ghost:hover{color:var(--sx-text);border-color:var(--sx-accent)}
+/* the dialog's .btn relies on hub.css's --accent (not defined on every page); pin sync's buttons to --sx-accent */
+.btn.sy-btn{background:var(--sx-accent);color:var(--sx-on-accent,#06090c);border:0}
+.btn.sy-btn:hover{filter:brightness(1.08)}
+.sy-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn.sy-btn--ghost{background:transparent;border:1px solid var(--sx-line-2);color:var(--sx-muted);filter:none}
+.btn.sy-btn--ghost:hover{color:var(--sx-text);border-color:var(--sx-accent);background:transparent}
 
 .sy-linked{display:flex;align-items:flex-start;gap:10px;margin:0;font-size:1.02rem;line-height:1.5;color:var(--sx-text)}
 .sy-linked strong{color:var(--sx-accent);filter:brightness(1.25)}
@@ -32,10 +35,40 @@
 :root.ch-scrolled .sx-tools .sy-profile.sx-iconbtn{width:auto;height:36px;border-radius:999px;padding:0 10px 0 5px}
 .sy-av{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sx-surface-2);color:var(--sx-muted);overflow:hidden}
 .sy-av svg{width:17px;height:17px}
+.sy-av-img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .sy-av--initial{background:var(--sx-accent);color:var(--sx-on-accent,#fff);font:800 .8rem/1 var(--sx-display);text-transform:uppercase}
 .sy-name{font:600 .86rem/1 var(--sx-display);color:var(--sx-text);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sy-profile.is-linked{border-color:color-mix(in srgb,var(--sx-ok) 50%,var(--sx-line-2))}
 .sy-profile.is-linked .sy-av:not(.sy-av--initial){color:var(--sx-ok)}
+/* when the member has a profile accent, mirror it on the chip ring + initial avatar */
+.sy-profile--accent{border-color:color-mix(in srgb,var(--sy-ac) 55%,var(--sx-line-2))}
+.sy-profile--accent .sy-av--initial{background:var(--sy-ac)}
+.sy-profile--accent.is-linked{border-color:color-mix(in srgb,var(--sy-ac) 65%,var(--sx-line-2))}
+
+/* ---- mini profile card (inside the account dialog when linked) ---- */
+.sy-card{--sy-ac:var(--sx-accent);display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:16px;
+  border:1px solid var(--sx-line-2);background:var(--sx-glass);position:relative;overflow:hidden}
+.sy-card--accent{border-color:color-mix(in srgb,var(--sy-ac) 45%,var(--sx-line-2))}
+.sy-card--accent::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--sy-ac);opacity:.9}
+.sy-card__head{display:flex;align-items:center;gap:13px;min-width:0}
+.sy-card__av{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;overflow:hidden;
+  background:var(--sx-surface-2);box-shadow:0 0 0 2px color-mix(in srgb,var(--sy-ac) 55%,transparent)}
+.sy-card__img{width:100%;height:100%;object-fit:cover;display:block}
+.sy-card__av.is-initial{background:var(--sy-ac);color:var(--sx-on-accent,#fff);font:800 1.35rem/1 var(--sx-display);text-transform:uppercase}
+.sy-card__who{min-width:0;display:flex;flex-direction:column;gap:2px}
+.sy-card__name{font:800 1.18rem/1.15 var(--sx-display);color:var(--sx-text);text-decoration:none;overflow:hidden;text-overflow:ellipsis}
+.sy-card__name:hover{color:var(--sy-ac)}
+.sy-card__handle{font-size:.86rem;color:var(--sx-muted)}
+.sy-card__flag{align-self:flex-start;margin-top:3px;font:700 .64rem/1 var(--sx-display);letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--sx-err) 18%,transparent);color:var(--sx-err)}
+.sy-card__motto{margin:0;font-size:.92rem;line-height:1.5;color:var(--sx-text);font-style:italic}
+.sy-card__since{margin:0;font-size:.82rem;color:var(--sx-muted)}
+.sy-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sy-stat{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px;border-radius:11px;
+  background:var(--sx-surface-2);text-align:center}
+.sy-stat b{font:800 1.05rem/1 var(--sx-display);color:var(--sx-text)}
+.sy-stat span{font-size:.68rem;letter-spacing:.03em;text-transform:uppercase;color:var(--sx-muted)}
+@media (max-width:440px){.sy-stats{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:560px){
   .sy-profile .sy-name{display:none}
   .sy-profile.sx-iconbtn{padding:0;width:40px}
