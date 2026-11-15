@@ -59,14 +59,15 @@
     host.textContent = "";
     if (!WS) { host.appendChild(el("p", { text: "Could not load the story list for Wizard of the Sprint." })); return; }
     if (!document.getElementById("wsa-css")) { var st = el("style", { id: "wsa-css" }); st.textContent = CSS; document.head.appendChild(st); }
-    var edits = {}, saved = api.get() || {}, k;
+    var unseal = WS.open || function (o) { return o || {}; }, seal = WS.seal || function (o) { return o; };   /* an older cached story file has neither */
+    var edits = {}, saved = unseal(api.get() || {}), k;
     for (k in saved) { var c = WS.clean(saved[k]); if (c && c.length) edits[k] = c; }
     var root = el("div", { class: "wsa" }), cards = [], count = el("span", { class: "wsa-count" });
 
     function push() {
       var out = {}, n = 0;
       WS.beats.forEach(function (b) { if (edits[b.id] && !same(edits[b.id], b.lines)) { out[b.id] = edits[b.id]; n++; } });
-      api.set(out);
+      api.set(seal(out));                              /* stored scrambled, so the saved settings are not readable at a glance */
       count.textContent = n ? n + " of " + WS.beats.length + " beats changed from the built-in text" : "All " + WS.beats.length + " beats use the built-in text";
     }
 
@@ -78,7 +79,7 @@
         el("li", {}, "Type ", el("span", { class: "wsa-tok", text: "{Name}" }), " anywhere and the game puts the player's wizard name there."),
         el("li", { text: "A box left empty goes back to the built-in text, so nothing can end up blank in the game." }),
         el("li", { text: "Press the control panel's Save button when you are done. The game picks the new text up within about five minutes (straight away on this browser)." }),
-        el("li", { text: "Saved text is stored with the site's public settings, so treat it as visible to anyone who goes looking." }))));
+        el("li", { text: "Saved text is stored scrambled, so it cannot be read at a glance in the site's public settings. Someone who studied the game's code could still decode it." }))));
 
     var find = el("input", { type: "search", placeholder: "Find a beat or a line…", "aria-label": "Find a beat or a line" });
     var resetAll = el("button", { type: "button", class: "wsa-btn", text: "Reset every beat" });
