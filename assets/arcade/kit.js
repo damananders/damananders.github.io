@@ -293,6 +293,7 @@
       var list = el("div", { class: "ak-panel__items" + (spec.grid ? " is-grid" : "") });
       (spec.items || []).forEach(function (it) {
         if (!it) return;
+        if (it.head) { list.appendChild(el("div", { class: "ak-head", role: "presentation" }, el("span", { text: it.head }))); return; }
         var b = el("button", { type: "button", class: "ak-btn " + (it.cls || ""), disabled: it.disabled ? "" : null },
           el("b", { text: it.label }), it.sub ? el("span", { text: it.sub }) : null);
         b.addEventListener("click", function () { if (it.disabled) return; Site.sfx("tap"); it.act && it.act(); });
@@ -308,8 +309,9 @@
     g.closeMenu = function () { menuSpec = null; menuBtns = []; menuIts = []; menuLayer.hidden = true; menuLayer.textContent = ""; };
     g.menuOpen = function () { return !!menuSpec; };
     function mark() { menuBtns.forEach(function (b, i) { b.classList.toggle("is-sel", i === menuSel); }); }
-    function focusSel() { var b = menuBtns[menuSel]; if (b && open && (full || captured(g) || stage.contains(doc.activeElement))) try { b.focus({ preventScroll: true }); } catch (e) {} }
-    function moveSel(d) { if (!menuBtns.length) return; menuSel = (menuSel + d + menuBtns.length) % menuBtns.length; mark(); try { menuBtns[menuSel].focus({ preventScroll: true }); } catch (e) {} Site.sfx("hover"); }
+    function seeSel() { var b = menuBtns[menuSel]; if (b && b.scrollIntoView) try { b.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (e) {} }
+    function focusSel() { var b = menuBtns[menuSel]; if (b && open && (full || captured(g) || stage.contains(doc.activeElement))) try { b.focus({ preventScroll: true }); } catch (e) {} seeSel(); }
+    function moveSel(d) { if (!menuBtns.length) return; menuSel = (menuSel + d + menuBtns.length) % menuBtns.length; mark(); try { menuBtns[menuSel].focus({ preventScroll: true }); } catch (e) {} seeSel(); Site.sfx("hover"); }
     function menuBack() { if (menuSpec && menuSpec.back) { Site.sfx("close"); menuSpec.back(); } }
     function menuOk() { var b = menuBtns[menuSel]; if (b) b.click(); }
     g._menuKey = function (k) {
