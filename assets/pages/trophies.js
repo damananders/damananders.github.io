@@ -54,6 +54,9 @@
     { id: "streak", name: "On a Roll", desc: "Came back three days in a row.", secret: true },
     { id: "miss5", name: "Unfivetunately", desc: "Typed five wrong codes into the hidden door.", secret: true },
     { id: "nightowl", name: "Night Owl", desc: "Visited between midnight and four in the morning.", secret: true },
+    { id: "warcraft", name: "Realm Keeper", desc: "Found the AndersCraft client stashed in the Locker.", secret: true },
+    { id: "offsite", name: "Off-Site Backup", desc: "Grabbed one of the backups from the Locker.", secret: true },
+    { id: "twodoors", name: "Lockpick", desc: "Got through both hidden doors — the Vault and the Locker.", secret: true },
     { id: "all", name: "Completionist", desc: "Earned every other trophy." },
     { id: "special", name: "Super Duper Special", desc: "Reserved for the people Anders has made an Admin in Discord.", special: true }
   ];

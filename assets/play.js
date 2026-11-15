@@ -65,6 +65,9 @@
     { id: "streak",    name: "On a Roll",         desc: "Came back three days in a row.", secret: true },
     { id: "miss5",     name: "Unfivetunately",    desc: "Typed five wrong codes into the hidden door.", secret: true },
     { id: "nightowl",  name: "Night Owl",         desc: "Visited between midnight and four in the morning.", secret: true },
+    { id: "warcraft",  name: "Realm Keeper",      desc: "Found the AndersCraft client stashed in the Locker.", secret: true },
+    { id: "offsite",   name: "Off-Site Backup",   desc: "Grabbed one of the backups from the Locker.", secret: true },
+    { id: "twodoors",  name: "Lockpick",          desc: "Got through both hidden doors — the Vault and the Locker.", secret: true },
     { id: "all",       name: "Completionist",     desc: "Earned every other trophy." },
     /* special: sits below Completionist, never counts toward it, and is only given to members Anders has made
        an Admin in Discord. The Rate-O-Pedia pages confirm that with the server and emit "rop:admin". */
@@ -247,6 +250,7 @@
     if (window.ROP_STATS) setTimeout(function () { ropStats(window.ROP_STATS); }, 2000);
     if (Site.page === "404") setTimeout(function () { award("lost"); }, 1200);
     if (Site.page === "vault" || Site.page === "locker") setTimeout(function () { award("key"); }, 1200);
+    if (seen.vault && seen.locker) setTimeout(function () { award("twodoors"); }, 1300);
     Site.on("pref:soundscape", function (v) { if (v === true || (v && v.detail === true)) award("dj"); });
     Site.on("konami", function () { award("konami"); });
     Site.on("dialog:open", function (d) {

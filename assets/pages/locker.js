@@ -19,7 +19,7 @@
   var FAV = get("lk.fav", {}) || {};    /* { id: 1 } */
   function dlId(catId, name) { return catId + ":" + slug(name); }
   function dlCount(id) { return DL[id] || 0; }
-  function bump(id) { DL[id] = (DL[id] || 0) + 1; set("lk.dl", DL); }
+  function bump(id) { DL[id] = (DL[id] || 0) + 1; set("lk.dl", DL); if (S.trophy) S.trophy("offsite"); }
   function isFav(id) { return !!FAV[id]; }
   function toggleFav(id) { if (FAV[id]) delete FAV[id]; else FAV[id] = 1; set("lk.fav", FAV); }
 
@@ -249,6 +249,7 @@
   function renderCategory(cat, root) {
     setHero(cat.console || "Locker", cat.name, cat.blurb || "", true);
     root.textContent = "";
+    if (cat.id === "anderscraft") setTimeout(function () { if (S.trophy) S.trophy("warcraft"); }, 1500);
 
     var isPack = cat.mode === "pack";
     var items = catItems(cat).slice();
