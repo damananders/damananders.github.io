@@ -75,12 +75,26 @@ window.SITE_EXTRA = {
          entries[] list mode: { name, url, size, year, region, genre, note, dlc:[{name, url, size}] }
          added    optional date on any game/entry ("2026-11-13"): shows a NEW badge for ~3 weeks and a
                   dot on the shelf card. The storefront also shows a whole-library tally (titles + size).
+         image    optional cover image, on a category (shows on its shelf card) or on any game/entry (shows as
+                  a cover on that item's card). Use an https:// URL or a root path like "/assets/og/foo.jpg".
+                  No image = the drawn icon as before; a broken image quietly falls back too.
        DLC names are auto-cleaned on screen, so you can paste the raw package name (serial numbers and
        [BRACKETED] codes are stripped to a readable title). url:"" anywhere = shows "Link not added yet".
        Downloads shown on the cards are a private per-browser tally of your own opens — handy, not analytics. */
   locker: {
     intro: "My own system files and game backups, kept off-site so I can pull them back from anywhere. Private shelves — pick one to browse.",
     categories: [
+      {
+        id: "anderscraft", name: "AndersCraft", console: "WoW 3.3.5a client", icon: "disc", mode: "list",
+        image: "/assets/og/anderscraft.jpg",
+        blurb: "My ready-to-play World of Warcraft 3.3.5a (Wrath of the Lich King) client, set up for the AndersCraft private server. Unzip and run.",
+        entries: [
+          { name: "AndersCraft client (WotLK 3.3.5a)", genre: "MMORPG", year: 2010, size: "", added: "2026-11-15",
+            note: "Full WotLK 3.3.5a (build 12340) client for AndersCraft. Unzip and launch Wow.exe.",
+            image: "/assets/og/anderscraft.jpg",
+            url: "https://drive.google.com/file/d/1XeyrgjUSD5PfMDavzps024Hpvpg32IEv/view?usp=drive_link" },
+        ],
+      },
       {
         id: "bios", name: "System Files", console: "BIOS & Firmware", icon: "bios", mode: "list",
         blurb: "BIOS and firmware dumped from my own consoles. Needed to boot the games in an emulator.",

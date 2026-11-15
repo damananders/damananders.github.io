@@ -139,7 +139,9 @@
       var card = S.el("a", { class: "lk-cat", href: "?c=" + encodeURIComponent(cat.id) },
         S.el("span", { class: "lk-tag", text: "FREE" }),
         catHasNew(cat) ? S.el("span", { class: "lk-new-dot", title: "New additions", "aria-label": "New additions" }) : null,
-        S.el("span", { class: "lk-cat-ico" }, S.svg(ICONS[iconKey(cat)])),
+        imgOk(cat.image)
+          ? S.el("span", { class: "lk-cat-ico lk-cat-ico--img" }, S.el("img", { class: "lk-cat-img", src: cat.image, alt: "", loading: "lazy", decoding: "async" }))
+          : S.el("span", { class: "lk-cat-ico" }, S.svg(ICONS[iconKey(cat)])),
         S.el("div", { class: "lk-cat-head" },
           S.el("h2", { class: "lk-cat-name", text: cat.name }),
           S.el("span", { class: "lk-cat-sub", text: cat.console || "" })),
@@ -207,11 +209,24 @@
 
   function newPill(it) { return isNew(it) ? S.el("span", { class: "lk-new", text: "NEW" }) : null; }
 
+  /* An optional cover image on an item or shelf. Accepts an https:// URL or a root-relative
+     "/assets/..." path; anything else is ignored. Items with no image render exactly as before.
+     If the image fails to load, the cover is removed so the card falls back cleanly. */
+  function imgOk(u) { return typeof u === "string" && (/^https:\/\//.test(u) || /^\/[^/]/.test(u)); }
+  function cover(it) {
+    if (!it || !imgOk(it.image)) return null;
+    var box = S.el("span", { class: "lk-cover" });
+    var img = S.el("img", { class: "lk-cover-img", src: it.image, alt: "", loading: "lazy", decoding: "async" });
+    img.addEventListener("error", function () { box.remove(); });
+    box.appendChild(img);
+    return box;
+  }
+
   /* one game inside a pack (info only) */
   function gameCard(cat, g) {
-    var id = dlId(cat.id, g.name), meta = metaLine(g);
-    return S.el("article", { class: "lk-item", dataset: { fav: isFav(id) ? "1" : "0" } },
-      favBtn(id), newPill(g),
+    var id = dlId(cat.id, g.name), meta = metaLine(g), cov = cover(g);
+    return S.el("article", { class: "lk-item" + (cov ? " has-cover" : ""), dataset: { fav: isFav(id) ? "1" : "0" } },
+      cov, favBtn(id), newPill(g),
       S.el("h3", { class: "lk-item-name", text: cleanName(g.name) || g.name }),
       meta ? S.el("p", { class: "lk-item-meta", text: meta }) : null,
       g.note ? S.el("p", { class: "lk-item-note", text: g.note }) : null,
@@ -220,9 +235,9 @@
 
   /* one separately-uploaded entry (its own download) */
   function entryCard(cat, e) {
-    var id = dlId(cat.id, e.name), meta = metaLine(e);
-    return S.el("article", { class: "lk-item lk-item--dl", dataset: { fav: isFav(id) ? "1" : "0" } },
-      favBtn(id), newPill(e),
+    var id = dlId(cat.id, e.name), meta = metaLine(e), cov = cover(e);
+    return S.el("article", { class: "lk-item lk-item--dl" + (cov ? " has-cover" : ""), dataset: { fav: isFav(id) ? "1" : "0" } },
+      cov, favBtn(id), newPill(e),
       S.el("h3", { class: "lk-item-name", text: cleanName(e.name) || e.name }),
       meta ? S.el("p", { class: "lk-item-meta", text: meta }) : null,
       e.note ? S.el("p", { class: "lk-item-note", text: e.note }) : null,
