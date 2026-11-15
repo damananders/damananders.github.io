@@ -309,6 +309,10 @@
         body.appendChild(el("div", { class: "sy-form" }, input, go));
         body.appendChild(statusEl);
         body.appendChild(el("a", { class: "sy-help", href: "/games/", text: "Open Rate-O-Pedia to find your code →" }));
+        /* native DMA Accounts (shown only once the backend is live, i.e. features.accounts is on) */
+        if (((((Site.config || {}).features) || {}).accounts) === true) {
+          body.appendChild(el("a", { class: "sy-help sy-help--dma", href: "/account/", text: "New here? Create a DMA Account →" }));
+        }
         setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
       }
     }

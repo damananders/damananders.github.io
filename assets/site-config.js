@@ -237,6 +237,10 @@ window.SITE_EXTRA = {
   /* ---- Analytics (privacy friendly, no cookies). Your GoatCounter site code, e.g. "damananders". Blank = off. ---- */
   analytics: { goatcounter: "damananders" },
 
+  /* ---- Captcha for the DMA Account sign-up/sign-in (/account/). Paste your Cloudflare Turnstile PUBLIC site
+     key here once you've set it up (see site-hub/rateopedia/DMA_ACCOUNTS_SETUP.md). Blank = captcha skipped. ---- */
+  captcha: { turnstile: "" },
+
   /* ---- Feature switches. Set any to false to turn that effect off for everyone. ---- */
   features: {
     typing: true,        // typing headline on the hub
@@ -252,5 +256,6 @@ window.SITE_EXTRA = {
     soundscape: true,    // optional waves-and-wind soundscape on the hub (always starts muted)
     uiSounds: true,      // optional UI sounds (always start off)
     konami: true,        // easter egg
+    accounts: false,     // native DMA Account sign-up at /account/ — keep OFF until the Supabase backend is live (DMA_ACCOUNTS_SETUP.md)
   },
 };
