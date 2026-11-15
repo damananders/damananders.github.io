@@ -353,7 +353,14 @@
       }
       paint();
       Site.on("sync:changed", paint);
-      btn.addEventListener("click", function () { Site.sfx("open"); openDialog(); });
+      btn.addEventListener("click", function () {
+        Site.sfx("open");
+        /* when native accounts are live and there's a real auth session, open the full Account center;
+           otherwise fall back to the sign-in / mini-profile dialog */
+        var accOn = ((((Site.config || {}).features) || {}).accounts) === true;
+        if (accOn && hasDiscordSession() && Site.accountCenter && Site.accountCenter.open()) return;
+        openDialog();
+      });
       tools.appendChild(btn);
     }
 
