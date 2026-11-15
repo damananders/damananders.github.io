@@ -239,7 +239,7 @@ window.SITE_EXTRA = {
 
   /* ---- Captcha for the DMA Account sign-up/sign-in (/account/). Paste your Cloudflare Turnstile PUBLIC site
      key here once you've set it up (see site-hub/rateopedia/DMA_ACCOUNTS_SETUP.md). Blank = captcha skipped. ---- */
-  captcha: { turnstile: "" },
+  captcha: { turnstile: "0x4AAAAAAGChQvl7gpffle1o" },
 
   /* ---- Feature switches. Set any to false to turn that effect off for everyone. ---- */
   features: {
@@ -256,6 +256,6 @@ window.SITE_EXTRA = {
     soundscape: true,    // optional waves-and-wind soundscape on the hub (always starts muted)
     uiSounds: true,      // optional UI sounds (always start off)
     konami: true,        // easter egg
-    accounts: false,     // native DMA Account sign-up at /account/ — keep OFF until the Supabase backend is live (DMA_ACCOUNTS_SETUP.md)
+    accounts: true,      // native DMA Account sign-up at /account/ — ON (Supabase backend live, Turnstile key set 2026-11-15)
   },
 };

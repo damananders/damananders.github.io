@@ -154,7 +154,7 @@ function renderSignedOut() {
   cf.appendChild(cmsg);
   var cbtn = el("button", { class: "btn ac-cta", type: "submit", text: "Create my account" });
   cf.appendChild(cbtn);
-  cf.appendChild(el("p", { class: "ac-fine", text: "I'll email a confirmation link — click it to finish and you're Verified." }));
+  cf.appendChild(el("p", { class: "ac-fine", text: "I'll email a confirmation link — click it to finish and you're Verified. If you don't see it in a minute, check your spam/junk folder." }));
   cf.addEventListener("submit", function (e) { e.preventDefault(); doSignUp(cbtn, cmsg); });
   create.appendChild(cf);
   grid.appendChild(create);
@@ -236,7 +236,7 @@ function doSignUp(btn, msg) {
         say(msg, "That email already has an account. Sign in, then add a password from this page.", "warn");
         return;
       }
-      say(msg, "Almost there! Check your email for a confirmation link to finish. 💛", "ok");
+      say(msg, "Almost there! Check your email for a confirmation link to finish — if it's not in your inbox, look in your spam/junk folder and mark it “Not spam.” 💛", "ok");
       try { if (window.Site && Site.sfx) Site.sfx("win"); } catch (e) {}
     }).catch(done);
   });
@@ -280,7 +280,7 @@ function doReset(msg) {
     if (!sb) { say(msg, "Password reset is being set up — check back soon."); return; }
     sb.auth.resetPasswordForEmail(id, withCaptcha({ redirectTo: location.origin + "/account/?reset=1" })).then(function (res) {
       if (res && res.error) say(msg, "Couldn't send the reset link — try again in a moment.", "err");
-      else say(msg, "If that email has an account, a reset link is on its way. 💛", "ok");
+      else say(msg, "If that email has an account, a reset link is on its way — check your spam folder if it's not in your inbox. 💛", "ok");
     }).catch(function () { say(msg, "Password reset is being set up — check back soon."); });
   });
 }
