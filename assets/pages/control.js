@@ -240,7 +240,7 @@
     app.appendChild(el("section", { class: "panel cp-jump" }, el("h2", { text: "Other owner pages" }),
       el("p", { class: "pg-actions" },
         el("a", { class: "btn ghost", href: "/b4m8t1v6/", text: "Dashboard" }),
-        el("a", { class: "btn ghost", href: "/games/station/", text: "Rate-O-Pedia Operation Station" }),
+        el("a", { class: "btn ghost", href: "/games/ti3c20mi/", text: "Rate-O-Pedia Operation Station" }),
         el("a", { class: "btn ghost", href: "/links/", text: "Links I Like" }),
         el("a", { class: "btn ghost", href: "https://supabase.com/dashboard/project/zjhlhkruqzfendvbglsb", target: "_blank", rel: "noopener", text: "Supabase ↗" }),
         el("a", { class: "btn ghost", href: "https://github.com/damananders/damananders.github.io", target: "_blank", rel: "noopener", text: "GitHub ↗" }))));
