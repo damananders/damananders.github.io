@@ -70,6 +70,93 @@
   }
 
   /* ------------------------------------------------------------------------------------------------
+     Settings rows — shared builder. The page settings used to live behind their own gear button; they now
+     live inside the radial menu (one button for navigation + settings), so this builder is at module scope
+     and makeSettingsRows() mounts a live, self-updating set of rows anywhere.
+     ------------------------------------------------------------------------------------------------ */
+  function st_read(row) { return typeof row.get === "function" ? row.get() : Site.pref(row.pref); }
+  function st_write(row, v) { if (typeof row.set === "function") row.set(v); else Site.setPref(row.pref, v); }
+  function st_locked(row) { return typeof row.disabled === "function" && !!row.disabled(); }
+  function st_hint(row) { return typeof row.hint === "function" ? row.hint() : row.hint; }
+
+  function buildSettingRow(row, n, syncers) {
+    if (!row || !row.label || (!row.pref && typeof row.get !== "function")) return null;
+    var base = "ch-set-" + n, lid = base + "-l", hid = base + "-h", key = String(row.id);
+    var label = el("div", { class: "ch-row__label", id: lid, text: String(row.label) });
+    var hint = el("div", { class: "ch-row__hint", id: hid });
+    var text = el("div", { class: "ch-row__text" }, label, hint);
+    var node = el("div", { class: "ch-row ch-row--" + row.type }, text);
+    function syncHint() { var h = st_hint(row); hint.textContent = h ? String(h) : ""; hint.hidden = !h; }
+
+    if (row.type === "toggle") {
+      var onV = "on" in row ? row.on : true, offV = "off" in row ? row.off : false;
+      var sw = el("button", { type: "button", class: "ch-switch", role: "switch", "aria-checked": "false", "aria-labelledby": lid, "aria-describedby": hid, "data-ch-key": key });
+      var isOn = function () { var v = st_read(row); return typeof row.get === "function" ? !!v : v === onV; };
+      sw.addEventListener("click", function () {
+        if (st_locked(row)) return;
+        var next = !isOn(); st_write(row, typeof row.set === "function" ? next : (next ? onV : offV)); sfx("toggle");
+      });
+      node.appendChild(sw);
+      syncers.push(function () {
+        sw.setAttribute("aria-checked", String(isOn()));
+        if (st_locked(row)) sw.setAttribute("aria-disabled", "true"); else sw.removeAttribute("aria-disabled");
+        syncHint();
+      });
+    } else if (row.type === "choice") {
+      var choices = Array.isArray(row.choices) ? row.choices : [];
+      if (!choices.length) return null;
+      var seg = el("div", { class: "ch-seg", role: "group", "aria-labelledby": lid, "aria-describedby": hid });
+      var btns = choices.map(function (c, i) {
+        var b = el("button", { type: "button", class: "ch-seg__btn", "aria-pressed": "false", "data-ch-key": key + ":" + i, text: String(c.label != null ? c.label : c.value) });
+        b.addEventListener("click", function () { if (st_locked(row) || st_read(row) === c.value) return; st_write(row, c.value); sfx("toggle"); });
+        seg.appendChild(b); return b;
+      });
+      node.appendChild(seg);
+      syncers.push(function () {
+        var v = st_read(row);
+        btns.forEach(function (b, i) { b.setAttribute("aria-pressed", String(choices[i].value === v)); });
+        syncHint();
+      });
+    } else if (row.type === "range") {
+      var min = row.min != null ? +row.min : 0, max = row.max != null ? +row.max : 1, step = row.step != null ? +row.step : (max - min) / 20;
+      var out = el("span", { class: "ch-row__val", "aria-hidden": "true" });
+      var input = el("input", { type: "range", class: "ch-range", min: String(min), max: String(max), step: String(step), "aria-labelledby": lid, "aria-describedby": hid, "data-ch-key": key });
+      var show = function (v) {
+        var pct = max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0;
+        input.style.setProperty("--ch-fill", (pct * 100).toFixed(1) + "%");
+        var txt = max <= 1 && min >= 0 ? Math.round(v * 100) + "%" : String(Math.round(v * 100) / 100);
+        out.textContent = txt; input.setAttribute("aria-valuetext", txt);
+      };
+      input.addEventListener("input", function () { var v = parseFloat(input.value); if (isNaN(v) || st_locked(row)) return; show(v); st_write(row, v); });
+      node.appendChild(out); node.appendChild(input);
+      syncers.push(function () {
+        var v = parseFloat(st_read(row)); if (isNaN(v)) v = min;
+        if (document.activeElement !== input || parseFloat(input.value) !== v) input.value = String(v);
+        show(v); syncHint();
+      });
+    } else return null;
+    return node;
+  }
+
+  /* A live rows container: draw() rebuilds from Site.settings.list(), syncAll() refreshes control states. */
+  function makeSettingsRows() {
+    var syncers = [], box = el("div", { class: "ch-panel__rows" });
+    function syncAll() { syncers.forEach(function (fn) { try { fn(); } catch (e) { console.error("[site] settings row", e); } }); }
+    function draw() {
+      var act = document.activeElement, key = act && box.contains(act) ? act.getAttribute("data-ch-key") : null;
+      syncers.length = 0; box.textContent = "";
+      Site.settings.list().forEach(function (row, i) { var n = null; try { n = buildSettingRow(row, i, syncers); } catch (e) { console.error("[site] settings row", e); } if (n) box.appendChild(n); });
+      syncAll();
+      if (key != null) {
+        var again = null;
+        Array.prototype.forEach.call(box.querySelectorAll("[data-ch-key]"), function (c) { if (!again && c.getAttribute("data-ch-key") === key) again = c; });
+        focusQuietly(again);
+      }
+    }
+    return { box: box, draw: draw, syncAll: syncAll };
+  }
+
+  /* ------------------------------------------------------------------------------------------------
      Sticky, shrinking header
      ------------------------------------------------------------------------------------------------ */
   Site.ready(function () {
@@ -236,154 +323,8 @@
       disabled: motionForcedByDevice
     });
 
-    var tools = Site.tools(); if (!tools || !nav) return;
-
-    var open = false, dirty = true, drawing = false, syncers = [];
-    var rowsBox = el("div", { class: "ch-panel__rows" });
-    var closeBtn = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Close settings" }, svg(ICON.close));
-    var panel = el("div", { class: "ch-panel", id: "ch-settings", role: "dialog", "aria-modal": "false", "aria-labelledby": "ch-settings-title", tabindex: "-1", hidden: true },
-      el("div", { class: "ch-panel__head" }, el("h2", { class: "ch-panel__title", id: "ch-settings-title", text: "Settings" }), closeBtn),
-      rowsBox);
-    var gear = el("button", { type: "button", class: "sx-iconbtn ch-gear", style: { order: "20" }, "aria-label": "Settings", "aria-haspopup": "dialog", "aria-expanded": "false", "aria-controls": "ch-settings" },
-      svg(ICON.gear));
-
-    function read(row) { return typeof row.get === "function" ? row.get() : Site.pref(row.pref); }
-    function write(row, v) { if (typeof row.set === "function") row.set(v); else Site.setPref(row.pref, v); }
-    function locked(row) { return typeof row.disabled === "function" && !!row.disabled(); }
-    function hintOf(row) { return typeof row.hint === "function" ? row.hint() : row.hint; }
-
-    function buildRow(row, n) {
-      if (!row || !row.label || (!row.pref && typeof row.get !== "function")) return null;
-      var base = "ch-set-" + n, lid = base + "-l", hid = base + "-h", key = String(row.id);
-      var label = el("div", { class: "ch-row__label", id: lid, text: String(row.label) });
-      var hint = el("div", { class: "ch-row__hint", id: hid });
-      var text = el("div", { class: "ch-row__text" }, label, hint);
-      var node = el("div", { class: "ch-row ch-row--" + row.type }, text);
-      function syncHint() { var h = hintOf(row); hint.textContent = h ? String(h) : ""; hint.hidden = !h; }
-
-      if (row.type === "toggle") {
-        var onV = "on" in row ? row.on : true, offV = "off" in row ? row.off : false;
-        var sw = el("button", { type: "button", class: "ch-switch", role: "switch", "aria-checked": "false", "aria-labelledby": lid, "aria-describedby": hid, "data-ch-key": key });
-        var isOn = function () { var v = read(row); return typeof row.get === "function" ? !!v : v === onV; };
-        sw.addEventListener("click", function () {
-          if (locked(row)) return;
-          var next = !isOn(); write(row, typeof row.set === "function" ? next : (next ? onV : offV)); sfx("toggle");
-        });
-        node.appendChild(sw);
-        syncers.push(function () {
-          sw.setAttribute("aria-checked", String(isOn()));
-          if (locked(row)) sw.setAttribute("aria-disabled", "true"); else sw.removeAttribute("aria-disabled");
-          syncHint();
-        });
-      } else if (row.type === "choice") {
-        var choices = Array.isArray(row.choices) ? row.choices : [];
-        if (!choices.length) return null;
-        var seg = el("div", { class: "ch-seg", role: "group", "aria-labelledby": lid, "aria-describedby": hid });
-        var btns = choices.map(function (c, i) {
-          var b = el("button", { type: "button", class: "ch-seg__btn", "aria-pressed": "false", "data-ch-key": key + ":" + i, text: String(c.label != null ? c.label : c.value) });
-          b.addEventListener("click", function () { if (locked(row) || read(row) === c.value) return; write(row, c.value); sfx("toggle"); });
-          seg.appendChild(b); return b;
-        });
-        node.appendChild(seg);
-        syncers.push(function () {
-          var v = read(row);
-          btns.forEach(function (b, i) { b.setAttribute("aria-pressed", String(choices[i].value === v)); });
-          syncHint();
-        });
-      } else if (row.type === "range") {
-        var min = row.min != null ? +row.min : 0, max = row.max != null ? +row.max : 1, step = row.step != null ? +row.step : (max - min) / 20;
-        var out = el("span", { class: "ch-row__val", "aria-hidden": "true" });
-        var input = el("input", { type: "range", class: "ch-range", min: String(min), max: String(max), step: String(step), "aria-labelledby": lid, "aria-describedby": hid, "data-ch-key": key });
-        var show = function (v) {
-          var pct = max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0;
-          input.style.setProperty("--ch-fill", (pct * 100).toFixed(1) + "%");
-          var txt = max <= 1 && min >= 0 ? Math.round(v * 100) + "%" : String(Math.round(v * 100) / 100);
-          out.textContent = txt; input.setAttribute("aria-valuetext", txt);
-        };
-        input.addEventListener("input", function () { var v = parseFloat(input.value); if (isNaN(v) || locked(row)) return; show(v); write(row, v); });
-        node.appendChild(out); node.appendChild(input);
-        syncers.push(function () {
-          var v = parseFloat(read(row)); if (isNaN(v)) v = min;
-          if (document.activeElement !== input || parseFloat(input.value) !== v) input.value = String(v);
-          show(v); syncHint();
-        });
-      } else return null;
-      return node;
-    }
-
-    function syncAll() { syncers.forEach(function (fn) { try { fn(); } catch (e) { console.error("[site] settings row", e); } }); }
-
-    function draw() {
-      dirty = false; drawing = true;
-      var act = document.activeElement, key = act && rowsBox.contains(act) ? act.getAttribute("data-ch-key") : null;
-      syncers = []; rowsBox.textContent = "";
-      Site.settings.list().forEach(function (row, i) { var n = null; try { n = buildRow(row, i); } catch (e) { console.error("[site] settings row", e); } if (n) rowsBox.appendChild(n); });
-      syncAll();
-      if (key != null) {
-        var again = null;
-        Array.prototype.forEach.call(rowsBox.querySelectorAll("[data-ch-key]"), function (c) { if (!again && c.getAttribute("data-ch-key") === key) again = c; });
-        focusQuietly(again || panel);
-      }
-      drawing = false;
-    }
-
-    /* focus: "back" returns it to the gear, "auto" does so only if it was inside the panel, "leave" never moves it */
-    function setOpen(v, focus) {
-      if (v === open) return;
-      open = v;
-      gear.setAttribute("aria-expanded", String(v));
-      root.classList.toggle("ch-open", v);
-      if (v) {
-        if (dirty) draw(); else syncAll();
-        panel.hidden = false; void panel.offsetWidth; panel.classList.add("is-in");
-        focusQuietly(rowsBox.querySelector("[data-ch-key]:not([aria-disabled='true'])") || closeBtn);
-        sfx("open");
-      } else {
-        var inside = panel.contains(document.activeElement);
-        panel.classList.remove("is-in"); panel.hidden = true;
-        if (focus === "back" || (focus === "auto" && inside)) focusQuietly(gear);
-        sfx("close");
-      }
-    }
-    function toggle() { setOpen(!open, "back"); }
-
-    gear.addEventListener("click", toggle);
-    closeBtn.addEventListener("click", function () { setOpen(false, "back"); });
-    document.addEventListener("keydown", function (e) { if (open && e.key === "Escape") { e.preventDefault(); setOpen(false, "back"); } });
-    /* A press outside the panel only dismisses it: the click that ends that same press is swallowed, so it cannot
-       also follow a link or flip a button underneath. Any later press or key forgets it again. */
-    var swallow = false;
-    document.addEventListener("pointerdown", function (e) {
-      swallow = false;
-      if (!open) return; var t = e.target;
-      if (t && t.nodeType === 1 && (panel.contains(t) || gear.contains(t))) return;
-      setOpen(false, "auto");
-      swallow = !e.button;
-    }, true);
-    window.addEventListener("pointercancel", function () { swallow = false; }, true);   /* the press became a scroll */
-    window.addEventListener("keydown", function () { swallow = false; }, true);
-    window.addEventListener("click", function (e) {
-      if (!swallow) return; swallow = false;
-      if (e.detail === 0) return;                                                         /* keyboard activation */
-      e.preventDefault(); e.stopImmediatePropagation();
-    }, true);
-    /* Keys that move a slider or a scroll position stay inside the panel (pages have their own arrow-key shortcuts). */
-    panel.addEventListener("keydown", function (e) { if (/^(Arrow|Home$|End$|Page)/.test(e.key)) e.stopPropagation(); });
-    /* Tabbing (or steering with a controller) out of the panel closes it; focus stays where the visitor put it. */
-    panel.addEventListener("focusout", function (e) {
-      if (!open || drawing) return; var to = e.relatedTarget;
-      if (to && !panel.contains(to) && to !== gear) setOpen(false, "leave");
-    });
-
-    Site.on("ui:escape", function () { if (open) setOpen(false, "back"); });
-    Site.on("ui:settings", toggle);
-    Site.on("settings:changed", function () { dirty = true; if (open) draw(); });
-    Site.on("pref", function () { if (open) syncAll(); });
-    Site.on("pref:theme", function () { if (open) syncAll(); });    /* also fired when the device theme changes */
-    Site.on("pref:motion", function () { if (open) syncAll(); });   /* also fired when the device motion setting changes */
-
-    tools.appendChild(gear);
-    nav.appendChild(panel);
+    /* The settings themselves now render inside the radial menu (see "chrome:menu"); this block only
+       registers the rows every page needs. Other files (a11y, audio, seasons) register their own. */
   }, "chrome:settings");
 
   /* ------------------------------------------------------------------------------------------------
@@ -624,18 +565,70 @@
     overlay.appendChild(seg);
     applyMode(mode, false);
 
-    function focusables() { return [center].concat(nodes).concat(segBtns); }
+    /* ---- page settings, folded into the menu so one button covers navigation and settings ---- */
+    var hasSettings = feat("settingsPanel"), settings = null, settingsDrawn = false, view = "pages", pendingView = "pages";
+    var vPages = null, vSet = null, setClose = null;
+    if (hasSettings) {
+      settings = makeSettingsRows();
+      setClose = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Close settings" }, svg(ICON.close));
+      setClose.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
+      var setPanel = el("div", { class: "ch-panel ch-panel--rad", role: "group", "aria-label": "Settings" },
+        el("div", { class: "ch-panel__head" }, el("h2", { class: "ch-panel__title", text: "Settings" }), setClose),
+        settings.box);
+      var setView = el("div", { class: "ch-rad__settings" }, setPanel);
+      overlay.appendChild(setView);
+      /* keys that drive a slider stay inside the panel (pages have their own arrow shortcuts) */
+      setPanel.addEventListener("keydown", function (e) { if (/^(Arrow|Home$|End$|Page)/.test(e.key)) e.stopPropagation(); });
+
+      /* view switch (top of the overlay): Pages ↔ Settings */
+      vPages = el("button", { type: "button", class: "ch-rad__segb", "data-v": "pages", "aria-pressed": "true" },
+        svg('<circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/><circle cx="12" cy="12" r="2.1"/>', { fill: "currentColor", stroke: "none" }), el("span", { text: "Pages" }));
+      vSet = el("button", { type: "button", class: "ch-rad__segb", "data-v": "settings", "aria-pressed": "false" }, svg(ICON.gear), el("span", { text: "Settings" }));
+      var vseg = el("div", { class: "ch-rad__views", role: "group", "aria-label": "Menu view" }, vPages, vSet);
+      overlay.appendChild(vseg);
+      vPages.addEventListener("click", function () { showView("pages"); sfx("tap"); try { (wheel.querySelector(".is-current") || nodes[0] || center).focus(); } catch (e) {} });
+      vSet.addEventListener("click", function () { showView("settings"); sfx("tap"); setTimeout(function () { focusQuietly(settings.box.querySelector("[data-ch-key]:not([aria-disabled='true'])") || setClose); }, 20); });
+
+      Site.on("settings:changed", function () { settingsDrawn = false; if (view === "settings" && open) { settings.draw(); settingsDrawn = true; } });
+      function resync() { if (view === "settings" && open) settings.syncAll(); }
+      Site.on("pref", resync); Site.on("pref:theme", resync); Site.on("pref:motion", resync);
+    }
+
+    function showView(v) {
+      view = (v === "settings" && hasSettings) ? "settings" : "pages";
+      overlay.setAttribute("data-view", view);
+      if (vPages) { vPages.classList.toggle("is-on", view === "pages"); vPages.setAttribute("aria-pressed", String(view === "pages")); }
+      if (vSet) { vSet.classList.toggle("is-on", view === "settings"); vSet.setAttribute("aria-pressed", String(view === "settings")); }
+      if (view === "settings" && settings) {
+        if (!settingsDrawn) { settings.draw(); settingsDrawn = true; } else settings.syncAll();
+        Site.emit("ui:settings-shown");                                 /* play.js awards the "Tinkerer" trophy on this */
+      }
+    }
+    showView("pages");
+
+    function focusables() {
+      if (view === "settings" && hasSettings) {
+        var rows = Array.prototype.slice.call(settings.box.querySelectorAll("[data-ch-key]:not([aria-disabled='true'])"));
+        return [vPages, vSet].concat(rows).concat([setClose]);
+      }
+      return [center].concat(nodes).concat(segBtns).concat(vPages ? [vPages, vSet] : []);
+    }
     function set(on) {
       if (on === open) return;
       open = on; btn.setAttribute("aria-expanded", String(on));
       document.documentElement.classList.toggle("ch-radial-open", on);
       if (closing) { clearTimeout(closing); closing = 0; }
       if (on) {
+        showView(pendingView); pendingView = "pages";
         overlay.hidden = false;
         /* next frame so the fly-out transition runs from the collapsed state */
         requestAnimationFrame(function () { requestAnimationFrame(function () { overlay.classList.add("is-open"); }); });
-        var cur = wheel.querySelector(".is-current") || nodes[0];
-        setTimeout(function () { try { (cur || center).focus(); } catch (e) {} }, 40);
+        setTimeout(function () {
+          try {
+            if (view === "settings" && settings) focusQuietly(settings.box.querySelector("[data-ch-key]:not([aria-disabled='true'])") || setClose);
+            else (wheel.querySelector(".is-current") || nodes[0] || center).focus();
+          } catch (e) {}
+        }, 40);
       } else {
         overlay.classList.remove("is-open");
         var ms = Site.reducedMotion ? 0 : 320;
@@ -646,14 +639,21 @@
     center.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
     scrim.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
     Site.on("ui:escape", function () { if (open) { set(false); try { btn.focus(); } catch (e) {} } });
+    /* the controller's Start button, or any ui:settings emitter, opens the menu straight to Settings */
+    Site.on("ui:settings", function () {
+      if (!hasSettings) return;
+      pendingView = "settings";
+      if (open) { showView("settings"); setTimeout(function () { focusQuietly(settings.box.querySelector("[data-ch-key]:not([aria-disabled='true'])") || setClose); }, 20); }
+      else { set(true); sfx("open"); }
+    });
 
     overlay.addEventListener("keydown", function (e) {
       if (!open) return;
       if (e.key === "Escape") { set(false); sfx("close"); try { btn.focus(); } catch (x) {} return; }
-      /* arrows / step keys move focus around the ring */
+      /* arrows / step keys move focus around the ring (pages view only) */
       var step = 0;
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") step = 1;
-      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") step = -1;
+      if (view === "pages" && (e.key === "ArrowRight" || e.key === "ArrowDown")) step = 1;
+      else if (view === "pages" && (e.key === "ArrowLeft" || e.key === "ArrowUp")) step = -1;
       if (step && nodes.length) {
         e.preventDefault();
         var cur = nodes.indexOf(document.activeElement);

@@ -25,6 +25,7 @@
 
   var CODE_KEY = "syncCode", HANDLE_KEY = "syncHandle";
   var LINK = '<path d="M9.5 14.5 14.5 9.5"/><path d="M11 7l1.2-1.2a3.5 3.5 0 0 1 5 5L16 12"/><path d="M13 17l-1.2 1.2a3.5 3.5 0 0 1-5-5L8 12"/>';
+  var PERSON = '<circle cx="12" cy="8.2" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>';
 
   function code() { return String(Site.store.get(CODE_KEY, "") || ""); }
   function linked() { return !!code(); }
@@ -151,6 +152,7 @@
         });
         off.addEventListener("click", function () { unlink(); Site.sfx("toggle"); paint(); });
         body.appendChild(el("div", { class: "sy-actions" }, now, off));
+        if (who) body.appendChild(el("a", { class: "sy-help", href: "/games/profile/?u=" + encodeURIComponent(normalize(who)), text: "View my Rate-O-Pedia profile →" }));
         body.appendChild(statusEl);
       } else {
         body.appendChild(el("p", { class: "sy-note", text: "Link this browser to carry your trophies and arcade progress across devices. On your home browser, sign in with Discord on your Rate-O-Pedia profile to get a secret sync code, then paste it below." }));
@@ -182,21 +184,33 @@
       }
     }
     paint();
-    var d = Site.modal({ id: "sy-link", title: "Link account", className: "sy-modal", body: body });
+    var d = Site.modal({ id: "sy-link", title: linked() ? "Your profile" : "Sign in", className: "sy-modal", body: body });
     d.addEventListener("close", function () { d.remove(); statusEl = null; });
     Site.dialog.open(d);
   }
 
+  /* the first letter of the handle, for the avatar when linked (falls back to a star) */
+  function initial() { var h = normalize(handle()); return h ? h.charAt(0) : "★"; }
+
   Site.ready(function () {
-    /* header tool button, sits with the theme / sound / trophy buttons */
+    /* header profile chip — the account's home in the top-right corner of every page. Shows the linked
+       handle (with an avatar) when signed in, or a quiet "Sign in" when not. Click opens the profile panel. */
     var tools = Site.tools();
     if (tools) {
-      var btn = el("button", { type: "button", class: "sx-iconbtn sy-btn-tool", style: { order: "35" }, "aria-label": "Link account", title: "Link account across devices" }, svg(LINK));
-      var dot = el("span", { class: "sy-dot", "aria-hidden": "true" });
-      btn.appendChild(dot);
-      function paintDot() { btn.classList.toggle("is-linked", linked()); }
-      paintDot();
-      Site.on("sync:changed", paintDot);
+      var av = el("span", { class: "sy-av", "aria-hidden": "true" });
+      var nm = el("span", { class: "sy-name" });
+      var btn = el("button", { type: "button", class: "sx-iconbtn sy-profile", style: { order: "50" }, "aria-haspopup": "dialog" }, av, nm);
+      function paint() {
+        var on = linked(), who = handle();
+        btn.classList.toggle("is-linked", on);
+        av.textContent = ""; av.classList.remove("sy-av--initial");
+        if (on && who) { av.textContent = initial(); av.classList.add("sy-av--initial"); nm.textContent = who; }
+        else { av.appendChild(svg(PERSON)); nm.textContent = on ? "Account" : "Sign in"; }
+        var lbl = on ? ("Profile" + (who ? " — " + who : "")) : "Sign in to your profile";
+        btn.setAttribute("aria-label", lbl); btn.title = lbl;
+      }
+      paint();
+      Site.on("sync:changed", paint);
       btn.addEventListener("click", function () { Site.sfx("open"); openDialog(); });
       tools.appendChild(btn);
     }

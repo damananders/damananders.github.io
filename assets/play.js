@@ -281,6 +281,7 @@
       if (id === "hb-code") award("door"); else if (id === "hg-box") award("hire"); else if (id === "ax-keys") award("shortcuts");
     });
     Site.on("resume:card", function () { award("card"); });   /* opened a project dropdown on the résumé */
+    Site.on("ui:settings-shown", function () { award("settings"); });   /* settings now live inside the radial menu */
     /* milestone: earning half of all the trophies. re-checked on every award. */
     function checkHalf() { if (!got.halfway && count() >= Math.ceil(CORE.length / 2)) award("halfway"); }
     Site.on("trophy:earned", checkHalf);
@@ -289,7 +290,6 @@
     doc.addEventListener("click", function (e) {
       var t = e.target; if (!t || !t.closest) return;
       if (t.closest(".ch-theme")) { award("theme"); themeFlips++; Site.store.set("themeFlips", themeFlips); if (themeFlips >= 5) award("themehop"); }
-      else if (t.closest(".ch-gear")) award("settings");
       else if (t.closest(".ch-share")) award("share");
       else if (t.closest(".ch-menu")) award("menu");
       else if (t.closest(".lk2-go,.lk2-shotlink")) award("linkout");
