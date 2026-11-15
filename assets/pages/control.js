@@ -341,8 +341,8 @@
   }
   function ensureWiz() {
     if (!wizLoad) {
-      wizLoad = loadScript("/assets/arcade/wizard-story.js?v=1")
-        .then(function () { return loadScript("/assets/arcade/wizard-story-admin.js?v=1"); })
+      wizLoad = loadScript("/assets/arcade/wizard-story.js?v=2")
+        .then(function () { return loadScript("/assets/arcade/wizard-story-admin.js?v=2"); })
         .then(function () { if (!window.WizStoryAdmin || typeof window.WizStoryAdmin.mount !== "function") throw new Error("WizStoryAdmin missing"); })
         .catch(function (e) { wizLoad = null; throw e; });
     }
