@@ -65,7 +65,7 @@
     return rpc("sync_pull", { p_code: code() }).then(function (res) {
       if (!res || res.ok === false) {
         if (res && res.error === "bad-code") {   /* regenerated or wrong: forget it, do NOT retry */
-          Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, "");
+          Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, ""); Site.store.set(PROFILE_KEY, null);
           Site.emit("sync:changed");
           if (opts.loud) say("That sync code didn't work. Please enter it again from your profile.", "err");
         }
@@ -94,7 +94,7 @@
       if (!patch || !Object.keys(patch).length) return;
       rpc("sync_push", { p_code: code(), p_ns: ns, p_patch: patch }).then(function (res) {
         if (res && res.ok === false && res.error === "bad-code") {
-          Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, ""); Site.emit("sync:changed");
+          Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, ""); Site.store.set(PROFILE_KEY, null); Site.emit("sync:changed");
         }
       }).catch(function () {});
     });
@@ -122,11 +122,40 @@
     });
   }
   function unlink() {
-    Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, "");
+    Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, ""); Site.store.set(PROFILE_KEY, null);
     Site.emit("sync:changed");
   }
 
-  Site.sync = { code: code, linked: linked, handle: handle, link: link, unlink: unlink, pull: pull, push: push, pretty: pretty };
+  /* ---- Rate-O-Pedia profile (sync_profile) ----
+     The chip and the mini profile card mirror the member's ROP customization: display name, picture, accent
+     colour and a few public stats. Keyed off the sync code, so it works for the linked member regardless of
+     their profile-search opt-in. 404/offline leaves whatever is cached (graceful); a bad code clears it. */
+  var PROFILE_KEY = "syncProfile";
+  var AV_OK = /^https:\/\/(cdn\.discordapp\.com\/|[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/)/i;
+  function profileData() { var p = Site.store.get(PROFILE_KEY, null); return p && typeof p === "object" ? p : null; }
+  function fetchProfile() {
+    if (!linked()) return Promise.resolve(null);
+    return rpc("sync_profile", { p_code: code() }).then(function (res) {
+      if (!res || res.ok === false) {
+        if (res && res.error === "bad-code") { Site.store.set(CODE_KEY, ""); Site.store.set(HANDLE_KEY, ""); Site.store.set(PROFILE_KEY, null); Site.emit("sync:changed"); }
+        return null;
+      }
+      var s = (res.stats && typeof res.stats === "object") ? res.stats : {};
+      var p = {
+        handle: String(res.handle || handle() || ""), name: String(res.name || "").slice(0, 60),
+        avatar: AV_OK.test(String(res.avatar || "")) ? String(res.avatar) : "",
+        accentHex: /^#[0-9a-f]{6}$/i.test(String(res.accent_hex || "")) ? String(res.accent_hex) : "",
+        motto: String(res.motto || "").slice(0, 160), member: res.member !== false, since: String(res.member_since || ""),
+        stats: { ratings: +s.ratings || 0, reviews: +s.reviews || 0, lists: +s.lists || 0, followers: +s.followers || 0, following: +s.following || 0 }
+      };
+      Site.store.set(PROFILE_KEY, p);
+      if (p.handle) Site.store.set(HANDLE_KEY, p.handle);
+      Site.emit("sync:changed");
+      return p;
+    }).catch(function () { return null; });
+  }
+
+  Site.sync = { code: code, linked: linked, handle: handle, link: link, unlink: unlink, pull: pull, push: push, pretty: pretty, profile: profileData, fetchProfile: fetchProfile };
 
   /* A tiny status line used inside the dialog. */
   var statusEl = null;
@@ -134,26 +163,56 @@
 
   function openDialog() {
     var body = el("div", { class: "sy-box" });
+    var dlgOpen = true;
     statusEl = el("p", { class: "sy-status", role: "status", "aria-live": "polite" });
 
     function paint() {
       body.textContent = "";
       if (linked()) {
-        var who = handle();
-        body.appendChild(el("p", { class: "sy-linked" },
-          svg('<path d="M4 12.5 9.5 18 20 6.5"/>', { class: "sy-tick" }),
-          el("span", { html: who ? "This browser is linked to <strong>" + who.replace(/[<>&]/g, "") + "</strong>." : "This browser is linked to your account." })));
-        body.appendChild(el("p", { class: "sy-note", text: "Your trophies and arcade progress sync here automatically. Syncing only ever adds — it never deletes, so linking is safe." }));
-        var now = el("button", { type: "button", class: "btn sy-btn", text: "Sync now" });
+        var who = handle(), p = profileData();
+        var profUrl = who ? "/games/profile/?u=" + encodeURIComponent(who) : "/games/";
+        var nameStr = (p && p.name) || who || "Your profile";
+
+        /* header: avatar, name (links to the full ROP profile), @handle, accent-tinted */
+        var avBig = el("span", { class: "sy-card__av" });
+        if (p && p.avatar) {
+          var im = el("img", { class: "sy-card__img", src: p.avatar, alt: "" });
+          im.addEventListener("error", function () { avBig.replaceChildren(); avBig.classList.add("is-initial"); avBig.textContent = letterOf(nameStr); });
+          avBig.appendChild(im);
+        } else { avBig.classList.add("is-initial"); avBig.textContent = letterOf(nameStr); }
+        var who2 = el("div", { class: "sy-card__who" },
+          el("a", { class: "sy-card__name", href: profUrl, text: nameStr }),
+          who ? el("span", { class: "sy-card__handle", text: "@" + who }) : null,
+          p && p.member === false ? el("span", { class: "sy-card__flag", text: "Restricted" }) : null);
+        var card = el("div", { class: "sy-card" + (p && p.accentHex ? " sy-card--accent" : "") }, el("div", { class: "sy-card__head" }, avBig, who2));
+        if (p && p.accentHex) card.style.setProperty("--sy-ac", p.accentHex);
+        if (p && p.motto) card.appendChild(el("p", { class: "sy-card__motto", text: p.motto }));
+
+        /* stats overview */
+        if (p && p.stats) {
+          var S = p.stats, fmt = Site.fmtNum || function (n) { return String(n); };
+          var grid = el("div", { class: "sy-stats" });
+          [["Ratings", S.ratings], ["Reviews", S.reviews], ["Lists", S.lists], ["Followers", S.followers], ["Following", S.following]].forEach(function (s) {
+            grid.appendChild(el("div", { class: "sy-stat" }, el("b", { text: fmt(s[1] || 0) }), el("span", { text: s[0] })));
+          });
+          card.appendChild(grid);
+        }
+        if (p && p.since && Site.fmtDate) card.appendChild(el("p", { class: "sy-card__since", text: "Member since " + Site.fmtDate(p.since) }));
+        body.appendChild(card);
+
+        body.appendChild(el("p", { class: "sy-note", text: "Your trophies and arcade progress sync to this account automatically. Syncing only ever adds — it never deletes." }));
+        var now = el("button", { type: "button", class: "btn btn--primary sy-btn", text: "Sync now" });
         var off = el("button", { type: "button", class: "btn sy-btn sy-btn--ghost", text: "Unlink this browser" });
         now.addEventListener("click", function () {
           say("Syncing…"); now.disabled = true;
-          pull({ loud: true }).then(function (r) { now.disabled = false; say(r.ok ? "Synced. You're up to date." : (r.error === "bad-code" ? "" : "Couldn't sync just now."), r.ok ? "ok" : "err"); });
+          Promise.all([pull({ loud: true }), fetchProfile()]).then(function (rs) { now.disabled = false; var r = rs[0]; paint(); say(r.ok ? "Synced. You're up to date." : (r.error === "bad-code" ? "" : "Couldn't sync just now."), r.ok ? "ok" : "err"); });
         });
         off.addEventListener("click", function () { unlink(); Site.sfx("toggle"); paint(); });
         body.appendChild(el("div", { class: "sy-actions" }, now, off));
-        if (who) body.appendChild(el("a", { class: "sy-help", href: "/games/profile/?u=" + encodeURIComponent(normalize(who)), text: "View my Rate-O-Pedia profile →" }));
+        body.appendChild(el("a", { class: "sy-help", href: profUrl, text: "View my full Rate-O-Pedia profile →" }));
         body.appendChild(statusEl);
+        /* no profile data cached yet (first open, or RPC just went live) — fetch and repaint */
+        if (!p) fetchProfile().then(function (np) { if (np && dlgOpen) paint(); });
       } else {
         body.appendChild(el("p", { class: "sy-note", text: "Link this browser to carry your trophies and arcade progress across devices. On your home browser, sign in with Discord on your Rate-O-Pedia profile to get a secret sync code, then paste it below." }));
         var input = el("input", { type: "text", class: "sy-input", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "XXXX-XXXX-XXXX-XXXX", "aria-label": "Sync code" });
@@ -185,12 +244,12 @@
     }
     paint();
     var d = Site.modal({ id: "sy-link", title: linked() ? "Your profile" : "Sign in", className: "sy-modal", body: body });
-    d.addEventListener("close", function () { d.remove(); statusEl = null; });
+    d.addEventListener("close", function () { dlgOpen = false; d.remove(); statusEl = null; });
     Site.dialog.open(d);
   }
 
-  /* the first letter of the handle, for the avatar when linked (falls back to a star) */
-  function initial() { var h = normalize(handle()); return h ? h.charAt(0) : "★"; }
+  /* the first letter of a name/handle, for the avatar fallback (a star if there's nothing usable) */
+  function letterOf(str) { var s = String(str || "").replace(/[^A-Za-z0-9]/g, ""); return s ? s.charAt(0).toUpperCase() : "★"; }
 
   Site.ready(function () {
     /* header profile chip — the account's home in the top-right corner of every page. Shows the linked
@@ -201,12 +260,21 @@
       var nm = el("span", { class: "sy-name" });
       var btn = el("button", { type: "button", class: "sx-iconbtn sy-profile", style: { order: "50" }, "aria-haspopup": "dialog" }, av, nm);
       function paint() {
-        var on = linked(), who = handle();
+        var on = linked(), who = handle(), p = profileData();
         btn.classList.toggle("is-linked", on);
-        av.textContent = ""; av.classList.remove("sy-av--initial");
-        if (on && who) { av.textContent = initial(); av.classList.add("sy-av--initial"); nm.textContent = who; }
-        else { av.appendChild(svg(PERSON)); nm.textContent = on ? "Account" : "Sign in"; }
-        var lbl = on ? ("Profile" + (who ? " — " + who : "")) : "Sign in to your profile";
+        av.replaceChildren(); av.classList.remove("sy-av--initial");
+        var ac = on && p && p.accentHex ? p.accentHex : "";
+        if (ac) { btn.style.setProperty("--sy-ac", ac); btn.classList.add("sy-profile--accent"); }
+        else { btn.style.removeProperty("--sy-ac"); btn.classList.remove("sy-profile--accent"); }
+        var nameStr = on ? ((p && p.name) || who) : "";
+        if (on && p && p.avatar) {
+          var img = el("img", { class: "sy-av-img", src: p.avatar, alt: "", loading: "lazy" });
+          img.addEventListener("error", function () { av.replaceChildren(); av.classList.add("sy-av--initial"); av.textContent = letterOf(nameStr || who); });
+          av.appendChild(img);
+        } else if (on) { av.classList.add("sy-av--initial"); av.textContent = letterOf(nameStr || who); }
+        else { av.appendChild(svg(PERSON)); }
+        nm.textContent = on ? (nameStr || "Account") : "Sign in";
+        var lbl = on ? ("Profile" + (nm.textContent ? " — " + nm.textContent : "")) : "Sign in to your profile";
         btn.setAttribute("aria-label", lbl); btn.title = lbl;
       }
       paint();
@@ -215,8 +283,8 @@
       tools.appendChild(btn);
     }
 
-    /* when linked, pull once on load so this browser catches anything earned elsewhere */
-    if (linked()) setTimeout(function () { pull({ loud: false }); }, 1500);
+    /* when linked, pull progress AND refresh the profile (name/pic/accent/stats) once on load */
+    if (linked()) setTimeout(function () { pull({ loud: false }); fetchProfile(); }, 1500);
 
     /* live: a trophy earned on this browser goes up to the account */
     Site.on("trophy:earned", function (v) {
