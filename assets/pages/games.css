@@ -1402,7 +1402,7 @@ body.pt-on .pf-hero__say{border-color:color-mix(in srgb,var(--pt-acc2) 50%,trans
 .pt-bgthumb{width:96px;height:54px;border-radius:8px;object-fit:cover;border:1px solid var(--sx-line-2)}
 
 /* search box on the ROP home: bordered, with a search button (sits clear of the banner's glow) */
-.gm-qbox{position:relative;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 14px;border-radius:16px;margin-top:4px;
+.gm-qbox{position:relative;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 10px;border-radius:16px;margin-top:4px;
   background:linear-gradient(180deg,#0c110f,#0a0e0c);border:1.5px solid color-mix(in srgb,var(--rop,#36d39a) 45%,var(--sx-line-2));
   box-shadow:0 0 0 1px rgba(0,0,0,.55),0 10px 26px -18px rgba(0,0,0,.9);transition:border-color .15s,box-shadow .15s}
 .gm-qbox:focus-within{border-color:var(--rop,#36d39a);box-shadow:0 0 0 3px color-mix(in srgb,var(--rop,#36d39a) 22%,transparent),0 0 0 1px rgba(0,0,0,.55)}
