@@ -145,7 +145,7 @@
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* ---- Rate-O-Pedia showcase banner under the avenues (links to /games/) — the site's headline feature ---- */
-.hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:16px;margin-top:26px;padding:32px 34px 30px;text-decoration:none;color:var(--sx-text);border-radius:26px;
+.hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:1fr;gap:22px;align-items:center;margin-top:26px;padding:32px 34px 30px;text-decoration:none;color:var(--sx-text);border-radius:26px;
   background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 26%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 24%,transparent),transparent 60%),rgba(13,16,21,.9);
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   border:1.5px solid color-mix(in srgb,var(--hr) 58%,var(--sx-line));
@@ -158,6 +158,7 @@
 @keyframes hb-rate-drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-18%,10%) scale(1.15)}}
 .hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-4px);border-color:var(--hr);box-shadow:0 34px 70px -28px var(--hr),0 0 0 1px var(--hr),inset 0 0 50px -20px color-mix(in srgb,var(--hr) 90%,transparent);outline:none}
 .hb-rate:focus-visible{outline:2px solid var(--hr);outline-offset:3px}
+.hb-rate__main{display:flex;flex-direction:column;gap:16px;min-width:0}
 .hb-rate__top{display:flex;align-items:center;gap:20px;min-width:0}
 .hb-rate__icon{flex:none;display:grid;place-items:center;width:88px;height:88px;border-radius:22px;color:var(--hr);background:color-mix(in srgb,var(--hr) 16%,rgba(0,0,0,.4));border:1px solid color-mix(in srgb,var(--hr) 50%,transparent);box-shadow:inset 0 0 26px -8px var(--hr),0 10px 30px -16px var(--hr)}
 .hb-rate__icon svg{width:60px;height:60px}
@@ -173,6 +174,23 @@
 .hb-rate__foot{display:flex;margin-top:4px}
 .hb-rate__cta{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:999px;font:700 1.05rem var(--sx-display);color:#06140d;background:linear-gradient(135deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)));box-shadow:0 14px 32px -12px var(--hr);transition:transform .2s,box-shadow .2s}
 .hb-rate:hover .hb-rate__cta{transform:translateX(3px);box-shadow:0 18px 40px -12px var(--hr)}
+/* right-side ratings visual (decorative) */
+.hb-rate__aside{display:none;flex-direction:column;gap:14px;align-self:center}
+.hb-rate__widget{display:grid;gap:9px;padding:16px 18px;border-radius:18px;background:color-mix(in srgb,var(--hr) 9%,rgba(0,0,0,.34));border:1px solid color-mix(in srgb,var(--hr) 34%,var(--sx-line));box-shadow:inset 0 0 30px -20px var(--hr)}
+.hb-rate__wlabel{font:600 .68rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sx-muted)}
+.hb-rate__stars{display:flex;gap:5px;color:var(--hr)}
+.hb-rate__stars svg{width:28px;height:28px;filter:drop-shadow(0 2px 8px color-mix(in srgb,var(--hr) 55%,transparent))}
+.hb-rate__stars svg.is-empty{color:color-mix(in srgb,var(--hr) 45%,var(--sx-muted));filter:none}
+.hb-rate__scale{display:flex;align-items:center;gap:8px;font:600 .72rem var(--sx-mono);color:var(--sx-muted)}
+.hb-rate__track{flex:1;height:6px;border-radius:999px;background:color-mix(in srgb,var(--hr) 16%,rgba(255,255,255,.08));overflow:hidden}
+.hb-rate__track i{display:block;height:100%;width:90%;border-radius:999px;background:linear-gradient(90deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)))}
+.hb-rate__wnote{font:600 .82rem var(--sx-display);color:var(--sx-text)}
+.hb-rate__bars{display:grid;gap:5px}
+.hb-rate__bars i{display:block;height:7px;width:var(--w,50%);border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--hr) 80%,transparent),color-mix(in srgb,var(--hr) 24%,transparent));justify-self:start}
+@media (min-width:780px){
+  .hb-rate{grid-template-columns:minmax(0,1fr) 262px}
+  .hb-rate__aside{display:flex}
+}
 :root[data-theme="light"] .hb-rate{background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 18%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 14%,transparent),transparent 60%),var(--sx-surface)}
 :root[data-theme="light"] .hb-rate__tags span{background:color-mix(in srgb,var(--hr) 10%,#fff)}
 :root[data-theme="light"] .hb-rate__cta{color:#fff}
@@ -196,14 +214,19 @@
    DMA: An Enthusiast's Haven — ROP-forward hero + "More from Anders" (landing rework, Nov 2026)
    =================================================================================================== */
 .hb-hero{padding-bottom:22px}
-/* flashy wordmark: gradient fill + glow; "DMA" gets the accent, the rest a lighter sheen */
+/* flashy wordmark: "DMA" glows in a per-visit accent (hub-fx picks one of 4), the rest stays crisp white.
+   The accent is a single hue (--h1a) with a lighter sheen tint (--h1b) so the fill never muddies. */
 .hb-h1{margin:0;font:800 clamp(2.4rem,6.4vw,4rem)/1.03 var(--sx-display);letter-spacing:-.02em;color:var(--sx-text);
-  --h1a:var(--games,#36d39a);--h1b:var(--anyps,#3d8bff)}
-.hb-h1__mark{background:linear-gradient(100deg,var(--h1a),color-mix(in srgb,var(--h1a) 40%,var(--h1b)));-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 2px 18px color-mix(in srgb,var(--h1a) 55%,transparent))}
+  --h1a:var(--games,#36d39a);--h1b:color-mix(in srgb,var(--games,#36d39a) 45%,#fff)}
+.hb-h1.h1c-rop{--h1a:var(--games,#36d39a);--h1b:color-mix(in srgb,var(--games,#36d39a) 45%,#fff)}
+.hb-h1.h1c-ac{--h1a:var(--craft,#ff7a1f);--h1b:color-mix(in srgb,var(--craft,#ff7a1f) 45%,#fff)}
+.hb-h1.h1c-anyps{--h1a:var(--anyps,#3d8bff);--h1b:color-mix(in srgb,var(--anyps,#3d8bff) 45%,#fff)}
+.hb-h1.h1c-arcade{--h1a:#a470ff;--h1b:#d4bcff}
+.hb-h1__mark{background:linear-gradient(100deg,var(--h1a),var(--h1b));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 1px 10px color-mix(in srgb,var(--h1a) 40%,transparent))}
 .hb-h1__colon{color:color-mix(in srgb,var(--h1a) 70%,var(--sx-text))}
-.hb-h1__rest{background:linear-gradient(100deg,var(--sx-text),color-mix(in srgb,var(--sx-text) 70%,var(--h1b)));-webkit-background-clip:text;background-clip:text;color:transparent}
-:root:not([data-motion="reduce"]) .hb-h1__mark{background-size:200% 100%;animation:hb-h1-sheen 7s ease-in-out infinite alternate}
+.hb-h1__rest{color:var(--sx-text)}
+:root:not([data-motion="reduce"]) .hb-h1__mark{background-size:220% 100%;animation:hb-h1-sheen 7s ease-in-out infinite alternate}
 @keyframes hb-h1-sheen{from{background-position:0% 50%}to{background-position:100% 50%}}
 /* byline: tucked under the title, aligned to its right edge */
 .hb-byline{margin:6px 0 0;text-align:right;max-width:min(100%,16ch);margin-left:auto}

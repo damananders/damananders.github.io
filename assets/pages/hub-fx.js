@@ -215,6 +215,17 @@
   }, "hub typing headline");
 
   /* =====================================================================================
+   * ITEM 1b: wordmark colour — "DMA" lights up in one of the four site accents, chosen
+   * fresh on every visit/refresh (ROP green, AndersCraft orange, AnyPS blue, Arcade purple).
+   * ===================================================================================== */
+  Site.ready(function () {
+    var h1 = doc.querySelector(".hb-h1"); if (!h1) return;
+    var classes = ["h1c-rop", "h1c-ac", "h1c-anyps", "h1c-arcade"];
+    h1.classList.remove.apply(h1.classList, classes);
+    h1.classList.add(classes[Math.floor(Math.random() * classes.length)]);
+  }, "hub wordmark colour");
+
+  /* =====================================================================================
    * ITEM 8: day and night (tint from the visitor's local hour, lamp light at night)
    * ===================================================================================== */
   Site.ready(function () {
