@@ -1,5 +1,5 @@
 {
-  "_help": "The 'Now' card on the hub. Any entry with a blank title is hidden; if both are blank the whole card is hidden. url is optional.",
+  "_help": "The 'Now' card on the hub. If 'slides' has entries, the card is a rotating banner (one slide per project, pips to switch, auto-cycles). Otherwise 'building'/'playing' show as before; a blank title hides an entry. url is optional. art: anyps | wizard | none.",
   "updated": "2026-11-16",
   "building": {
     "title": "AnyPS native cores",
@@ -10,5 +10,25 @@
     "title": "",
     "note": "",
     "url": ""
-  }
+  },
+  "slides": [
+    {
+      "kind": "Now building",
+      "title": "AnyPS native cores",
+      "note": "Rebuilding the PS1 and PS2 from scratch inside AnyPS, so games run straight through it with no outside emulator. Most of the PS2 library now boots.",
+      "url": "/anyps/",
+      "cta": "See AnyPS",
+      "art": "anyps",
+      "accent": "#3d8bff"
+    },
+    {
+      "kind": "Also building",
+      "title": "Wizard of the Sprint",
+      "note": "A robbed arch-wizard chases the thief through the forest. Run, cast, loot and rebuild your tower. Playable now in beta, with new polish landing every week.",
+      "url": "/arcade/#wizard-sprint",
+      "cta": "Play the beta",
+      "art": "wizard",
+      "accent": "#8f6bff"
+    }
+  ]
 }

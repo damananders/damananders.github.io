@@ -242,6 +242,7 @@
     };
     Site.data("now").then(safe(function (d) {
       if (!d) return;
+      if (Array.isArray(d.slides) && d.slides.some(function (x) { return x && typeof x.title === "string" && x.title.trim(); })) return nowSlides(host, d);
       var grid = el("div", { class: "hb-now__grid" }), n = 0;
       [["building", "Now building"], ["playing", "Now playing"]].forEach(function (pair) {
         var e = d[pair[0]]; if (!e || typeof e.title !== "string" || !e.title.trim()) return;
@@ -262,6 +263,58 @@
       host.appendChild(grid);
       host.hidden = false;
     }));
+
+    /* the banner version: one slide per project, pips underneath, cycles every 8s (pauses on hover/focus, off with reduced motion) */
+    function nowSlides(host, d) {
+      var ART = {
+        anyps: '<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="nsA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1a33"/><stop offset="1" stop-color="#03060d"/></linearGradient></defs><rect width="320" height="180" fill="url(#nsA)"/><g fill="none" stroke="#3d8bff" stroke-opacity=".35" stroke-width="1.2"><path d="M0 120h70l12-12h60l12 12h166M0 140h40l10 10h90l10-10h170M210 0v40l12 12v60"/></g><g transform="translate(196 52)"><rect width="76" height="76" rx="12" fill="#06101f" stroke="#3d8bff" stroke-width="2"/><path d="M14 0v-8M30 0v-8M46 0v-8M62 0v-8M14 76v8M30 76v8M46 76v8M62 76v8M0 14h-8M0 30h-8M0 46h-8M0 62h-8M76 14h8M76 30h8M76 46h8M76 62h8" stroke="#3d8bff" stroke-width="2.4" stroke-linecap="round"/><text x="38" y="46" text-anchor="middle" font-family="Space Grotesk,system-ui,sans-serif" font-weight="800" font-size="20" fill="#9fd3ff">PS2</text></g><circle cx="234" cy="90" r="70" fill="#3d8bff" opacity=".10"/></svg>',
+        wizard: '<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges" aria-hidden="true"><rect width="320" height="180" fill="#120a24"/><rect y="90" width="320" height="90" fill="#1b1036"/><g fill="#fff" opacity=".8"><rect x="30" y="20" width="2" height="2"/><rect x="90" y="44" width="2" height="2"/><rect x="150" y="14" width="2" height="2"/><rect x="300" y="30" width="2" height="2"/><rect x="120" y="70" width="2" height="2"/><rect x="60" y="64" width="1" height="1"/></g><circle cx="266" cy="30" r="14" fill="#f6e7b0" shape-rendering="auto"/><circle cx="273" cy="25" r="12" fill="#120a24" shape-rendering="auto"/><g fill="#0b2a1a"><rect x="0" y="132" width="320" height="48"/><rect x="10" y="112" width="18" height="22"/><rect x="40" y="104" width="22" height="30"/><rect x="290" y="108" width="22" height="26"/></g><g transform="translate(176 40)"><polygon points="32,0 4,52 60,52" fill="#3b2a6b"/><rect x="2" y="50" width="60" height="8" fill="#2a1e4d"/><rect x="10" y="58" width="44" height="40" fill="#4a3a7e"/><rect x="26" y="74" width="12" height="24" fill="#120a24"/><rect x="16" y="64" width="8" height="8" fill="#f5c542"/><rect x="40" y="64" width="8" height="8" fill="#f5c542"/></g><g transform="translate(118 108)"><polygon points="12,0 0,18 24,18" fill="#8f6bff"/><rect x="4" y="18" width="16" height="22" fill="#6b4fd8"/><rect x="8" y="20" width="8" height="6" fill="#f2d3b0"/><rect x="22" y="22" width="12" height="2" fill="#c9a24a"/><rect x="34" y="20" width="4" height="4" fill="#7ef0ff"/></g></svg>'
+      };
+      var slides = d.slides.filter(function (x) { return x && typeof x.title === "string" && x.title.trim(); });
+      var cur = 0, timer = 0, paused = false;
+      var reduce = function () { return document.documentElement.getAttribute("data-motion") === "reduce"; };
+      var track = el("div", { class: "hb-ns__track", "aria-live": "polite" });
+      var pips = el("div", { class: "hb-ns__pips", role: "tablist", "aria-label": "Projects" });
+      slides.forEach(function (x, i) {
+        var url = safeUrl(x.url), acc = /^#[0-9a-f]{6}$/i.test(x.accent || "") ? x.accent : "";
+        var slide = el("article", { class: "hb-ns__slide" + (i ? "" : " is-on"), "aria-hidden": i ? "true" : "false", "aria-roledescription": "slide", "aria-label": (i + 1) + " of " + slides.length },
+          el("div", { class: "hb-ns__art hb-ns__art--" + (ART[x.art] ? x.art : "none"), "aria-hidden": "true" }),
+          el("div", { class: "hb-ns__body" },
+            el("div", { class: "hb-ns__kind", text: String(x.kind || "Now building") }),
+            el("h3", { class: "hb-ns__title", text: x.title.trim() }),
+            x.note ? el("p", { class: "hb-ns__note", text: String(x.note).trim() }) : null,
+            url ? el("a", { class: "hb-ns__cta", href: url, tabindex: i ? "-1" : "0" }, String(x.cta || "Take a look"), el("span", { class: "hb-ns__arr", "aria-hidden": "true", text: "→" })) : null));
+        if (acc) slide.style.setProperty("--ns-c", acc);
+        if (ART[x.art]) slide.querySelector(".hb-ns__art").innerHTML = ART[x.art];
+        track.appendChild(slide);
+        pips.appendChild(el("button", { class: "hb-ns__pip" + (i ? "" : " is-on"), type: "button", role: "tab", "aria-selected": i ? "false" : "true", "aria-label": "Show " + x.title.trim(),
+          onclick: function () { go(i); restart(); } }, el("span", { class: "hb-ns__fill" })));
+      });
+      function go(i) {
+        cur = (i + slides.length) % slides.length;
+        Array.prototype.forEach.call(track.children, function (s, k) { var on = k === cur; s.classList.toggle("is-on", on); s.setAttribute("aria-hidden", on ? "false" : "true"); var a = s.querySelector(".hb-ns__cta"); if (a) a.setAttribute("tabindex", on ? "0" : "-1"); });
+        Array.prototype.forEach.call(pips.children, function (p, k) { var on = k === cur; p.classList.toggle("is-on", on); p.setAttribute("aria-selected", on ? "true" : "false"); });
+      }
+      function restart() {
+        clearInterval(timer); host.classList.remove("is-cycling");
+        if (slides.length < 2 || reduce()) return;
+        void host.offsetWidth; host.classList.add("is-cycling");
+        timer = setInterval(function () { if (!paused && !document.hidden) { go(cur + 1); host.classList.remove("is-cycling"); void host.offsetWidth; host.classList.add("is-cycling"); } }, 8000);
+      }
+      host.addEventListener("mouseenter", function () { paused = true; host.classList.add("is-paused"); });
+      host.addEventListener("mouseleave", function () { paused = false; host.classList.remove("is-paused"); });
+      host.addEventListener("focusin", function () { paused = true; host.classList.add("is-paused"); });
+      host.addEventListener("focusout", function () { paused = false; host.classList.remove("is-paused"); });
+      host.textContent = "";
+      host.classList.add("hb-ns");
+      host.appendChild(el("div", { class: "hb-now__head" },
+        el("h2", { class: "hb-now__h", text: "Now" }),
+        d.updated ? el("span", { class: "hb-now__upd" }, "Updated ", el("time", { datetime: String(d.updated).slice(0, 10), text: Site.fmtDate(d.updated) })) : null));
+      host.appendChild(track);
+      if (slides.length > 1) host.appendChild(pips);
+      host.hidden = false;
+      restart();
+    }
   }, "hub now card");
 
   /* ====================================================================================================
