@@ -35,8 +35,9 @@
   function fmtPlays(n) { n = n || 0; return n >= 10000 ? Math.round(n / 1000) + "k" : n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(n); }
   function fmtTime(s) { s = Math.round(s || 0); if (s < 60) return (s || 0) + "s"; var m = Math.floor(s / 60); if (m < 60) return m + "m"; var h = Math.floor(m / 60); return h >= 100 ? h + "h" : h + "h " + (m % 60) + "m"; }
   function paintStat(g) {
-    if (!g.statEl) return; var s = STAT[g.id];
-    if (!s) { g.statEl.hidden = true; return; }
+    if (!g.statEl) return;
+    if (!SB) { g.statEl.hidden = true; return; }
+    var s = STAT[g.id] || { plays: 0, secs: 0 };
     g.statEl.hidden = false; g.statEl.textContent = "";
     g.statEl.appendChild(el("span", { class: "ak-tile__stat", title: "Times anyone has played" }, el("b", { text: fmtPlays(s.plays) }), " plays"));
     g.statEl.appendChild(el("span", { class: "ak-tile__stat", title: "Everyone's playtime, combined" }, el("b", { text: fmtTime(s.secs) }), " played"));
@@ -615,7 +616,7 @@
       g.setState("title");
       if (def.title) def.title(g);
       games.slice().sort(function (a, b) { return (a.def.order || 99) - (b.def.order || 99); }).forEach(function (x) { grid.appendChild(x.tile); });
-      paintFilters(); paintContinue(); scheduleStats();
+      paintFilters(); paintContinue(); paintStat(g); scheduleStats();
       if (ROUTE && location.hash === "#" + g.id) setTimeout(function () { if (!g.isOpen()) g.open({ fromRoute: true }); }, 0);
       if (def.sync) sySoon(4000);                 /* after sync.js's own pull on page load */
       return g;
