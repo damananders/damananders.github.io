@@ -1583,21 +1583,21 @@
   function slotName(k) { var sd = slotDef(k); return /^sim/.test(k) ? "Simulacrum " + k.slice(3) : sd.n; }
   /* the equipment body-map: each open slot is a card placed at a body position (canvas px, 1280x720);
      locked slots never appear. Simulacra sit bottom-left, weapons bottom-centre, the wizard preview centre-right. */
+  /* a tidy 3-column body map down the left; the wizard medallion sits centre-right, stats far right */
   var EMAP = {
-    back:  [22, 86, 182, 78],  shoulder: [22, 176, 182, 78],  waist: [22, 300, 182, 78],
-    hands: [216, 300, 182, 78],
-    head:  [416, 86, 182, 78], chest: [416, 174, 182, 104], legs: [416, 290, 182, 78], feet: [416, 380, 182, 78],
-    neck:  [612, 86, 182, 78],
-    main:  [598, 548, 190, 80], off: [794, 548, 190, 80],
-    sim1: [22, 540, 122, 62], sim2: [150, 540, 122, 62], sim3: [278, 540, 122, 62],
-    sim4: [22, 606, 122, 62], sim5: [150, 606, 122, 62], sim6: [278, 606, 122, 62]
+    neck:  [20,  86, 182, 78], head:  [212,  86, 182, 78], shoulder: [404,  86, 182, 78],
+    back:  [20, 174, 182, 78], chest: [212, 174, 182, 78], hands:    [404, 174, 182, 78],
+    waist: [20, 262, 182, 78], legs:  [212, 262, 182, 78], feet:     [404, 262, 182, 78],
+    main:  [20, 350, 182, 78], off:   [212, 350, 182, 78],
+    sim1: [20, 440, 182, 68], sim2: [212, 440, 182, 68], sim3: [404, 440, 182, 68],
+    sim4: [20, 514, 182, 68], sim5: [212, 514, 182, 68], sim6: [404, 514, 182, 68]
   };
   function equip(g, focus) {
     UI.scene = "equip"; UI.menu = "equip";
     var open = openSlots();
     var items = open.map(function (k, i) { var it = S.eq[k], kind = /^sim/.test(k) ? "sim" : k, fit = S.bag.filter(function (q) { return q.s === kind; }), nn = fit.filter(function (q) { return q.nw; }).length;
       return { label: slotName(k), tag: k, pos: EMAP[k] || [0, 0, 178, 62], card: { k: k, it: it, fit: fit.length, nn: nn },
-        cls: "wz-card " + (/^sim/.test(k) ? "wz-card--sim " : "") + (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : "") + (nn ? " is-new" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
+        cls: "wz-card " + (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : "") + (nn ? " is-new" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
     var nb = S.bag.filter(function (q) { return q.nw; }).length;
     items.push({ label: "Rummage In The Bag", ico: "equip", pos: [340, 650, 360, 48], cls: "wz-equipbtn is-primary" + (nb ? " is-new" : ""), act: function () { bag(g, 0, function () { equip(g, open.length); }); } });
     items.push({ label: "Back To The Tower", ico: "back", pos: [724, 650, 260, 48], cls: "wz-equipbtn", act: function () { hub(g, 1); } });
@@ -1658,17 +1658,18 @@
     ctx.fillStyle = "rgba(70,48,28,.42)"; D.rr(ctx, fx, fy, fw, fh, 16); ctx.fill();
     ctx.lineWidth = 3; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, fx + 1.5, fy + 1.5, fw - 3, fh - 3, 15); ctx.stroke();
     ctx.lineWidth = 1; ctx.strokeStyle = "rgba(232,193,90,.32)"; D.rr(ctx, fx + 6, fy + 6, fw - 12, fh - 12, 12); ctx.stroke();
-    /* a lit medallion holds the wizard preview, bright and clear (no more dim radial) */
-    var mcx = wx2, mcy = footY - 96;
-    var halo = ctx.createRadialGradient(mcx, mcy, 16, mcx, mcy, 240); halo.addColorStop(0, "rgba(255,236,176,.72)"); halo.addColorStop(.45, "rgba(255,222,142,.3)"); halo.addColorStop(1, "rgba(255,222,142,0)"); ctx.fillStyle = halo; ctx.fillRect(wx2 - 240, fy + 4, 480, fh - 8);
-    ctx.fillStyle = "rgba(46,32,19,.72)"; ctx.beginPath(); ctx.ellipse(mcx, mcy + 40, 152, 200, 0, 0, TAU); ctx.fill();
-    ctx.lineWidth = 2.5; ctx.strokeStyle = "rgba(232,193,90,.6)"; ctx.beginPath(); ctx.ellipse(mcx, mcy + 40, 152, 200, 0, 0, TAU); ctx.stroke();
+    /* a lit medallion holds the wizard preview, bright and clear (no more dim radial) — big enough to frame the whole wizard */
+    var mcx = wx2, mcy = 272, mrx = 176, mry = 226;
+    var halo = ctx.createRadialGradient(mcx, mcy, 16, mcx, mcy, 250); halo.addColorStop(0, "rgba(255,236,176,.72)"); halo.addColorStop(.45, "rgba(255,222,142,.3)"); halo.addColorStop(1, "rgba(255,222,142,0)"); ctx.fillStyle = halo; ctx.fillRect(wx2 - 210, fy + 4, 420, fh - 8);
+    ctx.fillStyle = "rgba(46,32,19,.72)"; ctx.beginPath(); ctx.ellipse(mcx, mcy, mrx, mry, 0, 0, TAU); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = "rgba(232,193,90,.7)"; ctx.beginPath(); ctx.ellipse(mcx, mcy, mrx, mry, 0, 0, TAU); ctx.stroke();
+    ctx.lineWidth = 1.25; ctx.strokeStyle = "rgba(232,193,90,.3)"; ctx.beginPath(); ctx.ellipse(mcx, mcy, mrx - 7, mry - 7, 0, 0, TAU); ctx.stroke();
     ell(ctx, wx2, footY + 8, 112, 19, "rgba(0,0,0,.4)");
     wizSprite(lookOf(S.comfort), (t % 8) < 5 ? "stand" : (t % 8) < 6.5 ? "five" : "stand", t);
     ctx.imageSmoothingEnabled = false; blitWiz(ctx, wx2, footY, 4.8);
-    plate(ctx, wx2 - 118, footY + 24, 236, 46, 9);
-    bold(ctx, S.wiz.name || "The Wizard", wx2, footY + 44, "800 19px " + SERIF, "#fff3c4", "center");
-    bold(ctx, "Wiz Level " + S.lvl, wx2, footY + 62, "700 13px " + F.mono, "#dccb9f", "center");
+    plate(ctx, wx2 - 118, mcy + mry + 10, 236, 46, 9);
+    bold(ctx, S.wiz.name || "The Wizard", wx2, mcy + mry + 30, "800 19px " + SERIF, "#fff3c4", "center");
+    bold(ctx, "Wiz Level " + S.lvl, wx2, mcy + mry + 48, "700 13px " + F.mono, "#dccb9f", "center");
     /* right-hand stat stack: a base number, with a green bump from whatever gear is on */
     var tot = calc(), base = {}; SK.forEach(function (k) { base[k] = Math.min(STAT[k].cap, r1((S.ranks[k] || 0) * STAT[k].rank)); });
     var px0 = 992, pw = 262, py0 = 134, rh = 50;
