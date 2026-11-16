@@ -153,6 +153,7 @@
   ];
   var CORE = TROPHIES.filter(function (t) { return !t.special; });
   var RARITY = { common: "Common", uncommon: "Uncommon", rare: "Rare", epic: "Epic", legendary: "Legendary", platinum: "Platinum", special: "Special" };
+  var RARITY_RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, platinum: 5, special: 6 };
   function rarOf(t) { return t.special ? "special" : (t.id === "all" ? "platinum" : (t.rarity || "common")); }
   var CUP = '<path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.2a2.6 2.6 0 0 0 2.9 3.6M16 5.5h2.8a2.6 2.6 0 0 1-2.9 3.6M12 13v3.5M8.5 20h7M9.5 20c0-2 1-3.5 2.5-3.5s2.5 1.5 2.5 3.5"/>';
   var LOCK = '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>';
@@ -250,7 +251,12 @@
 
   function openList() {
     var list = el("ul", { class: "pl-list" });
-    TROPHIES.forEach(function (t) {
+    /* default order is by rarity, rarest first; catalog position breaks ties so the order stays stable. */
+    var pos = {}; TROPHIES.forEach(function (t, i) { pos[t.id] = i; });
+    var ordered = TROPHIES.slice().sort(function (a, b) {
+      return (RARITY_RANK[rarOf(b)] || 0) - (RARITY_RANK[rarOf(a)] || 0) || (pos[a.id] - pos[b.id]);
+    });
+    ordered.forEach(function (t) {
       var have = !!got[t.id], hidden = t.secret && !have, r = rarOf(t);
       var ico = have ? CUP : (t.secret ? QMARK : LOCK);
       list.appendChild(el("li", { class: "pl-item pl-r-" + r + (have ? " is-got" : " is-locked") + (t.special ? " pl-item--special" : "") },
