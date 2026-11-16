@@ -806,7 +806,7 @@
       return;
     }
     R.xp += 5 * (e.elite ? 3 : 1) * (e.gold ? 6 : 1); R.rem += e.gold ? 40 : 2; chEv("kill", 1); if (e.k === "imp") chEv("imp", 1);
-    if (Math.random() < (e.gold ? 1 : e.elite ? 0.25 : 0.04)) lootDrop(e.gold ? 2 : 0);
+    if (Math.random() < (e.gold ? 1 : e.elite ? 0.25 : 0.065)) lootDrop(e.gold ? 2 : 0);
   }
   function dmgOf(id) { return INC[id].dmg * (1 + R.st.pow / 100) * (1 + 0.08 * mlvl(id)); }
   function cdOf(id) { var c = INC[id].cd; if (id === "ward") c = mlvl(id) >= 6 ? 7 : mlvl(id) >= 3 ? 9 : 12; return c / (1 + R.st.flu / 100); }
@@ -999,6 +999,24 @@
               : { label: "Run It Again", cls: "is-primary ak-pz ak-pz--warn", act: function () { startRun(g, R.mode); } },
         first ? null : { label: "Back To The Tower", cls: "ak-pz ak-pz--exit", act: function () { g.toTitle(); } }
       ] });
+    /* keep a held key (the jump button at the moment of death) from instantly firing a button,
+       so the player actually gets to see the death screen before Run It Again / Continue can trigger */
+    lockMenu(g, 850);
+  }
+  function lockMenu(g, ms) {
+    try {
+      var btns = g.stage.querySelectorAll(".ak-menu .ak-btn"), j;
+      for (j = 0; j < btns.length; j++) { btns[j].disabled = true; }
+      var ae = document.activeElement; if (ae && ae.blur && g.stage.contains(ae)) try { ae.blur(); } catch (e) {}
+      setTimeout(function () {
+        try {
+          var bs = g.stage.querySelectorAll(".ak-menu .ak-btn"), k;
+          for (k = 0; k < bs.length; k++) { bs[k].disabled = false; }
+          var sel = g.stage.querySelector(".ak-menu .ak-btn.is-sel") || bs[0];
+          if (sel && g.menuOpen && g.menuOpen()) try { sel.focus({ preventScroll: true }); } catch (e) {}
+        } catch (e) {}
+      }, ms || 800);
+    } catch (e) {}
   }
 
   /* ---------------- drawing a run ---------------- */
@@ -1560,7 +1578,7 @@
     var c1 = !!S.cleared[1], st = calc(), owned = Object.keys(S.inc).filter(function (k) { return INC[k]; });
     var items = [], ns = incSlots();
     /* --- spell cards --- */
-    var spx = 335, spw = ns <= 1 ? 380 : 200, spgap = 16, spy = 122, sph = 152;
+    var spx = 335, spw = ns <= 1 ? 380 : 186, spgap = 16, spy = 122, sph = 152;
     for (var i = 0; i < ns; i++) (function (slot) {
       var idx = items.length, id = S.incEq[slot] || "poof", I = INC[id];
       function turn(d) { var free = owned.filter(function (k) { return S.incEq.indexOf(k) < 0 || S.incEq[slot] === k; }), at = free.indexOf(id); S.incEq[slot] = free[cyc(at < 0 ? 0 : at, d, free.length)]; prep(g, idx); }
@@ -1572,16 +1590,16 @@
     /* --- upgrade mini-shop: the buff, and the run pace --- */
     var shy = 376, bid = S.buffEq[0];
     if (bid) { var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], maxed = rk >= 5, bi = items.length;
-      items.push({ pos: [335, shy, 300, 92], cls: "wz-shoptile" + (!maxed && S.orbs >= cost ? " is-hot" : ""),
+      items.push({ pos: [335, shy, 290, 92], cls: "wz-shoptile" + (!maxed && S.orbs >= cost ? " is-hot" : ""),
         shop: { name: "Buff · " + BUFF[bid].n + "  " + pips(rk, 5), sub: maxed ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s", price: maxed ? "MAXED" : "◆ " + cost + " Orbs", no: !maxed && S.orbs < cost },
         act: function () { if (maxed) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
-    } else items.push({ pos: [335, shy, 300, 92], cls: "wz-shoptile", shop: { name: "Buff", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () {} });
+    } else items.push({ pos: [335, shy, 290, 92], cls: "wz-shoptile", shop: { name: "Buff", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () {} });
     var pi = items.length;
-    items.push({ pos: [651, shy, 316, 92], cls: "wz-shoptile", shop: { name: "Run Pace · " + pacePct(st.ton) + "%", sub: "‹ slower / faster ›  up to " + paceMax(st.ton) + "%", price: null },
+    items.push({ pos: [643, shy, 282, 92], cls: "wz-shoptile", shop: { name: "Run Pace · " + pacePct(st.ton) + "%", sub: "‹ slower / faster ›  up to " + paceMax(st.ton) + "%", price: null },
       adj: function (d) { S.speed = clamp(S.speed + d * 0.1, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : clamp(S.speed + 0.1, 0, 1); prep(g, pi); } });
     /* --- start run (and endless once the forest's cleared) --- */
-    if (c1) items.push({ pos: [684, 540, 272, 48], cls: "wz-endless", ico: "inf", label: "Endless Forest", act: function () { save(); startRun(g, "endless"); } });
-    items.push({ pos: [670, 596, 286, 92], cls: "wz-startbtn", ico: "tree", label: "Start Run", act: function () { save(); startRun(g, "story"); } });
+    if (c1) items.push({ pos: [639, 540, 286, 48], cls: "wz-endless", ico: "inf", label: "Endless Forest", act: function () { save(); startRun(g, "endless"); } });
+    items.push({ pos: [639, 596, 286, 92], cls: "wz-startbtn", ico: "tree", label: "Start Run", act: function () { save(); startRun(g, "story"); } });
     items.push({ pos: [30, 596, 270, 92], cls: "wz-backarrow", ico: "back", label: "Back To The Tower", act: function () { save(); hub(g, 0); } });
     MN(g, { cls: "wz-prepmap", kicker: "Prep Time", title: "Plan The Dash", items: items, focus: focus || 0, back: function () { save(); hub(g, 0); } });
   }
@@ -1632,9 +1650,9 @@
     /* section labels */
     bold(ctx, "Your Spells", 335, 112, "800 17px " + SERIF, "#f3e6c4", "left");
     bold(ctx, "Upgrades", 335, 366, "800 17px " + SERIF, "#f3e6c4", "left");
-    bold(ctx, "Challenges", 968, 86, "800 16px " + SERIF, "#ffe08a", "left");
+    bold(ctx, "Challenges", 958, 86, "800 16px " + SERIF, "#ffe08a", "left");
     /* right: the three challenges, as gilded blue & gold cards */
-    var cx0 = 968, cw = 286, cy = 96, chh = 162, cg = 12;
+    var cx0 = 958, cw = 282, cy = 96, chh = 162, cg = 12;
     S.ch.forEach(function (c, ci) { if (ci > 2) return; var d = chDef(c.id), done = Math.min(d.need, Math.floor(c.p)), fr = clamp(done / d.need, 0, 1); drawChalCard(ctx, cx0, cy + ci * (chh + cg), cw, chh, d, done, fr); });
   }
   function incList(g) {
