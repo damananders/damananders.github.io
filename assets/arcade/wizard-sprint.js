@@ -1246,7 +1246,7 @@
   }
   function menuHud(ctx) {
     /* a Wiz-level XP bar, up top in the clear band to the right of the side panel */
-    var ebw = 344, ex = UI.scene === "equip" ? Math.round((W - ebw) / 2) : 560, ey = 16, need = xpNeed(S.lvl), max = S.lvl >= 100, f = max ? 1 : clamp(S.xp / need, 0, 1);
+    var ebw = 344, ex = (UI.scene === "equip" || UI.scene === "prep") ? Math.round((W - ebw) / 2) : 560, ey = 16, need = xpNeed(S.lvl), max = S.lvl >= 100, f = max ? 1 : clamp(S.xp / need, 0, 1);
     plate(ctx, ex - 10, ey, ebw + 20, 44, 10);
     bold(ctx, "WIZ LEVEL", ex + 6, ey + 18, "800 11px " + F.mono, "#e8c15a");
     bold(ctx, String(S.lvl), ex + 92, ey + 20, "800 18px " + SERIF, "#fff3c4", "left");
@@ -1471,6 +1471,19 @@
         if (c.nn) bt.appendChild(el("em", { class: "wz-new", text: "NEW" }));
         bt.dataset.wzSlot = c.k;
       }
+      if (it.spell) {                                     /* a big equipped-spell card for the dash screen */
+        var s = it.spell; while (bt.firstChild) bt.removeChild(bt.firstChild);
+        bt.appendChild(el("span", { class: "wz-sc__top" }, icoEl("spark"), el("em", { class: "wz-sc__slot", text: "Spell " + s.n })));
+        bt.appendChild(el("b", { class: "wz-sc__name", text: s.name }));
+        bt.appendChild(el("span", { class: "wz-sc__sub", text: s.cast + "  ·  Mastery " + s.m }));
+        if (s.swap) bt.appendChild(el("span", { class: "wz-sc__swap", text: "▸ tap to swap" }));
+      }
+      if (it.shop) {                                      /* an upgrade mini-shop tile with a price tag */
+        var sh = it.shop; while (bt.firstChild) bt.removeChild(bt.firstChild);
+        bt.appendChild(el("b", { class: "wz-st__name", text: sh.name }));
+        bt.appendChild(el("span", { class: "wz-st__sub", text: sh.sub }));
+        if (sh.price) bt.appendChild(el("span", { class: "wz-price" + (sh.no ? " is-no" : ""), text: sh.price }));
+      }
     });
   }
   function tile(l, v, note) { return el("div", { class: "ak-stat" }, el("span", { text: l }), el("b", { text: String(v) }), note ? el("em", { text: note }) : null); }
@@ -1540,38 +1553,89 @@
         { label: "How To Play", ico: "scroll", sub: "The short version", act: function () { how(g); } }
       ] });
   }
+  /* the dash prep screen: a full-bleed layout — name/info left, challenges right, big spell cards in the
+     middle (tap to swap), an upgrade mini-shop, a big red Start Run and an orange-brown back arrow. */
   function prep(g, focus) {
-    UI.scene = "hub"; UI.menu = "prep";
-    var c1 = !!S.cleared[1], st = calc(), items = [], owned = Object.keys(S.inc).filter(function (k) { return INC[k]; });
-    function eidx() { var n = 0; items.forEach(function (x) { if (!x.head && !x.disabled) n++; }); return n; }   /* the focus index (enabled buttons only) the next pushed row will have */
-    items.push({ head: "Set off" });
-    items.push({ label: c1 ? "Run The Forest Again" : "Follow The Tracks", ico: "tree", sub: c1 ? "The story run · about 5 minutes, then the boss" : "The story run · about 5 minutes, then a boss", cls: "is-primary", act: function () { save(); startRun(g, "story"); } });
-    if (c1) items.push({ label: "Endless Forest", ico: "inf", sub: "No end · a boss every 6.5 min · best so far " + fmt(S.best.endless1 || 0) + " m", cls: "is-gold", act: function () { save(); startRun(g, "endless"); } });
-    items.push({ head: "Your spells" });
-    for (var i = 0; i < incSlots(); i++) (function (slot) {
-      var idx = eidx(), id = S.incEq[slot] || "poof", I = INC[id];
+    UI.scene = "prep"; UI.menu = "prep";
+    var c1 = !!S.cleared[1], st = calc(), owned = Object.keys(S.inc).filter(function (k) { return INC[k]; });
+    var items = [], ns = incSlots();
+    /* --- spell cards --- */
+    var spx = 335, spw = ns <= 1 ? 380 : 200, spgap = 16, spy = 122, sph = 152;
+    for (var i = 0; i < ns; i++) (function (slot) {
+      var idx = items.length, id = S.incEq[slot] || "poof", I = INC[id];
       function turn(d) { var free = owned.filter(function (k) { return S.incEq.indexOf(k) < 0 || S.incEq[slot] === k; }), at = free.indexOf(id); S.incEq[slot] = free[cyc(at < 0 ? 0 : at, d, free.length)]; prep(g, idx); }
-      items.push({ label: "Spell " + (slot + 1) + ":  " + I.n, ico: "spark", sub: (owned.length > 1 ? "‹ swap ›   " : "") + I.cast + "   ·   Mastery " + mlvl(id), cls: "wz-r" + I.r, adj: turn, act: function () { turn(1); } });
+      items.push({ pos: [spx + slot * (spw + spgap), spy, spw, sph], cls: "wz-spellcard wz-r" + I.r,
+        spell: { n: slot + 1, name: I.n, cast: I.cast, m: mlvl(id), swap: owned.length > 1 },
+        adj: owned.length > 1 ? turn : null, act: function () { if (owned.length > 1) spellPick(g, slot, idx); } });
     })(i);
-    items.push({ label: "What each spell does", ico: "grim", sub: owned.length + " Incantation" + (owned.length > 1 ? "s" : "") + " owned · read them all", act: function () { incList(g); } });
-    items.push({ head: "Buff and pace" });
-    var bid = S.buffEq[0];
-    if (bid) {
-      var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], bi = eidx();
-      items.push({ label: "Buff: " + BUFF[bid].n + "  " + pips(rk, 5), ico: "wing", sub: rk >= 5 ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s · " + cost + " Whisper Orbs to upgrade (" + S.orbs + ")",
-        cls: rk < 5 && S.orbs >= cost ? "is-hot" : "", act: function () { if (rk >= 5) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
-    } else items.push({ label: "Buff", ico: "wing", sub: "Pick up a Whisper Orb on a run to earn one", disabled: true });
-    var pi = eidx(); items.push({ label: "Run Pace: " + pacePct(st.ton) + "%", ico: "prep", sub: "‹ left and right ›  ·  slow down or speed up, up to " + paceMax(st.ton) + "%", adj: function (d) { S.speed = clamp(S.speed + d * 0.1, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : clamp(S.speed + 0.1, 0, 1); prep(g, pi); } });
-    items.push({ label: "Back To The Tower", ico: "back", act: function () { save(); hub(g, 0); } });
-    /* the challenges in play, as cards that pop */
-    var chal = el("div", { class: "wz-chal" });
-    S.ch.forEach(function (c) { var d = chDef(c.id), done = Math.min(d.need, Math.floor(c.p)), fr = clamp(done / d.need, 0, 1);
-      chal.appendChild(el("div", { class: "wz-chal__row" },
-        el("div", { class: "wz-chal__top" }, el("b", { text: d.n }), el("em", { text: done + " / " + d.need })),
-        el("div", { class: "wz-chal__bar" }, el("i", { style: { width: Math.round(fr * 100) + "%" } })),
-        el("span", { class: "wz-chal__d", text: d.d }),
-        el("span", { class: "wz-chal__r", text: "+100 XP  ·  +25 Remnants" }))); });
-    MN(g, { cls: "is-side wz-narrow wz-prep", kicker: "Prep Time", title: "Plan The Dash", sub: "Three challenges run alongside the dash. Finish one for its reward:", body: chal, items: items, focus: focus, back: function () { save(); hub(g, 0); } });
+    items.push({ pos: [335, spy + sph + 14, 416, 44], cls: "wz-spellhelp", ico: "grim", label: "What each spell does", act: function () { incList(g); } });
+    /* --- upgrade mini-shop: the buff, and the run pace --- */
+    var shy = 376, bid = S.buffEq[0];
+    if (bid) { var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], maxed = rk >= 5, bi = items.length;
+      items.push({ pos: [335, shy, 300, 92], cls: "wz-shoptile" + (!maxed && S.orbs >= cost ? " is-hot" : ""),
+        shop: { name: "Buff · " + BUFF[bid].n + "  " + pips(rk, 5), sub: maxed ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s", price: maxed ? "MAXED" : "◆ " + cost + " Orbs", no: !maxed && S.orbs < cost },
+        act: function () { if (maxed) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
+    } else items.push({ pos: [335, shy, 300, 92], cls: "wz-shoptile", shop: { name: "Buff", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () {} });
+    var pi = items.length;
+    items.push({ pos: [651, shy, 316, 92], cls: "wz-shoptile", shop: { name: "Run Pace · " + pacePct(st.ton) + "%", sub: "‹ slower / faster ›  up to " + paceMax(st.ton) + "%", price: null },
+      adj: function (d) { S.speed = clamp(S.speed + d * 0.1, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : clamp(S.speed + 0.1, 0, 1); prep(g, pi); } });
+    /* --- start run (and endless once the forest's cleared) --- */
+    if (c1) items.push({ pos: [684, 540, 272, 48], cls: "wz-endless", ico: "inf", label: "Endless Forest", act: function () { save(); startRun(g, "endless"); } });
+    items.push({ pos: [670, 596, 286, 92], cls: "wz-startbtn", ico: "tree", label: "Start Run", act: function () { save(); startRun(g, "story"); } });
+    items.push({ pos: [30, 596, 270, 92], cls: "wz-backarrow", ico: "back", label: "Back To The Tower", act: function () { save(); hub(g, 0); } });
+    MN(g, { cls: "wz-prepmap", kicker: "Prep Time", title: "Plan The Dash", items: items, focus: focus || 0, back: function () { save(); hub(g, 0); } });
+  }
+  /* pick an incantation for a spell slot (the spell-card popup switcher) */
+  function spellPick(g, slot, backFocus) {
+    UI.scene = "prep"; UI.menu = "prep";
+    var owned = Object.keys(S.inc).filter(function (k) { return INC[k]; }), cur = S.incEq[slot] || "poof";
+    var items = owned.map(function (id) { var I = INC[id], at = S.incEq.indexOf(id), elsewhere = at >= 0 && at !== slot;
+      return { label: I.n, ico: "spark", sub: I.cast + "  ·  Mastery " + mlvl(id) + (elsewhere ? "  ·  in Spell " + (at + 1) : ""), chips: [[RAR[I.r].n, "r" + I.r]], cls: "wz-r" + I.r + (id === cur ? " is-owned" : ""),
+        act: function () { var prev = S.incEq[slot]; S.incEq[slot] = id; if (elsewhere) S.incEq[at] = prev; save(); sfx("buy"); prep(g, backFocus); } }; });
+    items.push({ label: "Back", cls: "is-primary", act: function () { prep(g, backFocus); } });
+    MN(g, { cls: "is-side is-wide", kicker: "Swap Spell " + (slot + 1), title: "Choose an Incantation", sub: "What this slot casts on the dash.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
+  }
+  function wrapLines(ctx, s, maxw) { var words = ("" + s).split(" "), lines = [], cur = ""; words.forEach(function (w) { var t = cur ? cur + " " + w : w; if (ctx.measureText(t).width > maxw && cur) { lines.push(cur); cur = w; } else cur = t; }); if (cur) lines.push(cur); return lines; }
+  function drawChalCard(ctx, x, y, w, h, d, done, fr) {
+    ctx.fillStyle = "rgba(24,40,86,.94)"; D.rr(ctx, x, y, w, h, 10); ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, x + 1, y + 1, w - 2, h - 2, 9); ctx.stroke();
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(200,180,255,.25)"; D.rr(ctx, x + 5, y + 5, w - 10, h - 10, 7); ctx.stroke();
+    diamond(ctx, x + 12, y + 13, 4, "#ffe08a"); diamond(ctx, x + w - 12, y + 13, 4, "#ffe08a");
+    bold(ctx, d.n, x + 20, y + 28, "800 15px " + SERIF, "#fff3d0", "left");
+    bold(ctx, done + " / " + d.need, x + w - 20, y + 28, "800 13px " + F.mono, done >= d.need ? "#9ae6b4" : "#ffe08a", "right");
+    var bx = x + 16, bw = w - 32, by = y + 40; ctx.fillStyle = "rgba(0,0,0,.5)"; D.rr(ctx, bx, by, bw, 9, 4); ctx.fill();
+    if (fr > 0) { ctx.fillStyle = "#ffe58a"; D.rr(ctx, bx, by, Math.max(7, bw * fr), 9, 4); ctx.fill(); }
+    ctx.font = "600 11px " + F.mono; var ls = wrapLines(ctx, d.d, w - 32);
+    for (var li = 0; li < ls.length && li < 3; li++) D.text(ctx, ls[li], x + 16, y + 66 + li * 15, "600 11px " + F.mono, "#d7e2ff", "left");
+    bold(ctx, "+100 XP  ·  +25 Remnants", x + w / 2, y + h - 12, "800 11px " + F.mono, "#ffe08a", "center");
+  }
+  function drawPrepScene(g, ctx) {
+    var i, c1 = !!S.cleared[1];
+    var bgg = ctx.createLinearGradient(0, 0, 0, H); bgg.addColorStop(0, "#2a2033"); bgg.addColorStop(1, "#1a1422"); ctx.fillStyle = bgg; ctx.fillRect(0, 0, W, H);
+    for (i = 0; i < 80; i++) { ctx.fillStyle = i % 2 ? "rgba(255,220,170,.05)" : "rgba(0,0,0,.08)"; ctx.fillRect((i * 83) % W, (i * 127) % H, 40 + (i % 3) * 20, 3); }
+    var fx = 14, fy = 62, fw = W - 28, fh = H - 76;
+    ctx.fillStyle = "rgba(40,28,20,.4)"; D.rr(ctx, fx, fy, fw, fh, 16); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, fx + 1.5, fy + 1.5, fw - 3, fh - 3, 15); ctx.stroke();
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(232,193,90,.3)"; D.rr(ctx, fx + 6, fy + 6, fw - 12, fh - 12, 12); ctx.stroke();
+    /* left: name & info */
+    var lx = 30, ly = 92, lw = 275, lh = 250;
+    plate(ctx, lx, ly, lw, lh, 10);
+    bold(ctx, "The Mad Dash", lx + lw / 2, ly + 30, "800 22px " + SERIF, "#fff3c4", "center");
+    ctx.strokeStyle = "rgba(232,193,90,.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx + 22, ly + 44); ctx.lineTo(lx + lw - 22, ly + 44); ctx.stroke();
+    bold(ctx, S.wiz.name || "The Wizard", lx + lw / 2, ly + 76, "800 20px " + SERIF, "#ffe9b8", "center");
+    bold(ctx, "Wiz Level " + S.lvl, lx + lw / 2, ly + 98, "700 13px " + F.mono, "#dccb9f", "center");
+    D.text(ctx, c1 ? "Run the forest again — about" : "Follow the tracks — about", lx + 20, ly + 136, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "five minutes, then the boss.", lx + 20, ly + 154, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "Three challenges run alongside.", lx + 20, ly + 184, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "Finish one for +100 XP", lx + 20, ly + 206, "700 12px " + F.mono, "#ffe08a", "left");
+    D.text(ctx, "and +25 Remnants.", lx + 20, ly + 224, "700 12px " + F.mono, "#ffe08a", "left");
+    /* section labels */
+    bold(ctx, "Your Spells", 335, 112, "800 17px " + SERIF, "#f3e6c4", "left");
+    bold(ctx, "Upgrades", 335, 366, "800 17px " + SERIF, "#f3e6c4", "left");
+    bold(ctx, "Challenges", 968, 86, "800 16px " + SERIF, "#ffe08a", "left");
+    /* right: the three challenges, as gilded blue & gold cards */
+    var cx0 = 968, cw = 286, cy = 96, chh = 162, cg = 12;
+    S.ch.forEach(function (c, ci) { if (ci > 2) return; var d = chDef(c.id), done = Math.min(d.need, Math.floor(c.p)), fr = clamp(done / d.need, 0, 1); drawChalCard(ctx, cx0, cy + ci * (chh + cg), cw, chh, d, done, fr); });
   }
   function incList(g) {
     UI.scene = "hub"; UI.menu = "prep";
@@ -1824,6 +1888,7 @@
       if (R && (g.state === "play" || g.state === "paused" || g.state === "over") && UI.scene === "run") { drawRun(g, ctx); return; }
       if (UI.scene === "creator") { drawCreator(g, ctx); return; }
       if (UI.scene === "equip") { drawEquipScene(g, ctx); menuHud(ctx); return; }
+      if (UI.scene === "prep") { drawPrepScene(g, ctx); menuHud(ctx); return; }
       if (UI.scene === "bag") { drawBagScene(g, ctx); menuHud(ctx); return; }
       drawHubScene(g, ctx);
       if (UI.scene === "hub" && UI.menu !== "settings" && UI.menu !== "controls") menuHud(ctx);
