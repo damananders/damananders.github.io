@@ -144,6 +144,19 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 /* AndersCraft styles every bare <button> on hover (orange fill): keep the header tools on their own surface */
 .sx-tools .sx-iconbtn:hover{background:var(--sx-glass)}
 
+/* --- visibility: give every top-bar item a clear outline + shadow so it reads over the photo
+   on the landing page too, before the bar backdrop fades in on scroll --- */
+.sx-tools .sx-iconbtn,
+.ch-menu__box > .ch-menu.sx-iconbtn,
+.ch-menu__gear{border-color:var(--sx-line-2);box-shadow:0 3px 12px -4px rgba(0,0,0,.55)}
+.wrap > nav .social{box-shadow:0 3px 12px -4px rgba(0,0,0,.4)}
+.wrap > nav .brand{text-shadow:0 1px 12px rgba(0,0,0,.5)}
+:root[data-theme="light"] .wrap > nav .brand{text-shadow:0 1px 2px rgba(255,255,255,.85)}
+:root[data-theme="light"] .sx-tools .sx-iconbtn,
+:root[data-theme="light"] .ch-menu__box > .ch-menu.sx-iconbtn,
+:root[data-theme="light"] .ch-menu__gear,
+:root[data-theme="light"] .wrap > nav .social{box-shadow:0 4px 14px -6px rgba(20,30,50,.34)}
+
 /* Space for the tools is held before chrome.js adds them, so the social buttons do not slide on load
    (data-page is set by the inline head script, so this only applies when scripts run at all) */
 :root[data-page]:not(.ch-js) .wrap > nav .socials{margin-right:100px}
