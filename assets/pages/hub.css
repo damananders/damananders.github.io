@@ -285,3 +285,32 @@
   .hb-search__go{padding:11px 15px}
   .hb-more__head{flex-wrap:wrap}
 }
+
+/* ---- ROP banner in Rate-O-Pedia's palette: light green, accented with black, grey and gold ---- */
+.hb-rate{--hr:#36d39a;--hr2:#7ef0c0;--hr-gold:#e3b54a;--hr-gold2:#f6d488;--hr-grey:#8d9691;
+  background:radial-gradient(120% 110% at 0% 0%,rgba(54,211,154,.20),transparent 55%),radial-gradient(90% 90% at 100% 100%,rgba(227,181,74,.10),transparent 60%),linear-gradient(135deg,#050807 0%,#0c110f 55%,#161c19 100%);
+  border-color:color-mix(in srgb,var(--hr) 62%,#000)}
+.hb-rate::before{background-image:radial-gradient(circle,rgba(141,150,145,.22) 1px,transparent 1.4px)}
+.hb-rate__glow{background:radial-gradient(circle,rgba(54,211,154,.55),rgba(227,181,74,.14) 55%,transparent 72%)}
+.hb-rate__icon{background:linear-gradient(145deg,#0a0f0d,#151b18);border-color:color-mix(in srgb,var(--hr-gold) 55%,transparent);box-shadow:inset 0 0 26px -10px var(--hr),0 10px 30px -16px var(--hr),0 0 0 1px rgba(0,0,0,.6)}
+.hb-rate__eyebrow{color:var(--hr-gold);display:inline-flex;align-items:center;gap:9px}
+.hb-rate__eyebrow::before{content:"";width:20px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--hr-gold2),var(--hr-gold))}
+.hb-rate__head strong{background:linear-gradient(100deg,#f4f8f5 10%,var(--hr2) 60%,var(--hr) 95%);-webkit-background-clip:text;background-clip:text}
+.hb-rate__lead{color:#c9d2cd;padding-top:12px;border-top:1px solid;border-image:linear-gradient(90deg,var(--hr-gold),rgba(141,150,145,.28) 45%,transparent) 1}
+.hb-rate__tags span{color:#dfe6e1;background:rgba(141,150,145,.10);border-color:rgba(141,150,145,.30)}
+.hb-rate__tags span:first-child{color:var(--hr-gold2);border-color:color-mix(in srgb,var(--hr-gold) 55%,transparent);background:rgba(227,181,74,.08)}
+.hb-rate__cta{color:#03110b;background:linear-gradient(135deg,var(--hr),var(--hr2));box-shadow:0 14px 32px -12px var(--hr),0 0 0 1px color-mix(in srgb,var(--hr-gold) 50%,transparent)}
+.hb-rate__widget{--chip-bg:#070a09;background:linear-gradient(160deg,#080b0a,#121815);border-color:rgba(141,150,145,.30);box-shadow:inset 0 0 30px -20px var(--hr),0 0 0 1px rgba(0,0,0,.5)}
+.hb-rate__wlabel{color:var(--hr-gold)}
+.hb-rate__wscale{color:var(--hr-grey)}
+/* each mood in Rate-O-Pedia's own rating colours (same as the chips on /games/) */
+.hb-rate__chip--0{color:#ff5d5d}.hb-rate__chip--1{color:#ff8a4c}.hb-rate__chip--2{color:#ffb547}
+.hb-rate__chip--3{color:#f0d95c}.hb-rate__chip--4{color:#9be36f}.hb-rate__chip--5{color:#3ee08a;filter:drop-shadow(0 2px 8px rgba(62,224,138,.55))}
+.hb-rate__chip{opacity:.9}.hb-rate__chip--5{opacity:1}
+.hb-rate:hover,.hb-rate:focus-visible{box-shadow:0 34px 70px -28px var(--hr),0 0 0 1px var(--hr),0 0 0 3px rgba(227,181,74,.18),inset 0 0 50px -20px color-mix(in srgb,var(--hr) 90%,transparent)}
+/* the banner stays a dark card in light mode too, like the ROP landing header */
+:root[data-theme="light"] .hb-rate{background:radial-gradient(120% 110% at 0% 0%,rgba(54,211,154,.20),transparent 55%),radial-gradient(90% 90% at 100% 100%,rgba(227,181,74,.10),transparent 60%),linear-gradient(135deg,#050807,#0c110f 55%,#161c19);color:#eef3ef}
+:root[data-theme="light"] .hb-rate__tags span{background:rgba(141,150,145,.10)}
+:root[data-theme="light"] .hb-rate__icon{background:linear-gradient(145deg,#0a0f0d,#151b18)}
+:root[data-theme="light"] .hb-rate__cta{color:#03110b}
+:root[data-theme="light"] .hb-rate__wnote{color:#eef3ef}
