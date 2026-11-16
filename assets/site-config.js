@@ -243,7 +243,7 @@ window.SITE_EXTRA = {
 
   /* ---- Feature switches. Set any to false to turn that effect off for everyone. ---- */
   features: {
-    typing: true,        // typing headline on the hub
+    typing: false,       // typing headline on the hub (off: the "DMA Enthusiast Safezone" brand stays static)
     parallax: true,      // background drifts with the pointer and scroll
     tilt: true,          // 3D tilt + glare on the avenue cards
     glow: true,          // slow accent glow pulse on the cards
