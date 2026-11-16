@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged } from "./games.common.js?v=23";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER } from "./games.common.js?v=24";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -224,81 +224,94 @@ function rankSwitch(show) {
 }
 
 /* ---------------- reviews ---------------- */
+/* Your own review shows in the list like everyone else's, with an "Edit review" button. Editing turns that same
+   review into the text box in place (one box only); Save replaces the posted text. The write box only appears when
+   you haven't reviewed the game yet. */
 async function reviews(g, box) {
   box.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
   const { data } = await sb.from("public_reviews").select("*").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
   box.replaceChildren();
   const rx = await myReactions((data || []).map((r) => r.id));
+  const myHandle = me.profile && me.profile.handle;
+  let mineShown = false;
   for (const r of data || []) {
-    const head = el("header", { class: "gm-review__head" }, avatar(r.avatar, r.name, 32), el("span", { class: "gm-review__who" }, nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null,
-      el("span", { class: "gm-review__when", text: new Date(r.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) })),
+    const isMine = !!(myHandle && r.handle === myHandle);
+    if (isMine) mineShown = true;
+    const when = el("time", { class: "gm-review__when", datetime: r.created_at, "data-when": r.created_at, text: fmtWhen(r.created_at) });
+    const head = el("header", { class: "gm-review__head" }, avatar(r.avatar, r.name, 32), el("span", { class: "gm-review__who" }, nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null, when),
       r.stars != null ? el("span", { class: "gm-review__mood rop-chip--" + r.stars, title: r.stars + " / 5 · " + CHIP_WORD[r.stars] }, chipSvg(r.stars), el("b", { text: String(r.stars) })) : null);
-    const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") }, head, el("p", { class: "gm-review__body", text: r.body }), reactBar(r, rx.get(r.id)));
-    if (r.id != null && !(me.profile && r.handle && me.profile.handle === r.handle)) art.append(reportBtn("review", r.id));
+    const body = el("p", { class: "gm-review__body", text: r.body });
+    const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") + (isMine ? " gm-review--mine" : "") }, head, body, reactBar(r, rx.get(r.id)));
+    if (isMine && member) art.append(editTools(g, box, art, body, r));
+    else if (r.id != null && !isMine) art.append(reportBtn("review", r.id));
     box.append(art);
   }
   if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
-  writeBox(g, box, data || []);
+  writeBox(g, box, mineShown);
 }
 
-/* Your own review: a write box if you haven't reviewed the game yet, otherwise your review read-only with an Edit button. */
-async function writeBox(g, box, shown) {
-  if (!user) { box.append(el("p", { class: "gm-note", text: "Sign in with Discord to write a review." })); return; }
-  if (!member) { box.append(el("p", { class: "gm-note", text: "Join the Discord server to write reviews." })); return; }
-  const wrap = el("div", { class: "gm-write" });
-  box.append(wrap);
-  let mineRow = null;
-  const r = await sb.rpc("my_review", { p_game: g.id });
-  if (!r.error && r.data && r.data.length) mineRow = r.data[0];
-  else if (r.error && me.profile && me.profile.handle) {         // database update not run yet: find it among the shown reviews
-    const hit = shown.find((x) => x.handle === me.profile.handle);
-    if (hit) mineRow = { body: hit.body, created_at: hit.created_at, hidden: false };
+/* "Edit review" on your own posted review: the posted text becomes the editable box right there */
+function editTools(g, box, art, body, r) {
+  const bar = el("div", { class: "gm-review__mine" });
+  const note = el("span", { class: "gm-note", role: "status" });
+  const edit = el("button", { class: "rop-me__btn gm-review__edit", type: "button", text: "Edit review", onclick: start });
+  bar.append(edit, note);
+  function start() {
+    const ta = el("textarea", { class: "gm-ta gm-review__ta", maxlength: "1000", rows: String(Math.min(12, Math.max(3, r.body.split("\n").length + 1))), "aria-label": "Edit your review of " + g.title });
+    ta.value = r.body;
+    const count = el("span", { class: "gm-write__count", text: ta.value.length + " / 1000" });
+    ta.addEventListener("input", () => { count.textContent = ta.value.length + " / 1000"; });
+    const save = el("button", { class: "btn gm-btn", type: "button", text: "Save changes", onclick: async () => {
+      const v = ta.value.trim(); if (v.length < 3) { note.textContent = "Write a little more first."; return; }
+      save.disabled = true;
+      const { error } = await sb.rpc("edit_my_review", { p_game: g.id, p_body: v });
+      save.disabled = false;
+      if (error) { note.textContent = /edit_my_review|function|schema cache/i.test(error.message) ? "Editing needs the latest database update." : "That didn't save: " + error.message; return; }
+      r.body = v; body.textContent = v; ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = "Saved.";
+      sfx("success");
+    } });
+    const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = ""; } });
+    body.replaceWith(ta); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    note.textContent = "";
+    bar.replaceChildren(save, cancel, count, note);
   }
+  return bar;
+}
+
+/* The write box: only when you haven't reviewed this game yet */
+async function writeBox(g, box, mineShown) {
+  if (!user) { box.append(el("p", { class: "gm-note", text: "Sign in to write a review." })); return; }
+  if (!member) { box.append(el("p", { class: "gm-note", text: "Verified members can write reviews." })); return; }
+  if (mineShown) return;
+  const r = await sb.rpc("my_review", { p_game: g.id });
+  if (!r.error && r.data && r.data.length) {        // you have one, but it isn't in the list (hidden by a moderator)
+    box.append(el("p", { class: "gm-note", text: r.data[0].hidden ? "Your review of this game is hidden by a moderator." : "You've already reviewed this game." }));
+    return;
+  }
+  const wrap = el("div", { class: "gm-write" });
   const note = el("p", { class: "gm-note", role: "status" });
-  const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game", "aria-label": "Your review of " + g.title });
+  const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game. Shift+Enter or Enter starts a new line.", "aria-label": "Your review of " + g.title });
   const count = el("span", { class: "gm-write__count", text: "0 / 1000" });
   ta.addEventListener("input", () => { count.textContent = ta.value.length + " / 1000"; });
-  const send = el("button", { class: "btn gm-btn", type: "button" });
-
-  function showMine() {
-    ta.value = mineRow.body; ta.disabled = true; ta.readOnly = true; count.textContent = mineRow.body.length + " / 1000";
-    send.textContent = "Edit review"; send.onclick = startEdit;
-    wrap.replaceChildren(el("p", { class: "gm-write__h", text: "Your review" + (mineRow.hidden ? " (hidden by a moderator)" : "") }), ta,
-      el("div", { class: "gm-write__bar" }, send, count), note);
-  }
-  function startEdit() {
-    ta.disabled = false; ta.readOnly = false; ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
-    send.textContent = "Save changes"; send.onclick = save;
-    const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { note.textContent = ""; showMine(); } });
-    wrap.querySelector(".gm-write__bar").insertBefore(cancel, count);
-  }
-  async function save() {
-    const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
-    send.disabled = true;
-    const { error } = await sb.rpc("edit_my_review", { p_game: g.id, p_body: body });
-    send.disabled = false;
-    if (error) { note.textContent = /edit_my_review|function|schema cache/i.test(error.message) ? "Editing needs the latest database update. The owner has to run it first." : "That didn't save: " + error.message; return; }
-    mineRow.body = body; note.textContent = "Saved. Your review is updated."; reviews(g, box);
-  }
-  async function create() {
+  const send = el("button", { class: "btn gm-btn", type: "button", text: "Send review", onclick: async () => {
     const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
     send.disabled = true;
     const { error } = await sb.from("reviews").insert({ user_id: user.id, game_id: g.id, body });
     send.disabled = false;
     if (error) {
-      if (error.code === "23505") { note.textContent = "You've already reviewed this game. Use Edit review to change it."; reviews(g, box); return; }
+      if (error.code === "23505") { note.textContent = "You've already reviewed this game."; reviews(g, box); return; }
       note.textContent = "That didn't send: " + error.message; return;
     }
-    if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {} statsChanged();
+    sfx("success"); statsChanged();
     reviewCounts.set(g.id, (reviewCounts.get(g.id) || 0) + 1);
     reviews(g, box);
-  }
-  if (mineRow) showMine();
-  else {
-    send.textContent = "Send review"; send.onclick = create;
-    wrap.replaceChildren(el("p", { class: "gm-write__h", text: "Write a review" }), ta, el("div", { class: "gm-write__bar" }, send, count), note);
-  }
+  } });
+  wrap.append(el("p", { class: "gm-write__h", text: "Write a review" }), ta, el("div", { class: "gm-write__bar" }, send, count), note);
+  box.append(wrap);
 }
+
+/* re-draw shown times when the 12h / 24h switch changes */
+window.addEventListener("site:clock", () => document.querySelectorAll("time[data-when]").forEach((t) => { t.textContent = fmtWhen(t.dataset.when); }));
 
 
 /* ---------------- add a missing game ---------------- */
@@ -313,9 +326,11 @@ function addBox(q, data) {
   box.append(el("p", { class: "gm-add__line", text: "Can't find it? Add “" + q + "” to the list:" }), sel,
     el("button", { class: "btn gm-btn", type: "button", text: "Add this game", onclick: async () => {
       const s = slug(q); if (!s) { note.textContent = "That name needs some letters or numbers."; return; }
-      const id = sel.value + ":" + s + "-m" + Math.random().toString(36).slice(2, 6);
-      const { error } = await sb.from("games").insert({ id, console: sel.value, title: q.slice(0, 120), added_by: user.id });
-      note.textContent = error ? "That didn't work: " + error.message : "Added — it's in the list now. Search for it to rate it.";
+      const r = await sb.rpc("add_game", { p_console: sel.value, p_title: q.slice(0, 120) });
+      if (r.error) { note.textContent = /add_game|function|schema cache/i.test(r.error.message) ? "Adding games switches back on with the next database update." : "That didn't work: " + r.error.message; return; }
+      if (!r.data || !r.data.ok) { note.textContent = (r.data && r.data.error) || "That didn't work."; return; }
+      sfx("success");
+      note.textContent = r.data.approved ? "Added. It's in the list now, so search for it to rate it." : "Sent. It shows up for everyone once the owner or an admin approves it.";
     } }), note);
 }
 
@@ -479,3 +494,7 @@ $("gm-q").addEventListener("input", () => { clearTimeout(searchTimer); searchTim
 const qbox = $("gm-qbox"); if (qbox) qbox.addEventListener("submit", (e) => { e.preventDefault(); clearTimeout(searchTimer); load(); });
 subnav($("rop-tabs"), "ratings");
 onAuth(onSession);
+
+/* the Chippers line-up in "How scores work" */
+{ const box = $("gm-chippers"); if (box) box.replaceChildren(...CHIPPER.map((n, i) => el("span", { class: "gm-chipper rop-chip--" + i, title: i + " · " + n + " (" + CHIP_WORD[i] + ")" },
+  chipSvg(i), el("b", { text: n }), el("small", { text: CHIP_WORD[i] })))); }

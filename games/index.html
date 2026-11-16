@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/games.css?v=34" />
+<link rel="stylesheet" href="/assets/pages/games.css?v=35" />
 <!-- /site:head -->
 </head>
 <body class="anyps photo" style="--bg:url('/assets/anyps-bg.webp')">
@@ -44,9 +44,17 @@
     <section class="gm-auth" id="gm-auth" aria-label="Sign in"><p class="gm-auth__line">Loading…</p></section>
     <section class="gm-sidecard gm-howto" aria-label="How scores work">
       <h2 class="gm-head">How scores work</h2>
-      <p><span class="rop-sc rop-sc--v"><span class="rop-sc__i" aria-hidden="true">✔</span><span class="rop-sc__l">Verified</span></span> Discord members only.</p>
-      <p><span class="rop-sc rop-sc--o"><span class="rop-sc__i" aria-hidden="true">🌐</span><span class="rop-sc__l">Open-Vote</span></span> Everyone: members and visitors.</p>
-      <p class="gm-note">Pick a face from 0 to 5 on any game. Click it again to take your vote back.</p>
+      <p class="gm-howto__lead">Every game gets two scores from 0 to 5. Rate with a Chipper: pick the face that fits, and click it again to take your vote back.</p>
+      <div class="gm-howto__chippers" id="gm-chippers" aria-label="The Chippers, from 0 to 5"></div>
+      <div class="gm-howto__score gm-howto__score--v">
+        <span class="rop-sc rop-sc--v"><span class="rop-sc__i" aria-hidden="true">✔</span><span class="rop-sc__l">Verified</span></span>
+        <p><b>Verified members only.</b> Members of the Discord server, plus anyone with a confirmed DMA account (after it's 3 days old). Verified members can also write reviews, post in the forums and add missing games.</p>
+      </div>
+      <div class="gm-howto__score gm-howto__score--o">
+        <span class="rop-sc rop-sc--o"><span class="rop-sc__i" aria-hidden="true">🌐</span><span class="rop-sc__l">Open-Vote</span></span>
+        <p><b>Everyone.</b> Verified members and visitors together, no account needed.</p>
+      </div>
+      <a class="gm-howto__cta" href="/account/">Get Verified: make a DMA account →</a>
     </section>
     <section class="gm-week gm-sidecard" id="gm-week" aria-label="This week" hidden></section>
     <section class="gm-voters gm-sidecard" id="gm-voters" aria-label="Leaderboard" hidden></section>
@@ -56,7 +64,7 @@
   <header class="hero" style="padding-bottom:8px">
     <div class="eyebrow">Rate-O-Pedia &middot; community rankings</div>
     <h1>Rate-O-Pedia Forums</h1>
-    <p class="lead">Search any game, on any platform from the Atari 2600 to the PS5, PC and Switch, and see how it scores from 0 to 5. Anyone can rate a game. Discord members' votes make the <b>Verified Review Score</b>; everyone's votes together make the <b>Open-Vote Review Score</b>. Reviews and adding games are a perk for members of the Discord server.</p>
+    <p class="lead">Search any game, on any platform from the Atari 2600 to the PS5, PC and Switch, and see how it scores from 0 to 5. Anyone can rate a game. Verified members' votes make the <b>Verified Review Score</b>; everyone's votes together make the <b>Open-Vote Review Score</b>. Reviews and adding games are a perk for Verified members: join the Discord server or make a DMA account.</p>
   </header>
 
   <main id="main">
@@ -88,7 +96,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script type="module" src="/assets/pages/games.js?v=31"></script>
+<script type="module" src="/assets/pages/games.js?v=32"></script>
 <!-- /site:scripts -->
 </body>
 </html>

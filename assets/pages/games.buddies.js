@@ -3,7 +3,7 @@
  * plus a conversation view at ?dm=<handle>. Everything goes through the round-33 database functions, which only ever
  * return your own data. Messages arrive live (Realtime) with a slow poll as a fallback.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, profileUrl, toast, sfx, opps } from "./games.common.js?v=23";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, profileUrl, toast, sfx, opps } from "./games.common.js?v=24";
 
 const root = $("bd-root");
 const params = new URLSearchParams(location.search);

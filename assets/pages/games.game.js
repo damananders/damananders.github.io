@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt } from "./games.common.js?v=23";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt } from "./games.common.js?v=24";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -90,7 +90,7 @@ function scoreBox() {
       el("h2", { class: "gi-h" }, el("span", { "aria-hidden": "true", text: icon + " " }), title),
       el("p", { class: "gi-big" }, el("b", { text: val }), el("span", { text: " / 5" })), el("p", { class: "gm-note", text: note }));
     box.append(el("div", { class: "gi-scores" },
-      half("v", "✔", "Verified Review Score", avg, game.votes ? plural(game.votes, "member vote") : "No member votes yet", "Discord members only"),
+      half("v", "✔", "Verified Review Score", avg, game.votes ? plural(game.votes, "member vote") : "No member votes yet", "Verified members: the Discord server or a confirmed DMA account"),
       half("o", "🌐", "Open-Vote Review Score", oavg, game.open_votes ? plural(game.open_votes, "vote") + " · " + plural(game.visitor_votes || 0, "visitor") : "No votes yet", "Members and visitors together")));
   }
   const row = el("div", { class: "gm-rate" });

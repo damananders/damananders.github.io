@@ -1422,3 +1422,59 @@ body.pt-on .pf-hero__say{border-color:color-mix(in srgb,var(--pt-acc2) 50%,trans
 /* calmer banner glow so it doesn't spill onto the search box */
 :root[data-page="games"] .wrap > header.hero{box-shadow:0 0 0 1px rgba(0,0,0,.6),0 18px 40px -34px var(--rop),inset 0 0 50px -34px color-mix(in srgb,var(--rop) 60%,transparent);margin-bottom:22px}
 :root[data-page="games"] .wrap > header.hero::after{opacity:.24}
+
+/* reviews keep the writer's own line breaks; your own review gets Edit in place */
+.gm-review__body{white-space:pre-line}
+.gm-review--mine{border-color:color-mix(in srgb,var(--rop,#36d39a) 40%,var(--sx-line))}
+.gm-review__mine{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:8px}
+.gm-review__edit{font-size:.82rem;padding:5px 12px}
+.gm-review__ta{width:100%;font:inherit;line-height:1.55}
+.gm-review__when{color:var(--sx-muted);font-size:.82rem}
+/* quick profile: 12h / 24h clock switch */
+.rop-me__clock{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:3px 4px 3px 10px;border-radius:999px;border:1px solid var(--sx-line-2);font:600 .72rem var(--sx-mono);color:var(--sx-muted)}
+.rop-me__clockk{margin-right:4px;letter-spacing:.08em;text-transform:uppercase}
+.rop-me__clock b{padding:2px 8px;border-radius:999px;font-weight:600}
+.rop-me__clock b.is-on{background:var(--sx-accent);color:var(--sx-on-accent)}
+.rop-me__clock:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
+
+/* "How scores work": the Chippers line-up and the two scores */
+.gm-howto{gap:12px;border-color:color-mix(in srgb,var(--rop,#36d39a) 35%,var(--sx-line));background:linear-gradient(160deg,rgba(54,211,154,.07),transparent 50%),var(--sx-surface)}
+.gm-howto__lead{margin:0;color:var(--sx-muted);font-size:.88rem;line-height:1.5}
+.gm-howto__chippers{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:10px 6px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--sx-line);--chip-bg:#0a0e0c}
+.gm-chipper{display:grid;justify-items:center;gap:2px;text-align:center;min-width:0}
+.gm-chipper .rop-chip__svg svg{width:34px;height:34px;display:block}
+.gm-chipper b{font:700 .72rem var(--sx-display);color:var(--sx-text);overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.gm-chipper small{font:500 .6rem var(--sx-mono);color:var(--sx-muted);white-space:nowrap}
+.gm-howto__score{display:grid;gap:6px;padding:10px 12px;border-radius:12px;border:1px solid var(--sx-line)}
+.gm-howto__score p{margin:0;font-size:.85rem;line-height:1.5;color:var(--sx-muted)}
+.gm-howto__score b{color:var(--sx-text)}
+.gm-howto__score--v{border-color:color-mix(in srgb,var(--rop,#36d39a) 40%,transparent);background:rgba(54,211,154,.06)}
+.gm-howto__score--o{border-color:rgba(75,155,255,.35);background:rgba(75,155,255,.06)}
+.gm-howto__score .rop-sc{justify-self:start}
+.gm-howto__cta{justify-self:start;font:700 .85rem var(--sx-display);color:var(--rop-gold,#e3b54a);text-decoration:none}
+.gm-howto__cta:hover{text-decoration:underline}
+
+/* Ratings tab shows a Chipper, not a star */
+.rop-tab__chip{display:inline-grid;--chip-bg:transparent}
+.rop-tab__chip svg{width:100%;height:100%}
+
+/* mini profile: Op Station as a yellow computer by the bell; pink/red Buddies; small red Sign out bottom right */
+.rop-me__opico{display:grid;place-items:center;width:36px;height:36px;flex:none;align-self:flex-start;border-radius:12px;color:#ffcc4d;border:1px solid rgba(255,204,77,.5);background:rgba(255,204,77,.08)}
+.rop-me__opico svg{width:20px;height:20px}
+.rop-me__opico:hover,.rop-me__opico:focus-visible{background:rgba(255,204,77,.18);outline:none;box-shadow:0 0 0 2px rgba(255,204,77,.4)}
+.rop-me__head .rop-bell__wrap + .rop-me__opico{margin-left:0}
+.rop-me__head:not(:has(.rop-bell__wrap:not([hidden]))) .rop-me__opico{margin-left:auto}
+.rop-me__btn.rop-me__bud{display:inline-flex;align-items:center;gap:7px;color:#fff;border-color:transparent;background:linear-gradient(135deg,#ff4f8b,#e0243c);box-shadow:0 6px 16px -10px #ff4f8b}
+.rop-me__btn.rop-me__bud:hover{filter:brightness(1.08)}
+.rop-me__budi{display:inline-grid;color:#ffd1e0}
+.rop-me__budi svg{width:18px;height:18px}
+.rop-me__foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rop-me__foot .rop-me__clock{margin-top:0}
+.rop-me__out{all:unset;cursor:pointer;padding:3px 10px;border-radius:999px;font:700 .7rem var(--sx-display);letter-spacing:.02em;color:#fff;background:#e5262f;box-shadow:0 4px 12px -6px #e5262f}
+.rop-me__out:hover{background:#ff3540}
+.rop-me__out:focus-visible{outline:2px solid #ff8a8f;outline-offset:2px}
+/* breathing room under the site top bar */
+.gm-auth.rop-me{margin-top:26px}
+.gm-howto .gm-howto__score p,.gm-howto .gm-howto__lead{display:block}
+.gm-chipper small{white-space:normal;font-size:.58rem;line-height:1.2}
+.rop-me__btns > .rop-me__bud{grid-column:1/-1}

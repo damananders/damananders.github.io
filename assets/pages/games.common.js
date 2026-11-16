@@ -17,7 +17,7 @@ export function el(tag, attrs, ...kids) {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
     if (v == null || v === false) continue;
-    if (k === "text") n.textContent = v; else if (k === "class") n.className = v;
+    if (k === "text") n.textContent = v; else if (k === "class") n.className = v; else if (k === "html") n.innerHTML = v;   // html: only ever our own constants
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? "" : v);
   }
   for (const k of kids) if (k != null && k !== false) n.append(k);
@@ -37,6 +37,15 @@ export const colorClass = (c) => "rop-c rop-c--" + (COLORS.some(([k]) => k === c
 export function memberSince(iso) {
   const d = iso ? new Date(iso) : null;
   return d && !isNaN(d) ? d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "—";
+}
+/* review / post times: the visitor's own time zone, 12-hour by default; "site.clock24" (true) switches to 24-hour.
+   The quick profile box and the site settings both write that same key. */
+export const clock24 = () => { try { return JSON.parse(localStorage.getItem("site.clock24") || "false") === true; } catch (e) { return false; } };
+export function setClock24(on) { try { localStorage.setItem("site.clock24", JSON.stringify(!!on)); } catch (e) {} try { window.dispatchEvent(new CustomEvent("site:clock", { detail: !!on })); } catch (e) {} }
+export function fmtWhen(iso) {
+  const d = iso ? new Date(iso) : null; if (!d || isNaN(d)) return "";
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) + " · " +
+    d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: !clock24() });
 }
 export function shortDate(iso) {
   const d = iso ? new Date(iso) : null;
@@ -229,15 +238,19 @@ export function authPill(box, opts) {
       el("div", { class: "rop-me__who" }, el("span", { class: "rop-me__line" }, el("b", { class: "rop-me__name", text: myName() }), flair), status)),
     el("ul", { class: "rop-me__stats" }, rLi, pLi, cLi));
   if (me.ready) box.querySelector(".rop-me__head").append(bell());
+  if (me.admin) box.querySelector(".rop-me__head").append(el("a", { class: "rop-me__opico", href: "/games/ti3c20mi/", title: "Operation Station", "aria-label": "Operation Station", html: OP_ICO }));
   const btns = el("div", { class: "rop-me__btns" });
   if (!me.member && !me.banned && !me.restricted) btns.append(el("a", { class: "btn gm-btn rop-me__main", href: INVITE, target: "_blank", rel: "noopener", text: "Join the Discord" }),
     el("button", { class: "rop-me__btn", type: "button", onclick: (e) => recheck(e.currentTarget), text: "I've joined, check again" }));
   if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
   if (handle) btns.append(buddiesBtn());
-  if (me.admin) btns.append(el("a", { class: "rop-me__btn rop-me__op", href: "/games/ti3c20mi/", text: "Operation Station" }));
-  btns.append(el("button", { class: "rop-me__btn rop-me__out", type: "button", text: "Sign out", title: "Sign out of Discord", onclick: async () => { await sb.auth.signOut(); } }));
   box.append(btns);
+  const out = el("button", { class: "rop-me__out", type: "button", text: "Sign out", title: "Sign out", onclick: async () => { await sb.auth.signOut(); } });
+  const clk = el("button", { class: "rop-me__clock", type: "button", "aria-pressed": clock24() ? "true" : "false", title: "How review and post times are shown",
+    onclick: () => { setClock24(!clock24()); paintClk(); } });
+  const paintClk = () => { const on = clock24(); clk.setAttribute("aria-pressed", on ? "true" : "false"); clk.replaceChildren(el("span", { class: "rop-me__clockk", text: "Clock" }), el("b", { class: on ? "" : "is-on", text: "12h" }), el("b", { class: on ? "is-on" : "", text: "24h" })); };
+  paintClk(); box.append(el("div", { class: "rop-me__foot" }, clk, out));
   if (!handle) { [rB, pB, cB].forEach((x) => { x.textContent = "0"; }); return; }
   // counts and the top-3 voter medal, filled in as they arrive
   sb.from("member_profiles").select("reviews,posts").eq("handle", handle).maybeSingle().then(({ data }) => {
@@ -287,7 +300,10 @@ export function unreadBadge(node) {
   tick(); setInterval(() => { if (!document.hidden) tick(); }, 60000);
   return node;
 }
-function buddiesBtn() { return unreadBadge(el("a", { class: "rop-me__btn rop-me__bud", href: "/games/buddies/", text: "Buddies & messages" })); }
+const OP_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M7 8l2 2-2 2M11 12h4"/></svg>';
+/* a heart with a fist inside it */
+const BUD_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.3-9.4C1.4 8 3.6 4.5 7.1 4.5c2 0 3.7 1.1 4.9 2.8 1.2-1.7 2.9-2.8 4.9-2.8 3.5 0 5.7 3.5 4.4 7.1C19.5 16.4 12 21 12 21z" fill="currentColor"/><path d="M8.6 10.2h5.6a1.3 1.3 0 0 1 1.3 1.3v2.4a2.6 2.6 0 0 1-2.6 2.6h-2.3a2 2 0 0 1-2-2v-4.3zM10.5 10.2v1.6M12.4 10.2v1.6M8.6 12.4h1.6" fill="#fff" stroke="#b0123f" stroke-width="1" stroke-linejoin="round"/></svg>';
+function buddiesBtn() { return unreadBadge(el("a", { class: "rop-me__btn rop-me__bud", href: "/games/buddies/" }, el("span", { class: "rop-me__budi", html: BUD_ICO }), el("span", { text: "Buddies & messages" }))); }
 
 function discordSvg() {
   const ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
@@ -307,8 +323,9 @@ export function subnav(box, active) {
     svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.8");
     svg.setAttribute("stroke-linecap", "round"); svg.setAttribute("stroke-linejoin", "round"); svg.setAttribute("aria-hidden", "true"); svg.classList.add("rop-tab__i");
     path.setAttribute("d", d); svg.append(path);
+    const ico = k === "ratings" ? Object.assign(chipSvg(5), { className: "rop-chip__svg rop-tab__i rop-tab__chip" }) : svg;
     return el("a", { class: "rop-tab rop-tab--big" + (k === active ? " is-on" : ""), href, "aria-current": k === active ? "page" : null },
-      svg, el("span", { class: "rop-tab__t" }, el("b", { text: label }), el("small", { text: sub })));
+      ico, el("span", { class: "rop-tab__t" }, el("b", { text: label }), el("small", { text: sub })));
   }));
 }
 
@@ -339,6 +356,8 @@ const CHIP_FACE = [
 ];
 const CHIP_PINS = '<path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/>';
 export const CHIP_WORD = ["Awful", "Bad", "Meh", "Okay", "Great", "Must play"];
+/* the rating chips are "the Chippers"; each mood has a name */
+export const CHIPPER = ["Poobar", "Eskritt", "Meepo", "Gibby", "Perisa", "Fromie"];
 export function chipSvg(n) {
   const w = document.createElement("span");
   w.className = "rop-chip__svg"; w.setAttribute("aria-hidden", "true");
@@ -353,7 +372,7 @@ export function chipRow(current, onPick, label) {
   for (let i = 0; i <= 5; i++) {
     const on = current === i;
     row.append(el("button", { class: "rop-chip rop-chip--" + i + (on ? " is-on" : ""), type: "button", role: "radio", "aria-checked": on ? "true" : "false",
-      title: on ? i + " (" + CHIP_WORD[i] + ") — click again to remove your rating" : i + " out of 5 · " + CHIP_WORD[i], "aria-label": i + " out of 5, " + CHIP_WORD[i],
+      title: on ? i + " · " + CHIPPER[i] + " (" + CHIP_WORD[i] + ") — click again to remove your rating" : i + " out of 5 · " + CHIPPER[i] + " (" + CHIP_WORD[i] + ")", "aria-label": i + " out of 5, " + CHIP_WORD[i],
       onclick: () => onPick(on ? null : i) }, chipSvg(i), el("span", { class: "rop-chip__n", text: String(i) })));
   }
   return row;
@@ -510,7 +529,7 @@ export function scorePair(g, compact) {
     el("span", { class: "rop-sc__i", "aria-hidden": "true", text: icon }), el("span", { class: "rop-sc__l", text: label }),
     el("b", { text: fmtScore(avg, n) }), compact ? null : el("span", { class: "rop-sc__n", text: v(n) }));
   return el("span", { class: "rop-scores" + (compact ? " rop-scores--c" : "") },
-    pill("v", "✔", "Verified", g.average, g.votes, "Verified Review Score: Discord members only (" + v(g.votes) + ")"),
+    pill("v", "✔", "Verified", g.average, g.votes, "Verified Review Score: Verified members only, from the Discord server or a confirmed DMA account (" + v(g.votes) + ")"),
     pill("o", "🌐", "Open-Vote", g.open_average, g.open_votes, "Open-Vote Review Score: members and visitors together (" + v(g.open_votes) + ", " + v(g.visitor_votes) + " from visitors)"));
 }
 /* this browser's own visitor ratings: Map(game id -> stars) */
