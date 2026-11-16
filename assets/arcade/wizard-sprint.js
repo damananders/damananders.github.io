@@ -1483,7 +1483,7 @@
         var imgBox = el("span", { class: "wz-card__img" }, icoEl(slotIco(c.k))); if (rc) imgBox.style.setProperty("--lc", rc);
         bt.appendChild(imgBox);
         bt.appendChild(el("span", { class: "wz-card__meta" },
-          el("em", { class: "wz-card__slot", text: /^sim/.test(c.k) ? "Sim " + c.k.slice(3) : slotName(c.k) }),
+          el("em", { class: "wz-card__slot", text: slotName(c.k) }),
           el("b", { class: "wz-card__name", text: itm ? itm.n : "Empty" }),
           el("span", { class: "wz-card__lv", text: itm ? "Lv " + itm.il + " · " + RAR[itm.r].n : (c.fit ? c.fit + " fit" : "—") })));
         if (c.nn) bt.appendChild(el("em", { class: "wz-new", text: "NEW" }));
