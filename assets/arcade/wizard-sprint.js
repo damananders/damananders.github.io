@@ -1206,7 +1206,7 @@
   }
   function menuHud(ctx) {
     /* a Wiz-level XP bar, up top in the clear band to the right of the side panel */
-    var ebw = 344, ex = 560, ey = 16, need = xpNeed(S.lvl), max = S.lvl >= 100, f = max ? 1 : clamp(S.xp / need, 0, 1);
+    var ebw = 344, ex = UI.scene === "equip" ? Math.round((W - ebw) / 2) : 560, ey = 16, need = xpNeed(S.lvl), max = S.lvl >= 100, f = max ? 1 : clamp(S.xp / need, 0, 1);
     plate(ctx, ex - 10, ey, ebw + 20, 44, 10);
     bold(ctx, "WIZ LEVEL", ex + 6, ey + 18, "800 11px " + F.mono, "#e8c15a");
     bold(ctx, String(S.lvl), ex + 92, ey + 20, "800 18px " + SERIF, "#fff3c4", "left");
@@ -1418,6 +1418,19 @@
       if (it.chips) { var box = el("span", { class: "wz-chips" }); it.chips.forEach(function (c) { box.appendChild(el("i", { class: "wz-chip " + (c[1] ? "is-" + c[1] : ""), text: c[0] })); }); var sp = bt.querySelector("span"); if (sp) bt.replaceChild(box, sp); else bt.appendChild(box); }
       if (it.more) { var bx2 = el("span", { class: "wz-chips" }); it.more.forEach(function (c) { bx2.appendChild(el("i", { class: "wz-chip " + (c[1] ? "is-" + c[1] : ""), text: c[0] })); }); bt.appendChild(bx2); }
       if (it.isNew) { bt.classList.add("is-new"); bt.appendChild(el("em", { class: "wz-new", text: it.isNew === true ? "NEW!" : it.isNew })); }
+      if (it.pos) { var P = it.pos; bt.style.cssText += ";position:absolute;margin:0;left:" + (P[0] / 1280 * 100) + "cqw;top:" + (P[1] / 720 * 100) + "cqh;width:" + (P[2] / 1280 * 100) + "cqw;height:" + (P[3] / 720 * 100) + "cqh"; }
+      if (it.card) {                                      /* a body-map slot: rarity-bordered icon preview, slot name, item name, level */
+        var c = it.card, itm = c.it, rc = itm ? (RAR[itm.r].c === "rb" ? "#ffd84a" : RAR[itm.r].c) : "";
+        while (bt.firstChild) bt.removeChild(bt.firstChild);
+        var imgBox = el("span", { class: "wz-card__img" }, icoEl(slotIco(c.k))); if (rc) imgBox.style.setProperty("--lc", rc);
+        bt.appendChild(imgBox);
+        bt.appendChild(el("span", { class: "wz-card__meta" },
+          el("em", { class: "wz-card__slot", text: /^sim/.test(c.k) ? "Sim " + c.k.slice(3) : slotName(c.k) }),
+          el("b", { class: "wz-card__name", text: itm ? itm.n : "Empty" }),
+          el("span", { class: "wz-card__lv", text: itm ? "Lv " + itm.il + " · " + RAR[itm.r].n : (c.fit ? c.fit + " fit" : "—") })));
+        if (c.nn) bt.appendChild(el("em", { class: "wz-new", text: "NEW" }));
+        bt.dataset.wzSlot = c.k;
+      }
     });
   }
   function tile(l, v, note) { return el("div", { class: "ak-stat" }, el("span", { text: l }), el("b", { text: String(v) }), note ? el("em", { text: note }) : null); }
@@ -1528,17 +1541,27 @@
     MN(g, { cls: "is-side is-wide", kicker: "Prep Time", title: "Incantations", sub: "Shattered Syllables: " + S.syl + " (spent at the Incantation Study, later)", items: items, focus: items.length - 1, back: function () { prep(g, 0); } });
   }
   function slotName(k) { var sd = slotDef(k); return /^sim/.test(k) ? "Simulacrum " + k.slice(3) : sd.n; }
+  /* the equipment body-map: each open slot is a card placed at a body position (canvas px, 1280x720);
+     locked slots never appear. Simulacra sit bottom-left, weapons bottom-centre, the wizard preview centre-right. */
+  var EMAP = {
+    back:  [22, 86, 182, 78],  shoulder: [22, 176, 182, 78],  waist: [22, 300, 182, 78],
+    hands: [216, 300, 182, 78],
+    head:  [416, 86, 182, 78], chest: [416, 174, 182, 104], legs: [416, 290, 182, 78], feet: [416, 380, 182, 78],
+    neck:  [612, 86, 182, 78],
+    main:  [598, 548, 190, 80], off: [794, 548, 190, 80],
+    sim1: [22, 540, 122, 62], sim2: [150, 540, 122, 62], sim3: [278, 540, 122, 62],
+    sim4: [22, 606, 122, 62], sim5: [150, 606, 122, 62], sim6: [278, 606, 122, 62]
+  };
   function equip(g, focus) {
     UI.scene = "equip"; UI.menu = "equip";
     var open = openSlots();
     var items = open.map(function (k, i) { var it = S.eq[k], kind = /^sim/.test(k) ? "sim" : k, fit = S.bag.filter(function (q) { return q.s === kind; }), nn = fit.filter(function (q) { return q.nw; }).length;
-      var sub = it ? RAR[it.r].n + (it.l.length ? "  ·  " + it.l.map(function (l) { return "+" + l[1] + STAT[l[0]].u; }).join(" ") : "") : "Empty";
-      if (fit.length) sub += "  ·  " + fit.length + " fit";
-      return { label: slotName(k), ico: slotIco(k), sub: (nn ? "● " : "") + sub, tag: k, cls: "wz-slotrow " + (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : "") + (nn ? " is-new" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
+      return { label: slotName(k), tag: k, pos: EMAP[k] || [0, 0, 178, 62], card: { k: k, it: it, fit: fit.length, nn: nn },
+        cls: "wz-card " + (/^sim/.test(k) ? "wz-card--sim " : "") + (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : "") + (nn ? " is-new" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
     var nb = S.bag.filter(function (q) { return q.nw; }).length;
-    items.push({ label: "Rummage In The Bag", ico: "equip", sub: (nb ? nb + " new · " : "") + S.bag.length + " / " + S.bagCap + " carried", cls: "wz-slotrow" + (nb ? " is-new" : ""), act: function () { bag(g, 0, function () { equip(g, open.length); }); } });
-    items.push({ label: "Back", ico: "back", cls: "wz-slotrow", act: function () { hub(g, 1); } });
-    MN(g, { cls: "is-side wz-narrow wz-equip", kicker: "Wizard Drip", title: "Equipment", sub: "The selected slot shows below the wizard; your stats sit on the right. Slots open as your Wiz Level rises.", items: items, focus: focus, back: function () { hub(g, 1); } });
+    items.push({ label: "Rummage In The Bag", ico: "equip", pos: [340, 650, 360, 48], cls: "wz-equipbtn is-primary" + (nb ? " is-new" : ""), act: function () { bag(g, 0, function () { equip(g, open.length); }); } });
+    items.push({ label: "Back To The Tower", ico: "back", pos: [724, 650, 260, 48], cls: "wz-equipbtn", act: function () { hub(g, 1); } });
+    MN(g, { cls: "wz-equipmap", kicker: "Wizard Drip", title: "Equipment", items: items, focus: focus, back: function () { hub(g, 1); } });
   }
   function slotMenu(g, k, focus, backF) {
     UI.scene = "bag"; UI.menu = "slot";
@@ -1586,52 +1609,29 @@
   }
   function statWord(k) { return STAT[k].d.split(" ")[0]; }
   function drawEquipScene(g, ctx) {
-    var t = Hb.t, i, open = openSlots(), cx = 672, cy = 326, footY = 520;
-    /* an armory alcove: warm stone, a shaft of light on the wizard */
-    ctx.fillStyle = "#1a1620"; ctx.fillRect(0, 0, W, H);
-    for (i = 0; i < 90; i++) { ctx.fillStyle = i % 2 ? "rgba(255,210,150,.04)" : "rgba(0,0,0,.10)"; var bx = (i * 73) % W, by = (i * 97) % H; ctx.fillRect(bx, by, 46 + (i % 3) * 22, 3); }
-    var gl = ctx.createRadialGradient(cx, cy + 40, 50, cx, cy + 40, 470); gl.addColorStop(0, "rgba(255,214,130,.20)"); gl.addColorStop(1, "rgba(255,214,130,0)"); ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
-    ell(ctx, cx, footY + 6, 118, 20, "rgba(0,0,0,.4)");
-    /* which slot the menu has selected, so its node and the detail card light up */
-    var sel = null; try { var pn = document.querySelector('.ak-stage[data-game="wizard-sprint"] .ak-panel'), sb = pn && pn.querySelector(".ak-btn.is-sel"); sel = sb && sb.dataset ? sb.dataset.wzSlot : null; } catch (e) {}
-    /* a clean ring of small icon tiles around the wizard: no text to crowd or cut off, so it stays tidy even fully unlocked */
-    var n = open.length, rx = 236, ry = 232, nodes = [];
-    open.forEach(function (k, i2) { var an = -Math.PI / 2 + (n ? i2 / n : 0) * TAU; nodes.push({ k: k, x: Math.round(cx + Math.cos(an) * rx), y: Math.round(cy + Math.sin(an) * ry) }); });
-    nodes.forEach(function (nd) { if (nd.k !== sel) return; ctx.strokeStyle = "#ffe08a"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, cy + 8); ctx.lineTo(nd.x, nd.y); ctx.stroke(); });
-    nodes.forEach(function (nd) {
-      var it = S.eq[nd.k], on = nd.k === sel, col = it ? RAR[it.r].c : "#5f564a", s = on ? 27 : 22, w = s * 2, x = nd.x - s, y = nd.y - s;
-      if (on) { ctx.fillStyle = "rgba(255,224,138,.18)"; ctx.beginPath(); ctx.arc(nd.x, nd.y, s + 7, 0, TAU); ctx.fill(); }
-      ctx.fillStyle = on ? "rgba(46,30,15,.98)" : "rgba(20,13,7,.92)"; D.rr(ctx, x, y, w, w, 9); ctx.fill();
-      ctx.strokeStyle = on ? "#ffe08a" : col; ctx.lineWidth = on ? 3 : 2; D.rr(ctx, x + 1, y + 1, w - 2, w - 2, 8); ctx.stroke();
-      ctx.save(); ctx.imageSmoothingEnabled = false; if (!it) ctx.globalAlpha = 0.45; var isc = (w - 14) / 16; icoAt(ctx, slotIco(nd.k), x + 7, y + 7, isc); ctx.globalAlpha = 1; ctx.restore();
-    });
-    /* the wizard in the middle */
+    var t = Hb.t, i, wx2 = 812, footY = 470;
+    /* an armory alcove: warm lit stone */
+    var bgg = ctx.createLinearGradient(0, 0, 0, H); bgg.addColorStop(0, "#3a2c20"); bgg.addColorStop(1, "#241a14"); ctx.fillStyle = bgg; ctx.fillRect(0, 0, W, H);
+    for (i = 0; i < 90; i++) { ctx.fillStyle = i % 2 ? "rgba(255,210,150,.07)" : "rgba(0,0,0,.09)"; var bx = (i * 73) % W, by = (i * 97) % H; ctx.fillRect(bx, by, 46 + (i % 3) * 22, 3); }
+    /* the Wizard Drip bordered cell the whole screen sits inside */
+    var fx = 14, fy = 62, fw = W - 28, fh = H - 76;
+    ctx.fillStyle = "rgba(70,48,28,.42)"; D.rr(ctx, fx, fy, fw, fh, 16); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, fx + 1.5, fy + 1.5, fw - 3, fh - 3, 15); ctx.stroke();
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(232,193,90,.32)"; D.rr(ctx, fx + 6, fy + 6, fw - 12, fh - 12, 12); ctx.stroke();
+    /* a lit medallion holds the wizard preview, bright and clear (no more dim radial) */
+    var mcx = wx2, mcy = footY - 96;
+    var halo = ctx.createRadialGradient(mcx, mcy, 16, mcx, mcy, 240); halo.addColorStop(0, "rgba(255,236,176,.72)"); halo.addColorStop(.45, "rgba(255,222,142,.3)"); halo.addColorStop(1, "rgba(255,222,142,0)"); ctx.fillStyle = halo; ctx.fillRect(wx2 - 240, fy + 4, 480, fh - 8);
+    ctx.fillStyle = "rgba(46,32,19,.72)"; ctx.beginPath(); ctx.ellipse(mcx, mcy + 40, 152, 200, 0, 0, TAU); ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = "rgba(232,193,90,.6)"; ctx.beginPath(); ctx.ellipse(mcx, mcy + 40, 152, 200, 0, 0, TAU); ctx.stroke();
+    ell(ctx, wx2, footY + 8, 112, 19, "rgba(0,0,0,.4)");
     wizSprite(lookOf(S.comfort), (t % 8) < 5 ? "stand" : (t % 8) < 6.5 ? "five" : "stand", t);
-    ctx.imageSmoothingEnabled = false; blitWiz(ctx, cx, footY, 4.2);
-    /* the selected slot, roomy and uncut, at the bottom: big category name, the worn item and its full stats */
-    var dx = 356, dy = 598, dw = 628, dh = 112;
-    plate(ctx, dx, dy, dw, dh, 10);
-    if (sel) {
-      var it2 = S.eq[sel], col2 = it2 ? RAR[it2.r].c : "#8a7f6e";
-      ctx.save(); ctx.imageSmoothingEnabled = false; if (!it2) ctx.globalAlpha = 0.5; icoAt(ctx, slotIco(sel), dx + dw - 64, dy + 22, 3.4); ctx.globalAlpha = 1; ctx.restore();
-      D.text(ctx, slotName(sel), dx + 18, dy + 32, "800 23px " + SERIF, "#fff3c4", "left");
-      if (it2) {
-        D.text(ctx, it2.n, dx + 18, dy + 56, "700 16px " + SERIF, col2, "left");
-        D.text(ctx, RAR[it2.r].n + "  ·  Item Lv " + it2.il, dx + 18, dy + 74, "700 11px " + F.mono, col2, "left");
-        var lns = it2.l.length ? it2.l.map(function (l) { return "+" + l[1] + STAT[l[0]].u.trim() + "  " + STAT[l[0]].d; }) : ["No stats on this piece"];
-        var shown = lns.slice(0, 4); if (lns.length > 4) shown[3] = "+" + (lns.length - 3) + " more stats";
-        shown.forEach(function (ln, li) { D.text(ctx, ln, dx + 18 + (li % 2) * 306, dy + 93 + Math.floor(li / 2) * 15, "700 12px " + F.mono, it2.l.length ? "#9ff0b4" : "#b9a780", "left"); });
-      } else {
-        D.text(ctx, "Empty", dx + 18, dy + 58, "700 15px " + F.mono, "#b9a780", "left");
-        D.text(ctx, "Pick a piece from the bag on the left to fill this slot.", dx + 18, dy + 80, "600 12px " + F.mono, "#8a7f6e", "left");
-      }
-    } else {
-      D.text(ctx, "Select a slot on the left", dx + 18, dy + 42, "700 17px " + SERIF, "#dccb9f", "left");
-      D.text(ctx, "The gear worn there, and its stats, show here.", dx + 18, dy + 68, "600 12px " + F.mono, "#9a8f7a", "left");
-    }
+    ctx.imageSmoothingEnabled = false; blitWiz(ctx, wx2, footY, 4.8);
+    plate(ctx, wx2 - 118, footY + 24, 236, 46, 9);
+    bold(ctx, S.wiz.name || "The Wizard", wx2, footY + 44, "800 19px " + SERIF, "#fff3c4", "center");
+    bold(ctx, "Wiz Level " + S.lvl, wx2, footY + 62, "700 13px " + F.mono, "#dccb9f", "center");
     /* right-hand stat stack: a base number, with a green bump from whatever gear is on */
     var tot = calc(), base = {}; SK.forEach(function (k) { base[k] = Math.min(STAT[k].cap, r1((S.ranks[k] || 0) * STAT[k].rank)); });
-    var px0 = 996, pw = 272, py0 = 132, rh = 50;
+    var px0 = 992, pw = 262, py0 = 134, rh = 50;
     plate(ctx, px0, py0 - 42, pw, 34); D.text(ctx, "Wizard Stats", px0 + pw / 2, py0 - 19, "700 19px " + SERIF, "#f3e6c4", "center");
     SK.forEach(function (k, i3) {
       var y = py0 + i3 * rh, bv = k === "vit" ? 10 + base.vit : base[k], tv = k === "vit" ? tot.hp : tot[k], u = k === "vit" ? "" : STAT[k].u, dl = r1(tv - bv);
