@@ -26,7 +26,7 @@ const SB_URL = "https://zjhlhkruqzfendvbglsb.supabase.co";
 const SB_KEY = "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk";
 const SKIP_PLATFORMS = new Set(["PS1", "PS2", "PSP", "PS3"]);
 const JUNK = /(?:[\s:(-]+)(?:demo|playtest|soundtrack|original soundtrack|ost|artbook|art book|dedicated server|benchmark|sdk|level editor|public test|test server)\)?$/i;
-const MUST = [["PC", "World of Warcraft"], ["Mac", "World of Warcraft"]];   // checked at the end of the run
+const MUST = [["PC", "World of Warcraft"]];   // checked at the end of the run
 
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

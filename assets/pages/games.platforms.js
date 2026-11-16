@@ -11,7 +11,7 @@ export const FAMILIES = [
   ["xbox", "Xbox", "#3fbf3f"],
   ["nin", "Nintendo", "#e4000f"],
   ["sega", "Sega", "#1f6fe0"],
-  ["pc", "PC & Mac", "#9aa6b4"],
+  ["pc", "PC", "#9aa6b4"],
   ["atari", "Atari", "#ff7a1f"],
   ["retro", "Other consoles", "#c069ff"],
   ["comp", "Home computers", "#1ec5b3"],
@@ -60,11 +60,9 @@ export const PLATFORMS = [
   { id: "DC", name: "Dreamcast", fam: "sega", wp: "Dreamcast", lr: ["Sega - Dreamcast"], year: 1998 },
   { id: "GG", name: "Game Gear", fam: "sega", wp: "Game Gear", lr: ["Sega - Game Gear"], year: 1990 },
   { id: "Pico", name: "Sega Pico", fam: "sega", wp: "Sega Pico", lr: ["Sega - PICO"], year: 1993 },
-  // PC & Mac
+  // PC (Mac and Linux copies were merged into PC, round 23)
   { id: "PC", name: "PC (Windows)", fam: "pc", wp: "Microsoft Windows", year: 1985 },
   { id: "DOS", name: "MS-DOS", fam: "pc", wp: "MS-DOS", wpx: ["IBM PC compatible"], lr: ["DOS"], year: 1981 },
-  { id: "Mac", name: "Mac", fam: "pc", wp: "macOS", wpx: ["Classic Mac OS", "Mac (computer)"], qx: ["Q14116", "Q43627", "Q13522376", "Q75687"], year: 1984 },
-  { id: "Linux", name: "Linux", fam: "pc", wp: "Linux", year: 1991 },
   // Atari
   { id: "2600", name: "Atari 2600", fam: "atari", wp: "Atari 2600", lr: ["Atari - 2600"], year: 1977 },
   { id: "5200", name: "Atari 5200", fam: "atari", wp: "Atari 5200", lr: ["Atari - 5200"], year: 1982 },

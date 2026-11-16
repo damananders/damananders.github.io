@@ -5,6 +5,7 @@
 import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores } from "./games.common.js?v=22";
 
 const qs = new URLSearchParams(location.search);
+if (/^(Mac|Linux)$/.test(qs.get("p") || "")) { qs.set("p", "PC"); location.replace("?" + qs); }   // merged into PC (round 23)
 const pid = qs.get("p") || "", fam = qs.get("f") || "";
 const root = $("ph-root");
 const fmt = (n) => Number(n || 0).toLocaleString();
