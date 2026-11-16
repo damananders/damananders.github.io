@@ -308,6 +308,34 @@
 .wz-lootcard__lv{font:700 .68em var(--mono);color:#d8c7a0}
 .wz-lootcard.is-r0{--lc:#e8e8e8}.wz-lootcard.is-r1{--lc:#4ed16a}.wz-lootcard.is-r2{--lc:#4aa3ff}
 .wz-lootcard.is-r3{--lc:#b46bff}.wz-lootcard.is-r4{--lc:#ff9a2e}.wz-lootcard.is-r5{--lc:#ff6bd6}
+/* ---- equipment body-map: slot cards placed at body positions over the canvas wizard ---- */
+.ak-menu:has(.ak-panel.wz-equipmap){place-items:stretch;padding:0;background:transparent;backdrop-filter:none}
+.ak-panel.wz-equipmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;font-size:2.35cqh}
+.ak-panel.wz-equipmap .ak-panel__kicker{position:absolute;left:2.4cqw;top:.7cqh;margin:0;font-size:.95em;color:var(--wz-gold)}
+.ak-panel.wz-equipmap .ak-panel__title{position:absolute;left:2.4cqw;top:2.1cqh;margin:0;font-size:2em}
+.ak-panel.wz-equipmap .ak-panel__sub{display:none}
+.ak-panel.wz-equipmap .ak-panel__items{position:relative;display:block;width:100%;height:100%;margin:0;gap:0}
+.wz-equipmap .ak-btn.wz-card{display:flex;flex-direction:row;align-items:center;gap:.45em;padding:.25em .45em;border-radius:.45em;text-align:left;min-height:0;overflow:hidden;
+  border:1.5px solid var(--lc,rgba(232,193,90,.5));background:linear-gradient(180deg,rgba(54,34,17,.94),rgba(32,19,9,.96));box-shadow:inset 0 0 .7em rgba(0,0,0,.4),0 .1em .4em rgba(0,0,0,.45)}
+.wz-card.wz-r0{--lc:#e8e8e8}.wz-card.wz-r1{--lc:#4ed16a}.wz-card.wz-r2{--lc:#4aa3ff}.wz-card.wz-r3{--lc:#b46bff}.wz-card.wz-r4{--lc:#ff9a2e}.wz-card.wz-r5{--lc:#ff6bd6}
+.wz-card.wz-empty{--lc:rgba(185,170,140,.55)}
+.wz-card.is-sel,.wz-card:hover{border-color:#ffe08a !important;box-shadow:0 0 0 2px rgba(255,224,138,.55),inset 0 0 .8em rgba(0,0,0,.4);z-index:3}
+.wz-card__img{flex:0 0 auto;width:2.3em;height:2.3em;display:grid;place-items:center;border-radius:.3em;background:rgba(0,0,0,.5);border:2px solid var(--lc,#888)}
+.wz-card__img .wz-ico{width:1.65em;height:1.65em;image-rendering:pixelated}
+.wz-card__meta{display:flex;flex-direction:column;justify-content:center;gap:0;min-width:0;line-height:1.12}
+.wz-card__slot{font:800 .6em var(--mono);font-style:normal;color:var(--lc,#d8c7a0);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wz-card__name{font:800 .84em var(--wz-serif);color:#fff6de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wz-card__lv{font:700 .58em var(--mono);color:#cdbc94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wz-card.is-hot .wz-card__lv{color:#8fe0a4}
+.wz-card--sim{gap:.3em;padding:.2em .3em}
+.wz-card--sim .wz-card__img{width:1.9em;height:1.9em}
+.wz-card--sim .wz-card__img .wz-ico{width:1.35em;height:1.35em}
+.wz-card--sim .wz-card__slot{font-size:.55em}
+.wz-card--sim .wz-card__name{font-size:.72em}
+.wz-card--sim .wz-card__lv{font-size:.54em}
+.wz-card .wz-new{position:absolute;top:-.35em;right:-.35em;background:#ffd84a;color:#2a1a0e;font:800 .55em var(--mono);font-style:normal;padding:.08em .32em;border-radius:.3em;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.wz-equipmap .ak-btn.wz-equipbtn{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:.5em;min-height:0;font:800 1em var(--wz-serif);padding:.3em .6em}
+.wz-equipmap .ak-btn.wz-equipbtn .wz-ico{width:1.3em;height:1.3em;image-rendering:pixelated}
 
 /* themed pause / fail buttons (opt-in via def.pauseTheme, and wizard's fail screen): coloured, icon'd */
 .ak-pz{position:relative;padding-left:2.6em !important;align-items:flex-start !important;text-align:left;
