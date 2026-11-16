@@ -101,6 +101,9 @@
 .ak-menu{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:3cqh 3cqw;background:rgba(4,8,14,.55);
   backdrop-filter:blur(3px);overflow:auto;font-size:clamp(12px,2.4cqh,22px)}
 .ak-menu[hidden]{display:none}
+.ak-menu,.ak-stage.is-full .ak-menu{cursor:default}
+.ak-menu .ak-btn:not([disabled]){cursor:pointer}
+.ak-stage.is-full[data-state="play"] .ak-cv{cursor:crosshair}
 .ak-panel{width:min(32em,100%);max-height:100%;overflow:auto;padding:1.1em 1.2em 1.2em;border-radius:1em;color:#eef0f3;text-align:center;
   background:linear-gradient(180deg,rgba(18,24,34,.92),rgba(10,14,22,.94));border:1px solid rgba(255,255,255,.14);
   box-shadow:0 1.2em 3em -1em rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.4)}
@@ -310,11 +313,11 @@
 .wz-lootcard.is-r3{--lc:#b46bff}.wz-lootcard.is-r4{--lc:#ff9a2e}.wz-lootcard.is-r5{--lc:#ff6bd6}
 /* ---- equipment body-map: slot cards placed at body positions over the canvas wizard ---- */
 .ak-menu:has(.ak-panel.wz-equipmap){place-items:stretch;padding:0;background:transparent;backdrop-filter:none}
-.ak-panel.wz-equipmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;font-size:2.35cqh}
-.ak-panel.wz-equipmap .ak-panel__kicker{position:absolute;left:2.4cqw;top:.7cqh;margin:0;font-size:.95em;color:var(--wz-gold)}
-.ak-panel.wz-equipmap .ak-panel__title{position:absolute;left:2.4cqw;top:2.1cqh;margin:0;font-size:2em}
-.ak-panel.wz-equipmap .ak-panel__sub{display:none}
-.ak-panel.wz-equipmap .ak-panel__items{position:relative;display:block;width:100%;height:100%;margin:0;gap:0}
+.ak-panel.wz-equipmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;container-type:size}
+.ak-panel.wz-equipmap .ak-panel__kicker,.ak-panel.wz-equipmap .ak-panel__title,.ak-panel.wz-equipmap .ak-panel__sub{display:none}
+/* the items area is a centred 16:9 box that exactly overlays the letterboxed canvas, so cards track it at any window ratio */
+.ak-panel.wz-equipmap .ak-panel__items{position:absolute;inset:0;margin:auto;display:block;gap:0;
+  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:2.35cqh}
 .wz-equipmap .ak-btn.wz-card{display:flex;flex-direction:row;align-items:center;gap:.45em;padding:.25em .45em;border-radius:.45em;text-align:left;min-height:0;overflow:hidden;
   border:1.5px solid var(--lc,rgba(232,193,90,.5));background:linear-gradient(180deg,rgba(54,34,17,.94),rgba(32,19,9,.96));box-shadow:inset 0 0 .7em rgba(0,0,0,.4),0 .1em .4em rgba(0,0,0,.45)}
 .wz-card.wz-r0{--lc:#e8e8e8}.wz-card.wz-r1{--lc:#4ed16a}.wz-card.wz-r2{--lc:#4aa3ff}.wz-card.wz-r3{--lc:#b46bff}.wz-card.wz-r4{--lc:#ff9a2e}.wz-card.wz-r5{--lc:#ff6bd6}
@@ -339,9 +342,10 @@
 
 /* --- dash (Prep Time) full-screen layout --- */
 .ak-stage[data-game="wizard-sprint"] .ak-menu:has(.ak-panel.wz-prepmap){place-items:stretch;padding:0;background:transparent;backdrop-filter:none}
-.ak-panel.wz-prepmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;font-size:2.35cqh}
+.ak-panel.wz-prepmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;container-type:size}
 .ak-panel.wz-prepmap .ak-panel__kicker,.ak-panel.wz-prepmap .ak-panel__title,.ak-panel.wz-prepmap .ak-panel__sub{display:none}
-.ak-panel.wz-prepmap .ak-panel__items{position:relative;display:block;width:100%;height:100%;margin:0;gap:0}
+.ak-panel.wz-prepmap .ak-panel__items{position:absolute;inset:0;margin:auto;display:block;gap:0;
+  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:2.35cqh}
 /* spell cards */
 .wz-prepmap .ak-btn.wz-spellcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.12em;padding:.45em .6em;border-radius:.5em;text-align:left;min-height:0;overflow:hidden;
   border:2px solid var(--lc,rgba(232,193,90,.6));background:linear-gradient(180deg,rgba(54,34,17,.95),rgba(30,18,8,.97));box-shadow:inset 0 0 .8em rgba(0,0,0,.45),0 .15em .5em rgba(0,0,0,.5)}

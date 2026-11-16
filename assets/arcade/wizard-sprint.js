@@ -1652,9 +1652,9 @@
     neck:  [20,  86, 182, 78], head:  [212,  86, 182, 78], shoulder: [404,  86, 182, 78],
     back:  [20, 174, 182, 78], chest: [212, 174, 182, 78], hands:    [404, 174, 182, 78],
     waist: [20, 262, 182, 78], legs:  [212, 262, 182, 78], feet:     [404, 262, 182, 78],
-    main:  [20, 350, 182, 78], off:   [212, 350, 182, 78],
-    sim1: [20, 440, 182, 68], sim2: [212, 440, 182, 68], sim3: [404, 440, 182, 68],
-    sim4: [20, 514, 182, 68], sim5: [212, 514, 182, 68], sim6: [404, 514, 182, 68]
+    main:  [628, 566, 170, 64], off: [812, 566, 170, 64],
+    sim1: [20, 384, 182, 68], sim2: [212, 384, 182, 68], sim3: [404, 384, 182, 68],
+    sim4: [20, 458, 182, 68], sim5: [212, 458, 182, 68], sim6: [404, 458, 182, 68]
   };
   function equip(g, focus) {
     UI.scene = "equip"; UI.menu = "equip";
@@ -1722,6 +1722,9 @@
     ctx.fillStyle = "rgba(70,48,28,.42)"; D.rr(ctx, fx, fy, fw, fh, 16); ctx.fill();
     ctx.lineWidth = 3; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, fx + 1.5, fy + 1.5, fw - 3, fh - 3, 15); ctx.stroke();
     ctx.lineWidth = 1; ctx.strokeStyle = "rgba(232,193,90,.32)"; D.rr(ctx, fx + 6, fy + 6, fw - 12, fh - 12, 12); ctx.stroke();
+    /* header (drawn on canvas so it stays aligned at any window ratio) */
+    bold(ctx, "✦  WIZARD DRIP  ✦", 40, 34, "800 15px " + F.mono, "#e8c15a", "left");
+    bold(ctx, "Equipment", 40, 56, "800 26px " + SERIF, "#fff3c4", "left");
     /* a lit medallion holds the wizard preview, bright and clear (no more dim radial) — big enough to frame the whole wizard */
     var mcx = wx2, mcy = 272, mrx = 176, mry = 226;
     var halo = ctx.createRadialGradient(mcx, mcy, 16, mcx, mcy, 250); halo.addColorStop(0, "rgba(255,236,176,.72)"); halo.addColorStop(.45, "rgba(255,222,142,.3)"); halo.addColorStop(1, "rgba(255,222,142,0)"); ctx.fillStyle = halo; ctx.fillRect(wx2 - 210, fy + 4, 420, fh - 8);
