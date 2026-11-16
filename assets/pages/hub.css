@@ -145,15 +145,17 @@
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* ---- Rate-O-Pedia showcase banner under the avenues (links to /games/) — the site's headline feature ---- */
-.hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:1fr;gap:22px;align-items:center;margin-top:26px;padding:32px 34px 30px;text-decoration:none;color:var(--sx-text);border-radius:26px;
-  background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 26%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 24%,transparent),transparent 60%),rgba(13,16,21,.9);
+/* Rate-O-Pedia palette (matches /games/): light green lead, accented with black, grey and gold */
+.hb-rate{--hr:var(--games,#36d39a);--hr2:#7ef0c0;--gold:#e3b54a;--gold-hi:#f6d488;--ink:#040605;--steel:#1b211e;--grey:#8d9691;
+  position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:1fr;gap:22px;align-items:center;margin-top:26px;padding:32px 34px 30px;text-decoration:none;color:#eef3f0;border-radius:26px;
+  background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 24%,transparent),transparent 56%),radial-gradient(120% 120% at 100% 100%,color-mix(in srgb,var(--gold) 15%,transparent),transparent 60%),linear-gradient(135deg,var(--ink),var(--steel));
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  border:1.5px solid color-mix(in srgb,var(--hr) 58%,var(--sx-line));
-  box-shadow:0 26px 60px -30px var(--hr),0 0 0 1px color-mix(in srgb,var(--hr) 22%,transparent),inset 0 0 44px -22px color-mix(in srgb,var(--hr) 80%,transparent);
+  border:1.5px solid color-mix(in srgb,var(--hr) 52%,var(--steel));
+  box-shadow:0 26px 60px -30px var(--hr),0 0 0 1px color-mix(in srgb,var(--gold) 20%,transparent),inset 0 0 44px -24px color-mix(in srgb,var(--hr) 75%,transparent);
   transition:transform .2s,box-shadow .2s,border-color .2s}
 /* dotted grain + a soft rotating aura so the banner feels alive */
 .hb-rate::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.3;background-image:radial-gradient(circle,rgba(255,255,255,.1) 1px,transparent 1.4px);background-size:16px 16px;-webkit-mask-image:linear-gradient(120deg,transparent,#000 75%);mask-image:linear-gradient(120deg,transparent,#000 75%)}
-.hb-rate__glow{position:absolute;z-index:-1;top:-40%;right:-10%;width:60%;height:180%;pointer-events:none;border-radius:50%;filter:blur(60px);opacity:.5;background:radial-gradient(circle,color-mix(in srgb,var(--hr) 70%,transparent),transparent 70%)}
+.hb-rate__glow{position:absolute;z-index:-1;top:-40%;right:-10%;width:60%;height:180%;pointer-events:none;border-radius:50%;filter:blur(60px);opacity:.5;background:radial-gradient(circle,color-mix(in srgb,var(--hr) 62%,transparent) 0%,color-mix(in srgb,var(--gold) 30%,transparent) 55%,transparent 72%)}
 :root:not([data-motion="reduce"]) .hb-rate__glow{animation:hb-rate-drift 9s ease-in-out infinite alternate}
 @keyframes hb-rate-drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-18%,10%) scale(1.15)}}
 .hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-4px);border-color:var(--hr);box-shadow:0 34px 70px -28px var(--hr),0 0 0 1px var(--hr),inset 0 0 50px -20px color-mix(in srgb,var(--hr) 90%,transparent);outline:none}
@@ -165,34 +167,32 @@
 :root:not([data-motion="reduce"]) .hb-rate:hover .hb-rate__icon svg{animation:hb-rate-bob .9s ease-in-out infinite alternate}
 @keyframes hb-rate-bob{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-3px) rotate(4deg)}}
 .hb-rate__head{display:grid;gap:4px;min-width:0}
-.hb-rate__eyebrow{font:600 .72rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--hr)}
+.hb-rate__eyebrow{display:inline-flex;align-items:center;gap:9px;font:600 .72rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.hb-rate__eyebrow::before{content:"";width:22px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold-hi),var(--gold))}
 .hb-rate__head strong{font:800 clamp(1.7rem,3.4vw,2.5rem)/1.02 var(--sx-display);letter-spacing:-.02em;
-  background:linear-gradient(100deg,var(--sx-text),color-mix(in srgb,var(--hr) 75%,var(--sx-text)));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hb-rate__lead{color:var(--sx-muted);font-size:1.02rem;line-height:1.5;max-width:68ch}
+  background:linear-gradient(100deg,#f3f7f4,color-mix(in srgb,var(--hr) 80%,#f3f7f4));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hb-rate__lead{position:relative;margin-top:2px;padding-top:16px;color:#b7c0bb;font-size:1.02rem;line-height:1.5;max-width:68ch}
+.hb-rate__lead::before{content:"";position:absolute;top:0;left:0;width:128px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--grey) 72%,transparent)}
 .hb-rate__tags{display:flex;flex-wrap:wrap;gap:7px}
-.hb-rate__tags span{padding:5px 13px;border-radius:999px;font:600 .78rem var(--sx-display);color:var(--sx-text);background:color-mix(in srgb,var(--hr) 10%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--hr) 32%,var(--sx-line))}
+.hb-rate__tags span{padding:5px 13px;border-radius:999px;font:600 .78rem var(--sx-display);color:#eef3f0;background:color-mix(in srgb,var(--hr) 10%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--hr) 32%,var(--sx-line))}
 .hb-rate__foot{display:flex;margin-top:4px}
-.hb-rate__cta{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:999px;font:700 1.05rem var(--sx-display);color:#06140d;background:linear-gradient(135deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)));box-shadow:0 14px 32px -12px var(--hr);transition:transform .2s,box-shadow .2s}
+.hb-rate__cta{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:999px;font:700 1.05rem var(--sx-display);color:#04120b;background:linear-gradient(135deg,var(--hr),var(--hr2));box-shadow:0 14px 32px -12px var(--hr);transition:transform .2s,box-shadow .2s}
 .hb-rate:hover .hb-rate__cta{transform:translateX(3px);box-shadow:0 18px 40px -12px var(--hr)}
 /* right-side ratings visual (decorative) — uses Rate-O-Pedia's own CPU-chip mood icons (0 Awful .. 5 Must play) */
 .hb-rate__aside{display:none;flex-direction:column;gap:14px;align-self:center;--chip-bg:#0d1014}
-.hb-rate__widget{display:grid;gap:11px;padding:16px 18px;border-radius:18px;background:color-mix(in srgb,var(--hr) 9%,rgba(0,0,0,.34));border:1px solid color-mix(in srgb,var(--hr) 34%,var(--sx-line));box-shadow:inset 0 0 30px -20px var(--hr)}
-.hb-rate__wlabel{font:600 .68rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sx-muted)}
+.hb-rate__widget{display:grid;gap:11px;padding:16px 18px;border-radius:18px;background:color-mix(in srgb,var(--hr) 9%,rgba(0,0,0,.42));border:1px solid color-mix(in srgb,var(--gold) 26%,color-mix(in srgb,var(--hr) 30%,var(--steel)));box-shadow:inset 0 0 30px -20px var(--hr)}
+.hb-rate__wlabel{font:600 .68rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:#9aa39d}
 .hb-rate__chips{display:flex;gap:4px;justify-content:space-between}
-.hb-rate__chip{flex:0 0 auto;line-height:0;color:color-mix(in srgb,var(--hr) 55%,var(--sx-muted))}
+.hb-rate__chip{flex:0 0 auto;line-height:0;color:color-mix(in srgb,var(--hr) 50%,var(--grey))}
 .hb-rate__chip svg{width:30px;height:30px;display:block}
 /* the top mood lit up in the full accent, like a chosen rating */
 .hb-rate__chip--5{color:var(--hr);filter:drop-shadow(0 2px 8px color-mix(in srgb,var(--hr) 55%,transparent))}
-.hb-rate__wscale{display:flex;justify-content:space-between;font:600 .68rem var(--sx-mono);letter-spacing:.04em;color:var(--sx-muted)}
-.hb-rate__wnote{font:600 .82rem var(--sx-display);color:var(--sx-text)}
+.hb-rate__wscale{display:flex;justify-content:space-between;font:600 .68rem var(--sx-mono);letter-spacing:.04em;color:#9aa39d}
+.hb-rate__wnote{font:600 .82rem var(--sx-display);color:#f1f5f2}
 @media (min-width:780px){
   .hb-rate{grid-template-columns:minmax(0,1fr) 262px}
   .hb-rate__aside{display:flex}
 }
-:root[data-theme="light"] .hb-rate{background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 18%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 14%,transparent),transparent 60%),var(--sx-surface)}
-:root[data-theme="light"] .hb-rate__tags span{background:color-mix(in srgb,var(--hr) 10%,#fff)}
-:root[data-theme="light"] .hb-rate__cta{color:#fff}
-:root[data-theme="light"] .hb-rate__icon{background:color-mix(in srgb,var(--hr) 12%,#fff)}
 @media (max-width:640px){.hb-rate{padding:22px 20px}.hb-rate__top{gap:14px}.hb-rate__icon{width:64px;height:64px;border-radius:18px}.hb-rate__icon svg{width:44px;height:44px}.hb-rate__cta{width:100%;justify-content:center}.hb-rate__foot{margin-top:2px}}
 
 /* ---- "Want to work with me?" footer link (opens the contact gate) ---- */
