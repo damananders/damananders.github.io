@@ -183,7 +183,7 @@
 :root[data-au-pulse] .au-btn{box-shadow:0 0 calc(4px + 16px * var(--sx-pulse,0)) color-mix(in srgb,var(--sx-accent) 70%,transparent)}
 
 /* ===================================================================================================
-   DMA Enthusiast Safezone — ROP-forward hero + "More from Anders" (landing rework, Nov 2026)
+   DMA: An Enthusiast's Haven — ROP-forward hero + "More from Anders" (landing rework, Nov 2026)
    =================================================================================================== */
 .hb-hero{padding-bottom:22px}
 .hb-h1{margin:0;font:800 clamp(2.2rem,6vw,3.6rem)/1.02 var(--sx-display);letter-spacing:-.02em;color:var(--sx-text)}
