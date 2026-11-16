@@ -92,13 +92,18 @@
       Site.live.discord().then(function (s) { if (!s) tDc.set("Unknown", "The lookup did not answer."); else tDc.set(Site.fmtNum(s.members) + " members", Site.fmtNum(s.online) + " online now", "ok"); });
       Site.live.signup().then(function (v) { tSign.set(v === "up" ? "Open" : "Offline", v === "up" ? "The sign-up service is answering." : "The sign-up service is not reachable.", v === "up" ? "ok" : "bad"); });
       Site.live.realms().then(function (s) {
-        if (!s || !Array.isArray(s.realms)) { tRealm.set("Not connected", "Fill in anderscraft.statusUrl in site-config.js."); return; }
+        if (!s || !Array.isArray(s.realms)) {
+          var hasUrl = !!(cfg.anderscraft && cfg.anderscraft.statusUrl) || !!(window.SITE && SITE.anderscraft && SITE.anderscraft.statusUrl);
+          tRealm.set(hasUrl ? "Offline" : "Not tracked", hasUrl ? "Status endpoint isn't answering." : "No status endpoint set.", hasUrl ? "bad" : ""); return;
+        }
         var p = 0, up = 0; s.realms.forEach(function (r) { p += r.players || 0; if (r.online) up++; });
         tRealm.set(Site.fmtNum(p) + " players", up + " of " + s.realms.length + " realms up", up === s.realms.length ? "ok" : "bad");
       });
       var a = (window.SITE && SITE.anyps) || {};
       tAny.set(a.version ? "V" + a.version : "Unknown", a.date ? "Published " + Site.fmtDate(a.date) : "");
-      Site.live.releases().then(function (r) { if (!r) tDl.set("Not connected", "Set the AnyPS releases repo in site-config.js."); else tDl.set(Site.fmtNum(r.downloads), "Across all releases, latest " + r.tag, "ok"); });
+      var repo = String(a.githubRepo || "").trim();
+      if (!repo) tDl.set("Via Google Drive", "Not tracked on GitHub");
+      else Site.live.releases().then(function (r) { if (!r) tDl.set("Unavailable", "Couldn't reach the releases repo.", "bad"); else tDl.set(Site.fmtNum(r.downloads), "Across all releases, latest " + r.tag, "ok"); });
       var g = cfg.kofi && cfg.kofi.goal;
       if (g && isFinite(g.target) && g.target > 0) tKo.set((g.currency || "$") + (g.current || 0) + " of " + (g.currency || "$") + g.target, Math.round(100 * (g.current || 0) / g.target) + "% this month");
       else tKo.set("No goal set", "");
