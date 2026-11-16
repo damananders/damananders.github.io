@@ -40,6 +40,13 @@
 
   var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  /* Once a visitor has given a name + valid email, remember it for this browser so the required
+     Edge gate doesn't block them again and the optional box pre-fills. */
+  var STORE_KEY = "hireContact";
+  function saved() { try { return Site.store.get(STORE_KEY, null) || null; } catch (e) { return null; } }
+  function remember(name, mail, tel) { try { Site.store.set(STORE_KEY, { name: name, email: mail, phone: tel || "" }); } catch (e) {} }
+  function hasValidContact() { var s = saved(); return !!(s && s.name && EMAIL.test(s.email || "")); }
+
   function field(name, label, type, hint) {
     var id = "hire-" + name;
     return el("label", { class: "hg-field", "for": id },
@@ -81,6 +88,16 @@
       className: "hg-modal", body: form
     });
 
+    /* pre-fill from a remembered submission so returning visitors don't retype */
+    (function () {
+      var s = saved(); if (!s) return;
+      try {
+        if (s.name) fName.querySelector("input").value = s.name;
+        if (s.email) fMail.querySelector("input").value = s.email;
+        if (s.phone) fTel.querySelector("input").value = s.phone;
+      } catch (e) {}
+    })();
+
     function mark(wrap, bad) {
       var i = wrap.querySelector("input");
       if (bad) { i.setAttribute("aria-invalid", "true"); wrap.classList.add("hg-field--bad"); }
@@ -106,6 +123,7 @@
       }
 
       done = true;
+      if (name && EMAIL.test(mail)) remember(name, mail, tel);
       sendBtn.disabled = true; if (skipBtn) skipBtn.disabled = true;
       if (sending) {
         var payload = {
@@ -132,10 +150,14 @@
       if (!t) return;
       e.preventDefault();
       var target = t.getAttribute("href") || t.getAttribute("data-hire-target") || "";
-      open(target || null, {
-        require: t.hasAttribute("data-hire-require"),
-        newTab: t.hasAttribute("data-hire-newtab")
-      });
+      var require = t.hasAttribute("data-hire-require"), newTab = t.hasAttribute("data-hire-newtab");
+      /* required (Edge) gate: if this browser already gave a name + valid email, don't ask again */
+      if (require && hasValidContact()) {
+        if (Site.toast) Site.toast("Opening my Edge profile.", { type: "ok" });
+        go(target || null, newTab);
+        return;
+      }
+      open(target || null, { require: require, newTab: newTab });
     });
   }, "hire gate");
 })();
