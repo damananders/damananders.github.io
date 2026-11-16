@@ -1478,3 +1478,4 @@ body.pt-on .pf-hero__say{border-color:color-mix(in srgb,var(--pt-acc2) 50%,trans
 .gm-howto .gm-howto__score p,.gm-howto .gm-howto__lead{display:block}
 .gm-chipper small{white-space:normal;font-size:.58rem;line-height:1.2}
 .rop-me__btns > .rop-me__bud{grid-column:1/-1}
+:root[data-page="games"] .wrap > nav{margin-bottom:14px}
