@@ -574,8 +574,12 @@
       h.push({ key: "condenser", name: "Condenser", x: 70, y: 244, w: 78, h: 54, lx: 109 }); }
     return h;
   }
+  function wreckOf() {                                    /* 0 = whole, 1 = clearly wrecked. Mends as you level, then snaps whole on the forest clear */
+    if (S.cleared[1]) return 0;
+    return clamp(1 - (S.lvl - 1) * 0.06, 0.45, 1);
+  }
   function drawHub(t, stage) {
-    var i, x, y, L3 = !!S.cleared[3];                     /* the chandelier is mended once the third level is cleared */
+    var i, x, y, L3 = !!S.cleared[3], wreck = wreckOf();   /* the chandelier is mended once the third level is cleared */
     /* sky */
     for (i = 0; i < 10; i++) px(-HOX, i * 31, BW + HOX, 31, ["#20304a", "#283a56", "#2f4360", "#374d6a", "#405873", "#4a627c", "#536b85", "#5c738b", "#657b90", "#6d8294"][i]);
     for (i = 0; i < 20; i++) { var sx = -HOX + hash(i * 9) * (BW + HOX), sy = hash(i * 5) * 150; px(sx, sy, 2, 2, "rgba(255,247,220,.7)"); }
@@ -655,6 +659,42 @@
       px(x + 62, 266, 2, 8, "#3a2a1a"); px(x + 60, 274, 6, 6, Math.sin(t * 6) > 0 ? "#ffe58a" : "#ffd04a");
     }
     for (i = 0; i < 9; i++) { x = 436 + i * 20; px(x, 304 + (i % 2) * 5, 5, 2, "#33291c"); px(x + 5, 304 + (i % 2) * 5, 1, 1, "#33291c"); }   /* the tracks */
+    if (wreck > 0) drawWreck(t, wreck);
+  }
+  /* storm damage over the tower shell, scaled by wreck (1 = ruined, easing to 0 as the wizard rebuilds) */
+  function drawWreck(t, w) {
+    var i;
+    /* a jagged hole punched through the right roof slope, sky showing through */
+    if (w > 0.5) {
+      px(384, 40, 30, 20, "#283a56"); px(380, 46, 8, 12, "#283a56"); px(412, 44, 8, 14, "#2f4360"); px(390, 36, 18, 8, "#2f4360");
+      px(396, 44, 2, 2, "rgba(255,247,220,.7)"); px(406, 52, 1, 1, "rgba(255,247,220,.6)");                 /* stars through the gap */
+      px(382, 38, 4, 4, "#301c50"); px(414, 40, 4, 5, "#3a2560"); px(388, 58, 5, 4, "#301c50"); px(404, 60, 6, 4, "#3a2560"); px(410, 36, 4, 4, "#2a1848");   /* ragged shingle lip */
+      px(398, 60, 3, 7, "#2a1848"); px(398, 66, 4, 2, "#3a2560");                                            /* a shingle hanging off */
+    }
+    /* the belled tip snapped off */
+    if (w > 0.7) {
+      px(APEX + 4, 1, 14, 10, "#20304a"); px(APEX - 6, 20, 12, 10, "#20304a");                               /* erase the gold finial + bent tip */
+      px(APEX - 4, 22, 7, 8, "#301c50"); px(APEX - 2, 18, 4, 6, "#3a2560"); px(APEX - 1, 16, 2, 3, "#241633"); /* a snapped stub */
+    }
+    /* the roof window boarded over (dark, crossed planks) instead of lit */
+    if (w > 0.6) {
+      px(APEX - 10, 46, 20, 22, "#1a1226");
+      px(APEX - 12, 50, 24, 4, "#5c4530"); px(APEX - 12, 58, 24, 4, "#4a3826"); px(APEX - 2, 44, 4, 26, "#5c4530");
+      px(APEX - 12, 50, 24, 1, "#6b4a2e"); px(APEX - 12, 58, 24, 1, "#6b4a2e");
+    }
+    /* cracks running down the visible side walls */
+    if (w > 0.3) for (i = 0; i < 2; i++) { var wx = i ? WR - 6 : WL + 2, cy = 96 + i * 46, s; for (s = 0; s < 76; s += 4) { var jx = wx + Math.round(Math.sin(s * 0.8 + i * 2) * 2); px(jx, cy + s, 2, 4, "#1c2029"); px(jx + 2, cy + s + 1, 1, 3, "#11141b"); } }
+    /* knocked-out stones along the lit right edge and the shaded left edge */
+    if (w > 0.4) { px(WR - 8, 118, 8, 11, "#241f2e"); px(WR - 8, 196, 8, 9, "#241f2e"); px(WL, 160, 8, 9, "#15111d"); }
+    /* rubble heaped at the foot of the tower */
+    var rb = Math.round(w * 6);
+    for (i = 0; i < rb; i++) { var bx = i < rb / 2 ? WL - 8 + (i * 9) % 42 : WR - 32 + (i * 11) % 36, by = 296 + (i % 2) * 3, bw = 6 + (i % 3) * 3; px(bx, by, bw, 5, "#39414f"); px(bx, by, bw, 1, "#4a5466"); px(bx + 1, by + 4, bw - 1, 1, "#2c3340"); }
+    /* scaffolding leaning on the left wall while the repairs are underway (gone once ruined, gone once whole) */
+    if (w > 0.25 && w < 0.9) {
+      px(WL - 9, 150, 3, 150, "#6b4a2e"); px(WL + 2, 150, 3, 150, "#5c4530");
+      for (i = 0; i < 4; i++) { var py = 172 + i * 34; px(WL - 9, py, 14, 3, "#7a5a3a"); px(WL - 9, py, 14, 1, "#8f6d48"); }
+      for (var d = 0; d < 150; d += 5) px(WL - 9 + Math.round(d * 0.08), 150 + d, 2, 3, "#5c4530");
+    }
   }
   function drawRain(t) { for (var i = 0; i < 70; i++) { var x = (hash(i) * BW + t * 40) % BW, y = (hash(i + 50) * BH + t * (340 + hash(i) * 120)) % BH; px(x, y, 1, 5, "rgba(190,215,240,.5)"); } }
 
@@ -1764,7 +1804,7 @@
     blurb: "Run, cast and loot your way after whoever robbed your tower.",
     sync: [{ k: "save", s: SKEY, t: "newest" }],
     onSync: function (g) { load(); if (g.state === "title" && UI.scene === "hub" && g.menuOpen()) title(g); },
-    init: function (g) { G = g; g.debug = { S: function () { return S; }, R: function () { return R; }, UI: UI, start: function (m) { startRun(g, m || "story"); }, save: save, load: load, calc: calc, makeItem: makeItem, giveInc: giveInc, step: function (n, dt) { for (var i = 0; i < n && R && !R.over; i++) update(g, dt); }, endRun: endRun, wiz: wizSprite, look: lookOf, WC: WC }; },
+    init: function (g) { G = g; g.debug = { S: function () { return S; }, R: function () { return R; }, UI: UI, start: function (m) { startRun(g, m || "story"); }, save: save, load: load, calc: calc, makeItem: makeItem, giveInc: giveInc, step: function (n, dt) { for (var i = 0; i < n && R && !R.over; i++) update(g, dt); }, endRun: endRun, wiz: wizSprite, look: lookOf, WC: WC, wreckOf: wreckOf }; },
     title: title,
     update: update,
     idle: hubIdle,
