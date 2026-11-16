@@ -174,7 +174,7 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
    ===================================================================================================== */
 .wrap > nav .brand{display:inline-flex;align-items:center;gap:.34em;min-height:40px;white-space:nowrap;line-height:1.12;letter-spacing:-.012em;text-decoration:none;border-radius:10px}
 .wrap > nav .brand::before{content:"";flex:none;width:26px;height:26px;margin-right:calc(9px - .34em);border-radius:27%;
-  background:url("/assets/icons/logo.svg") center/cover no-repeat;box-shadow:0 0 0 1px var(--sx-line-2),0 6px 14px -8px rgba(0,0,0,.7);
+  background:url("/assets/icons/logo.svg?v=5") center/cover no-repeat;box-shadow:0 0 0 1px var(--sx-line-2),0 6px 14px -8px rgba(0,0,0,.7);
   transition:transform .4s cubic-bezier(.34,1.56,.64,1),width var(--ch-t) var(--sx-ease),height var(--ch-t) var(--sx-ease)}
 .wrap > nav .brand span{letter-spacing:0;transition:color .15s}
 .wrap > nav .brand:focus-visible::before{transform:rotate(-10deg) scale(1.12)}

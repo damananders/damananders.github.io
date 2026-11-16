@@ -5,7 +5,7 @@ const { chromium } = require("playwright");
 const path = require("path"), fs = require("fs");
 const root = path.resolve(__dirname, "..");
 const CARDS = [
-  { file: "hub", kicker: "DaManAnders", title: "Choose your avenue", sub: "The AndersCraft WoW server, the AnyPS PlayStation launcher and Rate-O-Pedia game ratings — fan projects, built for fun.", accent: "#cd4257", bg: "assets/hub-bg.jpg" },
+  // "hub" is drawn by tools/og-hub/ (the fanned panels card), not here.
   { file: "resume", kicker: "Interactive résumé", title: "Anders", sub: "Compliance & Sales Lead. Builder and reverse-engineer after hours.", accent: "#cd4257" },
   { file: "changelog", kicker: "Changelog", title: "What's new", sub: "Every update across the hub, AnyPS, AndersCraft and the game ratings.", accent: "#cd4257" },
   { file: "projects", kicker: "Projects", title: "What I'm working on", sub: "AnyPS going native, Wizard of the Sprint, this site, AndersCraft and more.", accent: "#cd4257" },
