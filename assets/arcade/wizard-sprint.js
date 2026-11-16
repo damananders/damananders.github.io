@@ -234,6 +234,7 @@
   var DEFK = { jump: ["Space", "KeyW", "ArrowUp"], drop: ["KeyS", "ArrowDown"], flash: ["ShiftLeft"], c1: ["KeyJ"], c2: ["KeyK"], c3: ["KeyL"], five: ["KeyF"], slow: ["Digit1"], fast: ["Digit2"] };
   var DEFP = { jump: "a", drop: "down", flash: "lb", c1: "x", c2: "y", c3: "b", five: "rb", slow: "lt", fast: "rt" };
   var FLASHCD = 3.2, FLASHDUR = 0.5;                     /* Illusion Flash: a short dodge of i-frames on a cooldown */
+  var LOOTCARD = 2.7;                                     /* how long a "Loot Get!" card stays on screen */
   /* Binds are arrays of up to 3 (keyboard codes or pad buttons); old single-string saves and the defaults both read fine. */
   function keysOf(a) { var b = S.binds[a]; if (Array.isArray(b)) return b.length ? b : DEFK[a]; return b ? [b] : DEFK[a]; }
   function padsOf(a) { var b = S.pad[a]; if (Array.isArray(b)) return b.length ? b : (DEFP[a] ? [DEFP[a]] : []); return b ? [b] : (DEFP[a] ? [DEFP[a]] : []); }
@@ -674,7 +675,7 @@
     var st = calc();
     S.ch.forEach(function (c) { if (chDef(c.id).run) c.p = 0; });
     R = { mode: mode, t: 0, dist: 0, y: GY, vy: 0, ground: true, plat: null, jumps: 0, dropT: 0, glide: false, hp: st.hp, maxhp: st.hp, inv: 0, st: st, look: lookOf(false),
-      plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], cds: {},
+      plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], lootCards: [], cds: {},
       nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
       bossAt: (mode === "story" ? 300 : 390) * BASE, win: 0, over: false, revived: false, fiveT: 0, fiveWin: 0, shake: 0, mud: 0, chat: 5, tap: false, flashCd: 0, flashT: 0,
       nextOrb: rnd(40, 60) * BASE, nextGrim: rnd(110, 170) * BASE, nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12 };
@@ -751,7 +752,7 @@
     }
     endRun(false);
   }
-  function lootDrop(minR) { var it = makeItem(minR); R.loot.push(it); G.toast("Loot: " + it.n + "  (" + RAR[it.r].n + ")", it.r >= 2 ? "gold" : "info"); sfx(it.r >= 4 ? "lootBig" : "loot"); fxAdd("ring", wxw(), R.y - 20, { c: RAR[it.r].c }); }
+  function lootDrop(minR) { var it = makeItem(minR); R.loot.push(it); R.lootCards.push({ it: it, t: 0 }); if (R.lootCards.length > 4) R.lootCards.shift(); sfx(it.r >= 4 ? "lootBig" : "loot"); fxAdd("ring", wxw(), R.y - 20, { c: RAR[it.r].c }); }
   function damage(e, n, src) {
     if (e.dead) return;
     e.hp -= n; e.fl = 0.1; cnt("dmg", n); fxAdd("num", e.x, e.y - e.h - 4, { s: String(Math.max(1, Math.round(n))), d: 0.6 });
@@ -913,6 +914,7 @@
     R.picks = R.picks.filter(function (q) { return q.x > cut; }); R.fr = R.fr.filter(function (q) { return q.x > cut; });
     R.haz = R.haz.filter(function (q) { return q.x + (q.w || 0) > cut && !(q.k === "branch" && q.st === 2 && q.t > 4); });
     R.fx = R.fx.filter(function (q) { q.t += dt; return q.t < q.d; });
+    if (R.lootCards.length) { R.lootCards[0].t += dt; if (R.lootCards[0].t >= LOOTCARD) R.lootCards.shift(); }
     R.bub = R.bub.filter(function (q) { q.t -= dt; return q.t > 0; });
     R.chat -= dt; if (R.chat <= 0 && !R.boss) { R.chat = rnd(16, 28); if (!R.bub.length) say(line(R.dist < R.bossAt * 0.5 || R.mode !== "story" ? (Math.random() < 0.5 ? "early" : "mid") : "late")); }
     if (R.win > 0) { R.win -= dt; if (Math.random() < 0.5) R.rems.push({ x: wx + rnd(60, 300), y: GY - rnd(10, 70) }); if (R.win <= 0) endRun(true); }
@@ -937,7 +939,19 @@
     row("Wiz XP", "+" + fmt(xp) + (S.lvl > l0 ? "  (now Wiz Level " + S.lvl + ")" : "")); row("Loot", kept + " to the bag" + (sold ? ", " + sold + " sold (bag full)" : ""));
     for (i = 0; i < extra.length; i++) row(i === 0 ? "Rewards" : "", extra[i]);
     var res = el("div", {}, kv);
-    if (R.loot.length) { var lb = el("div", { class: "wz-chips wz-loot" }); R.loot.forEach(function (it) { lb.appendChild(el("i", { class: "wz-chip is-r" + it.r, text: it.n + "  ·  " + RAR[it.r].n })); }); res.appendChild(lb); }
+    if (R.loot.length) {
+      res.appendChild(el("div", { class: "wz-loothead", text: R.loot.length > 1 ? "Loot Get!  ·  " + R.loot.length + " drops" : "Loot Get!" }));
+      var lb = el("div", { class: "wz-lootgrid" });
+      R.loot.forEach(function (it) {
+        lb.appendChild(el("div", { class: "wz-lootcard is-r" + it.r },
+          el("div", { class: "wz-lootcard__img" }, icoEl(slotIco(it.s))),
+          el("div", { class: "wz-lootcard__meta" },
+            el("b", { text: it.n }),
+            el("span", { class: "wz-lootcard__slot", text: "NEW · " + slotName(it.s) }),
+            el("span", { class: "wz-lootcard__lv", text: "Lv " + it.il + " · " + RAR[it.r].n }))));
+      });
+      res.appendChild(lb);
+    }
     MN(g, { kicker: R.mode === "story" ? "Magickal Mad Dash · The Forest Around the Tower" : "Endless · The Forest Around the Tower",
       title: win ? "Forest Cleared" : "Flattened at " + fmt(m) + " m", sub: win ? txt("win1") : txt("lose"), body: res, cls: "is-wide",
       items: [
@@ -1131,16 +1145,16 @@
       ctx.fillStyle = "rgba(16,9,5,.55)"; cl.forEach(function (c) { D.rr(ctx, wxp + c[0] - 2, by + c[1] + bobY - 2, c[2] + 4, c[3] + 5, 8); ctx.fill(); });
       ctx.fillStyle = "#ffffff"; cl.forEach(function (c) { D.rr(ctx, wxp + c[0], by + c[1] + bobY, c[2], c[3], 6); ctx.fill(); });
       ctx.fillStyle = "#d3e3ee"; D.rr(ctx, wxp - 22, by + 6 + bobY, 44, 4, 2); ctx.fill();
-      plate(ctx, W / 2 - 150, by + 22, 300, 26); bold(ctx, "The Forest Around the Tower", W / 2, by + 41, "700 15px " + SERIF, "#f3e6c4", "center");
+      gildBanner(ctx, W / 2, by + 22, "The Forest Around the Tower");
     } else { plate(ctx, W / 2 - 150, 18, 300, 36); icoAt(ctx, "skull", W / 2 - 142, 20, 2); bold(ctx, "Endless · boss in " + Math.max(0, Math.ceil((R.bossAt - R.dist) / speedNow())) + "s", W / 2 + 14, 43, "800 17px " + F.mono, "#fff3c4", "center"); }
     /* top right: distance, level and the challenges in play */
     ctx.font = "800 30px " + F.display; var dw = Math.max(150, ctx.measureText(fmt(m) + " m").width + 36);
     plate(ctx, W - 24 - dw, 16, dw, 46); bold(ctx, fmt(m) + " m", W - 40, 50, "800 30px " + F.display, "#fff", "right");
     plate(ctx, W - 24 - 132, 68, 132, 28); bold(ctx, "Wiz Lv " + S.lvl, W - 38, 88, "800 16px " + F.mono, "#ffe58a", "right");
     S.ch.forEach(function (c, j) {
-      var d = chDef(c.id), y = 104 + j * 32, fr = clamp(c.p / d.need, 0, 1);
-      plate(ctx, W - 24 - 360, y, 360, 28); ctx.fillStyle = "rgba(104,211,145,.28)"; D.rr(ctx, W - 382, y + 2, 356 * fr, 24, 5); ctx.fill();
-      bold(ctx, d.n, W - 372, y + 20, "700 14px " + F.mono, "#f3e6c4"); bold(ctx, Math.min(d.need, Math.floor(c.p)) + " / " + d.need, W - 36, y + 20, "800 15px " + F.mono, "#9ae6b4", "right");
+      var d = chDef(c.id), y = 104 + j * 32, fr = clamp(c.p / d.need, 0, 1), done = fr >= 1;
+      chalPlate(ctx, W - 24 - 360, y, 360, 28, fr, done ? "rgba(104,211,145,.3)" : "rgba(232,193,90,.32)");
+      bold(ctx, d.n, W - 352, y + 20, "700 14px " + F.mono, "#f3e6c4"); bold(ctx, Math.min(d.need, Math.floor(c.p)) + " / " + d.need, W - 36, y + 20, "800 15px " + F.mono, done ? "#9ae6b4" : "#ffe58a", "right");
     });
     /* the spell rack: one wand per Incantation */
     var eqd = S.incEq.slice(0, incSlots());
@@ -1166,6 +1180,7 @@
     if (R.t < 9 && !(S.cnt.runs > 2)) { ctx.font = "700 18px " + F.display; var hs = keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five", hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center"); }
     R.fx.forEach(function (f) { if (f.k === "num") bold(ctx, f.s, (f.x - R.dist) * 2, (f.y - f.t * 30) * 2, "800 19px " + F.mono, "#fff", "center"); });
     R.bub.forEach(function (q) { if (q.at) bubble(ctx, (q.at.x - R.dist) * 2, (GY - 44) * 2, q.s); else bubble(ctx, WX * 2 + 30, (R.y - 66) * 2, q.s); });
+    if (R.lootCards.length) lootGetCard(ctx, R.lootCards[0]);
   }
 
   /* ---------------- the hub ---------------- */
@@ -1297,6 +1312,44 @@
   /* ---------------- menu dressing: pixel icons, stat chips and NEW tags ---------------- */
   var SERIF = '"Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", Georgia, serif';
   function plate(ctx, x, y, w, h, r) { ctx.fillStyle = "rgba(22,13,8,.78)"; D.rr(ctx, x, y, w, h, r == null ? 7 : r); ctx.fill(); ctx.strokeStyle = "rgba(232,193,90,.6)"; ctx.lineWidth = 2; D.rr(ctx, x + 1, y + 1, w - 2, h - 2, r == null ? 6 : r); ctx.stroke(); }
+  function diamond(ctx, x, y, r, col) { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, y - r); ctx.lineTo(x + r, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r, y); ctx.closePath(); ctx.fill(); }
+  /* a gilded blue-and-gold banner for mission flavour: royal-blue fill, gold rule, a blue-cored gold diamond at each end */
+  function gildBanner(ctx, cx, y, text) {
+    ctx.font = "800 16px " + SERIF; var w = ctx.measureText(text).width + 76, x = cx - w / 2;
+    ctx.fillStyle = "rgba(20,32,70,.9)"; D.rr(ctx, x, y, w, 30, 7); ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, x + 1, y + 1, w - 2, 28, 6); ctx.stroke();
+    diamond(ctx, x + 17, y + 15, 5, "#e8c15a"); diamond(ctx, x + 17, y + 15, 2.4, "#1a2c5c");
+    diamond(ctx, x + w - 17, y + 15, 5, "#e8c15a"); diamond(ctx, x + w - 17, y + 15, 2.4, "#1a2c5c");
+    bold(ctx, text, cx, y + 21, "800 16px " + SERIF, "#fff3c4", "center");
+  }
+  /* a royal-blue, gold-ruled challenge plate with a blue-cored gold diamond, matched to the gilded card style */
+  function chalPlate(ctx, x, y, w, h, fr, col) {
+    ctx.fillStyle = "rgba(24,42,88,.82)"; D.rr(ctx, x, y, w, h, 6); ctx.fill();
+    if (fr > 0) { ctx.save(); ctx.beginPath(); D.rr(ctx, x, y, w, h, 6); ctx.clip(); ctx.fillStyle = col || "rgba(232,193,90,.34)"; ctx.fillRect(x, y, w * fr, h); ctx.restore(); }
+    ctx.lineWidth = 2; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, x + 1, y + 1, w - 2, h - 2, 5); ctx.stroke();
+    diamond(ctx, x + 11, y + h / 2, 4, "#e8c15a"); diamond(ctx, x + 11, y + h / 2, 2, "#1a2c5c");
+  }
+  /* the "Loot Get!" card that slides in from the left when a drop lands: brown panel, gold rule, rarity-tinted item box */
+  function lootGetCard(ctx, c) {
+    var it = c.it, rc = RAR[it.r].c === "rb" ? "#ffd84a" : RAR[it.r].c;
+    var inA = clamp(c.t / 0.3, 0, 1), outA = clamp((LOOTCARD - c.t) / 0.3, 0, 1), app = Math.min(inA, outA), ease = app * app * (3 - 2 * app);
+    var cw = 324, ch = 112, x = -cw + (24 + cw) * ease, y = 150;
+    ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, app + 0.15));
+    ctx.fillStyle = "rgba(40,22,11,.95)"; D.rr(ctx, x, y, cw, ch, 12); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = "#e8c15a"; D.rr(ctx, x + 1.5, y + 1.5, cw - 3, ch - 3, 11); ctx.stroke();
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(232,193,90,.3)"; D.rr(ctx, x + 6, y + 6, cw - 12, ch - 12, 8); ctx.stroke();
+    bold(ctx, "LOOT  GET!", x + 18, y + 26, "800 17px " + SERIF, "#ffe58a", "left");
+    var bx = x + 18, by = y + 36, bs = 60;
+    ctx.fillStyle = "rgba(0,0,0,.4)"; D.rr(ctx, bx, by, bs, bs, 8); ctx.fill();
+    ctx.save(); ctx.globalAlpha *= 0.2; ctx.fillStyle = rc; D.rr(ctx, bx + 3, by + 3, bs - 6, bs - 6, 6); ctx.fill(); ctx.restore();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = rc; D.rr(ctx, bx + 1.5, by + 1.5, bs - 3, bs - 3, 7); ctx.stroke();
+    ctx.save(); ctx.imageSmoothingEnabled = false; var isc = (bs - 18) / 16; icoAt(ctx, slotIco(it.s), bx + 9, by + 9, isc); ctx.restore();
+    var tx = bx + bs + 14;
+    bold(ctx, it.n, tx, y + 52, "800 16px " + SERIF, "#fff6de", "left");
+    bold(ctx, "NEW  ·  " + slotName(it.s), tx, y + 72, "800 12px " + F.mono, rc, "left");
+    bold(ctx, "Lv " + it.il + "  ·  " + RAR[it.r].n, tx, y + 91, "700 12px " + F.mono, "#d8c7a0", "left");
+    ctx.restore();
+  }
   /* every icon is drawn on a 16 by 16 grid through r(x, y, w, h, colour), so the HUD and the menus share them */
   var ICO = {
     rem: function (r) { r(7, 1, 2, 1, "#3d418f"); r(5, 2, 6, 1, "#3d418f"); r(4, 3, 8, 2, "#3d418f"); r(3, 5, 10, 5, "#3d418f"); r(4, 10, 8, 2, "#3d418f"); r(5, 12, 6, 2, "#3d418f"); r(7, 14, 2, 1, "#3d418f");
@@ -1703,7 +1756,7 @@
   var DEF = {
     id: "wizard-sprint", name: "Wizard of the Sprint", icon: "🧙", accent: "#8f6bff", W: W, H: H, order: 0.5, badge: "Beta",
     tags: ["Runner", "RPG loot", "Campaign"],
-    tagline: "A robbed arch-wizard in pyjamas chases a trail of footprints. Run, jump, cast, loot, and rebuild your tower.",
+    tagline: "A robbed arch-wizard chases the thief's footprints through the forest. Run, jump, cast, loot, and rebuild your tower.",
     about: "A left-to-right runner with spell combat and loot. Build your wizard, follow the tracks through the forest, fight with Incantations that level up as you use them, pick up Wizard Drip in six rarities, and spend Remnants on upgrades back at your ruined tower. This is the first level: clear its boss to unlock the shop, the wardrobe and Endless mode. More levels are on the way.",
     controls: [["Jump, hold to glide", "Space, W or Up (A)"], ["Drop through a platform", "S or Down"], ["Illusion Flash (dodge)", "Shift (LB)"], ["Keyed Incantation", "J (X)"], ["High five", "F (RB)"], ["Run pace", "1 and 2 (LT, RT)"], ["Pause", "Esc, P or Start"], ["Rebind", "Settings, inside the game"]],
     stats: function () { return [["Wiz Level", S.lvl], ["Forest", S.cleared[1] ? "Cleared" : "Not cleared yet"], ["Best Endless", fmt(S.best.endless1 || 0) + " m"], ["Remnants", fmt(S.rem)], ["Incantations", Object.keys(S.inc).length + " / 20"], ["Enemies defeated", fmt(S.cnt.kills || 0)]]; },
@@ -1711,7 +1764,7 @@
     blurb: "Run, cast and loot your way after whoever robbed your tower.",
     sync: [{ k: "save", s: SKEY, t: "newest" }],
     onSync: function (g) { load(); if (g.state === "title" && UI.scene === "hub" && g.menuOpen()) title(g); },
-    init: function (g) { G = g; g.debug = { S: function () { return S; }, R: function () { return R; }, UI: UI, start: function (m) { startRun(g, m || "story"); }, save: save, load: load, calc: calc, makeItem: makeItem, giveInc: giveInc, step: function (n, dt) { for (var i = 0; i < n && R && !R.over; i++) update(g, dt); }, wiz: wizSprite, look: lookOf, WC: WC }; },
+    init: function (g) { G = g; g.debug = { S: function () { return S; }, R: function () { return R; }, UI: UI, start: function (m) { startRun(g, m || "story"); }, save: save, load: load, calc: calc, makeItem: makeItem, giveInc: giveInc, step: function (n, dt) { for (var i = 0; i < n && R && !R.over; i++) update(g, dt); }, endRun: endRun, wiz: wizSprite, look: lookOf, WC: WC }; },
     title: title,
     update: update,
     idle: hubIdle,
