@@ -326,9 +326,9 @@
 .wz-card__img{flex:0 0 auto;width:2.3em;height:2.3em;display:grid;place-items:center;border-radius:.3em;background:rgba(0,0,0,.5);border:2px solid var(--lc,#888)}
 .wz-card__img .wz-ico{width:1.65em;height:1.65em;image-rendering:pixelated}
 .wz-card__meta{display:flex;flex-direction:column;justify-content:center;gap:0;min-width:0;line-height:1.12}
-.wz-card__slot{font:800 .6em var(--mono);font-style:normal;color:var(--lc,#d8c7a0);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wz-card__slot{font:800 .7em var(--mono);font-style:normal;color:var(--lc,#e0cfa6);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wz-card__name{font:800 .84em var(--wz-serif);color:#fff6de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wz-card__lv{font:700 .58em var(--mono);color:#cdbc94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wz-card__lv{font:700 .6em var(--mono);color:#ecdcaf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;align-self:flex-start;background:rgba(0,0,0,.5);border-radius:6px;padding:1px 7px;margin-top:2px}
 .wz-card.is-hot .wz-card__lv{color:#8fe0a4}
 .wz-card--sim{gap:.3em;padding:.2em .3em}
 .wz-card--sim .wz-card__img{width:1.9em;height:1.9em}
