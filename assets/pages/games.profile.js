@@ -36,6 +36,53 @@ const ALL_BANNERS = [...BANNERS, ...X_ADMIN.banners, ...X_OWNER.banners, ...X_RE
 const ALL_FRAMES = [...FRAMES, ...X_ADMIN.frames, ...X_OWNER.frames, ...X_REWARD.frames];
 const ALL_FX = [...NAME_FX, ...X_ADMIN.fx, ...X_OWNER.fx, ...X_REWARD.fx];
 const PAGE_FX = [["none", "None"], ...X_ADMIN.page, ...X_OWNER.page];
+
+/* ---- member page themes (round 35): colour the whole profile page for every visitor ---- */
+const THEMES = [
+  ["haven", "Haven", { bg: "#040605", bg2: "#0b1a14", card: "#0c110f", accent: "#36d39a", accent2: "#e3b54a", pattern: "dots", glow: true }],
+  ["crimson", "Crimson", { bg: "#0a0405", bg2: "#2a0a10", card: "#150a0c", accent: "#ff4d5e", accent2: "#f5c542", pattern: "none", glow: true }],
+  ["abyss", "Abyss", { bg: "#03060d", bg2: "#0a1a33", card: "#0a1020", accent: "#4b9bff", accent2: "#9fd3ff", pattern: "waves", glow: true }],
+  ["synth", "Synthwave", { bg: "#0b0414", bg2: "#2b0a3d", card: "#160b24", accent: "#ff4fd8", accent2: "#46e0ff", pattern: "grid", glow: true }],
+  ["sakura", "Sakura", { bg: "#140a10", bg2: "#3a1a2a", card: "#1e1118", accent: "#ff8fc2", accent2: "#ffe0ec", pattern: "stars", glow: false }],
+  ["ember", "Ember", { bg: "#0d0704", bg2: "#3a1606", card: "#1a0f08", accent: "#ff8a2b", accent2: "#ffd166", pattern: "none", glow: true }],
+  ["frost", "Frost", { bg: "#060b10", bg2: "#10283a", card: "#0d1720", accent: "#8fe3ff", accent2: "#e8f6ff", pattern: "hex", glow: false }],
+  ["royal", "Royal", { bg: "#07050f", bg2: "#1d1240", card: "#120d24", accent: "#a374ff", accent2: "#f5c542", pattern: "stars", glow: true }],
+  ["mono", "Mono", { bg: "#070707", bg2: "#1c1c1c", card: "#121212", accent: "#e6e6e6", accent2: "#9a9a9a", pattern: "scan", glow: false }],
+  ["daylight", "Daylight", { bg: "#eef1ec", bg2: "#dfeae3", card: "#ffffff", accent: "#0b7a52", accent2: "#8a6410", pattern: "none", glow: false }],
+];
+const T_PATTERNS = [["none", "None"], ["dots", "Dots"], ["grid", "Grid"], ["stars", "Stars"], ["scan", "Scanlines"], ["waves", "Waves"], ["hex", "Lattice"]];
+const HEX = /^#[0-9a-f]{6}$/i;
+const lum = (h) => { const c = [1, 3, 5].map((i) => { const v = parseInt(h.slice(i, i + 2), 16) / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+const rgba = (h, a) => "rgba(" + [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(",") + "," + a + ")";
+/* a stored theme (preset name + any custom values) filled out to every colour */
+function fullTheme(t) {
+  if (!t || typeof t !== "object") return null;
+  const base = (THEMES.find(([k]) => k === t.preset) || THEMES[0])[2];
+  const o = Object.assign({}, base);
+  for (const k of ["bg", "bg2", "card", "accent", "accent2", "text"]) if (HEX.test(t[k] || "")) o[k] = t[k];
+  if (T_PATTERNS.some(([k]) => k === t.pattern)) o.pattern = t.pattern;
+  if (typeof t.glow === "boolean") o.glow = t.glow;
+  o.alpha = typeof t.card_alpha === "number" ? Math.min(1, Math.max(0.4, t.card_alpha)) : 0.86;
+  o.img = typeof t.bg_image === "string" && t.bg_image.startsWith(BANNER_OK) ? t.bg_image : "";
+  return o;
+}
+function applyTheme(t) {
+  const b = document.body;
+  document.querySelectorAll(".pt-layer").forEach((x) => x.remove());
+  b.classList.remove("pt-on", "pt-glow");
+  ["--pt-bg", "--pt-bg2", "--pt-card", "--pt-cardc", "--pt-acc", "--pt-acc2", "--pt-on", "--pt-text", "--pt-muted", "--pt-img"].forEach((v) => b.style.removeProperty(v));
+  const o = fullTheme(t); if (!o) return;
+  const light = lum(o.card) > 0.4;
+  const text = o.text || (light ? "#121a16" : "#eef2ef");
+  const set = (k, v) => b.style.setProperty(k, v);
+  set("--pt-bg", o.bg); set("--pt-bg2", o.bg2); set("--pt-card", o.card); set("--pt-cardc", rgba(o.card, o.alpha));
+  set("--pt-acc", o.accent); set("--pt-acc2", o.accent2); set("--pt-on", lum(o.accent) > 0.35 ? "#08100c" : "#ffffff");
+  set("--pt-text", text); set("--pt-muted", lum(text) > 0.4 ? "color-mix(in srgb," + text + " 66%," + o.card + ")" : "color-mix(in srgb," + text + " 72%," + o.card + ")");
+  if (o.img) set("--pt-img", "linear-gradient(180deg," + rgba(o.bg, 0.55) + "," + rgba(o.bg, 0.86) + "),url('" + o.img.replace(/'/g, "%27") + "')");
+  b.classList.add("pt-on"); if (o.glow) b.classList.add("pt-glow");
+  if (o.glow) b.prepend(el("div", { class: "pt-layer pt-layer--glow", "aria-hidden": "true" }));
+  if (o.pattern && o.pattern !== "none") b.prepend(el("div", { class: "pt-layer pt-pat--" + o.pattern, "aria-hidden": "true" }));
+}
 const ACCENT_NAMES = { maroon: "Maroon", white: "White", gray: "Gray", red: "Red", orange: "Orange", gold: "Gold", yellow: "Yellow", green: "Green", teal: "Teal", blue: "Blue", purple: "Purple", pink: "Pink" };
 const STATUS_EMOJI = ["🎮", "🔥", "🏆", "😴", "💀", "🎧", "🍿", "🧠", "😤", "🥳", "📺", "🛠️", "🌙", "☕", "❤️", "👾"];
 const SECTIONS = [["now", "Now playing"], ["stats", "Stats"], ["links", "Gamer tags"], ["showcase", "Showcase"], ["badges", "Badges"],
@@ -135,6 +182,8 @@ async function render() {
   if (!wanted) history.replaceState(null, "", profileUrl(handle));
   if (sideNow) { sideNow.remove(); side2Now.remove(); sideNow = side2Now = null; }
   root.replaceChildren(el("p", { class: "gm-empty", text: "Loading profile…" }));
+  applyTheme(null);
+  const themeQ = sb.rpc("profile_theme", { p_handle: handle }).then((r) => r.error ? null : r.data, () => null);
   const [{ data: p, error }, top] = await Promise.all([
     sb.from("member_profiles").select("*").eq("handle", handle).maybeSingle(),
     sb.from("voter_stats").select("handle").order("votes", { ascending: false }).limit(3)]);
@@ -152,6 +201,7 @@ async function render() {
   const lv = levelOf(p);
   document.title = p.name + " — Rate-O-Pedia";
   root.style.setProperty("--acc", accentOf(p.accent));
+  pageTheme = await themeQ; applyTheme(pageTheme);
   document.querySelectorAll(".pf-pagefx").forEach((x) => x.remove());
   if (p.page_fx && p.page_fx !== "none" && PAGE_FX.some(([k]) => k === p.page_fx)) document.body.append(el("div", { class: "pf-pagefx pf-pagefx--" + p.page_fx, "aria-hidden": "true" }));
 
@@ -415,7 +465,7 @@ function supporterTag(p) {
  * The account box and the profile's side cards share one right-hand column (aside#pf-aside), so the page is
  * balanced instead of everything stacking down the left. Narrow screens put both back where they were. */
 const WIDE = matchMedia("(min-width: 980px)");
-let sideNow = null, side2Now = null, authSpot = null;
+let sideNow = null, side2Now = null, authSpot = null, pageTheme = null;
 function placeSide(side, side2) {
   sideNow = side; side2Now = side2;
   const wrap = document.querySelector(".wrap"), auth = $("gm-auth");
@@ -703,8 +753,8 @@ async function toWebp(file, w, h, q) {
   c.getContext("2d").drawImage(bmp, (bmp.width - sw) / 2, (bmp.height - sh) / 2, sw, sh, 0, 0, c.width, c.height);
   return await new Promise((res) => c.toBlob(res, "image/webp", q || 0.86));
 }
-async function tidy(bucket, keepUrl) {
-  try { const ls = await sb.storage.from(bucket).list(me.user.id); const keep = keepUrl ? keepUrl.split("/").pop() : ""; const old = (ls.data || []).map((o) => o.name).filter((n) => n !== keep); if (old.length) await sb.storage.from(bucket).remove(old.map((n) => me.user.id + "/" + n)); } catch (e) {}
+async function tidy(bucket, ...keepUrls) {
+  try { const ls = await sb.storage.from(bucket).list(me.user.id); const keep = keepUrls.filter(Boolean).map((u) => u.split("/").pop()); const old = (ls.data || []).map((o) => o.name).filter((n) => !keep.includes(n)); if (old.length) await sb.storage.from(bucket).remove(old.map((n) => me.user.id + "/" + n)); } catch (e) {}
 }
 /* a game search box: onPick(game) */
 function gameSearch(placeholder, onPick, skip) {
@@ -852,6 +902,64 @@ function editor(p) {
     hex ? el("label", { class: "pf-lab", text: "Any accent colour" }) : null,
     hex ? el("div", { class: "pf-picrow" }, hex, el("span", { class: "gm-note", text: "Overrides the accent swatches." })) : null) : null;
 
+  /* --- Theme (round 35): the whole page, live behind this window --- */
+  const th = Object.assign({}, pageTheme || {});
+  let thWas = JSON.stringify(pageTheme || null), thSaved = false;
+  const thNote = el("p", { class: "gm-note" });
+  const thBox = el("div", { class: "pf-tabpane", hidden: true });
+  const thFile = el("input", { type: "file", accept: "image/png,image/jpeg,image/webp", hidden: true, onchange: async () => {
+    const f = thFile.files && thFile.files[0]; if (!f) return;
+    if (f.size > 12 * 1024 * 1024) { thNote.textContent = "That image is over 12 MB."; return; }
+    thNote.textContent = "Uploading background…";
+    try {
+      const blob = await toWebp(f, 1920, 1080, 0.78);
+      const path = me.user.id + "/bg-" + Date.now() + ".webp";
+      const up = await sb.storage.from("banners").upload(path, blob, { contentType: "image/webp", cacheControl: "31536000" });
+      if (up.error) throw up.error;
+      th.bg_image = BANNER_OK + path; if (!th.preset) th.preset = "haven";
+      thNote.textContent = "Background ready. Press Save to keep it."; drawTheme();
+    } catch (e) { thNote.textContent = "That picture didn't upload: " + (e.message || e); }
+    thFile.value = "";
+  } });
+  function drawTheme() {
+    const on = !!th.preset;
+    applyTheme(on ? th : null);
+    const o = fullTheme(on ? th : { preset: "haven" });
+    const colour = (k, label) => {
+      const i = el("input", { type: "color", value: o[k] || (k === "text" ? (lum(o.card) > 0.4 ? "#121a16" : "#eef2ef") : "#000000"), "aria-label": label, disabled: !on });
+      i.addEventListener("input", () => { th[k] = i.value; applyTheme(th); });
+      i.addEventListener("change", drawTheme);
+      return el("label", { class: "pt-color" }, i, el("span", { text: label }));
+    };
+    const chip = (label, isOn, fn, dis) => el("button", { type: "button", class: "pt-chip" + (isOn ? " is-on" : ""), "aria-pressed": isOn ? "true" : "false", disabled: !!dis, text: label, onclick: () => { fn(); drawTheme(); } });
+    thBox.replaceChildren(
+      el("p", { class: "gm-note", text: "Colours your whole profile page, for everyone who visits it. Changes show behind this window as you go." }),
+      el("label", { class: "pf-lab", text: "Start from" }),
+      el("div", { class: "pt-presets" },
+        el("button", { type: "button", class: "pt-preset" + (on ? "" : " is-on"), onclick: () => { for (const k in th) delete th[k]; drawTheme(); } },
+          el("span", { class: "pt-preset__sw", style: "background:linear-gradient(135deg,#0b0f0d,#17201c)" }), "Site default"),
+        ...THEMES.map(([k, label, t]) => el("button", { type: "button", class: "pt-preset" + (th.preset === k ? " is-on" : ""), onclick: () => {
+          const img = th.bg_image; for (const x in th) delete th[x]; th.preset = k; if (img) th.bg_image = img; drawTheme(); } },
+          el("span", { class: "pt-preset__sw", style: "background:linear-gradient(135deg," + t.bg + "," + t.bg2 + ")" },
+            el("i", { style: "background:" + t.accent }), el("i", { style: "background:" + t.accent2 }), el("i", { style: "background:" + t.card })), label))),
+      on ? el("label", { class: "pf-lab", text: "Colours" }) : null,
+      on ? el("div", { class: "pt-colors" }, colour("bg", "Background"), colour("bg2", "Background fade"), colour("card", "Cards"),
+        colour("accent", "Accent"), colour("accent2", "Highlight"), colour("text", "Text")) : null,
+      on ? el("label", { class: "pf-lab", text: "Pattern" }) : null,
+      on ? el("div", { class: "pt-row" }, ...T_PATTERNS.map(([k, label]) => chip(label, o.pattern === k, () => { th.pattern = k; }))) : null,
+      on ? el("label", { class: "pf-lab", text: "Cards" }) : null,
+      on ? el("div", { class: "pt-row" },
+        chip("Glow", o.glow, () => { th.glow = !o.glow; }),
+        chip("Solid", o.alpha >= 1, () => { th.card_alpha = 1; }), chip("See-through", o.alpha < 1 && o.alpha >= 0.75, () => { th.card_alpha = 0.86; }), chip("Glass", o.alpha < 0.75, () => { th.card_alpha = 0.6; })) : null,
+      on ? el("label", { class: "pf-lab", text: "Background picture" }) : null,
+      on ? el("div", { class: "pt-row" },
+        o.img ? el("img", { class: "pt-bgthumb", src: o.img, alt: "" }) : null,
+        el("button", { class: "btn gm-btn", type: "button", text: o.img ? "Change picture" : "Upload a picture", onclick: () => thFile.click() }),
+        o.img ? el("button", { class: "linkbtn", type: "button", text: "Remove", onclick: () => { delete th.bg_image; drawTheme(); } }) : null) : null,
+      thFile, thNote);
+  }
+  drawTheme();
+
   /* --- About --- */
   const bio = el("textarea", { class: "gm-ta", maxlength: "600", rows: "6", placeholder: "Who you are, what you play, your hottest take…", "aria-label": "About me" });
   bio.value = p.bio || "";
@@ -924,7 +1032,7 @@ function editor(p) {
     findBox) : null;
 
   /* tabs */
-  const panes = [["Basics", basics], ["Look", look], [me.admin ? "👑 Exclusive" : "🛡️ Exclusive", excl], ["About", about], ["Showcase", show], ["Gamer tags", tags], ["Sections", secs]].filter(([, x]) => x);
+  const panes = [["Basics", basics], ["Look", look], ["Theme", thBox], [me.admin ? "👑 Exclusive" : "🛡️ Exclusive", excl], ["About", about], ["Showcase", show], ["Gamer tags", tags], ["Sections", secs]].filter(([, x]) => x);
   const tabBar = el("div", { class: "pf-etabs", role: "tablist" }, ...panes.map(([label, pane], i) => el("button", { class: "pf-etab" + (i ? "" : " is-on"), type: "button", role: "tab", "aria-selected": i ? "false" : "true",
     text: label, onclick: (e) => { panes.forEach(([, x]) => { x.hidden = x !== pane; }); tabBar.querySelectorAll(".pf-etab").forEach((t) => { const on = t === e.currentTarget; t.classList.toggle("is-on", on); t.setAttribute("aria-selected", on ? "true" : "false"); }); } })));
 
@@ -945,6 +1053,13 @@ function editor(p) {
         if (r.error) toast(r.error.message, "err");
       }
     }
+    const thNow = th.preset ? th : null;
+    if (JSON.stringify(thNow) !== thWas) {
+      const t = await sb.rpc("set_my_page_theme", { p: thNow });
+      if (t.error) toast(/set_my_page_theme|function/i.test(t.error.message) ? "Page themes switch on with the next database update." : t.error.message, "err");
+      else { pageTheme = (t.data && t.data.theme) || null; thWas = JSON.stringify(pageTheme); }
+    }
+    thSaved = true;
     if (findWas !== null && findC.checked !== findWas) {
       const f = await sb.rpc("set_my_searchable", { p_on: findC.checked });
       if (f.error) toast(f.error.message, "err");
@@ -952,7 +1067,7 @@ function editor(p) {
     save.disabled = false;
     sfx("success"); toast("Profile saved", "ok");
     tidy("avatars", st.pic);
-    if (plus) tidy("banners", typeof st.banner === "string" && st.banner.startsWith(BANNER_OK) ? st.banner : "");
+    if (plus) tidy("banners", typeof st.banner === "string" && st.banner.startsWith(BANNER_OK) ? st.banner : "", pageTheme && pageTheme.bg_image);
     close();
     const { data: s } = await sb.auth.getSession();
     await loadMe(s.session); render();
@@ -965,7 +1080,7 @@ function editor(p) {
     el("div", { class: "pf-dlg__foot" }, save, note));
   paint();
   document.body.append(d);
-  d.addEventListener("close", () => d.remove());
+  d.addEventListener("close", () => { d.remove(); if (!thSaved) applyTheme(pageTheme); });
   d.showModal();
 }
 
