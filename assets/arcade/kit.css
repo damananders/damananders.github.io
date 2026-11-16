@@ -337,6 +337,51 @@
 .wz-equipmap .ak-btn.wz-equipbtn{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:.5em;min-height:0;font:800 1em var(--wz-serif);padding:.3em .6em}
 .wz-equipmap .ak-btn.wz-equipbtn .wz-ico{width:1.3em;height:1.3em;image-rendering:pixelated}
 
+/* --- dash (Prep Time) full-screen layout --- */
+.ak-stage[data-game="wizard-sprint"] .ak-menu:has(.ak-panel.wz-prepmap){place-items:stretch;padding:0;background:transparent;backdrop-filter:none}
+.ak-panel.wz-prepmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;font-size:2.35cqh}
+.ak-panel.wz-prepmap .ak-panel__kicker,.ak-panel.wz-prepmap .ak-panel__title,.ak-panel.wz-prepmap .ak-panel__sub{display:none}
+.ak-panel.wz-prepmap .ak-panel__items{position:relative;display:block;width:100%;height:100%;margin:0;gap:0}
+/* spell cards */
+.wz-prepmap .ak-btn.wz-spellcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.12em;padding:.45em .6em;border-radius:.5em;text-align:left;min-height:0;overflow:hidden;
+  border:2px solid var(--lc,rgba(232,193,90,.6));background:linear-gradient(180deg,rgba(54,34,17,.95),rgba(30,18,8,.97));box-shadow:inset 0 0 .8em rgba(0,0,0,.45),0 .15em .5em rgba(0,0,0,.5)}
+.wz-spellcard.wz-r0{--lc:#e8e8e8}.wz-spellcard.wz-r1{--lc:#4ed16a}.wz-spellcard.wz-r2{--lc:#4aa3ff}.wz-spellcard.wz-r3{--lc:#b46bff}.wz-spellcard.wz-r4{--lc:#ff9a2e}.wz-spellcard.wz-r5{--lc:#ff6bd6}
+.wz-spellcard.is-sel,.wz-spellcard:hover{border-color:#ffe08a !important;box-shadow:0 0 0 2px rgba(255,224,138,.6),inset 0 0 .9em rgba(0,0,0,.4);z-index:3}
+.wz-spellcard .wz-sc__top{display:flex;align-items:center;gap:.4em}
+.wz-spellcard .wz-sc__top .wz-ico{width:1.7em;height:1.7em;image-rendering:pixelated}
+.wz-spellcard .wz-sc__slot{font:800 .62em var(--mono);font-style:normal;color:var(--lc,#e8c15a);text-transform:uppercase;letter-spacing:.05em}
+.wz-spellcard .wz-sc__name{font:800 1.04em var(--wz-serif);color:#fff6de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:.12em}
+.wz-spellcard .wz-sc__sub{font:700 .64em var(--mono);color:#cdbc94}
+.wz-spellcard .wz-sc__swap{margin-top:.12em;font:800 .6em var(--mono);color:#ffe08a;letter-spacing:.02em}
+/* upgrade mini-shop tiles */
+.wz-prepmap .ak-btn.wz-shoptile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.1em;padding:.4em .7em;border-radius:.5em;text-align:left;min-height:0;overflow:hidden;
+  border:1.5px solid rgba(232,193,90,.5);background:linear-gradient(180deg,rgba(48,32,18,.95),rgba(28,18,10,.97));box-shadow:inset 0 0 .7em rgba(0,0,0,.4)}
+.wz-shoptile.is-hot{border-color:#8fe0a4}
+.wz-shoptile.is-sel,.wz-shoptile:hover{border-color:#ffe08a !important;box-shadow:0 0 0 2px rgba(255,224,138,.5);z-index:3}
+.wz-shoptile .wz-st__name{font:800 .94em var(--wz-serif);color:#fff3d0}
+.wz-shoptile .wz-st__sub{font:700 .62em var(--mono);color:#cdbc94;line-height:1.3}
+.wz-shoptile .wz-price{display:inline-block;margin-top:.18em;font:800 .66em var(--mono);color:#ffe08a;background:rgba(0,0,0,.4);border:1px solid rgba(255,224,138,.45);border-radius:.35em;padding:.1em .45em}
+.wz-shoptile .wz-price.is-no{color:#ff9aa5;border-color:rgba(255,120,120,.45)}
+/* big red start run + gold endless */
+.wz-prepmap .ak-btn.wz-startbtn{display:flex;align-items:center;justify-content:center;gap:.5em;min-height:0;border-radius:.6em;font:800 1.55em var(--wz-serif);color:#fff;letter-spacing:.01em;
+  border:2px solid #ff9a86;background:linear-gradient(180deg,#d1434f,#8a1f2c);box-shadow:0 .2em .6em rgba(0,0,0,.5),inset 0 0 1em rgba(255,120,120,.3);text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.wz-prepmap .ak-btn.wz-startbtn:hover,.wz-prepmap .ak-btn.wz-startbtn.is-sel{border-color:#fff;box-shadow:0 0 0 3px rgba(255,180,160,.55),0 .2em .6em rgba(0,0,0,.5)}
+.wz-prepmap .ak-btn.wz-startbtn .wz-ico{width:1.5em;height:1.5em;image-rendering:pixelated}
+.wz-prepmap .ak-btn.wz-endless{display:flex;align-items:center;justify-content:center;gap:.4em;min-height:0;border-radius:.5em;font:800 1.02em var(--wz-serif);color:#2a1a0e;
+  border:2px solid #ffe08a;background:linear-gradient(180deg,#f0c23a,#c99a2e);box-shadow:0 .15em .5em rgba(0,0,0,.45)}
+.wz-prepmap .ak-btn.wz-endless:hover,.wz-prepmap .ak-btn.wz-endless.is-sel{box-shadow:0 0 0 3px rgba(255,224,138,.6),0 .15em .5em rgba(0,0,0,.45)}
+.wz-prepmap .ak-btn.wz-endless .wz-ico{width:1.2em;height:1.2em;image-rendering:pixelated}
+/* orange-brown back arrow */
+.wz-prepmap .ak-btn.wz-backarrow{display:flex;align-items:center;justify-content:center;gap:.5em;min-height:0;border-radius:.6em;font:800 1.18em var(--wz-serif);color:#ffe9c8;
+  border:2px solid #b47a3a;background:linear-gradient(180deg,#7a4e22,#5a3718);box-shadow:0 .15em .5em rgba(0,0,0,.5)}
+.wz-prepmap .ak-btn.wz-backarrow:hover,.wz-prepmap .ak-btn.wz-backarrow.is-sel{border-color:#ffe08a}
+.wz-prepmap .ak-btn.wz-backarrow .wz-ico{width:1.4em;height:1.4em;image-rendering:pixelated}
+/* spell help pill */
+.wz-prepmap .ak-btn.wz-spellhelp{display:flex;align-items:center;justify-content:center;gap:.4em;min-height:0;border-radius:.45em;font:700 .82em var(--wz-serif);color:#e8d5a8;
+  border:1px solid rgba(232,193,90,.4);background:rgba(40,26,14,.9)}
+.wz-prepmap .ak-btn.wz-spellhelp:hover,.wz-prepmap .ak-btn.wz-spellhelp.is-sel{border-color:#ffe08a;color:#fff3c4}
+.wz-prepmap .ak-btn.wz-spellhelp .wz-ico{width:1.1em;height:1.1em;image-rendering:pixelated}
+
 /* themed pause / fail buttons (opt-in via def.pauseTheme, and wizard's fail screen): coloured, icon'd */
 .ak-pz{position:relative;padding-left:2.6em !important;align-items:flex-start !important;text-align:left;
   background:color-mix(in srgb,var(--pz) 16%,rgba(14,10,8,.55)) !important;
