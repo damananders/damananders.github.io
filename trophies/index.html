@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/trophies.css?v=3" />
+<link rel="stylesheet" href="/assets/pages/trophies.css?v=4" />
 <!-- /site:head -->
 </head>
 <body class="photo" style="--bg:url('/assets/hub-bg.webp')">
@@ -49,6 +49,24 @@
 
   <main id="main">
     <div class="tr-filters" id="tr-filters" role="tablist" aria-label="Filter trophies"></div>
+    <div class="tr-toolbar">
+      <div class="tr-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="tr-search__ico"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+        <input id="tr-search" type="search" placeholder="Search trophies by name…" aria-label="Search trophies by name" autocomplete="off" />
+      </div>
+      <label class="tr-sort">
+        <span class="tr-sort__lbl">Sort</span>
+        <select id="tr-sort" aria-label="Sort trophies">
+          <option value="default">Default order</option>
+          <option value="name">Name (A–Z)</option>
+          <option value="rarity">Rarity (Common first)</option>
+          <option value="rarity-desc">Rarity (Rarest first)</option>
+          <option value="earned">Earned first</option>
+          <option value="locked">Locked first</option>
+        </select>
+      </label>
+      <div class="tr-count" id="tr-count" aria-live="polite"></div>
+    </div>
     <section class="tr-grid" id="tr-grid" aria-label="Trophies"></section>
   </main>
 
@@ -62,7 +80,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/trophies.js?v=4"></script>
+<script defer src="/assets/pages/trophies.js?v=5"></script>
 <!-- /site:scripts -->
 </body>
 </html>
