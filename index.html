@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Anders — Choose Your Avenue</title>
-<meta name="description" content="The AndersCraft WoW server, the AnyPS PlayStation launcher and Rate-O-Pedia game ratings — fan projects built for fun." />
+<title>DMA: An Enthusiast's Haven</title>
+<meta name="description" content="Rate and review every game ever made on Rate-O-Pedia — 336,000+ games across 76 platforms — plus the AndersCraft WoW server, the AnyPS PlayStation launcher, an arcade and more." />
 <meta name="theme-color" content="#07090b" />
-<meta property="og:title" content="Anders — Choose Your Avenue" />
-<meta property="og:description" content="The AndersCraft WoW server, the AnyPS PlayStation launcher and Rate-O-Pedia game ratings — fan projects built for fun." />
+<meta property="og:title" content="DMA: An Enthusiast's Haven" />
+<meta property="og:description" content="Rate and review every game ever made on Rate-O-Pedia — 336,000+ games across 76 platforms — plus the AndersCraft WoW server, the AnyPS PlayStation launcher, an arcade and more." />
 <meta property="og:url" content="https://damananders.github.io/" />
 <meta property="og:image" content="https://damananders.github.io/assets/og/hub.jpg?v=2" />
 <meta property="og:image:width" content="1200" />
@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/audio.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/hub.css?v=6" />
+<link rel="stylesheet" href="/assets/pages/hub.css?v=8" />
 <link rel="stylesheet" href="/assets/pages/hub-fx.css" />
 <!-- /site:head -->
 <!-- Hub only: ?owner / ?owner=0 in the address takes effect before first paint (site.js stores it a moment later), so the owner layout never jumps. -->
@@ -54,26 +54,54 @@
     </div>
   </nav>
 
-  <header class="hero">
-    <div class="eyebrow" data-reveal>Choose your avenue</div>
-    <h1>Where do you want to go?</h1>
-    <p class="lead" id="hb-lead" data-reveal data-reveal-delay="90"><span class="hb-lead__pub">A WoW server to join and a launcher to download. Pick one to learn more.</span></p>
+  <header class="hero hb-hero">
+    <h1 class="hb-h1" data-reveal><span class="hb-h1__mark">DMA</span><span class="hb-h1__colon">:</span> <span class="hb-h1__rest">An Enthusiast&rsquo;s Haven</span></h1>
+    <div class="hb-byline" data-reveal data-reveal-delay="60"><span>By Anders</span></div>
+    <p class="lead hb-sub" data-reveal data-reveal-delay="90">Rate and review every game ever made, from the Atari 2600 to PS5, PC and Switch. This is <strong>Rate&#8209;O&#8209;Pedia</strong> &mdash; the heart of the Haven.</p>
+    <form class="hb-search" action="games/" method="get" role="search" data-reveal data-reveal-delay="140">
+      <svg class="hb-search__ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+      <input class="hb-search__in" type="search" name="q" placeholder="Search 336,000+ games&hellip;" aria-label="Search games on Rate-O-Pedia" autocomplete="off" />
+      <button class="hb-search__go" type="submit">Search</button>
+    </form>
+    <p class="hb-quick" data-reveal data-reveal-delay="170">
+      <a href="games/">Browse all</a>
+      <a href="games/forum/">Forums</a>
+      <a href="games/lists/">Lists</a>
+      <a href="account/">Your profile</a>
+    </p>
   </header>
 
   <!-- Latest-update ticker: filled by assets/pages/hub.js from assets/data/news.json. The empty box keeps its height so nothing jumps. -->
   <section class="hb-ticker" id="hb-ticker" aria-label="Latest updates" data-reveal data-reveal-delay="160"></section>
 
   <a class="hb-rate" href="games/" data-reveal>
-    <span class="hb-rate__icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5"/><path d="M13.8 18.4c.8-2 3.6-2 4.4 0M21.8 18.4c.8-2 3.6-2 4.4 0"/><path d="M14 22.2h12c0 4.4-3 6.2-6 6.2s-6-1.8-6-6.2z" fill="currentColor" fill-opacity=".9"/></svg></span>
-    <span class="hb-rate__text">
-      <span class="hb-rate__eyebrow">Community &middot; Discord members</span>
-      <strong>Rate-O-Pedia</strong>
-      <span class="hb-rate__lead">Score games from every platform 0&ndash;5, from the Atari 2600 to PS5, PC and Switch. Write reviews, heart favourites and chat in the forums.</span>
+    <span class="hb-rate__glow" aria-hidden="true"></span>
+    <span class="hb-rate__main">
+      <span class="hb-rate__top">
+        <span class="hb-rate__icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5"/><path d="M13.8 18.4c.8-2 3.6-2 4.4 0M21.8 18.4c.8-2 3.6-2 4.4 0"/><path d="M14 22.2h12c0 4.4-3 6.2-6 6.2s-6-1.8-6-6.2z" fill="currentColor" fill-opacity=".9"/></svg></span>
+        <span class="hb-rate__head">
+          <span class="hb-rate__eyebrow">The heart of the Haven</span>
+          <strong>Rate-O-Pedia</strong>
+        </span>
+      </span>
+      <span class="hb-rate__lead">Score games from every platform 0&ndash;5, from the Atari 2600 to PS5, PC and Switch. Write reviews, heart favourites, build lists and chat in the forums.</span>
       <span class="hb-rate__tags"><span>336,000+ games</span><span>76 platforms</span><span>Ratings &amp; reviews</span><span>Forums</span><span>Profiles</span></span>
+      <span class="hb-rate__foot">
+        <span class="hb-rate__cta">Open Rate-O-Pedia <span aria-hidden="true">&rarr;</span></span>
+      </span>
     </span>
-    <span class="hb-rate__cta">Open Rate-O-Pedia <span aria-hidden="true">&rarr;</span></span>
+    <span class="hb-rate__aside" aria-hidden="true">
+      <span class="hb-rate__widget">
+        <span class="hb-rate__wlabel">Your rating</span>
+        <span class="hb-rate__chips"><span class="hb-rate__chip hb-rate__chip--0"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/><path d="M14.5 15.5l3 3m0-3l-3 3M22.5 15.5l3 3m0-3l-3 3"/><path d="M14.5 27c2-3.4 9-3.4 11 0"/><path d="M27 19.5c.9 1.2.9 2.4 0 3.1" stroke-width="1.2"/></svg></span><span class="hb-rate__chip hb-rate__chip--1"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/><path d="M14 15.2l3.2 1.2M26 15.2l-3.2 1.2"/><circle cx="16" cy="18.3" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="18.3" r="1.3" fill="currentColor" stroke="none"/><path d="M15 26.4c2.2-2.6 7.8-2.6 10 0"/></svg></span><span class="hb-rate__chip hb-rate__chip--2"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/><circle cx="16" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><path d="M15.5 25.6c2-1.3 7-1.3 9 0"/></svg></span><span class="hb-rate__chip hb-rate__chip--3"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/><circle cx="16" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="17.8" r="1.3" fill="currentColor" stroke="none"/><path d="M15.5 24.6h9"/></svg></span><span class="hb-rate__chip hb-rate__chip--4"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/><circle cx="16" cy="17.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="24" cy="17.6" r="1.3" fill="currentColor" stroke="none"/><path d="M15 23.4c2.4 2.6 7.6 2.6 10 0"/></svg></span><span class="hb-rate__chip hb-rate__chip--5"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5v3M20 5v3M26 5v3M14 32v3M20 32v3M26 32v3M5 14h3M5 20h3M5 26h3M32 14h3M32 20h3M32 26h3"/><rect x="8" y="8" width="24" height="24" rx="4.5" fill="var(--chip-bg,#0f1216)"/><circle cx="11.6" cy="11.6" r=".9" fill="currentColor" stroke="none" opacity=".6"/><path d="M13.8 18.4c.8-2 3.6-2 4.4 0M21.8 18.4c.8-2 3.6-2 4.4 0"/><path d="M14 22.2h12c0 4.4-3 6.2-6 6.2s-6-1.8-6-6.2z" fill="currentColor" fill-opacity=".9"/><path d="M16.5 26.5c2 1.3 5 1.3 7 0" stroke="var(--chip-bg,#0f1216)" stroke-width="1.1"/></svg></span></span>
+        <span class="hb-rate__wscale"><span>Awful</span><span>Must play</span></span>
+        <span class="hb-rate__wnote">Score, review &amp; discuss every game</span>
+      </span>
+    </span>
   </a>
 
+  <section class="hb-more" aria-label="More from Anders" data-reveal>
+  <div class="hb-more__head"><h2 class="hb-more__h">More from Anders</h2><a class="hb-more__all" href="projects/">See everything &rarr;</a></div>
   <main class="avenues" id="main">
     <a class="avenue craft" href="anderscraft/">
       <div class="art"><span class="hb-chips" id="hb-chips-craft"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/></svg></div>
@@ -109,6 +137,22 @@
   <!-- Shown by assets/pages/hub.js on devices with a keyboard and mouse -->
   <p class="hb-hint" id="hb-hint" data-reveal><kbd class="sx-kbd">Arrow keys</kbd> or a controller move between avenues. <kbd class="sx-kbd">Enter</kbd> opens one.</p>
 
+  <nav class="hb-tiles" aria-label="More pages">
+    <a class="hb-tile hb-tile--arcade" href="arcade/">
+      <span class="hb-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="3"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".6" fill="currentColor"/><circle cx="18" cy="15" r=".6" fill="currentColor"/></svg></span>
+      <span class="hb-tile__txt"><strong>Arcade</strong><span>Little browser games</span></span>
+    </a>
+    <a class="hb-tile hb-tile--trophies" href="trophies/">
+      <span class="hb-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.2a2.6 2.6 0 0 0 2.9 3.6M16 5.5h2.8a2.6 2.6 0 0 1-2.9 3.6M12 13v3.5M8.5 20h7"/></svg></span>
+      <span class="hb-tile__txt"><strong>Trophies</strong><span>Collect them by exploring</span></span>
+    </a>
+    <a class="hb-tile hb-tile--discord" href="discord/">
+      <span class="hb-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 5.3A17 17 0 0 0 15.7 4l-.2.4a12.7 12.7 0 0 1 3.7 1.9 16.6 16.6 0 0 0-14.4 0A12.7 12.7 0 0 1 8.5 4.4L8.3 4A17 17 0 0 0 4 5.3C1.3 9.3.6 13.2.9 17a17 17 0 0 0 5.2 2.6l.4-.6a11 11 0 0 1-1.7-.8l.4-.3a12 12 0 0 0 10.3 0l.4.3a11 11 0 0 1-1.7.8l.4.6A17 17 0 0 0 23 17c.4-4.5-.6-8.4-3-11.7ZM8.4 14.7c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Zm7.2 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Z"/></svg></span>
+      <span class="hb-tile__txt"><strong>Discord</strong><span>Friends of DaManAnders</span></span>
+    </a>
+  </nav>
+  </section>
+
   <!-- "Now" card: filled by assets/pages/hub.js from assets/data/now.json -->
   <section class="hb-now" id="hb-now" aria-label="What I'm up to now" data-reveal hidden></section>
 
@@ -132,7 +176,7 @@
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
 <script defer src="/assets/pages/hub.js?v=7"></script>
-<script defer src="/assets/pages/hub-fx.js?v=2"></script>
+<script defer src="/assets/pages/hub-fx.js?v=3"></script>
 <script defer src="/assets/pages/hub-dash.js"></script>
 <script defer src="/assets/pages/hub-tour.js"></script>
 <script defer src="/assets/pages/hub-toprated.js"></script>

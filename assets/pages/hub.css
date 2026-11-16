@@ -144,30 +144,56 @@
 :root:not([data-motion="reduce"]) .hb-code--no input{animation:hb-shake .3s}
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-/* ---- "Rate the games" strip under the avenues (links to /games/) ---- */
-.hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:22px;margin-top:22px;padding:24px 28px;text-decoration:none;color:var(--sx-text);border-radius:22px;
-  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--hr) 22%,transparent),transparent 55%),radial-gradient(120% 140% at 100% 100%,color-mix(in srgb,var(--hr2) 22%,transparent),transparent 55%),rgba(13,16,21,.88);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--hr) 40%,var(--sx-line));box-shadow:0 22px 50px -30px var(--hr);transition:transform .2s,box-shadow .2s,border-color .2s}
-.hb-rate::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.35;background-image:radial-gradient(circle,rgba(255,255,255,.12) 1px,transparent 1.4px);background-size:16px 16px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 70%);mask-image:linear-gradient(90deg,transparent,#000 70%)}
-.hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-3px);border-color:var(--hr);box-shadow:0 28px 60px -28px var(--hr);outline:none}
+/* ---- Rate-O-Pedia showcase banner under the avenues (links to /games/) — the site's headline feature ---- */
+.hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:1fr;gap:22px;align-items:center;margin-top:26px;padding:32px 34px 30px;text-decoration:none;color:var(--sx-text);border-radius:26px;
+  background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 26%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 24%,transparent),transparent 60%),rgba(13,16,21,.9);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border:1.5px solid color-mix(in srgb,var(--hr) 58%,var(--sx-line));
+  box-shadow:0 26px 60px -30px var(--hr),0 0 0 1px color-mix(in srgb,var(--hr) 22%,transparent),inset 0 0 44px -22px color-mix(in srgb,var(--hr) 80%,transparent);
+  transition:transform .2s,box-shadow .2s,border-color .2s}
+/* dotted grain + a soft rotating aura so the banner feels alive */
+.hb-rate::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.3;background-image:radial-gradient(circle,rgba(255,255,255,.1) 1px,transparent 1.4px);background-size:16px 16px;-webkit-mask-image:linear-gradient(120deg,transparent,#000 75%);mask-image:linear-gradient(120deg,transparent,#000 75%)}
+.hb-rate__glow{position:absolute;z-index:-1;top:-40%;right:-10%;width:60%;height:180%;pointer-events:none;border-radius:50%;filter:blur(60px);opacity:.5;background:radial-gradient(circle,color-mix(in srgb,var(--hr) 70%,transparent),transparent 70%)}
+:root:not([data-motion="reduce"]) .hb-rate__glow{animation:hb-rate-drift 9s ease-in-out infinite alternate}
+@keyframes hb-rate-drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-18%,10%) scale(1.15)}}
+.hb-rate:hover,.hb-rate:focus-visible{transform:translateY(-4px);border-color:var(--hr);box-shadow:0 34px 70px -28px var(--hr),0 0 0 1px var(--hr),inset 0 0 50px -20px color-mix(in srgb,var(--hr) 90%,transparent);outline:none}
 .hb-rate:focus-visible{outline:2px solid var(--hr);outline-offset:3px}
-.hb-rate__icon{flex:none;display:grid;place-items:center;width:76px;height:76px;border-radius:20px;color:var(--hr);background:color-mix(in srgb,var(--hr) 14%,rgba(0,0,0,.35));border:1px solid color-mix(in srgb,var(--hr) 45%,transparent);box-shadow:inset 0 0 22px -8px var(--hr)}
-.hb-rate__icon svg{width:52px;height:52px}
+.hb-rate__main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.hb-rate__top{display:flex;align-items:center;gap:20px;min-width:0}
+.hb-rate__icon{flex:none;display:grid;place-items:center;width:88px;height:88px;border-radius:22px;color:var(--hr);background:color-mix(in srgb,var(--hr) 16%,rgba(0,0,0,.4));border:1px solid color-mix(in srgb,var(--hr) 50%,transparent);box-shadow:inset 0 0 26px -8px var(--hr),0 10px 30px -16px var(--hr)}
+.hb-rate__icon svg{width:60px;height:60px}
 :root:not([data-motion="reduce"]) .hb-rate:hover .hb-rate__icon svg{animation:hb-rate-bob .9s ease-in-out infinite alternate}
 @keyframes hb-rate-bob{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-3px) rotate(4deg)}}
-.hb-rate__text{display:grid;gap:5px;min-width:0;flex:1}
-.hb-rate__eyebrow{font:600 .72rem var(--sx-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--hr)}
-.hb-rate__text strong{font:700 clamp(1.4rem,2.6vw,1.9rem)/1.05 var(--sx-display);letter-spacing:-.01em}
-.hb-rate__lead{color:var(--sx-muted);font-size:.98rem;line-height:1.45}
-.hb-rate__tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.hb-rate__tags span{padding:3px 10px;border-radius:999px;font:600 .74rem var(--sx-display);color:var(--sx-text);background:rgba(255,255,255,.06);border:1px solid var(--sx-line)}
-.hb-rate__cta{flex:none;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font:700 1rem var(--sx-display);color:#06140d;background:linear-gradient(135deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)));box-shadow:0 10px 26px -12px var(--hr);transition:transform .2s}
-.hb-rate:hover .hb-rate__cta{transform:translateX(3px)}
-:root[data-theme="light"] .hb-rate{background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--hr) 16%,transparent),transparent 55%),var(--sx-surface)}
-:root[data-theme="light"] .hb-rate__tags span{background:rgba(0,0,0,.04)}
+.hb-rate__head{display:grid;gap:4px;min-width:0}
+.hb-rate__eyebrow{font:600 .72rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--hr)}
+.hb-rate__head strong{font:800 clamp(1.7rem,3.4vw,2.5rem)/1.02 var(--sx-display);letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--sx-text),color-mix(in srgb,var(--hr) 75%,var(--sx-text)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hb-rate__lead{color:var(--sx-muted);font-size:1.02rem;line-height:1.5;max-width:68ch}
+.hb-rate__tags{display:flex;flex-wrap:wrap;gap:7px}
+.hb-rate__tags span{padding:5px 13px;border-radius:999px;font:600 .78rem var(--sx-display);color:var(--sx-text);background:color-mix(in srgb,var(--hr) 10%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--hr) 32%,var(--sx-line))}
+.hb-rate__foot{display:flex;margin-top:4px}
+.hb-rate__cta{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:999px;font:700 1.05rem var(--sx-display);color:#06140d;background:linear-gradient(135deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)));box-shadow:0 14px 32px -12px var(--hr);transition:transform .2s,box-shadow .2s}
+.hb-rate:hover .hb-rate__cta{transform:translateX(3px);box-shadow:0 18px 40px -12px var(--hr)}
+/* right-side ratings visual (decorative) — uses Rate-O-Pedia's own CPU-chip mood icons (0 Awful .. 5 Must play) */
+.hb-rate__aside{display:none;flex-direction:column;gap:14px;align-self:center;--chip-bg:#0d1014}
+.hb-rate__widget{display:grid;gap:11px;padding:16px 18px;border-radius:18px;background:color-mix(in srgb,var(--hr) 9%,rgba(0,0,0,.34));border:1px solid color-mix(in srgb,var(--hr) 34%,var(--sx-line));box-shadow:inset 0 0 30px -20px var(--hr)}
+.hb-rate__wlabel{font:600 .68rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sx-muted)}
+.hb-rate__chips{display:flex;gap:4px;justify-content:space-between}
+.hb-rate__chip{flex:0 0 auto;line-height:0;color:color-mix(in srgb,var(--hr) 55%,var(--sx-muted))}
+.hb-rate__chip svg{width:30px;height:30px;display:block}
+/* the top mood lit up in the full accent, like a chosen rating */
+.hb-rate__chip--5{color:var(--hr);filter:drop-shadow(0 2px 8px color-mix(in srgb,var(--hr) 55%,transparent))}
+.hb-rate__wscale{display:flex;justify-content:space-between;font:600 .68rem var(--sx-mono);letter-spacing:.04em;color:var(--sx-muted)}
+.hb-rate__wnote{font:600 .82rem var(--sx-display);color:var(--sx-text)}
+@media (min-width:780px){
+  .hb-rate{grid-template-columns:minmax(0,1fr) 262px}
+  .hb-rate__aside{display:flex}
+}
+:root[data-theme="light"] .hb-rate{background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 18%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 14%,transparent),transparent 60%),var(--sx-surface)}
+:root[data-theme="light"] .hb-rate__tags span{background:color-mix(in srgb,var(--hr) 10%,#fff)}
 :root[data-theme="light"] .hb-rate__cta{color:#fff}
 :root[data-theme="light"] .hb-rate__icon{background:color-mix(in srgb,var(--hr) 12%,#fff)}
-@media (max-width:640px){.hb-rate{flex-wrap:wrap;gap:14px;padding:18px}.hb-rate__icon{width:56px;height:56px;border-radius:16px}.hb-rate__icon svg{width:38px;height:38px}.hb-rate__text{flex-basis:calc(100% - 70px)}.hb-rate__cta{width:100%;justify-content:center}}
+@media (max-width:640px){.hb-rate{padding:22px 20px}.hb-rate__top{gap:14px}.hb-rate__icon{width:64px;height:64px;border-radius:18px}.hb-rate__icon svg{width:44px;height:44px}.hb-rate__cta{width:100%;justify-content:center}.hb-rate__foot{margin-top:2px}}
 
 /* ---- "Want to work with me?" footer link (opens the contact gate) ---- */
 .hb-hire-row{margin:26px 0 2px;text-align:center}
@@ -181,3 +207,81 @@
 /* ---- Sound-reactive accent (idea #49): assets/audio.js sets --sx-pulse (0..1) while the soundscape plays ---- */
 :root[data-au-pulse] .avenues .avenue{box-shadow:0 0 calc(18px + 46px * var(--sx-pulse,0)) calc(-14px + 6px * var(--sx-pulse,0)) var(--accent,var(--sx-accent))}
 :root[data-au-pulse] .au-btn{box-shadow:0 0 calc(4px + 16px * var(--sx-pulse,0)) color-mix(in srgb,var(--sx-accent) 70%,transparent)}
+
+/* ===================================================================================================
+   DMA: An Enthusiast's Haven — ROP-forward hero + "More from Anders" (landing rework, Nov 2026)
+   =================================================================================================== */
+.hb-hero{padding-bottom:22px}
+/* wordmark: "DMA" is one solid bright accent (hub-fx picks one of 4 per visit) with a clean glow;
+   the rest stays crisp white. No gradient fill — a flat colour reads clean, never muddy. */
+.hb-h1{margin:0;font:800 clamp(2.4rem,6.4vw,4rem)/1.03 var(--sx-display);letter-spacing:-.02em;color:var(--sx-text);
+  --h1a:var(--games,#36d39a)}
+.hb-h1.h1c-rop{--h1a:var(--games,#36d39a)}
+.hb-h1.h1c-ac{--h1a:var(--craft,#ff7a1f)}
+.hb-h1.h1c-anyps{--h1a:var(--anyps,#3d8bff)}
+.hb-h1.h1c-arcade{--h1a:#b07dff}
+.hb-h1__mark{color:var(--h1a);text-shadow:0 0 22px color-mix(in srgb,var(--h1a) 42%,transparent)}
+.hb-h1__colon{color:color-mix(in srgb,var(--h1a) 70%,var(--sx-text))}
+.hb-h1__rest{color:var(--sx-text)}
+/* byline: tucked under the title, aligned to its right edge */
+.hb-byline{margin:6px 0 0;text-align:right;max-width:min(100%,16ch);margin-left:auto}
+.hb-byline span{display:inline-flex;align-items:center;gap:8px;font:600 .8rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sx-muted)}
+.hb-byline span::before{content:"";width:22px;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--games,#36d39a) 70%,transparent))}
+.hb-sub{max-width:54ch;margin-top:16px}
+.hb-sub strong{color:var(--sx-text);font-weight:700}
+
+/* hero search bar (plain GET form → /games/?q=) */
+.hb-search{display:flex;align-items:center;gap:8px;max-width:620px;margin:22px 0 0;position:relative;text-shadow:none;
+  background:var(--sx-glass);border:1px solid var(--sx-line-2);border-radius:16px;padding:7px 7px 7px 14px;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 18px 44px -28px rgba(0,0,0,.8);
+  transition:border-color .15s,box-shadow .15s}
+.hb-search:focus-within{border-color:var(--sx-accent);box-shadow:0 18px 44px -24px var(--sx-accent)}
+.hb-search__ico{flex:none;width:20px;height:20px;color:var(--sx-muted)}
+.hb-search__in{flex:1 1 auto;min-width:0;border:0;background:none;outline:none;color:var(--sx-text);font:500 1.02rem var(--sx-display);padding:9px 2px}
+.hb-search__in::placeholder{color:var(--sx-muted)}
+.hb-search__in::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.hb-search__go{flex:none;cursor:pointer;border:0;border-radius:11px;padding:11px 20px;font:700 .98rem var(--sx-display);
+  color:var(--sx-on-accent);background:var(--sx-accent);transition:filter .15s}
+.hb-search__go:hover{filter:brightness(1.08)}
+.hb-search__go:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
+
+/* quick links under the search — pill buttons so they read clearly against the hero */
+.hb-quick{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 0;font:600 .9rem var(--sx-display)}
+.hb-quick a{display:inline-flex;align-items:center;color:var(--sx-text);text-decoration:none;padding:7px 15px;border-radius:999px;
+  background:var(--sx-glass);border:1px solid var(--sx-line-2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 8px 22px -18px rgba(0,0,0,.8);transition:transform .15s,border-color .15s,color .15s,box-shadow .15s}
+.hb-quick a:hover,.hb-quick a:focus-visible{transform:translateY(-1px);color:var(--sx-accent);border-color:var(--sx-accent);box-shadow:0 12px 26px -16px var(--sx-accent);outline:none}
+
+/* "More from Anders" — demoted projects */
+.hb-more{margin-top:40px;padding-top:26px;border-top:1px solid var(--sx-line-2)}
+.hb-more__head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 2px 16px}
+.hb-more__h{margin:0;font:700 1.25rem var(--sx-display);letter-spacing:-.01em;color:var(--sx-text)}
+.hb-more__all{font:600 .9rem var(--sx-display);color:var(--sx-accent);text-decoration:none;white-space:nowrap}
+.hb-more__all:hover{text-decoration:underline;text-underline-offset:3px}
+.hb-more .avenues .avenue .art{height:150px}
+/* glowing coloured border on each project card (uses the card's own --accent) */
+.hb-more .avenues .avenue{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent),0 18px 40px -28px color-mix(in srgb,var(--accent) 85%,transparent),inset 0 0 36px -26px color-mix(in srgb,var(--accent) 90%,transparent)}
+.hb-more .avenues .avenue:hover,.hb-more .avenues .avenue:focus-visible{box-shadow:0 0 0 1px var(--accent),0 24px 54px -26px var(--accent),inset 0 0 40px -22px color-mix(in srgb,var(--accent) 90%,transparent)}
+
+/* slim tile row (Arcade / Trophies / Discord) — each with a glowing coloured border */
+.hb-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:14px}
+.hb-tile{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:16px;text-decoration:none;color:var(--sx-text);text-shadow:none;
+  background:var(--sx-glass);border:1px solid color-mix(in srgb,var(--tile-c,var(--sx-accent)) 50%,var(--sx-line));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--tile-c,var(--sx-accent)) 20%,transparent),0 14px 30px -26px color-mix(in srgb,var(--tile-c,var(--sx-accent)) 85%,transparent);
+  transition:transform .15s,border-color .15s,box-shadow .15s}
+.hb-tile:hover,.hb-tile:focus-visible{transform:translateY(-2px);border-color:var(--tile-c,var(--sx-accent));box-shadow:0 0 0 1px var(--tile-c,var(--sx-accent)),0 20px 42px -24px var(--tile-c,var(--sx-accent));outline:none}
+.hb-tile:focus-visible{outline:2px solid var(--tile-c,var(--sx-accent));outline-offset:2px}
+.hb-tile__ico{flex:none;width:42px;height:42px;display:grid;place-items:center;border-radius:12px;color:var(--tile-c,var(--sx-accent));
+  background:color-mix(in srgb,var(--tile-c,var(--sx-accent)) 14%,transparent);border:1px solid color-mix(in srgb,var(--tile-c,var(--sx-accent)) 40%,transparent)}
+.hb-tile__ico svg{width:22px;height:22px}
+.hb-tile__txt{display:grid;gap:1px;min-width:0}
+.hb-tile__txt strong{font:700 1rem var(--sx-display);color:var(--sx-text)}
+.hb-tile__txt span{font-size:.84rem;color:var(--sx-muted)}
+.hb-tile--arcade{--tile-c:#ffbe3d}.hb-tile--trophies{--tile-c:var(--games,#36d39a)}.hb-tile--discord{--tile-c:#5865f2}
+
+@media (max-width:640px){
+  .hb-search{max-width:none}
+  .hb-search__go{padding:11px 15px}
+  .hb-more__head{flex-wrap:wrap}
+}
