@@ -481,7 +481,7 @@
       svg('<circle cx="12" cy="12" r="2.1"/><circle cx="12" cy="4.4" r="1.5"/><circle cx="19.6" cy="12" r="1.5"/><circle cx="12" cy="19.6" r="1.5"/><circle cx="4.4" cy="12" r="1.5"/>', { fill: "currentColor", stroke: "none" }));
     var box = el("div", { class: "ch-menu__box" }, btn);
     nav.insertBefore(box, nav.firstChild);
-    /* a dedicated Settings gear sitting directly under the menu button, visible on every page (including the
+    /* a dedicated Settings gear sitting to the right of the menu button, visible on every page (including the
        landing page) — it opens the radial straight to the Settings view. The in-overlay toggle still works too. */
     var gearBtn = null;
     if (feat("settingsPanel")) {
@@ -499,22 +499,19 @@
     var center = el("button", { type: "button", class: "ch-rad__center", "aria-label": "Close menu", title: "Close" },
       svg('<path d="M6 6l12 12M18 6 6 18"/>'));
     wheel.appendChild(center);
-    var N = PAGES.length, nodes = [];
-    /* Lay the cards on a loose ring. Each gets unit offsets (--x,--y scaled by the ring radius in CSS),
-       a parallax depth, a small idle-float delay and a gentle base lean, so they feel like they drift free. */
+    var N = PAGES.length, nodes = [], SLOTS = [];
+    /* Precompute the ring slots (two loose rings so wide cards never crowd: 7 outer, the rest tucked inside).
+       Each card gets its accent + opacity delay at build; its float POSITION comes from a slot, reassigned —
+       and shuffled — every time the menu opens, so the floaty constellation lands in a fresh order each time. */
     PAGES.forEach(function (p, i) {
       var cur = exact ? p[1] === path : p[0] === here;
-      /* two loose rings so the wide cards never crowd: 7 on the outer ring, the rest tucked inside */
       var OUT = 7, inner = i >= OUT, cnt = inner ? (N - OUT) : OUT, k = inner ? i - OUT : i;
       var ang = -Math.PI / 2 + (k / cnt) * Math.PI * 2 + (inner ? Math.PI / (N - OUT) : 0);
       var rad = inner ? 0.6 : 1;
-      var x = Math.cos(ang) * rad, y = Math.sin(ang) * rad;
-      var depth = 7 + ((i * 37) % 13);                        /* 7..19px of parallax travel */
-      var rot = (Math.sin(i * 1.7) * 3).toFixed(2);           /* base lean */
+      SLOTS.push({ x: Math.cos(ang) * rad, y: Math.sin(ang) * rad, depth: 10 + ((i * 37) % 21), rot: Math.sin(i * 1.7) * 4 });
       var card = el("a", { href: p[1], class: "ch-rad__card" + (cur ? " is-current" : ""), role: "menuitem",
         "aria-current": cur ? "page" : null,
-        style: { "--x": x.toFixed(3), "--y": y.toFixed(3), "--d": (i * 42) + "ms", "--dp": depth + "px",
-                 "--rot": rot + "deg", "--fd": (i * 0.41).toFixed(2) + "s", "--ac": RAD_ACCENTS[i % RAD_ACCENTS.length] } },
+        style: { "--d": (i * 42) + "ms", "--ac": RAD_ACCENTS[i % RAD_ACCENTS.length] } },
         el("span", { class: "ch-rad__float" },
           el("span", { class: "ch-rad__in" },
             el("span", { class: "ch-rad__dot", "aria-hidden": "true" }),
@@ -540,6 +537,22 @@
       card.addEventListener("pointercancel", untilt);
       wheel.appendChild(card); nodes.push(card);
     });
+    /* Reassign the ring slots to the cards. shuffle=true lands a fresh random arrangement (used on each open
+       in float mode); each card also gets a fresh idle-float duration + delay so nothing drifts in lockstep. */
+    function layoutFloat(shuffle) {
+      var order = SLOTS.map(function (_, idx) { return idx; });
+      if (shuffle) { for (var a = order.length - 1; a > 0; a--) { var b = Math.floor(Math.random() * (a + 1)), t = order[a]; order[a] = order[b]; order[b] = t; } }
+      nodes.forEach(function (card, idx) {
+        var s = SLOTS[order[idx]];
+        card.style.setProperty("--x", s.x.toFixed(3));
+        card.style.setProperty("--y", s.y.toFixed(3));
+        card.style.setProperty("--dp", s.depth + "px");
+        card.style.setProperty("--rot", s.rot.toFixed(2) + "deg");
+        card.style.setProperty("--fdur", (6 + Math.random() * 3.4).toFixed(2) + "s");
+        card.style.setProperty("--fd", (Math.random() * 2.4).toFixed(2) + "s");
+      });
+    }
+    layoutFloat(false);
     var scrim = el("div", { class: "ch-rad__scrim" });
     var overlay = el("div", { class: "ch-radial", id: "ch-radial", hidden: true }, scrim, wheel);
     (document.body || document.documentElement).appendChild(overlay);
@@ -659,6 +672,7 @@
       document.documentElement.classList.toggle("ch-radial-open", on);
       if (closing) { clearTimeout(closing); closing = 0; }
       if (on) {
+        if (mode === "float" && !Site.reducedMotion) layoutFloat(true);   /* fresh random arrangement each open */
         showView(pendingView); pendingView = "pages";
         overlay.hidden = false;
         /* next frame so the fly-out transition runs from the collapsed state */
