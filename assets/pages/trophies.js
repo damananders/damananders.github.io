@@ -144,6 +144,7 @@
     return t.rarity || "common";
   }
   var TIER_LABEL = { common: "Common", uncommon: "Uncommon", rare: "Rare", epic: "Epic", legendary: "Legendary", platinum: "Platinum", special: "Special" };
+  var RARITY_RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, platinum: 5, special: 6 };
 
   var CUP = '<path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.2a2.6 2.6 0 0 0 2.9 3.6M16 5.5h2.8a2.6 2.6 0 0 1-2.9 3.6M12 13v3.5M8.5 20h7M9.5 20c0-2 1-3.5 2.5-3.5s2.5 1.5 2.5 3.5"/>';
   var LOCK = '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>';
@@ -178,7 +179,7 @@
     }
 
     /* filter tabs */
-    var state = { filter: "all" };
+    var state = { filter: "all", query: "", sort: "default" };
     var FILTERS = [["all", "All"], ["earned", "Earned"], ["locked", "Locked"], ["secret", "Secret"]];
     var tabs = {};
     FILTERS.forEach(function (f) {
@@ -188,6 +189,21 @@
         S.el("span", { text: f[1] }));
       tabs[f[0]] = b; if (filtEl) filtEl.appendChild(b);
     });
+
+    /* search + sort */
+    var searchEl = document.getElementById("tr-search"),
+        sortEl = document.getElementById("tr-sort"),
+        countEl = document.getElementById("tr-count");
+    if (searchEl) searchEl.addEventListener("input", function () { state.query = searchEl.value.trim().toLowerCase(); draw(); });
+    if (sortEl) sortEl.addEventListener("change", function () { state.sort = sortEl.value; draw(); });
+
+    /* what a visitor can actually read on a card — a locked secret shows only placeholder text,
+       so searching its real name must never surface it. */
+    function shownText(t) {
+      var have = !!got[t.id];
+      if (t.secret && !have) return "secret trophy keep exploring to reveal this one";
+      return (t.name + " " + t.desc).toLowerCase();
+    }
 
     function card(t) {
       var have = !!got[t.id], tier = tierOf(t), hiddenSecret = t.secret && !have;
@@ -209,12 +225,41 @@
       grid.textContent = "";
       var list = CATALOG.filter(function (t) {
         var have = !!got[t.id];
-        if (state.filter === "earned") return have;
-        if (state.filter === "locked") return !have;
-        if (state.filter === "secret") return !!t.secret;
+        if (state.filter === "earned" && !have) return false;
+        if (state.filter === "locked" && have) return false;
+        if (state.filter === "secret" && !t.secret) return false;
+        if (state.query && shownText(t).indexOf(state.query) === -1) return false;
         return true;
       });
-      if (!list.length) { grid.appendChild(S.el("div", { class: "tr-empty", text: "Nothing here yet." })); return; }
+
+      if (state.sort !== "default") {
+        /* sort a copy so CATALOG order (the default) is never mutated;
+           ties fall back to catalog position so sorting stays stable. */
+        var idx = {};
+        CATALOG.forEach(function (t, i) { idx[t.id] = i; });
+        list = list.slice();
+        list.sort(function (a, b) {
+          var r = 0;
+          if (state.sort === "name") r = a.name.localeCompare(b.name);
+          else if (state.sort === "rarity") r = (RARITY_RANK[tierOf(a)] || 0) - (RARITY_RANK[tierOf(b)] || 0);
+          else if (state.sort === "rarity-desc") r = (RARITY_RANK[tierOf(b)] || 0) - (RARITY_RANK[tierOf(a)] || 0);
+          else if (state.sort === "earned") r = (got[b.id] ? 1 : 0) - (got[a.id] ? 1 : 0);
+          else if (state.sort === "locked") r = (got[a.id] ? 1 : 0) - (got[b.id] ? 1 : 0);
+          return r || (idx[a.id] - idx[b.id]);
+        });
+      }
+
+      if (countEl) {
+        var total = CATALOG.length;
+        countEl.textContent = (state.query || state.filter !== "all")
+          ? (list.length + " of " + total + " shown")
+          : (total + " trophies");
+      }
+
+      if (!list.length) {
+        grid.appendChild(S.el("div", { class: "tr-empty", text: state.query ? "No trophies match that search." : "Nothing here yet." }));
+        return;
+      }
       list.forEach(function (t) { grid.appendChild(card(t)); });
     }
     draw();
