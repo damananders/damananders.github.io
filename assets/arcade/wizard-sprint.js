@@ -146,7 +146,7 @@
     return { v: 1, ts: 0, made: false,
       wiz: { name: "", body: 0, skin: 6, head: 0, shape: 0.4, age: 104, hair: 2, hairCol: 0, brow: 1, beard: 0, height: 0.5 },
       rem: 0, orbs: 0, grim: 0, syl: 0, xp: 0, lvl: 1, rank: 0, cleared: {}, tower: 0, story: {},
-      inc: { poof: { k: 0 } }, incEq: ["poof"], buffs: {}, buffEq: [], ranks: {}, bag: [], eq: starter(), bagCap: 12, speed: 1,
+      inc: { poof: { k: 0 } }, incEq: ["poof"], buffs: {}, buffEq: [], ranks: {}, bag: [], eq: starter(), bagCap: 12, speed: 0.5,
       binds: {}, pad: {}, snd: true, vol: 0.7, flashOn: true, comfort: false, cos: {}, cnt: {}, best: {}, ch: [], shop: { slot: 0, items: [] }, nid: 10 };
   }
   function load() {
@@ -157,6 +157,7 @@
     for (var w in f.wiz) if (S.wiz[w] == null) S.wiz[w] = f.wiz[w];
     if (!S.inc.poof) S.inc.poof = { k: 0 };
     if (!S.incEq.length) S.incEq = ["poof"];
+    if (S.speed == null || S.speed === 1) S.speed = 0.5;   /* pace slider re-centred to neutral (old default was 1) */
     fillCh();
   }
   function save() { S.ts = Date.now(); store.set(SKEY, S); }
@@ -233,17 +234,27 @@
   var DEFK = { jump: ["Space", "KeyW", "ArrowUp"], drop: ["KeyS", "ArrowDown"], flash: ["ShiftLeft"], c1: ["KeyJ"], c2: ["KeyK"], c3: ["KeyL"], five: ["KeyF"], slow: ["Digit1"], fast: ["Digit2"] };
   var DEFP = { jump: "a", drop: "down", flash: "lb", c1: "x", c2: "y", c3: "b", five: "rb", slow: "lt", fast: "rt" };
   var FLASHCD = 3.2, FLASHDUR = 0.5;                     /* Illusion Flash: a short dodge of i-frames on a cooldown */
-  function keysOf(a) { return S.binds[a] ? [S.binds[a]] : DEFK[a]; }
-  function padOf(a) { return S.pad[a] || DEFP[a]; }
+  /* Binds are arrays of up to 3 (keyboard codes or pad buttons); old single-string saves and the defaults both read fine. */
+  function keysOf(a) { var b = S.binds[a]; if (Array.isArray(b)) return b.length ? b : DEFK[a]; return b ? [b] : DEFK[a]; }
+  function padsOf(a) { var b = S.pad[a]; if (Array.isArray(b)) return b.length ? b : (DEFP[a] ? [DEFP[a]] : []); return b ? [b] : (DEFP[a] ? [DEFP[a]] : []); }
+  function padOf(a) { return padsOf(a)[0]; }
+  function bindsOf(kind, a) { return kind === "key" ? keysOf(a) : padsOf(a); }
+  function bindLabel(kind, c) { return kind === "key" ? keyName(c) : String(c).toUpperCase(); }
+  function bindOwn(kind, a) { var m = kind === "key" ? S.binds : S.pad; if (!Array.isArray(m[a])) m[a] = bindsOf(kind, a).slice(); return m[a]; }
+  function addBind(kind, a, code) { if (!code) return; var arr = bindOwn(kind, a); if (arr.indexOf(code) >= 0) return;
+    ACTS.forEach(function (o) { if (o[0] !== a && bindsOf(kind, o[0]).indexOf(code) >= 0) { var oa = bindOwn(kind, o[0]); if (oa.length > 1) oa.splice(oa.indexOf(code), 1); } });
+    if (arr.length < 3) arr.push(code); save(); }
+  function removeBind(kind, a, code) { var arr = bindOwn(kind, a); if (arr.length <= 1) return; var k = arr.indexOf(code); if (k >= 0) arr.splice(k, 1); save(); }
   function keyName(c) { if (/^Shift/.test(c)) return "Shift"; if (/^Control/.test(c)) return "Ctrl"; return c.replace(/^Key|^Digit/, "").replace(/^Arrow/, "Arrow ").replace("Space", "Space"); }
   function isDown(g, a) {
     var ks = keysOf(a); for (var i = 0; i < ks.length; i++) if (g.key(ks[i])) return true;
-    if (g.pad && g.pad.btn[padOf(a)]) return true;
+    if (g.pad) { var ps = padsOf(a); for (var j = 0; j < ps.length; j++) if (g.pad.btn[ps[j]]) return true; }
     return a === "drop" && g.pad && g.pad.ly > 0.6;
   }
   function isHit(g, a) {
     var ks = keysOf(a); for (var i = 0; i < ks.length; i++) if (g.hit(ks[i])) return true;
-    return !!(g.pad && g.pad.hit[padOf(a)]);
+    if (g.pad) { var ps = padsOf(a); for (var j = 0; j < ps.length; j++) if (g.pad.hit[ps[j]]) return true; }
+    return false;
   }
 
   /* ---------------- sound ---------------- */
@@ -671,7 +682,11 @@
     UI.scene = "run"; cnt("runs", 1);
     g.start();
   }
-  function speedNow() { return BASE * (1 + R.st.ton * S.speed / 100) * (R.buffT > 0 && R.buff === "gust" ? 1.25 : 1) * (R.mud > 0 ? 0.6 : 1); }
+  /* the run-pace control: a baseline band every player has (75%–115%), the top of which the Move-speed stat
+     (ton) widens. S.speed is the 0..1 slider position; 0.5 is neutral 100%. */
+  function pacePct(ton) { var s = S.speed == null ? 0.5 : clamp(S.speed, 0, 1); ton = ton || 0; return Math.round(s <= 0.5 ? 75 + 50 * s : 100 + (15 + ton) * (s - 0.5) * 2); }
+  function paceMax(ton) { return 115 + (ton || 0); }
+  function speedNow() { return BASE * (pacePct(R.st.ton) / 100) * (R.buffT > 0 && R.buff === "gust" ? 1.25 : 1) * (R.mud > 0 ? 0.6 : 1); }
 
   /* --- spawning --- */
   function plat(x, h, w) { var p = { x: x, y: GY - h, w: w }; R.plats.push(p); return p; }
@@ -818,7 +833,8 @@
     var i, e, wx, sp = speedNow(), held = isDown(g, "jump") || g.pointer.down, pressed = isHit(g, "jump") || R.tap; R.tap = false;
     R.t += dt; R.dist += sp * dt; wx = wxw();
     R.mAcc += sp * dt / M; if (R.mAcc >= 1) { var mm = Math.floor(R.mAcc); R.mAcc -= mm; cnt("m", mm); chEv("m", mm); }
-    if (R.st.ton > 0) { if (isHit(g, "slow")) { S.speed = clamp(S.speed - 0.25, 0, 1); g.toast("Pace " + Math.round(100 + R.st.ton * S.speed) + "%"); } if (isHit(g, "fast")) { S.speed = clamp(S.speed + 0.25, 0, 1); g.toast("Pace " + Math.round(100 + R.st.ton * S.speed) + "%"); } }
+    if (isHit(g, "slow")) { S.speed = clamp(S.speed - 0.1, 0, 1); g.toast("Pace " + pacePct(R.st.ton) + "%"); }
+    if (isHit(g, "fast")) { S.speed = clamp(S.speed + 0.1, 0, 1); g.toast("Pace " + pacePct(R.st.ton) + "%"); }
     /* movement */
     var jv = Math.sqrt(2 * GRAV * R.st.jump) * (R.mud > 0 ? 0.85 : 1), gust = R.buffT > 0 && R.buff === "gust", maxJ = gust ? ((S.buffs.gust || 0) >= 3 ? 3 : 2) : 1;
     if (pressed) {
@@ -925,9 +941,9 @@
     MN(g, { kicker: R.mode === "story" ? "Magickal Mad Dash · The Forest Around the Tower" : "Endless · The Forest Around the Tower",
       title: win ? "Forest Cleared" : "Flattened at " + fmt(m) + " m", sub: win ? txt("win1") : txt("lose"), body: res, cls: "is-wide",
       items: [
-        first ? { label: "Continue", cls: "is-primary", act: function () { panels(g, WS.lines("clear1"), "After the forest", function () { g.toTitle(); }); } }
-              : { label: "Run It Again", cls: "is-primary", act: function () { startRun(g, R.mode); } },
-        first ? null : { label: "Back To The Tower", act: function () { g.toTitle(); } }
+        first ? { label: "Continue", cls: "is-primary ak-pz ak-pz--go", act: function () { panels(g, WS.lines("clear1"), "After the forest", function () { g.toTitle(); }); } }
+              : { label: "Run It Again", cls: "is-primary ak-pz ak-pz--warn", act: function () { startRun(g, R.mode); } },
+        first ? null : { label: "Back To The Tower", cls: "ak-pz ak-pz--exit", act: function () { g.toTitle(); } }
       ] });
   }
 
@@ -1082,12 +1098,24 @@
     ctx.font = "800 20px " + F.mono; var w = 50 + ctx.measureText(s).width;
     plate(ctx, x, y, w, 38); icoAt(ctx, ico, x + 6, y + 3, 2); bold(ctx, s, x + 42, y + 26, "800 20px " + F.mono, col); return w + 8;
   }
+  /* a round ability pip: name above, icon in the middle, a clock-style cooldown wipe, key/countdown below */
+  function abilityPip(ctx, cx, cy, r, ico, name, sub, frac, ready) {
+    frac = clamp(frac, 0, 1);
+    bold(ctx, name, cx, cy - r - 9, "800 13px " + F.mono, ready ? "#bfe3ff" : "#9aa6b4", "center");
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fillStyle = "rgba(14,10,8,.78)"; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r - 3, -Math.PI / 2, -Math.PI / 2 + frac * TAU); ctx.closePath();
+    ctx.fillStyle = ready ? "rgba(127,220,255,.32)" : "rgba(127,220,255,.26)"; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = ready ? "#7fdcff" : "rgba(127,180,220,.5)"; ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke();
+    if (ready) { ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255," + (0.22 + Math.sin(R.t * 8) * 0.14) + ")"; ctx.beginPath(); ctx.arc(cx, cy, r + 3 + Math.sin(R.t * 8) * 1.5, 0, TAU); ctx.stroke(); }
+    icoAt(ctx, ico, cx - 8 * (r / 24 * 1.9), cy - 8 * (r / 24 * 1.9), r / 24 * 1.9);
+    bold(ctx, sub, cx, cy + r + 16, "700 12px " + F.mono, ready ? "#e6f4ff" : "#8d98a6", "center");
+  }
   function hud(g, ctx) {
     var i, m = Math.floor(R.dist / M), t = R.t;
     vial(ctx, 24, 20, 320, 24, R.hp / R.maxhp, t);
     bold(ctx, "HP " + Math.ceil(R.hp) + " / " + Math.ceil(R.maxhp), 38, 38, "800 16px " + F.mono, "#fff");
     var cx = 22; cx += chip(ctx, cx, 58, "rem", fmt(R.rem), "#c3c6ff"); cx += chip(ctx, cx, 58, "orb", String(R.orbs), "#c8f6ff"); chip(ctx, cx, 58, "grim", String(R.grim), "#d9c2ff");
-    if (R.st.ton > 0) { plate(ctx, 22, 102, 118, 26); bold(ctx, "Pace " + Math.round(100 + R.st.ton * S.speed) + "%", 32, 121, "700 15px " + F.mono, "#f3e6c4"); }
+    plate(ctx, 22, 102, 118, 26); bold(ctx, "Pace " + pacePct(R.st.ton) + "%", 32, 121, "700 15px " + F.mono, "#f3e6c4");
     if (R.boss) {
       plate(ctx, W / 2 - 236, 16, 500, 40); bar(ctx, W / 2 - 228, 22, 484, 28, R.boss.hp / R.boss.max, "#e02a44", "rgba(0,0,0,.6)"); icoAt(ctx, "skull", W / 2 - 222, 20, 2);
       bold(ctx, "GRAND MUD IMP", W / 2 + 14, 43, "800 18px " + SERIF, "#fff3c4", "center");
@@ -1125,12 +1153,15 @@
       wand(ctx, x + 14, y + 43, 200, f, RAR[I.r].c === "rb" ? "#ffd84a" : RAR[I.r].c, t + j);
     });
     if (R.buffT > 0 && R.buff) { plate(ctx, 22, H - 126, 250, 40); bar(ctx, 30, H - 104, 234, 12, R.buffT / R.buffMax, "#7fe3ff"); icoAt(ctx, "wing", 28, H - 126, 1.3); bold(ctx, BUFF[R.buff].n + "  " + R.buffT.toFixed(1) + "s", 54, H - 108, "800 14px " + F.mono, "#c8f6ff"); }
-    if (S.flashOn) {                                      /* Illusion Flash readiness, bottom-right */
-      var fx0 = W - 24 - 196, fy0 = H - 70, rdy = R.flashCd <= 0, ff = rdy ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1);
-      plate(ctx, fx0, fy0, 196, 46); icoAt(ctx, "flash", fx0 + 8, fy0 + 8, 1.8);
-      bold(ctx, "Illusion Flash", fx0 + 42, fy0 + 20, "800 14px " + F.mono, rdy ? "#bfe3ff" : "#9aa6b4");
-      bar(ctx, fx0 + 42, fy0 + 28, 146, 9, ff, rdy ? "#7fdcff" : "#4a6f88");
-      bold(ctx, rdy ? keyName(keysOf("flash")[0]) + " : dodge" : r1(R.flashCd) + "s", fx0 + 188, fy0 + 20, "700 12px " + F.mono, rdy ? "#e6f4ff" : "#8d98a6", "right");
+    if (S.flashOn) {                                      /* Illusion Flash: a round pip bottom-right + a cooldown bar under the wizard */
+      var rdy = R.flashCd <= 0, ff = rdy ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1);
+      abilityPip(ctx, W - 74, H - 78, 30, "flash", "Illusion Flash", rdy ? keyName(keysOf("flash")[0]) + " · dodge" : r1(R.flashCd) + "s", ff, rdy);
+      if (!rdy) {                                          /* under the wizard, the same clock fill as the pip */
+        var bw = 60, bx = WX * 2 - bw / 2, byw = (R.y + 30) * 2;
+        ctx.fillStyle = "rgba(0,0,0,.5)"; D.rr(ctx, bx, byw, bw, 7, 3); ctx.fill();
+        ctx.fillStyle = "#7fdcff"; D.rr(ctx, bx, byw, Math.max(3, bw * ff), 7, 3); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.5)"; ctx.fillRect(bx + 2, byw + 1, Math.max(1, bw * ff - 4), 2);
+      }
     }
     if (R.t < 9 && !(S.cnt.runs > 2)) { ctx.font = "700 18px " + F.display; var hs = keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five", hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center"); }
     R.fx.forEach(function (f) { if (f.k === "num") bold(ctx, f.s, (f.x - R.dist) * 2, (f.y - f.t * 30) * 2, "800 19px " + F.mono, "#fff", "center"); });
@@ -1141,7 +1172,7 @@
   var Hb = { x: SPOT.crate + 4, tx: SPOT.crate + 4, act: "sit", t: 0, idleT: 6, then: null, busy: false, face: 1, moving: false };
   function hubIdle(g, dt) {
     Hb.t += dt;
-    if (UI.scene === "rebind" && UI.bind && UI.bind.kind === "pad" && g.pad) { for (var k in g.pad.hit) if (k !== "start" && k !== "select") { setBind("pad", UI.bind.a, k); return; } }
+    if (UI.scene === "rebind" && UI.bind && UI.bind.kind === "pad" && g.pad) { for (var k in g.pad.hit) if (k !== "start" && k !== "select") { captureBind(k); return; } }
     var dx = Hb.tx - Hb.x;
     if (Math.abs(dx) > 1) { Hb.x += (dx > 0 ? 1 : -1) * Math.min(Math.abs(dx), 170 * dt); Hb.face = dx > 0 ? 1 : -1; Hb.moving = true; return; }
     if (Hb.moving) { Hb.moving = false; Hb.face = 1; if (Hb.then) { var f = Hb.then; Hb.then = null; f(); return; } }
@@ -1424,7 +1455,7 @@
       items.push({ label: "Buff: " + BUFF[bid].n + "  " + pips(rk, 5), ico: "wing", sub: rk >= 5 ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s · " + cost + " Whisper Orbs to upgrade (" + S.orbs + ")",
         cls: rk < 5 && S.orbs >= cost ? "is-hot" : "", act: function () { if (rk >= 5) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
     } else items.push({ label: "Buff", ico: "wing", sub: "Pick up a Whisper Orb on a run to earn one", disabled: true });
-    if (st.ton > 0) { var pi = eidx(); items.push({ label: "Run Pace: " + Math.round(100 + st.ton * S.speed) + "%", ico: "prep", sub: "‹ left and right ›  ·  how fast you run, up to " + Math.round(100 + st.ton) + "%", adj: function (d) { S.speed = clamp(S.speed + d * 0.25, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : S.speed + 0.25; prep(g, pi); } }); }
+    var pi = eidx(); items.push({ label: "Run Pace: " + pacePct(st.ton) + "%", ico: "prep", sub: "‹ left and right ›  ·  slow down or speed up, up to " + paceMax(st.ton) + "%", adj: function (d) { S.speed = clamp(S.speed + d * 0.1, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : clamp(S.speed + 0.1, 0, 1); prep(g, pi); } });
     items.push({ label: "Back To The Tower", ico: "back", act: function () { save(); hub(g, 0); } });
     /* the challenges in play, as cards that pop */
     var chal = el("div", { class: "wz-chal" });
@@ -1616,19 +1647,25 @@
   }
   function controls(g, kind, focus) {
     UI.scene = "hub"; UI.menu = "controls"; UI.bind = null;
-    var items = ACTS.map(function (a, i) { return { label: a[1], sub: kind === "key" ? keysOf(a[0]).map(keyName).join(" or ") : padOf(a[0]).toUpperCase(), act: function () { UI.scene = "rebind"; UI.bind = { a: a[0], kind: kind, i: i, name: a[1] }; g.closeMenu(); g.paint(); g.wake && g.wake(); } }; });
+    var items = ACTS.map(function (a, i) { return { label: a[1], sub: bindsOf(kind, a[0]).map(function (c) { return bindLabel(kind, c); }).join("  ·  "), act: function () { bindEdit(g, kind, a[0], i); } }; });
     items.push({ label: "Reset To Defaults", act: function () { if (kind === "key") S.binds = {}; else S.pad = {}; save(); controls(g, kind, items.length - 2); } });
     items.push({ label: "Back", act: function () { settings(g, kind === "key" ? 3 : 4); } });
-    MN(g, { cls: "is-side is-wide", kicker: "Settings", title: kind === "key" ? "Keyboard Controls" : "Controller Controls", sub: "Select an action, then press the " + (kind === "key" ? "key" : "button") + " for it. Esc and P stay as pause.", grid: true, items: items, focus: focus, back: function () { settings(g, kind === "key" ? 3 : 4); } });
+    MN(g, { cls: "is-side is-wide", kicker: "Settings", title: kind === "key" ? "Keyboard Controls" : "Controller Controls", sub: "Select an action to manage its binds (up to 3 each). Esc and P stay as pause.", grid: true, items: items, focus: focus, back: function () { settings(g, kind === "key" ? 3 : 4); } });
   }
-  function setBind(kind, a, code) {
-    var g = G, i = UI.bind ? UI.bind.i : 0;
-    if (code) {
-      if (kind === "key") { var old = keysOf(a)[0]; ACTS.forEach(function (o) { if (o[0] !== a && keysOf(o[0]).indexOf(code) >= 0) S.binds[o[0]] = old; }); S.binds[a] = code; }
-      else { var oldp = padOf(a); ACTS.forEach(function (o) { if (o[0] !== a && padOf(o[0]) === code) S.pad[o[0]] = oldp; }); S.pad[a] = code; }
-      save(); sfx("buy");
-    }
-    controls(g, kind, i);
+  function bindEdit(g, kind, a, i) {
+    UI.scene = "hub"; UI.menu = "controls"; UI.bind = null;
+    var name = (ACTS.filter(function (x) { return x[0] === a; })[0] || ["", a])[1];
+    var cur = bindsOf(kind, a), many = cur.length > 1;
+    var items = cur.map(function (c) { return { label: bindLabel(kind, c), ico: kind === "key" ? "keys" : "pad",
+      sub: many ? "Select to remove" : "The only bind — add another before removing", act: function () { if (many) { removeBind(kind, a, c); sfx("rem"); bindEdit(g, kind, a, i); } else g.toast("Keep at least one bind"); } }; });
+    if (cur.length < 3) items.push({ label: "Add a bind", ico: kind === "key" ? "keys" : "pad", cls: "is-primary", sub: "Press a " + (kind === "key" ? "key" : "button") + " to add it", act: function () { UI.scene = "rebind"; UI.bind = { a: a, kind: kind, ei: i, name: name }; g.closeMenu(); g.paint(); g.wake && g.wake(); } });
+    items.push({ label: "Back", act: function () { controls(g, kind, i); } });
+    MN(g, { cls: "is-side is-wide", kicker: name, title: name + " Binds", sub: "Up to 3 " + (kind === "key" ? "keys" : "buttons") + " for this action.", grid: true, items: items, back: function () { controls(g, kind, i); } });
+  }
+  function captureBind(code) {
+    var b = UI.bind; if (!b) return; UI.scene = "hub";
+    if (code) { addBind(b.kind, b.a, code); sfx("buy"); }
+    bindEdit(G, b.kind, b.a, b.ei || 0);
   }
   function how(g) {
     UI.scene = "hub"; UI.menu = "how";
@@ -1680,14 +1717,15 @@
     idle: hubIdle,
     rawKey: function (g, e) {
       if (UI.scene !== "rebind" || !UI.bind) return false;
-      if (e.code === "Escape") { setBind(UI.bind.kind, UI.bind.a, null); return true; }
+      if (e.code === "Escape") { captureBind(null); return true; }
       if (UI.bind.kind !== "key") return true;
       if (e.code === "KeyP" || /^(Meta|Control|Alt|OS)/.test(e.code)) { g.toast("That key is reserved"); return true; }
-      setBind("key", UI.bind.a, e.code); return true;
+      captureBind(e.code); return true;
     },
     pointer: function (g, type) { if (type === "down" && g.state === "play" && R) R.tap = true; },
     backdropClick: function (g, x, y) { hubClick(g, x, y); },
     restart: function (g) { if (R) startRun(g, R.mode); },
+    pauseTheme: true,
     draw: function (g, ctx) {
       if (R && (g.state === "play" || g.state === "paused" || g.state === "over") && UI.scene === "run") { drawRun(g, ctx); return; }
       if (UI.scene === "creator") { drawCreator(g, ctx); return; }

@@ -313,12 +313,13 @@
     g.pause = function () {
       if (g.state !== "play") return;
       g.setState("paused"); g.keys = {}; Site.sfx("close");
-      var items = [{ label: "Resume", act: g.resume }];
-      if (def.restart) items.push({ label: "Restart", act: function () { def.restart(g); } });
+      var th = def.pauseTheme;   /* a game can opt into coloured, icon'd pause buttons */
+      var items = [{ label: "Resume", cls: th ? "ak-pz ak-pz--go" : "", act: g.resume }];
+      if (def.restart) items.push({ label: "Restart", cls: th ? "ak-pz ak-pz--warn" : "", act: function () { def.restart(g); } });
       (def.pauseItems ? def.pauseItems(g) : []).forEach(function (it) { items.push(it); });
-      items.push({ label: full ? "Minimize" : "Full Window", sub: full ? "Keep playing in the corner" : "", act: function () { g.full(!full); g.pause.reopen(); } });
-      items.push({ label: "Main Menu", sub: "Ends this run", act: function () { g.toTitle(); } });
-      g.menu({ title: "Paused", items: items, back: g.resume, cls: "is-pause" });
+      items.push({ label: full ? "Minimize" : "Full Window", cls: th ? "ak-pz ak-pz--stone" : "", sub: full ? "Keep playing in the corner" : "", act: function () { g.full(!full); g.pause.reopen(); } });
+      items.push({ label: "Main Menu", cls: th ? "ak-pz ak-pz--exit" : "", sub: "Ends this run", act: function () { g.toTitle(); } });
+      g.menu({ title: "Paused", items: items, back: g.resume, cls: "is-pause" + (th ? " is-themed" : "") });
     };
     g.pause.reopen = function () { g.state = "play"; g.pause(); };
     g.resume = function () { if (g.state !== "paused") return; g.closeMenu(); g.setState("play"); last = performance.now(); Site.sfx("open"); try { cv.focus({ preventScroll: true }); } catch (e) {} };
