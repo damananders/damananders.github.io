@@ -476,5 +476,6 @@ try { const p0 = new URLSearchParams(location.search).get("p"); if (p0 && PLATFO
 tabs();
 week();
 $("gm-q").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(load, 250); });
+const qbox = $("gm-qbox"); if (qbox) qbox.addEventListener("submit", (e) => { e.preventDefault(); clearTimeout(searchTimer); load(); });
 subnav($("rop-tabs"), "ratings");
 onAuth(onSession);

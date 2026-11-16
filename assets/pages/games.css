@@ -1400,3 +1400,25 @@ body.pt-on .pf-hero__say{border-color:color-mix(in srgb,var(--pt-acc2) 50%,trans
 .pt-chip.is-on{background:var(--sx-accent);color:var(--sx-on-accent);border-color:transparent}
 .pt-chip:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
 .pt-bgthumb{width:96px;height:54px;border-radius:8px;object-fit:cover;border:1px solid var(--sx-line-2)}
+
+/* search box on the ROP home: bordered, with a search button (sits clear of the banner's glow) */
+.gm-qbox{position:relative;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 14px;border-radius:16px;margin-top:4px;
+  background:linear-gradient(180deg,#0c110f,#0a0e0c);border:1.5px solid color-mix(in srgb,var(--rop,#36d39a) 45%,var(--sx-line-2));
+  box-shadow:0 0 0 1px rgba(0,0,0,.55),0 10px 26px -18px rgba(0,0,0,.9);transition:border-color .15s,box-shadow .15s}
+.gm-qbox:focus-within{border-color:var(--rop,#36d39a);box-shadow:0 0 0 3px color-mix(in srgb,var(--rop,#36d39a) 22%,transparent),0 0 0 1px rgba(0,0,0,.55)}
+.gm-qbox__ico{flex:none;width:20px;height:20px;color:var(--rop-gold,#e3b54a)}
+.gm-qbox .gm-search{flex:1;min-width:0;border:0;background:transparent;padding:10px 4px;border-radius:10px}
+.gm-qbox .gm-search:focus-visible{outline:none}
+.gm-qbox__go{flex:none;display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border:0;border-radius:12px;cursor:pointer;font:700 .95rem var(--sx-display);
+  color:#03110b;background:linear-gradient(135deg,var(--rop,#36d39a),var(--rop-hi,#7ef0c0));box-shadow:0 6px 18px -8px var(--rop,#36d39a),inset 0 -2px 0 rgba(0,0,0,.18);transition:transform .15s,filter .15s}
+.gm-qbox__go svg{width:17px;height:17px}
+.gm-qbox__go:hover{transform:translateY(-1px) rotate(-1deg);filter:brightness(1.06)}
+.gm-qbox__go:hover svg{animation:gm-qwig .5s ease-in-out}
+@keyframes gm-qwig{30%{transform:rotate(-14deg)}60%{transform:rotate(10deg)}}
+.gm-qbox__go:focus-visible{outline:2px solid var(--rop-gold,#e3b54a);outline-offset:2px}
+:root[data-motion="reduce"] .gm-qbox__go:hover svg{animation:none}
+:root[data-theme="light"] .gm-qbox{background:#fff}
+@media (max-width:480px){.gm-qbox__go span{display:none}.gm-qbox__go{padding:10px 12px}}
+/* calmer banner glow so it doesn't spill onto the search box */
+:root[data-page="games"] .wrap > header.hero{box-shadow:0 0 0 1px rgba(0,0,0,.6),0 18px 40px -34px var(--rop),inset 0 0 50px -34px color-mix(in srgb,var(--rop) 60%,transparent);margin-bottom:22px}
+:root[data-page="games"] .wrap > header.hero::after{opacity:.24}
