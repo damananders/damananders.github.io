@@ -246,6 +246,7 @@ export function authPill(box, opts) {
   if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
   if (handle) btns.append(buddiesBtn());
+  if (me.user) btns.append(el("a", { class: "rop-me__btn", href: "/account/", text: "My account" }), el("a", { class: "rop-me__btn", href: "/games/steam/", text: "Linked accounts" }));
   if (me.admin || me.staff) btns.append(el("a", { class: "rop-me__btn", href: "/games/fixes/", text: "Corrections" }));
   box.append(btns);
   const out = el("button", { class: "rop-me__out", type: "button", text: "Sign out", title: "Sign out", onclick: async () => { await sb.auth.signOut(); } });
@@ -279,6 +280,8 @@ function hubPill(box, handle) {
   row.append(a("rop-hub__b--me", profileUrl(handle), "My profile", HUB_ICO.profile));
   if (me.member) row.append(a("", "/games/feed/", "Following", HUB_ICO.following), a("", "/games/lists/", "Lists", HUB_ICO.lists));
   row.append(unreadBadge(el("a", { class: "rop-hub__b rop-hub__b--bud", href: "/games/buddies/", title: "Buddies & messages", "aria-label": "Buddies & messages", html: BUD_ICO })));
+  row.append(a("rop-hub__b--acct", "/account/", "My account (password, email, sign-in)", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M5.8 16c.6-1.6 1.8-2.4 3.2-2.4s2.6.8 3.2 2.4M14 10h4M14 13h3"/></svg>'),
+    a("rop-hub__b--link", "/games/steam/", "Linked accounts (Steam, Battle.net)", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'));
   if (me.admin) row.append(a("rop-hub__b--op", "/games/ti3c20mi/", "Operation Station", OP_ICO));
   if (me.admin || me.staff) row.append(a("rop-hub__b--fx", "/games/fixes/", "Game info corrections", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>'));
   row.append(el("button", { class: "rop-hub__b rop-hub__b--out", type: "button", title: "Sign out", "aria-label": "Sign out", html: HUB_ICO.out, onclick: async () => { await sb.auth.signOut(); } }));

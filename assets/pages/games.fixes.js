@@ -2,7 +2,7 @@
  * Members see the corrections they suggested and how each went. Approvers (the owner and Discord Admins) also get
  * the queue: each suggestion shows what the card says now next to the suggested value, and can be tweaked before
  * approving. The database (round 39) checks who may approve; nothing here is trusted for that. */
-import { sb, $, el, me, onAuth, authPill, subnav, consoleChip, gameUrl, nameLink, fmtWhen, toast, sfx, gameInfo, INFO_FIELDS, infoValue } from "./games.common.js?v=34";
+import { sb, $, el, me, onAuth, authPill, subnav, consoleChip, gameUrl, nameLink, fmtWhen, toast, sfx, gameInfo, INFO_FIELDS, infoValue } from "./games.common.js?v=35";
 
 const root = $("fx-root");
 let tab = "pending";

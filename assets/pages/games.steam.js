@@ -1,7 +1,7 @@
 /* pages/games.steam.js: Linked accounts (/games/steam/). Prefix ln-.
  * "Sign in through Steam" uses Steam's own sign-in page (OpenID 2.0); the steam-link function confirms Steam's answer
  * with Steam before saving anything, so nobody can claim someone else's account. Unlinking deletes the stored data. */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, toast, sfx, steamRow, steamCard, bnetRow, profileUrl } from "./games.common.js?v=34";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, toast, sfx, steamRow, steamCard, bnetRow, profileUrl } from "./games.common.js?v=35";
 
 const root = $("ln-root");
 const RETURN_TO = location.origin + "/games/steam/";
