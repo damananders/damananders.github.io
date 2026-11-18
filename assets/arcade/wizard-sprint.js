@@ -1612,6 +1612,17 @@
     if (c1) items.push({ pos: [639, 540, 286, 48], cls: "wz-endless", ico: "inf", label: "Endless Forest", act: function () { save(); startRun(g, "endless"); } });
     items.push({ pos: [639, 596, 286, 92], cls: "wz-startbtn", ico: "tree", label: "Start Run", act: function () { save(); startRun(g, "story"); } });
     items.push({ pos: [30, 596, 270, 92], cls: "wz-backarrow", ico: "back", label: "Back To The Tower", act: function () { save(); hub(g, 0); } });
+    /* --- shortcut buttons: jump straight to the other tower stations without leaving the loadout --- */
+    var jumps = [
+      { label: "Equipment", ico: "equip", fn: function () { equip(g, 0); } },
+      { label: "Condenser", ico: c1 ? "condenser" : "lock", fn: c1 ? function () { condenser(g, 0); } : null, dis: !c1 },
+      { label: "Armoire", ico: c1 ? "hat" : "lock", fn: c1 ? function () { armoire(g, 0); } : null, dis: !c1 },
+      { label: "Settings", ico: "gear", fn: function () { settings(g, 0); } }
+    ];
+    jumps.forEach(function (s, k) {
+      items.push({ pos: [30, 366 + k * 56, 270, 48], cls: "wz-shortcut", ico: s.ico, label: s.label, disabled: s.dis,
+        act: function () { if (s.fn) { save(); s.fn(); } } });
+    });
     MN(g, { cls: "wz-prepmap", kicker: "Prep Time", title: "Plan The Dash", items: items, focus: focus || 0, back: function () { save(); hub(g, 0); } });
   }
   /* the buff's own detailed panel: effect, what each rank adds, current rank/duration, and the upgrade */
@@ -1681,6 +1692,7 @@
     D.text(ctx, "per run. Finish one for", lx + 20, ly + 206, "600 12px " + F.mono, "#cbbf9f", "left");
     D.text(ctx, "+200 XP and +50 Remnants.", lx + 20, ly + 224, "700 12px " + F.mono, "#ffe08a", "left");
     /* section labels */
+    D.text(ctx, "JUMP TO", lx + 4, ly + 268, "800 11px " + F.mono, "#e4cf9a", "left");
     bold(ctx, "Select Spell", 627, 112, "800 17px " + SERIF, "#f3e6c4", "center");
     bold(ctx, "Upgrades", 335, 366, "800 17px " + SERIF, "#f3e6c4", "left");
     bold(ctx, "Challenges", 958, 86, "800 16px " + SERIF, "#ffe08a", "left");

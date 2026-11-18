@@ -390,6 +390,12 @@
   border:1px solid rgba(232,193,90,.4);background:rgba(40,26,14,.9)}
 .wz-prepmap .ak-btn.wz-spellhelp:hover,.wz-prepmap .ak-btn.wz-spellhelp.is-sel{border-color:#ffe08a;color:#fff3c4}
 .wz-prepmap .ak-btn.wz-spellhelp .wz-ico{width:1.1em;height:1.1em;image-rendering:pixelated}
+/* jump-to shortcut pills: reach any other tower station without leaving the loadout */
+.wz-prepmap .ak-btn.wz-shortcut{display:flex;align-items:center;justify-content:flex-start;gap:.5em;min-height:0;padding:0 .7em;border-radius:.45em;text-align:left;
+  font:800 .86em var(--wz-serif);color:#ffe9c8;letter-spacing:.01em;border:2px solid #9c6a34;background:linear-gradient(180deg,#5f3c1c,#432813);box-shadow:0 .12em .4em rgba(0,0,0,.45)}
+.wz-prepmap .ak-btn.wz-shortcut:hover,.wz-prepmap .ak-btn.wz-shortcut.is-sel{border-color:#ffe08a;color:#fff3c4}
+.wz-prepmap .ak-btn.wz-shortcut .wz-ico{width:1.25em;height:1.25em;image-rendering:pixelated;flex:0 0 auto}
+.wz-prepmap .ak-btn.wz-shortcut[disabled],.wz-prepmap .ak-btn.wz-shortcut:disabled{opacity:.42;filter:grayscale(.5);cursor:default;border-color:#6a5230}
 
 /* themed pause / fail buttons (opt-in via def.pauseTheme, and wizard's fail screen): coloured, icon'd */
 .ak-pz{position:relative;padding-left:2.6em !important;align-items:flex-start !important;text-align:left;
