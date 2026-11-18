@@ -846,6 +846,6 @@
     /* whole-site Maintenance Hatch — defines Site.hatch everywhere; edit UI is admin-gated inside */
     load("hatch", 1, "hatch");
     /* account settings center — opt-in, loaded only when native accounts are switched on */
-    if (f.accounts === true) load("account-center", 4, "accounts");
+    if (f.accounts === true) load("account-center", 5, "accounts");
   }, "add-on loader");
 })();
