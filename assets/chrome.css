@@ -165,6 +165,19 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
   box-shadow:0 3px 12px -4px rgba(0,0,0,.55),0 0 22px -5px color-mix(in srgb,var(--btn-c) 88%,transparent)}
 /* profile chip keeps its own accent ring; just give it a soft matching glow */
 .sx-tools .sy-profile{box-shadow:0 3px 12px -4px rgba(0,0,0,.55),0 0 15px -8px color-mix(in srgb,var(--sy-ac,var(--sx-accent)) 70%,transparent)}
+
+/* top-right local-time clock: a quiet, non-interactive display that sits with the header tools.
+   Tabular numerals so the width never jiggles as the minute ticks. */
+.ch-clock{display:inline-flex;align-items:center;height:40px;padding:0 11px;border-radius:12px;
+  font:600 .9rem/1 var(--sx-mono,ui-monospace,monospace);letter-spacing:.02em;white-space:nowrap;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:var(--sx-muted);
+  background:var(--sx-glass);border:1px solid color-mix(in srgb,var(--sx-line-2) 60%,transparent);
+  box-shadow:0 3px 12px -4px rgba(0,0,0,.45);text-shadow:none;transition:height var(--ch-t) var(--sx-ease),color .15s,border-radius var(--ch-t) var(--sx-ease)}
+:root.ch-scrolled .ch-clock{height:36px;border-radius:10px}
+:root[data-theme="light"] .ch-clock{color:var(--sx-text);border-color:color-mix(in srgb,var(--sx-line-2) 80%,transparent)}
+/* tuck it away on narrow phones so the header tools aren't crowded */
+@media (max-width:520px){.ch-clock{display:none}}
+:root[data-motion="reduce"] .ch-clock{transition:none}
 .wrap > nav .social{box-shadow:0 3px 12px -4px rgba(0,0,0,.4)}
 .wrap > nav .brand{text-shadow:0 1px 12px rgba(0,0,0,.5)}
 :root[data-theme="light"] .wrap > nav .brand{text-shadow:0 1px 2px rgba(255,255,255,.85)}
