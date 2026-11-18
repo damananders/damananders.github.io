@@ -301,6 +301,42 @@
   var DEFP = { jump: "a", drop: "down", flash: "lb", c1: "x", c2: "y", c3: "b", five: "rb", slow: "lt", fast: "rt" };
   var FLASHCD = 3.2, FLASHDUR = 0.5;                     /* Illusion Flash: a short dodge of i-frames on a cooldown */
   var LOOTCARD = 2.7;                                     /* how long a "Loot Get!" card stays on screen */
+  /* ---- touch controls: on-screen buttons for phones/tablets, shown once a coarse pointer is seen ---- */
+  var touchUI = false; try { touchUI = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(pointer: fine)").matches); } catch (e) {}
+  var TB = { jump: { cx: W - 108, cy: H - 112, r: 76 }, dodge: { cx: W - 108, cy: H - 262, r: 54 }, drop: { cx: W - 262, cy: H - 112, r: 56 } };
+  function spellRects() {                                 /* the in-run spell-rack cards double as cast buttons */
+    var out = []; S.incEq.slice(0, incSlots()).forEach(function (id, j) { out.push({ slot: j, keyed: !!(INC[id] && INC[id].key), x: 150 + j * 262, y: H - 78, w: 250, h: 62 }); }); return out;
+  }
+  function hitTouchZone(x, y) {                           /* which on-screen control a tap landed on (null = open area -> jump) */
+    function inC(c) { var dx = x - c.cx, dy = y - c.cy; return dx * dx + dy * dy <= c.r * c.r; }
+    if (S.flashOn && inC(TB.dodge)) return "flash";
+    if (inC(TB.drop)) return "drop";
+    if (inC(TB.jump)) return "jump";
+    var sr = spellRects(); for (var i = 0; i < sr.length; i++) { var s = sr[i]; if (s.keyed && x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) return "c" + (s.slot + 1); }
+    return null;
+  }
+  function chevron(ctx, cx, cy, dir, col) {               /* a small up/down arrow glyph */
+    ctx.strokeStyle = col; ctx.lineWidth = 7; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.moveTo(cx - 15, cy + dir * 8); ctx.lineTo(cx, cy - dir * 8); ctx.lineTo(cx + 15, cy + dir * 8); ctx.stroke(); ctx.lineCap = "butt";
+  }
+  function touchBtn(ctx, c, glyph, label, held) {        /* a round on-screen control */
+    ctx.fillStyle = held ? "rgba(255,224,138,.26)" : "rgba(14,10,8,.60)"; ctx.beginPath(); ctx.arc(c.cx, c.cy, c.r, 0, TAU); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = held ? "#ffe08a" : "rgba(232,193,90,.7)"; ctx.beginPath(); ctx.arc(c.cx, c.cy, c.r - 2, 0, TAU); ctx.stroke();
+    glyph(ctx, c);
+    if (label) bold(ctx, label, c.cx, c.cy + c.r - 9, "800 13px " + F.mono, "rgba(255,243,196,.9)", "center");
+  }
+  function drawTouchControls(ctx) {                        /* jump / dodge / drop pads for touch play */
+    touchBtn(ctx, TB.jump, function (x, geo) { chevron(x, geo.cx, geo.cy - 6, 1, "#fff3c4"); }, "JUMP", R.touchZone === "jump");
+    touchBtn(ctx, TB.drop, function (x, geo) { chevron(x, geo.cx, geo.cy - 6, -1, "#f3e6c4"); }, "DROP", !!R.touchHeld.drop);
+    if (S.flashOn) {
+      var ready = R.flashCd <= 0, ff = ready ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1), c = TB.dodge;
+      touchBtn(ctx, c, function () {
+        icoAt(ctx, "flash", c.cx - 16, c.cy - 20, 2);
+        ctx.strokeStyle = ready ? "#9ff0c4" : "rgba(127,220,255,.9)"; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(c.cx, c.cy, c.r - 7, -Math.PI / 2, -Math.PI / 2 + ff * TAU); ctx.stroke();
+      }, ready ? "DODGE" : r1(R.flashCd) + "s", false);
+    }
+  }
   /* Binds are arrays of up to 3 (keyboard codes or pad buttons); old single-string saves and the defaults both read fine. */
   function keysOf(a) { var b = S.binds[a]; if (Array.isArray(b)) return b.length ? b : DEFK[a]; return b ? [b] : DEFK[a]; }
   function padsOf(a) { var b = S.pad[a]; if (Array.isArray(b)) return b.length ? b : (DEFP[a] ? [DEFP[a]] : []); return b ? [b] : (DEFP[a] ? [DEFP[a]] : []); }
@@ -314,11 +350,13 @@
   function removeBind(kind, a, code) { var arr = bindOwn(kind, a); if (arr.length <= 1) return; var k = arr.indexOf(code); if (k >= 0) arr.splice(k, 1); save(); }
   function keyName(c) { if (/^Shift/.test(c)) return "Shift"; if (/^Control/.test(c)) return "Ctrl"; return c.replace(/^Key|^Digit/, "").replace(/^Arrow/, "Arrow ").replace("Space", "Space"); }
   function isDown(g, a) {
+    if (R && R.touchHeld && R.touchHeld[a]) return true;
     var ks = keysOf(a); for (var i = 0; i < ks.length; i++) if (g.key(ks[i])) return true;
     if (g.pad) { var ps = padsOf(a); for (var j = 0; j < ps.length; j++) if (g.pad.btn[ps[j]]) return true; }
     return a === "drop" && g.pad && g.pad.ly > 0.6;
   }
   function isHit(g, a) {
+    if (R && R.touchHit && R.touchHit[a]) return true;
     var ks = keysOf(a); for (var i = 0; i < ks.length; i++) if (g.hit(ks[i])) return true;
     if (g.pad) { var ps = padsOf(a); for (var j = 0; j < ps.length; j++) if (g.pad.hit[ps[j]]) return true; }
     return false;
@@ -786,7 +824,8 @@
       plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], lootCards: [], cds: {},
       nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, hurt: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
       bossAt: (mode === "story" ? 300 : 390) * BASE, win: 0, over: false, revived: false, fiveT: 0, fiveWin: 0, shake: 0, mud: 0, chat: 5, tap: false, flashCd: 0, flashT: 0,
-      nextOrb: rnd(40, 60) * BASE / tune("orbRate"), nextGrim: rnd(110, 170) * BASE / tune("grimRate"), nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12 };
+      nextOrb: rnd(40, 60) * BASE / tune("orbRate"), nextGrim: rnd(110, 170) * BASE / tune("grimRate"), nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12,
+      touchHit: {}, touchHeld: {}, touchZone: null };
     S.incEq.forEach(function (id) { R.cds[id] = { t: 0.8, ch: 3, r: 0 }; });
     UI.scene = "run"; cnt("runs", 1);
     g.start();
@@ -946,7 +985,7 @@
   function update(g, dt) {
     if (!R || R.over) return;
     dt = Math.min(dt, 0.05);
-    var i, e, wx, sp = speedNow(), held = isDown(g, "jump") || g.pointer.down, pressed = isHit(g, "jump") || R.tap; R.tap = false;
+    var i, e, wx, sp = speedNow(), held = isDown(g, "jump") || (!touchUI && g.pointer.down), pressed = isHit(g, "jump") || R.tap; R.tap = false;
     R.t += dt; R.dist += sp * dt; wx = wxw();
     R.mAcc += sp * dt / M; if (R.mAcc >= 1) { var mm = Math.floor(R.mAcc); R.mAcc -= mm; cnt("m", mm); chEv("m", mm); }
     if (isHit(g, "slow")) { S.speed = clamp(S.speed - 0.1, 0, 1); g.toast("Pace " + pacePct(R.st.ton) + "%"); }
@@ -1033,6 +1072,7 @@
     R.bub = R.bub.filter(function (q) { q.t -= dt; return q.t > 0; });
     R.chat -= dt; if (R.chat <= 0 && !R.boss) { R.chat = rnd(16, 28); if (!R.bub.length) say(line(R.dist < R.bossAt * 0.5 || R.mode !== "story" ? (Math.random() < 0.5 ? "early" : "mid") : "late")); }
     if (R.win > 0) { R.win -= dt; if (Math.random() < 0.5) R.rems.push({ x: wx + rnd(60, 300), y: GY - rnd(10, 70) }); if (R.win <= 0) endRun(true); }
+    R.touchHit = {};                                      /* one-shot touch presses are consumed each frame, like key hits */
   }
 
   function bankRun() {                                  /* whatever happens to a run, you keep what you picked up */
@@ -1323,11 +1363,16 @@
         ctx.fillStyle = "rgba(255,255,255,.5)"; ctx.fillRect(abx + 2, dby + 1, Math.max(1, abw * dff - 4), 2);
       }
     }
-    if (S.flashOn) {                                      /* Illusion Flash: the round pip, bottom-right */
+    if (S.flashOn && !touchUI) {                          /* Illusion Flash: the round pip, bottom-right (desktop/gamepad) */
       var rdy = R.flashCd <= 0, ff = rdy ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1);
       abilityPip(ctx, W - 74, H - 78, 30, "flash", "Illusion Flash", rdy ? keyName(keysOf("flash")[0]) + " · dodge" : r1(R.flashCd) + "s", ff, rdy);
     }
-    if (R.t < 9 && !(S.cnt.runs > 2)) { ctx.font = "700 18px " + F.display; var hs = keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five", hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center"); }
+    if (touchUI) drawTouchControls(ctx);                  /* on-screen jump / dodge / drop pads for phones + tablets */
+    if (R.t < 9 && !(S.cnt.runs > 2)) {
+      var hs = touchUI ? "Tap to jump, hold to glide   ·   DODGE / DROP, bottom-right   ·   tap a spell to cast"
+        : keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five";
+      ctx.font = "700 18px " + F.display; var hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center");
+    }
     R.fx.forEach(function (f) { if (f.k === "num") bold(ctx, f.s, (f.x - R.dist) * 2, (f.y - f.t * 30) * 2, "800 19px " + F.mono, "#fff", "center"); });
     R.bub.forEach(function (q) { if (q.at) bubble(ctx, (q.at.x - R.dist) * 2, (GY - 44) * 2, q.s); else bubble(ctx, WX * 2 + 30, (R.y - 66) * 2, q.s); });
     if (R.lootCards.length) lootGetCard(ctx, R.lootCards[0]);
@@ -2111,7 +2156,18 @@
       if (e.code === "KeyP" || /^(Meta|Control|Alt|OS)/.test(e.code)) { g.toast("That key is reserved"); return true; }
       captureBind(e.code); return true;
     },
-    pointer: function (g, type) { if (type === "down" && g.state === "play" && R) R.tap = true; },
+    pointer: function (g, type, x, y, e) {
+      if (e && e.pointerType === "touch") touchUI = true;
+      if (g.state !== "play" || !R) return;
+      if (type === "up") { R.touchHeld.jump = false; R.touchHeld.drop = false; R.touchZone = null; return; }
+      if (type !== "down") return;
+      if (!touchUI) { R.tap = true; return; }              /* desktop: tap anywhere jumps, as before */
+      var z = hitTouchZone(x, y);
+      if (z === "flash") R.touchHit.flash = true;
+      else if (z === "drop") { R.touchHeld.drop = true; R.touchZone = "drop"; }
+      else if (z && z.charAt(0) === "c") R.touchHit[z] = true;
+      else { R.tap = true; R.touchHeld.jump = true; R.touchZone = "jump"; }   /* jump button or open area */
+    },
     backdropClick: function (g, x, y) { hubClick(g, x, y); },
     restart: function (g) { if (R) startRun(g, R.mode); },
     pauseTheme: true,
