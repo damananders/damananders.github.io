@@ -226,6 +226,26 @@
   }, "hub wordmark colour");
 
   /* =====================================================================================
+   * ITEM 1c: "Welcome!" crumb — the hub's nav label greets you in a different language on
+   * every visit/refresh (~50 of them). Set at runtime so it never clashes with the static
+   * "DMA" wordmark; keeps the "/ " separator before it.
+   * ===================================================================================== */
+  Site.ready(function () {
+    var span = doc.querySelector("nav .brand span"); if (!span) return;
+    var HELLO = [
+      "Welcome", "Willkommen", "Bienvenue", "Bienvenido", "Benvenuto", "Bem-vindo", "Welkom",
+      "Välkommen", "Velkommen", "Velkomin", "Tervetuloa", "Witaj", "Vítejte", "Vitajte",
+      "Üdvözöljük", "Bine ați venit", "Dobrodošli", "Добро пожаловать", "Ласкаво просимо",
+      "Καλώς ήρθατε", "Hoş geldiniz", "أهلاً وسهلاً", "ברוך הבא", "خوش آمدید", "स्वागत है",
+      "স্বাগতম", "வரவேற்கிறோம்", "స్వాగతం", "ยินดีต้อนรับ", "Chào mừng", "Selamat datang",
+      "Maligayang pagdating", "환영합니다", "ようこそ", "欢迎", "歡迎", "Karibu", "Akwaaba",
+      "E kaabo", "Nnọọ", "Wamkelekile", "Fáilte", "Fàilte", "Croeso", "Benvingut", "Benvido",
+      "Ongi etorri", "Tere tulemast", "Sveiki atvykę", "Laipni lūdzam", "Mirë se vini"
+    ];
+    span.textContent = "/ " + HELLO[Math.floor(Math.random() * HELLO.length)] + "!";
+  }, "hub welcome crumb");
+
+  /* =====================================================================================
    * ITEM 8: day and night (tint from the visitor's local hour, lamp light at night)
    * ===================================================================================== */
   Site.ready(function () {
