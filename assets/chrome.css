@@ -279,17 +279,17 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-gear[aria-expanded="true"]{border-color:var(--accent,var(--sx-accent));color:var(--accent,var(--sx-accent))}
 .ch-gear[aria-expanded="true"] svg{transform:rotate(60deg)}
 
-.ch-panel{position:absolute;top:calc(100% - var(--ch-comp,0px) + 8px);right:0;z-index:1;box-sizing:border-box;width:min(344px,calc(100vw - 32px));
-  max-height:calc(100vh - var(--sx-header-h,64px) - 32px);overflow:auto;overscroll-behavior:contain;padding:14px 16px 16px;border-radius:16px;
+.ch-panel{position:absolute;top:calc(100% - var(--ch-comp,0px) + 8px);right:0;z-index:1;box-sizing:border-box;width:min(408px,calc(100vw - 32px));
+  max-height:calc(100vh - var(--sx-header-h,64px) - 32px);overflow:auto;overscroll-behavior:contain;padding:16px 18px 18px;border-radius:16px;
   color:var(--sx-text);background:var(--sx-surface);border:1px solid var(--sx-line-2);box-shadow:var(--sx-shadow);
-  font:400 .95rem/1.45 var(--sx-body);letter-spacing:0;text-align:left;text-shadow:none;text-transform:none;
+  font:400 1rem/1.5 var(--sx-body);letter-spacing:0;text-align:left;text-shadow:none;text-transform:none;
   opacity:0;transform:translateY(-6px) scale(.98);transform-origin:100% 0;transition:opacity .16s ease,transform .22s var(--sx-ease)}
 @supports (height:100dvh){.ch-panel{max-height:calc(100dvh - var(--sx-header-h,64px) - 32px)}}
 .ch-panel[hidden]{display:none}
 .ch-panel.is-in{opacity:1;transform:none}
 .ch-panel:focus{outline:none}
 .ch-panel__head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.ch-panel .ch-panel__title{margin:0;font:700 1.08rem/1.2 var(--sx-display);letter-spacing:-.005em;color:var(--sx-text)}
+.ch-panel .ch-panel__title{margin:0;font:700 1.22rem/1.2 var(--sx-display);letter-spacing:-.005em;color:var(--sx-text)}
 .ch-panel__x{all:unset;box-sizing:border-box;display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:10px;cursor:pointer;
   color:var(--sx-muted);border:1px solid transparent;transition:color .15s,background .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
 .ch-panel .ch-panel__x:hover{color:var(--sx-text);background:var(--sx-surface-2);border-color:var(--sx-line-2);transform:none}
@@ -297,23 +297,23 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-panel__rows{display:grid}
 /* Section headers inside the settings panel. The first row under a header drops its divider so the label
    reads as that section's start rather than a row of its own. */
-.ch-group__label{margin:0;padding:16px 0 3px;font:700 .66rem/1 var(--sx-sans,inherit);letter-spacing:.13em;text-transform:uppercase;color:var(--sx-muted)}
-.ch-group__label:first-child{padding-top:2px}
+.ch-group__label{margin:0;padding:20px 0 6px;font:700 .74rem/1 var(--sx-sans,inherit);letter-spacing:.13em;text-transform:uppercase;color:var(--sx-muted)}
+.ch-group__label:first-child{padding-top:3px}
 .ch-group__label + .ch-row{border-top:0}
-.ch-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 14px;padding:12px 0;border-top:1px solid var(--sx-line)}
+.ch-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px 16px;padding:14px 0;border-top:1px solid var(--sx-line)}
 .ch-row:last-child{padding-bottom:2px}
 .ch-row__text{min-width:0}
-.ch-row__label{font-weight:600;color:var(--sx-text)}
-.ch-row__hint{margin-top:1px;font-size:.84rem;line-height:1.4;color:var(--sx-muted)}
+.ch-row__label{font-weight:600;font-size:1rem;color:var(--sx-text)}
+.ch-row__hint{margin-top:2px;font-size:.9rem;line-height:1.45;color:var(--sx-muted)}
 .ch-row__val{font:500 .8rem/1 var(--sx-mono);color:var(--sx-muted);font-variant-numeric:tabular-nums}
 /* range rows: the value sits on the label's baseline, in line with the switches above it */
 .ch-row--range > .ch-row__text,.ch-row--range > .ch-row__val{align-self:baseline}
 .ch-row--range > .ch-row__val{padding-right:3px}
 
 /* choice: a segmented row of buttons, aria-pressed marks the current one */
-.ch-seg{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:12px;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
-.ch-seg__btn{all:unset;box-sizing:border-box;flex:1 1 auto;display:grid;place-items:center;min-height:36px;padding:4px 10px;border-radius:9px;cursor:pointer;
-  font:600 .86rem/1.15 var(--sx-body);text-align:center;color:var(--sx-muted);transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.ch-seg{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px;padding:5px;border-radius:13px;background:var(--sx-surface-2);border:1px solid var(--sx-line)}
+.ch-seg__btn{all:unset;box-sizing:border-box;flex:1 1 auto;display:grid;place-items:center;min-height:42px;padding:6px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;
+  font:600 .94rem/1.15 var(--sx-body);text-align:center;color:var(--sx-muted);transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent}
 .ch-panel .ch-seg__btn:hover{color:var(--sx-text);background:none;transform:none}
 .ch-panel .ch-seg__btn[aria-pressed="true"]{color:var(--sx-on-accent);background:var(--accent,var(--sx-accent))}
 
