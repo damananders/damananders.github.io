@@ -250,27 +250,82 @@
   };
 
   function openList() {
-    var list = el("ul", { class: "pl-list" });
-    /* default order is by rarity, rarest first; catalog position breaks ties so the order stays stable. */
     var pos = {}; TROPHIES.forEach(function (t, i) { pos[t.id] = i; });
-    var ordered = TROPHIES.slice().sort(function (a, b) {
-      return (RARITY_RANK[rarOf(b)] || 0) - (RARITY_RANK[rarOf(a)] || 0) || (pos[a.id] - pos[b.id]);
+    var list = el("ul", { class: "pl-list" });
+    var state = { sort: "rarity", filter: "all" };   /* sort + filter are toggleable from the popup */
+
+    function sorted() {
+      var arr = TROPHIES.slice();
+      if (state.sort === "name") {
+        arr.sort(function (a, b) {
+          /* hidden secret trophies (unearned) sort to the end so their real names never leak order */
+          var an = (a.secret && !got[a.id]) ? "￿" : a.name.toLowerCase();
+          var bn = (b.secret && !got[b.id]) ? "￿" : b.name.toLowerCase();
+          return an < bn ? -1 : an > bn ? 1 : pos[a.id] - pos[b.id];
+        });
+      } else if (state.sort === "earned") {
+        arr.sort(function (a, b) {
+          var ag = got[a.id] || 0, bg = got[b.id] || 0;
+          if (ag && !bg) return -1;
+          if (!ag && bg) return 1;
+          if (ag && bg) return bg - ag;   /* both earned → most recent first */
+          return (RARITY_RANK[rarOf(b)] || 0) - (RARITY_RANK[rarOf(a)] || 0) || pos[a.id] - pos[b.id];
+        });
+      } else {
+        /* rarity, rarest first; catalog position breaks ties so the order stays stable */
+        arr.sort(function (a, b) { return (RARITY_RANK[rarOf(b)] || 0) - (RARITY_RANK[rarOf(a)] || 0) || pos[a.id] - pos[b.id]; });
+      }
+      return arr;
+    }
+
+    function render() {
+      while (list.firstChild) list.removeChild(list.firstChild);
+      var shown = 0;
+      sorted().forEach(function (t) {
+        var have = !!got[t.id];
+        if (state.filter === "unlocked" && !have) return;
+        if (state.filter === "locked" && have) return;
+        shown++;
+        var hidden = t.secret && !have, r = rarOf(t);
+        var ico = have ? CUP : (t.secret ? QMARK : LOCK);
+        list.appendChild(el("li", { class: "pl-item pl-r-" + r + (have ? " is-got" : " is-locked") + (t.special ? " pl-item--special" : "") },
+          el("span", { class: "pl-item__ico" }, svg(ico)),
+          el("span", { class: "pl-item__txt" },
+            el("span", { class: "pl-item__top" },
+              el("strong", { text: hidden ? "Secret trophy" : t.name }),
+              el("em", { class: "pl-rarity pl-r-" + r, text: RARITY[r] })),
+            el("span", { class: "pl-item__desc", text: hidden ? "Keep poking around." : t.desc }))));
+      });
+      if (!shown) list.appendChild(el("li", { class: "pl-item pl-item--empty" },
+        el("span", { class: "pl-item__txt" }, el("span", { class: "pl-item__desc", text: state.filter === "unlocked" ? "No trophies earned yet — go explore the site!" : "Nothing to show." }))));
+    }
+
+    var sortSel = el("select", { class: "pl-sort", "aria-label": "Sort trophies" },
+      el("option", { value: "rarity", text: "Rarity" }),
+      el("option", { value: "name", text: "Name" }),
+      el("option", { value: "earned", text: "Recently earned" }));
+    sortSel.addEventListener("change", function () { state.sort = sortSel.value; Site.sfx("tap"); render(); });
+
+    var filterWrap = el("div", { class: "pl-filters", role: "group", "aria-label": "Filter trophies" });
+    [["all", "All"], ["unlocked", "Unlocked"], ["locked", "Locked"]].forEach(function (f) {
+      var b = el("button", { type: "button", class: "pl-filter", "aria-pressed": f[0] === "all" ? "true" : "false", text: f[1] });
+      b.addEventListener("click", function () {
+        state.filter = f[0];
+        Array.prototype.forEach.call(filterWrap.children, function (c) { c.setAttribute("aria-pressed", c === b ? "true" : "false"); });
+        Site.sfx("tap"); render();
+      });
+      filterWrap.appendChild(b);
     });
-    ordered.forEach(function (t) {
-      var have = !!got[t.id], hidden = t.secret && !have, r = rarOf(t);
-      var ico = have ? CUP : (t.secret ? QMARK : LOCK);
-      list.appendChild(el("li", { class: "pl-item pl-r-" + r + (have ? " is-got" : " is-locked") + (t.special ? " pl-item--special" : "") },
-        el("span", { class: "pl-item__ico" }, svg(ico)),
-        el("span", { class: "pl-item__txt" },
-          el("span", { class: "pl-item__top" },
-            el("strong", { text: hidden ? "Secret trophy" : t.name }),
-            el("em", { class: "pl-rarity pl-r-" + r, text: RARITY[r] })),
-          el("span", { class: "pl-item__desc", text: hidden ? "Keep poking around." : t.desc }))));
-    });
+    var controls = el("div", { class: "pl-controls" },
+      el("label", { class: "pl-sortwrap" }, el("span", { class: "pl-sortlab", text: "Sort" }), sortSel),
+      filterWrap);
+
+    render();
     var body = el("div", {},
       el("p", { class: "pl-list__sum", text: count() + " of " + CORE.length + " earned · saved in this browser only." }),
+      controls,
       list,
-      el("a", { class: "pl-list__cab", href: "/trophies/", text: "View the full trophy cabinet →" }),
+      el("a", { class: "pl-list__cab btn pl-cabbtn", href: "/trophies/", text: "View the full trophy cabinet →" }),
       el("p", { class: "pl-list__hint", text: "Psst: some words do things if you just type them. One of them is a country where everything is upside down." }));
     var d = Site.modal({ id: "pl-trophies", title: "Trophies", className: "pl-modal", body: body });
     d.addEventListener("close", function () { d.remove(); });
