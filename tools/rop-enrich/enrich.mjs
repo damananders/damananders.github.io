@@ -268,9 +268,11 @@ async function extracts(titles) {
     const j = await (await get(u)).json().catch(() => null);
     if (!j || !j.query) { await sleep(3000); continue; }
     const back = new Map(batch.map((t) => [t, t]));
-    for (const r of j.query.redirects || []) back.set(r.to, r.from);
+    // A redirect means Wikidata linked to a page that isn't this game's own article (e.g. "Yume Kōjō: Doki Doki Panic"
+    // -> Super Mario Bros. 2). Its lead would describe something else, so skip it; the card gets the facts line instead.
+    const redirected = new Set((j.query.redirects || []).map((r) => r.to));
     for (const r of j.query.normalized || []) back.set(r.to, r.from);
-    for (const p of j.query.pages || []) if (p.extract) out.set(back.get(p.title) || p.title, p.extract);
+    for (const p of j.query.pages || []) if (p.extract && !redirected.has(p.title)) out.set(back.get(p.title) || p.title, p.extract);
     if (i % 2000 === 0) log("extracts", i, "/", titles.length);
     await sleep(120);
   }
@@ -391,7 +393,7 @@ for (const g of games) {
     const genre = rec.gn ? String(rec.gn[0]).replace(/\s*\/\s*/g, " / ").toLowerCase().replace(/ game$/, "") : "";
     let line = (rec.st ? rec.t + ": " + rec.st : rec.t) + " is " + (genre ? (/^[aeiou]/.test(genre) ? "an " : "a ") + genre + " game" : "a game") + " for the " + CN[g.console];
     if (rec.pub) line += ", published by " + rec.pub[0];
-    if (rec.y) line += " in " + rec.y;
+    if (rec.y) line += (rec.pub ? " in " : ", released in ") + rec.y;
     rec.d = line + "."; rec.da = 1;   // da = description written from the facts, not quoted
   }
   const c = compat[g.console] && (compat[g.console].get(k) || (enName.has(k) && compat[g.console].get(norm(enName.get(k)))));

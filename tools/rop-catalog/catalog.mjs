@@ -208,9 +208,11 @@ async function extracts(titles) {
     try { j = await (await get(u)).json(); } catch (e) {}
     if (!j || !j.query) { await sleep(3000); continue; }
     const back = new Map(batch.map((t) => [t, t]));
-    for (const r of j.query.redirects || []) back.set(r.to, r.from);
+    // A redirect means Wikidata linked to a page that isn't this game's own article (e.g. "Yume Kōjō: Doki Doki Panic"
+    // -> Super Mario Bros. 2). Its lead would describe something else, so skip it; the card gets the facts line instead.
+    const redirected = new Set((j.query.redirects || []).map((r) => r.to));
     for (const r of j.query.normalized || []) back.set(r.to, r.from);
-    for (const p of j.query.pages || []) if (p.extract) out.set(back.get(p.title) || p.title, p.extract);
+    for (const p of j.query.pages || []) if (p.extract && !redirected.has(p.title)) out.set(back.get(p.title) || p.title, p.extract);
     if (i % 4000 === 0) log("extracts", i, "/", titles.length);
     await sleep(100);
   }
@@ -369,7 +371,7 @@ for (const p of plats) {
       let line = title + " is " + (genre ? (/^[aeiou]/.test(genre) ? "an " : "a ") + genre + " game" : "a game") + " for the " + p.name;
       if (rec.dev) line += ", developed by " + rec.dev[0];
       if (rec.pub && (!rec.dev || rec.pub[0] !== rec.dev[0])) line += (rec.dev ? " and" : ",") + " published by " + rec.pub[0];
-      if (rec.y) line += " in " + rec.y;
+      if (rec.y) line += (rec.pub ? " in " : ", released in ") + rec.y;
       rec.d = line + "."; rec.da = 1;
     } else described++;
     (shards[shardOf(id)] ||= {})[id] = rec;
