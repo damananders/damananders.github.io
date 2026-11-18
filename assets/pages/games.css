@@ -1714,3 +1714,9 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 .ln-bnet:disabled{opacity:.6;cursor:wait}
 .ln-bn{display:flex;align-items:center;gap:4px}
 .ln-bn__tag{font-weight:800;font-size:1.05rem}
+
+/* mini profile: flairs get their own row under the name/buttons so the bell and Op Station icons never cover them */
+.rop-me > .rop-me__flair{display:flex;flex-wrap:wrap;gap:5px;margin:-2px 0 2px;min-height:0}
+.rop-me > .rop-me__flair:empty{display:none}
+.rop-me__who{flex:1}
+.rop-me__name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}

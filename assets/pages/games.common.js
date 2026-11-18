@@ -236,7 +236,8 @@ export function authPill(box, opts) {
   const [rLi, rB] = stat("Reviews"), [pLi, pB] = stat("Posts"), [cLi, cB] = stat("Comments");
   box.append(
     el("div", { class: "rop-me__head" }, avatar(myAvatar(), myName(), 52, "rop-me__av"),
-      el("div", { class: "rop-me__who" }, el("span", { class: "rop-me__line" }, el("b", { class: "rop-me__name", text: myName() }), flair), status)),
+      el("div", { class: "rop-me__who" }, el("span", { class: "rop-me__line" }, el("b", { class: "rop-me__name", text: myName() })), status)),
+    flair,
     el("ul", { class: "rop-me__stats" }, rLi, pLi, cLi));
   if (me.ready) box.querySelector(".rop-me__head").append(bell());
   if (me.admin) box.querySelector(".rop-me__head").append(el("a", { class: "rop-me__opico", href: "/games/ti3c20mi/", title: "Operation Station", "aria-label": "Operation Station", html: OP_ICO }));
