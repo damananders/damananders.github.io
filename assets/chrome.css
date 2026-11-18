@@ -295,6 +295,11 @@ html.ch-on :where(a,button,input,select,textarea,summary,[tabindex],[id]):where(
 .ch-panel .ch-panel__x:hover{color:var(--sx-text);background:var(--sx-surface-2);border-color:var(--sx-line-2);transform:none}
 .ch-panel__x svg{width:18px;height:18px}
 .ch-panel__rows{display:grid}
+/* Section headers inside the settings panel. The first row under a header drops its divider so the label
+   reads as that section's start rather than a row of its own. */
+.ch-group__label{margin:0;padding:16px 0 3px;font:700 .66rem/1 var(--sx-sans,inherit);letter-spacing:.13em;text-transform:uppercase;color:var(--sx-muted)}
+.ch-group__label:first-child{padding-top:2px}
+.ch-group__label + .ch-row{border-top:0}
 .ch-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 14px;padding:12px 0;border-top:1px solid var(--sx-line)}
 .ch-row:last-child{padding-bottom:2px}
 .ch-row__text{min-width:0}
