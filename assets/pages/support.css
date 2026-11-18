@@ -46,11 +46,21 @@
 .sup-goal__pct:empty{display:none}
 .sup-bar{position:relative;height:13px;border-radius:999px;overflow:hidden;background:rgba(0,0,0,.3);
   box-shadow:inset 0 1px 3px rgba(0,0,0,.5),inset 0 0 0 1px var(--sx-line)}
-.sup-bar > i{display:block;height:100%;min-width:13px;width:0;border-radius:999px;
+.sup-bar > i{position:relative;display:block;height:100%;min-width:13px;width:0;border-radius:999px;
   background:linear-gradient(90deg,#cd4257,#e0657a 55%,#f0b065);box-shadow:0 0 14px -1px rgba(240,176,101,.75);transition:width 1s cubic-bezier(.22,1,.36,1)}
 .sup-bar--empty > i{min-width:0;box-shadow:none}
 :root[data-motion=reduce] .sup-bar > i{transition:none}
+/* goal met: a brighter all-gold fill, a stronger glow, and a slow sweeping sheen */
+.sup-bar--full > i{background:linear-gradient(90deg,#f0b065,#f6d488 50%,#f0b065);box-shadow:0 0 18px 0 rgba(246,212,136,.82),0 0 6px 0 rgba(240,176,101,.95)}
+.sup-bar--full > i::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(100deg,transparent 18%,rgba(255,255,255,.6) 50%,transparent 82%);transform:translateX(-120%);animation:sup-sheen 2.6s ease-in-out infinite}
+@keyframes sup-sheen{0%{transform:translateX(-120%)}60%,100%{transform:translateX(120%)}}
+:root[data-motion=reduce] .sup-bar--full > i::after{display:none;animation:none}
 .sup-goal__line{margin:13px 0 0;color:var(--sx-muted);font:500 .9rem/1.4 var(--sx-display)}
+/* goal met: warm the whole card and mark the heading */
+.sup-goal--done{border-color:rgba(246,212,136,.5) !important;box-shadow:0 0 0 1px rgba(246,212,136,.22),0 22px 55px -26px rgba(240,176,101,.7)}
+.sup-goal--done .sup-goal__head h2::after{content:" 🎉";font-size:.95em}
+.sup-goal--done .sup-goal__line{color:var(--gold-soft)}
 
 /* ---- the two give options ---- */
 .sup-give{padding:26px}

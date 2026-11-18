@@ -16,9 +16,10 @@ window.SITE_EXTRA = {
     showCount: true,        // member count on the Discord button
   },
   kofi: {
-    url: "https://ko-fi.com/damananders",
-    // Goal bar. Hidden until BOTH numbers are filled in, e.g. current: 40, target: 100.
-    goal: { title: "Help pay for website costs!", current: 0, target: 75, currency: "$" },   // monthly; update "current" as support comes in
+    url: "https://damananders.github.io/support/",   // donations are on-site now; this points at the Support page
+    // The monthly goal is tracked live on the Support page (donation_progress RPC) and resets on the 1st.
+    // Left null on purpose so no stale, hand-kept number can show in the header or dashboard.
+    goal: null,
   },
 
   /* ---- AndersCraft ---- */

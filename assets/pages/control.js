@@ -190,7 +190,7 @@
     ],
     content: [
       { type: "values", title: "Hub headline", fields: [["hero.lines", "Typing phrases, one per line (blank uses the built-in set; keep each to about 31 characters)", "lines"]] },
-      { type: "values", title: "Support (Ko-fi & donations)", fields: [["kofi.url", "Ko-fi page", "url"], ["kofi.goal.title", "Goal title", "text"], ["kofi.goal.current", "Raised so far this month", "number"], ["kofi.goal.target", "Monthly target", "number"], ["kofi.goal.currency", "Currency symbol", "text"]] },
+      { type: "values", title: "Support page", desc: "Donations run on-site through Stripe. The monthly goal is tracked live on the Support page and resets on the 1st — there's no number to keep by hand here.", fields: [["kofi.url", "Support page link", "url"]] },
       { type: "values", title: "AndersCraft", fields: [["anderscraft.statusUrl", "Live status address (blank hides realm counts)", "url"], ["anderscraft.apiUrl", "Sign-up API address (the register.php endpoint)", "url"]] },
       { type: "values", title: "Personal Vault", desc: "The hidden /vault/ page. A passphrase hash turns on a cosmetic gate (the real lock is Drive's Restricted sharing).", fields: [["vault.passphraseSha256", "Passphrase hash (SHA-256 hex; blank = no gate)", "text"], ["vault.hideOnHub", "Hide the Vault card on the hub until opened with ?owner", "bool"]] },
       { type: "values", title: "AnyPS", fields: [["anyps.githubRepo", "GitHub releases repo, as owner/name", "text"], ["anyps.sha256", "Download checksum (64-bit)", "text"], ["anyps.sha256_32", "Download checksum (32-bit)", "text"]] },

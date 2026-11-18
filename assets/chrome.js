@@ -1036,7 +1036,7 @@
     if (feat("supportLine") && /^https:\/\//.test(String(kofi.url || ""))) {
       var sup = el("p", { class: "ch-support" },
         document.createTextNode("These are free fan projects I build for fun. If one made your day, you can "),
-        el("a", { class: "ch-support__link", href: "/support/" }, "help cover the hosting ☕"),
+        el("a", { class: "ch-support__link", href: "/support/" }, "help cover the hosting 💛"),
         document.createTextNode(" — no pressure, ever."));
       foot.appendChild(sup);
     }
