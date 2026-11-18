@@ -2,7 +2,9 @@
 .social{display:inline-flex;align-items:center;gap:9px;font-family:"Space Grotesk",system-ui,sans-serif;font-weight:700;font-size:.98rem;letter-spacing:.01em;text-decoration:none;padding:9px 16px;border-radius:12px;box-shadow:0 8px 22px -12px rgba(0,0,0,.7);transition:transform .15s,filter .15s;text-shadow:none}
 .social:hover{transform:translateY(-1px);filter:brightness(1.06)}
 .social svg{width:22px;height:22px;flex:none}
-.social.kofi{background:#F9F6F0;color:#FF5E5B;border:1px solid #f1e6dd}
+.social.kofi{background:linear-gradient(145deg,#f6c888,#f0b065 48%,#e0657a);color:#3a1206;border:1px solid rgba(240,176,101,.55);box-shadow:0 8px 22px -11px rgba(224,101,122,.85)}
+.social.kofi svg{display:none}
+.social.kofi::before{content:"\2665";font-size:1.02rem;line-height:1;color:#8c1328;flex:none}
 .social.discord{background:#5865F2;color:#fff}
 .social.twitch{background:#9146FF;color:#0E0E10}
 @media (max-width:520px){.social{padding:8px 12px;font-size:.92rem}.social svg{width:20px;height:20px}}

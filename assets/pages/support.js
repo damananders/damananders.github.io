@@ -118,15 +118,20 @@ async function loadProgress() {
     var goal = Number(row.goal_cents) || 7500;
     var month = Math.max(0, Number(row.month_cents) || 0);
     var sup = Math.max(0, Number(row.supporters) || 0);
-    var pct = Math.max(0, Math.min(100, Math.round(month / goal * 100)));
+    var done = goal > 0 && month >= goal;                             /* goal met or beaten */
+    var pct = goal > 0 ? Math.max(0, Math.min(100, Math.round(month / goal * 100))) : 0;
+    var over = Math.max(0, month - goal);
+    var supTxt = sup > 0 ? " · " + sup + (sup === 1 ? " supporter" : " supporters") : "";
     goalPct.textContent = month > 0 ? pct + "%" : "";                 /* a bright 0% reads as discouraging */
-    barFill.parentNode.classList.toggle("sup-bar--empty", month <= 0);
+    var bar = barFill.parentNode;
+    bar.classList.toggle("sup-bar--empty", month <= 0);
+    bar.classList.toggle("sup-bar--full", done);                      /* kicks in the celebratory sheen + glow */
+    goalCard.classList.toggle("sup-goal--done", done);
     requestAnimationFrame(function () { barFill.style.width = pct + "%"; });
-    var remaining = Math.max(0, goal - month);
     var line;
     if (month <= 0) line = money(goal) + " a month keeps everything running. Be the first to chip in this month.";
-    else if (remaining <= 0) line = money(month) + " raised this month — goal reached. Thank you! 💛";
-    else line = money(month) + " of " + money(goal) + " this month" + (sup > 0 ? " · " + sup + (sup === 1 ? " supporter" : " supporters") : "");
+    else if (done) line = money(month) + " raised this month — goal smashed! 💛" + (over > 0 ? " That's " + money(over) + " past the " + money(goal) + " goal." : " Thank you!") + supTxt;
+    else line = money(month) + " of " + money(goal) + " this month" + supTxt;
     goalLine.textContent = line;
     goalCard.hidden = false;
   } catch (e) {}
