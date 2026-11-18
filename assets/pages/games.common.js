@@ -306,7 +306,7 @@ export function hideOpps(root) {
   links.forEach((a) => {
     const h = decodeURIComponent((a.getAttribute("href").split("u=")[1] || "").split(/[&#]/)[0]);
     if (!opps.has(h) || a.closest("[data-no-opp-hide]")) return;
-    const box = a.closest(".gm-review, .pf-note, .fd-item, .fr-c, .fr-post, article, li");
+    const box = a.closest(".rop-rep, .gm-review, .pf-note, .fd-item, .fr-c, .fr-post, article, li");
     if (box && !box.hidden) { box.hidden = true; box.dataset.opp = "1"; }
   });
 }
@@ -666,7 +666,7 @@ export function bell() {
 
 /* ---------------- report button (anyone; visitors use their visitor key) ---------------- */
 export async function reportItem(kind, id, reason) {
-  const col = { post: "post_id", comment: "comment_id", review: "review_id", wall: "wall_id", media: "media_id" }[kind];
+  const col = { post: "post_id", comment: "comment_id", review: "review_id", wall: "wall_id", media: "media_id", reply: "reply_id" }[kind];
   const r = await sb.rpc("report_item", { p_kind: kind, p_id: id, p_reason: reason, p_key: visitorKey() });
   if (!r.error) return null;
   if (/report_item|function|schema cache/i.test(r.error.message) && me.member && me.user && kind !== "wall") {   // before the database update
@@ -895,6 +895,7 @@ export async function reviewsPanel(g, box, opts = {}) {
   box.replaceChildren();
   if ((data || []).length > 1) box.append(el("div", { class: "gm-review__bar" }, el("span", { class: "gm-note", text: data.length + (data.length >= (opts.limit || 20) ? "+" : "") + " reviews" }), reviewSortPicker(() => reviews(g, box))));
   const rx = await myReactions((data || []).map((r) => r.id));
+  const reps = await loadReplies((data || []).map((r) => r.id));
   const myHandle = me.profile && me.profile.handle;
   let mineShown = false;
   for (const r of data || []) {
@@ -907,6 +908,7 @@ export async function reviewsPanel(g, box, opts = {}) {
     const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") + (isMine ? " gm-review--mine" : "") }, head, body, reactBar(r, rx.get(r.id)));
     if (isMine && member) art.append(rvEditTools(g, box, art, body, r));
     else if (r.id != null && !isMine) art.append(reportBtn("review", r.id));
+    if (reps) art.append(replyThread(r, reps.get(r.id) || []));
     box.append(art);
   }
   if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
@@ -977,3 +979,92 @@ async function rvWriteBox(g, box, mineShown, opts) {
 
 /* re-draw shown times when the 12h / 24h switch changes */
 window.addEventListener("site:clock", () => document.querySelectorAll("time[data-when]").forEach((t) => { t.textContent = fmtWhen(t.dataset.when); }));
+
+/* ---------------- replies under reviews (round 38). null = the SQL isn't in yet, so the feature stays out of sight ---------------- */
+async function loadReplies(ids) {
+  if (!ids.length) return new Map();
+  try {
+    const { data, error } = await sb.from("public_review_replies").select("*").in("review_id", ids).order("created_at", { ascending: true }).limit(1000);
+    if (error) return null;
+    const m = new Map(); for (const x of data || []) { if (!m.has(x.review_id)) m.set(x.review_id, []); m.get(x.review_id).push(x); }
+    return m;
+  } catch (e) { return null; }
+}
+function replyThread(r, list) {
+  const wrap = el("div", { class: "rop-reps" });
+  const items = el("div", { class: "rop-reps__list" });
+  const SHOW = 3; let expanded = list.length <= SHOW;
+  const more = el("button", { class: "linkbtn rop-reps__more", type: "button" });
+  const draw = () => {
+    items.replaceChildren(...(expanded ? list : list.slice(-SHOW)).map((x) => replyItem(x, () => { list.splice(list.indexOf(x), 1); draw(); })));
+    more.hidden = expanded; more.textContent = "Show all " + list.length + " replies";
+    count.textContent = list.length ? (list.length === 1 ? "1 reply" : list.length + " replies") : "";
+  };
+  more.addEventListener("click", () => { expanded = true; draw(); });
+  const count = el("span", { class: "rop-reps__n" });
+  const bar = el("div", { class: "rop-reps__bar" }, count);
+  if (me.user && me.member) {
+    const open = el("button", { class: "linkbtn rop-reps__open", type: "button", text: "Reply", onclick: () => { open.hidden = true; items.after(composer()); } });
+    bar.append(open);
+    function composer() {
+      const ta = el("textarea", { class: "gm-ta rop-reps__ta", maxlength: "1000", rows: "2", placeholder: "Reply to " + (r.name || "this review") + "…", "aria-label": "Your reply" });
+      const note = el("span", { class: "gm-note", role: "status" });
+      const box = el("div", { class: "rop-reps__write" });
+      const send = el("button", { class: "btn gm-btn", type: "button", text: "Reply", onclick: async () => {
+        const v = ta.value.trim(); if (!v) { ta.focus(); return; }
+        send.disabled = true;
+        const { data, error } = await sb.rpc("add_review_reply", { p_review: r.id, p_body: v });
+        send.disabled = false;
+        if (error || !data || !data.ok) { note.textContent = (data && data.error) || (error && error.message) || "That didn't send."; return; }
+        list.push({ id: data.id, review_id: r.id, body: v, created_at: new Date().toISOString(), name: (me.profile && (me.profile.display_name || me.profile.name)) || "You",
+          avatar: me.profile && (me.profile.custom_avatar || me.profile.avatar), handle: me.profile && me.profile.handle, is_staff: me.staff });
+        expanded = true; draw(); box.remove(); open.hidden = false; sfx("success");
+      } });
+      const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { box.remove(); open.hidden = false; } });
+      box.append(fmtBar(ta), ta, el("div", { class: "rop-reps__acts" }, send, cancel, note));
+      setTimeout(() => ta.focus(), 0);
+      return box;
+    }
+  }
+  wrap.append(bar, more, items);
+  draw();
+  if (!list.length && !(me.user && me.member)) wrap.hidden = true;
+  return wrap;
+}
+function replyItem(x, onGone) {
+  const mine = !!(me.profile && me.profile.handle && me.profile.handle === x.handle);
+  const body = el("div", { class: "rop-rep__body" }, richText(x.body));
+  const when = el("time", { class: "gm-review__when", datetime: x.created_at, "data-when": x.created_at, text: fmtWhen(x.created_at) + (x.edited_at ? " · edited" : "") });
+  const acts = el("div", { class: "rop-rep__acts" });
+  const item = el("div", { class: "rop-rep", id: "reply-" + x.id },
+    avatar(x.avatar, x.name, 24),
+    el("div", { class: "rop-rep__main" }, el("div", { class: "rop-rep__head" }, nameLink(x.handle, x.name || "A member"), x.is_staff ? adminTag() : null, when), body, acts));
+  if (mine && me.member) {
+    const edit = el("button", { class: "linkbtn", type: "button", text: "Edit", onclick: () => {
+      const ta = el("textarea", { class: "gm-ta rop-reps__ta", maxlength: "1000", rows: "2" }); ta.value = x.body;
+      const tb = fmtBar(ta), note = el("span", { class: "gm-note", role: "status" });
+      const done = () => { tb.remove(); ta.replaceWith(body); acts.replaceChildren(edit, del); };
+      const save = el("button", { class: "btn gm-btn", type: "button", text: "Save", onclick: async () => {
+        const v = ta.value.trim(); if (!v) return;
+        const { data, error } = await sb.rpc("edit_review_reply", { p_id: x.id, p_body: v });
+        if (error || !data || !data.ok) { note.textContent = (data && data.error) || (error && error.message) || "That didn't save."; return; }
+        x.body = v; body.replaceChildren(richText(v)); done(); sfx("success");
+      } });
+      body.replaceWith(tb, ta); acts.replaceChildren(save, el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: done }), note); ta.focus();
+    } });
+    const del = el("button", { class: "linkbtn", type: "button", text: "Delete", onclick: async () => {
+      if (!confirm("Delete your reply?")) return;
+      const { data, error } = await sb.rpc("delete_review_reply", { p_id: x.id });
+      if (error || !data || !data.ok) { toast((data && data.error) || (error && error.message) || "Couldn't delete.", "err"); return; }
+      item.remove(); onGone();
+    } });
+    acts.append(edit, del);
+  } else {
+    acts.append(reportBtn("reply", x.id));
+    if (me.admin) acts.append(el("button", { class: "linkbtn", type: "button", text: "Hide (mod)", onclick: async () => {
+      const { error } = await sb.rpc("mod_reply", { p_id: x.id, p_hidden: true });
+      if (error) { toast(error.message, "err"); return; } item.remove(); onGone();
+    } }));
+  }
+  return item;
+}

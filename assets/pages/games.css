@@ -1652,3 +1652,21 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 .gm-card__top .gm-mustplay{margin-left:auto}
 .gm-card__top .gm-mustplay ~ .gm-expand{margin-left:0}
 .gi-reviews .gi-revlist{margin-top:6px}
+
+/* ---- replies under reviews ---- */
+.rop-reps{margin-top:10px;padding-top:8px;border-top:1px dashed rgba(255,255,255,.08);display:grid;gap:6px}
+.rop-reps__bar{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--rop-grey,#8d9691)}
+.rop-reps__n:empty{display:none}
+.rop-reps__open{font-weight:700;color:var(--rop-hi,#7ef0c0)}
+.rop-reps__more{justify-self:start;font-size:.78rem}
+.rop-reps__list{display:grid;gap:6px}
+.rop-rep{display:flex;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.22);border-left:2px solid color-mix(in srgb,var(--rop,#36d39a) 45%,transparent);margin-left:14px}
+.rop-rep__main{min-width:0;flex:1;display:grid;gap:2px}
+.rop-rep__head{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem}
+.rop-rep__head .gm-review__when{font-size:.72rem}
+.rop-rep__body{font-size:.9rem;line-height:1.5;overflow-wrap:anywhere}
+.rop-rep__acts{display:flex;gap:10px;font-size:.72rem}
+.rop-rep__acts .linkbtn,.rop-rep__acts .gm-report{font-size:.72rem}
+.rop-reps__write{display:grid;gap:4px;margin-left:14px}
+.rop-reps__acts{display:flex;align-items:center;gap:10px}
+:root[data-theme="light"] .rop-rep{background:#f2f6f3}

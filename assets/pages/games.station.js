@@ -3,7 +3,7 @@
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=29";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=30";
 
 const root = $("op-root");
 const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"], ["visitors", "Visitors"], ["health", "Health"]];
@@ -86,7 +86,9 @@ async function reports(body) {
   const M = mIds.length ? await sb.from("game_media").select("id,game_id,path,caption,user_id,hidden").in("id", mIds) : { data: [] };
   const meds = new Map((M.data || []).map((x) => [x.id, x]));
   const pIds = data.filter((r) => r.post_id).map((r) => r.post_id), cIds = data.filter((r) => r.comment_id).map((r) => r.comment_id), rIds = data.filter((r) => r.review_id).map((r) => r.review_id);
-  const wIds = data.filter((r) => r.wall_id).map((r) => r.wall_id);
+  const wIds = data.filter((r) => r.wall_id).map((r) => r.wall_id), yIds = data.filter((r) => r.reply_id).map((r) => r.reply_id);
+  const Y = yIds.length ? await sb.from("review_replies").select("id,review_id,body,user_id,hidden").in("id", yIds) : { data: [] };
+  const replies = new Map((Y.data || []).map((x) => [x.id, x]));
   const W = wIds.length ? await sb.from("profile_wall").select("id,profile_id,body,author_id,hidden").in("id", wIds) : { data: [] };
   const walls = new Map((W.data || []).map((x) => [x.id, Object.assign(x, { user_id: x.author_id })]));
   const [P, C, R] = await Promise.all([
@@ -94,7 +96,7 @@ async function reports(body) {
     cIds.length ? sb.from("forum_comments").select("id,post_id,body,user_id,hidden").in("id", cIds) : { data: [] },
     rIds.length ? sb.from("reviews").select("id,game_id,body,user_id,hidden").in("id", rIds) : { data: [] }]);
   const posts = new Map((P.data || []).map((x) => [x.id, x])), coms = new Map((C.data || []).map((x) => [x.id, x])), revs = new Map((R.data || []).map((x) => [x.id, x]));
-  await loadPeople([...data.map((r) => r.user_id), ...[...posts.values(), ...coms.values(), ...revs.values(), ...meds.values(), ...walls.values()].map((x) => x.user_id), ...[...walls.values()].map((x) => x.profile_id)]);
+  await loadPeople([...data.map((r) => r.user_id), ...[...posts.values(), ...coms.values(), ...revs.values(), ...meds.values(), ...walls.values(), ...replies.values()].map((x) => x.user_id), ...[...walls.values()].map((x) => x.profile_id)]);
   body.replaceChildren();
   if (!data.length) return body.append(el("p", { class: "gm-empty", text: "No reports. All quiet." }));
   for (const r of data) {
@@ -103,6 +105,7 @@ async function reports(body) {
     else if (r.comment_id) { kind = "Comment"; t = coms.get(r.comment_id); id = r.comment_id; link = t ? "/games/forum/?p=" + t.post_id + "#c" + id : null; hideFn = (h) => act("mod_comment", { p_id: id, p_hidden: h }, h ? "Comment hidden" : "Comment shown", refresh); delKind = "comment"; }
     else if (r.media_id) { kind = "Upload"; t = meds.get(r.media_id); id = r.media_id; if (t) t.body = (t.caption ? t.caption + " · " : "") + t.path; link = t ? "/games/game/?id=" + encodeURIComponent(t.game_id) : null; hideFn = (h) => act("mod_media", { p_id: id, p_hidden: h }, h ? "Upload hidden" : "Upload shown", refresh); delKind = "media"; }
     else if (r.wall_id) { kind = "Guestbook note"; t = walls.get(r.wall_id); id = r.wall_id; const o = t && people.get(t.profile_id); link = o ? profileUrl(o.handle) + "#wall" : null; hideFn = (h) => act("mod_wall", { p_id: id, p_hidden: h }, h ? "Note hidden" : "Note shown", refresh); delKind = null; }
+    else if (r.reply_id) { kind = "Reply"; t = replies.get(r.reply_id); id = r.reply_id; link = null; hideFn = (h) => act("mod_reply", { p_id: id, p_hidden: h }, h ? "Reply hidden" : "Reply shown", refresh); delKind = "reply"; }
     else { kind = "Review"; t = revs.get(r.review_id); id = r.review_id; link = t ? "/games/?q=" : null; hideFn = (h) => act("mod_review", { p_id: id, p_hidden: h }, h ? "Review hidden" : "Review shown", refresh); delKind = "review"; }
     body.append(row(
       el("div", { class: "op-meta" }, el("span", { class: "op-pill", text: kind }), pill(r.resolved, "resolved"), pill(t && t.hidden, "hidden", true),
