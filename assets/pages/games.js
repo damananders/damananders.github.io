@@ -158,50 +158,77 @@ async function load() {
   browse(q);
 }
 
-/* ---------------- browse A-Z and a random pick (for the chosen family / platform, or everything) ---------------- */
+/* ---------------- browse A-Z and a "Surprise me" slot (for the chosen family / platform, or everything) ----------------
+ * Left: letter tiles and a shelf of game rows with little covers. Right: the Surprise me card, which rolls a random
+ * game IN PLACE (cover, year, blurb, scores) so you can keep rolling before you open one. */
 let browseKey = "", browseLetter = "", browseFrom = 0;
+const blurbOf = (x) => { const d = x && typeof x.d === "string" ? x.d.trim() : ""; return d ? (d.match(/^.{40,240}?[.!?](\s|$)/) || [d.slice(0, 200) + "…"])[0].trim() : ""; };
 function browse(q) {
   const box = $("gm-browse"); if (!box) return;
   if (q.length >= 2) { box.replaceChildren(); browseKey = ""; return; }
   const key = famFilter + "|" + consoleFilter;
   if (key === browseKey && box.childElementCount) return;
-  browseKey = key; browseLetter = ""; browseFrom = 0;
+  browseKey = key; browseLetter = "A"; browseFrom = 0;
+  const where = filterName() === "All-time" ? "every game" : filterName();
   const letters = el("div", { class: "gm-az", role: "group", "aria-label": "First letter" });
   const list = el("ol", { class: "gm-blist" });
   const more = el("button", { class: "btn gm-btn gm-bmore", type: "button", hidden: true, text: "Show more", onclick: () => page(false) });
   const note = el("p", { class: "gm-note", role: "status" });
-  for (const L of ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]) letters.append(el("button", { class: "gm-az__b", type: "button", text: L, "aria-pressed": "false",
+  const count = el("span", { class: "gm-browse__count" });
+  for (const L of ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]) letters.append(el("button", { class: "gm-az__b", type: "button", text: L, "aria-pressed": String(L === browseLetter),
     onclick: (e) => { letters.querySelectorAll(".gm-az__b").forEach((b) => b.setAttribute("aria-pressed", String(b === e.currentTarget))); browseLetter = L; browseFrom = 0; page(true); } }));
+  /* Surprise me card */
+  const sView = el("div", { class: "gm-sup__view" },
+    el("div", { class: "gm-sup__idle" }, el("span", { class: "gm-sup__dice", "aria-hidden": "true", text: "🎲" }),
+      el("p", { text: "Can't pick? Roll a random game from " + where + ". Keep rolling till one grabs you." })));
+  const sBtn = el("button", { class: "btn gm-btn gm-sup__roll", type: "button", onclick: roll }, el("span", { "aria-hidden": "true", class: "gm-sup__die", text: "🎲" }), el("span", { class: "gm-sup__lbl", text: "Surprise me" }));
+  const sup = el("aside", { class: "gm-sup", "aria-label": "Surprise me", "aria-live": "polite" },
+    el("div", { class: "gm-sup__head" }, el("b", { text: "Surprise me" }), el("small", { text: "a random pick" })), sView, sBtn);
   box.replaceChildren(
-    el("div", { class: "gm-browse__head" }, el("h2", { class: "gm-head", text: "Browse " + (filterName() === "All-time" ? "every game" : filterName()) }),
-      el("button", { class: "btn gm-btn gm-random", type: "button", onclick: random }, el("span", { "aria-hidden": "true", text: "🎲 " }), "Random game")),
-    letters, list, more, note);
+    el("div", { class: "gm-browse__head" },
+      el("div", null, el("h2", { class: "gm-head", text: "Browse " + where }), count),
+      el("p", { class: "gm-browse__sub", text: "Pick a letter to flip through the shelf. Hover a title for a quick peek." })),
+    el("div", { class: "gm-browse__grid" },
+      el("div", { class: "gm-browse__main" }, letters, list, more, note), sup));
+  idsCount().then((n) => { if (n) count.textContent = n.toLocaleString() + (n === 1 ? " game" : " games"); });
+  page(true);
+  function scoped(req) { const ids = filterIds(); return ids ? (ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids)) : req; }
+  async function idsCount() { try { const { count: n } = await scoped(sb.from("game_scores").select("id", { count: "exact", head: true })); return n || 0; } catch (e) { return 0; } }
   async function page(fresh) {
-    const ids = filterIds();
-    let req = sb.from("game_scores").select(await scoreCols());
-    if (ids) req = ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids);
+    let req = scoped(sb.from("game_scores").select(await scoreCols()));
     req = browseLetter === "#" ? req.filter("title", "match", "^[^A-Za-z]") : req.ilike("title", browseLetter + "%");
     const { data, error } = await req.order("title").range(browseFrom, browseFrom + 59);
     if (error) { note.textContent = "Couldn't load that list: " + error.message; return; }
     if (fresh) list.replaceChildren();
-    for (const g of data || []) list.append(el("li", { class: "gm-brow" }, consoleChip(g.console),
-      el("a", { class: "gm-brow__t", href: "/games/game/?id=" + encodeURIComponent(g.id), text: g.title }),
-      g.open_votes === undefined ? el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" }) : scorePair(g, true)));
+    for (const g of data || []) list.append(el("li", { class: "gm-brow" },
+      el("span", { class: "gm-brow__art" }, artSlot(g.id, g.title, "gm-brow__img"), el("span", { class: "gm-brow__ph", text: g.title.charAt(0) })),
+      el("span", { class: "gm-brow__mid" }, hoverCard(el("a", { class: "gm-brow__t", href: gameUrl(g.id), text: g.title }), "game", g.id),
+        el("span", { class: "gm-brow__meta" }, consoleChip(g.console),
+          g.open_votes === undefined ? el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" }) : scorePair(g, true)))));
     browseFrom += (data || []).length;
     more.hidden = (data || []).length < 60;
     note.textContent = fresh && !(data || []).length ? "No games starting with " + browseLetter + " here." : "";
   }
-  async function random() {
-    const ids = filterIds();
-    let c = sb.from("game_scores").select("id", { count: "exact", head: true });
-    if (ids) c = ids.length === 1 ? c.eq("console", ids[0]) : c.in("console", ids);
-    const { count } = await c;
-    if (!count) { note.textContent = "No games here yet."; return; }
-    let r = sb.from("game_scores").select("id");
-    if (ids) r = ids.length === 1 ? r.eq("console", ids[0]) : r.in("console", ids);
-    const off = Math.floor(Math.random() * count);
-    const { data } = await r.order("id").range(off, off);
-    if (data && data[0]) location.href = "/games/game/?id=" + encodeURIComponent(data[0].id);
+  let total = 0, rolling = false;
+  async function roll() {
+    if (rolling) return; rolling = true; sup.classList.add("is-rolling"); sBtn.disabled = true;
+    try {
+      if (!total) total = await idsCount();
+      if (!total) { sView.replaceChildren(el("p", { class: "gm-note", text: "No games here yet." })); return; }
+      const off = Math.floor(Math.random() * total);
+      const [{ data }] = await Promise.all([scoped(sb.from("game_scores").select(await scoreCols())).order("id").range(off, off), new Promise((r) => setTimeout(r, 450))]);
+      const g = data && data[0]; if (!g) return;
+      const x = await gameInfo(g.id).catch(() => null), blurb = blurbOf(x);
+      const art = el("div", { class: "gm-sup__art" }, artSlot(g.id, g.title, "gm-sup__img"), chipSvg(g.votes ? Math.round(Number(g.average)) : 3));
+      sView.replaceChildren(el("div", { class: "gm-sup__pick" }, art,
+        el("div", { class: "gm-sup__info" },
+          el("div", { class: "gm-sup__top" }, consoleChip(g.console), x && x.y ? el("span", { class: "gm-year", text: String(x.y) }) : null),
+          el("a", { class: "gm-sup__t", href: gameUrl(g.id), text: g.title }),
+          blurb ? el("p", { class: "gm-sup__d", text: blurb }) : null,
+          g.open_votes === undefined ? el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "Not rated yet. Be the first!" }) : scorePair(g, true),
+          el("a", { class: "gm-sup__go", href: gameUrl(g.id), text: "Open this game →" }))));
+      sBtn.querySelector(".gm-sup__lbl").textContent = "Roll again";
+    } finally { rolling = false; sup.classList.remove("is-rolling"); sBtn.disabled = false; }
   }
 }
 async function rate(g, stars) {
