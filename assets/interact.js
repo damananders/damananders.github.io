@@ -843,6 +843,8 @@
     load("a11y", 2, "a11y");
     load("seasons", 3, "seasons");
     load("sync", 7, "sync");
+    /* whole-site Maintenance Hatch — defines Site.hatch everywhere; edit UI is admin-gated inside */
+    load("hatch", 1, "hatch");
     /* account settings center — opt-in, loaded only when native accounts are switched on */
     if (f.accounts === true) load("account-center", 3, "accounts");
   }, "add-on loader");
