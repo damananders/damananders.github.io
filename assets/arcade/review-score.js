@@ -1,7 +1,7 @@
 /* arcade/review-score.js — "Review Score": stamp the flying game cases, leave the hardware alone.
  *
- * Real box art from Rate-O-Pedia's info cards (assets/data/rop-cases.json, heavily weighted to popular games with
- * a random spread mixed in). Stamp a case and it scores its live Rate-O-Pedia average (minimum 1 point, unrated
+ * Real box art from Wiki-Chip Dex's info cards (assets/data/rop-cases.json, heavily weighted to popular games with
+ * a random spread mixed in). Stamp a case and it scores its live Wiki-Chip Dex average (minimum 1 point, unrated
  * games score 1) with a GOLD (4+), SILVER (2 to under 4) or BRONZE (under 2) stamp.
  * A misclick (clicking empty space) or clicking any hardware costs a quarter of a heart, with a toast saying why.
  * A case that gets away scores nothing and costs nothing. Survive the timer AND reach the round's goal to win.
@@ -326,7 +326,7 @@
   function titleMenu(g) {
     g.menu({
       cls: "is-hero", kicker: "Arcade", title: "Review Score",
-      sub: "Stamp the flying game cases with their Rate-O-Pedia score. Leave the hardware alone.",
+      sub: "Stamp the flying game cases with their Wiki-Chip Dex score. Leave the hardware alone.",
       items: [
         { label: "Play", cls: "is-primary", act: function () { diffMenu(g); } },
         { label: "How to Play", act: function () { howMenu(g, function () { titleMenu(g); }); } },
@@ -347,7 +347,7 @@
   }
   function howMenu(g, back) {
     var ul = el("ul", { class: "ak-howto" },
-      el("li", { html: "<b>Stamp game cases</b> by clicking or slicing across them. Each one scores its Rate-O-Pedia average (minimum 1 point; unrated games score 1)." }),
+      el("li", { html: "<b>Stamp game cases</b> by clicking or slicing across them. Each one scores its Wiki-Chip Dex average (minimum 1 point; unrated games score 1)." }),
       el("li", { html: "Stamps: <b style='color:#f0c23a'>GOLD</b> 4+, <b style='color:#d2d8e0'>SILVER</b> 2 to under 4, <b style='color:#c58551'>BRONZE</b> under 2." }),
       el("li", { html: "<b>Don't click the hardware</b> (controllers, consoles, headsets, remotes, mugs…). It costs a quarter of a heart." }),
       el("li", { html: "<b>A misclick</b> on empty space also costs a quarter of a heart. A case that gets away just scores nothing." }),
@@ -371,7 +371,7 @@
     S.d = d; paintBest(g);
     var token = ++roundToken;
     if (!g.isFull()) g.full(true);
-    g.menu({ kicker: d.name, title: "Shuffling the cases…", sub: "Grabbing box art and the latest Rate-O-Pedia scores.", items: [{ label: "Cancel", act: function () { roundToken++; titleMenu(g); } }], back: function () { roundToken++; titleMenu(g); } });
+    g.menu({ kicker: d.name, title: "Shuffling the cases…", sub: "Grabbing box art and the latest Wiki-Chip Dex scores.", items: [{ label: "Cancel", act: function () { roundToken++; titleMenu(g); } }], back: function () { roundToken++; titleMenu(g); } });
     loadPool().then(function () {
       if (token !== roundToken) return;
       var items = [], t = 0.9, used = {};
@@ -563,8 +563,8 @@
   A.register({
     id: "review-score", name: "Review Score", icon: "🎮", accent: "#f0c23a", W: W, H: H,
     order: 3, tags: ["Arcade", "Reflexes", "Real scores"],
-    tagline: "Game cases fly up. Stamp each one with its real Rate-O-Pedia score before it drops, and leave the hardware alone.",
-    about: "Cases with real box art fly across the screen. Click, tap or slice them to stamp their live Rate-O-Pedia score, which counts toward your round goal. Hitting a controller, console or other hardware, or clicking empty space, costs a quarter heart. Survive the timer and reach the goal on each difficulty, and there's a hidden one past Harder.",
+    tagline: "Game cases fly up. Stamp each one with its real Wiki-Chip Dex score before it drops, and leave the hardware alone.",
+    about: "Cases with real box art fly across the screen. Click, tap or slice them to stamp their live Wiki-Chip Dex score, which counts toward your round goal. Hitting a controller, console or other hardware, or clicking empty space, costs a quarter heart. Survive the timer and reach the goal on each difficulty, and there's a hidden one past Harder.",
     controls: [["Stamp", "Click, tap or slice across cases"], ["Reticle", "Arrows / left stick, Space or A to stamp"], ["Pause", "Esc, P or Start"]],
     stats: function () { return DIFF.filter(function (d) { return !d.hidden || hardererUnlocked(); }).map(function (d) { return [d.name, (bestOf(d.key) || "—") + (store.get("case404.won." + d.key, false) ? "  ✓" : "")]; }); },
     poster: function (x, w, h, t) {
@@ -581,7 +581,7 @@
       x.save(); x.translate(w * 0.8, h * 0.3 + Math.sin(t * 2) * 10); x.rotate(Math.sin(t) * 0.4); x.fillStyle = "#1a202c"; D.rr(x, -40, -18, 80, 36, 18); x.fill();
       x.fillStyle = "#4a5568"; x.fillRect(-26, -3, 14, 5); x.fillRect(-21.5, -8, 5, 14); x.fillStyle = "#e53e3e"; x.beginPath(); x.arc(20, -4, 4, 0, 6.3); x.fill(); x.fillStyle = "#38a169"; x.beginPath(); x.arc(28, 4, 4, 0, 6.3); x.fill(); x.restore();
     },
-    blurb: "Stamp the flying game cases with their Rate-O-Pedia score. Skip the hardware.",
+    blurb: "Stamp the flying game cases with their Wiki-Chip Dex score. Skip the hardware.",
     sync: DIFF.map(function (d) { return { k: "best." + d.key, s: "case404.best." + d.key, t: "max" }; })
       .concat(DIFF.map(function (d) { return { k: "won." + d.key, s: "case404.won." + d.key, t: "or" }; }))
       .concat([{ k: "hr", s: HR_KEY, t: "or" }]),
