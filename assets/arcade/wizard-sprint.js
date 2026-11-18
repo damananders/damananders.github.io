@@ -25,7 +25,7 @@
     { k: "jump",     n: "Jump height",         d: "How high a jump and glide carry.",             lo: 0.5, hi: 2 },
     { k: "orbRate",  n: "Whisper-orb drops",   d: "How often Whisper Orbs appear in a run.",      lo: 0.25, hi: 4 },
     { k: "grimRate", n: "Grimoire drops",      d: "How often Grimoires appear in a run.",         lo: 0.25, hi: 4 },
-    { k: "spellCd",  n: "Spell cooldowns",     d: "Time between casts — lower is faster.",        lo: 0.4, hi: 2 },
+    { k: "spellCd",  n: "Incantation cooldowns", d: "Time between casts — lower is faster.",      lo: 0.4, hi: 2 },
     { k: "xpCurve",  n: "XP needed per level", d: "XP each level costs — lower levels faster.",   lo: 0.4, hi: 2.5 },
     { k: "chalXp",   n: "Challenge XP payout", d: "XP awarded for finishing a run challenge.",    lo: 0.25, hi: 4 },
     { k: "oblOrbs",  n: "Obliviate orb yield", d: "Whisper Orbs from obliviating an item.",       lo: 0.25, hi: 4 }
@@ -1370,7 +1370,7 @@
     }
     if (touchUI) drawTouchControls(ctx);                  /* on-screen jump / dodge / drop pads for phones + tablets */
     if (R.t < 9 && !(S.cnt.runs > 2)) {
-      var hs = touchUI ? "Tap to jump, hold to glide   ·   DODGE / DROP, bottom-right   ·   tap a spell to cast"
+      var hs = touchUI ? "Tap to jump, hold to glide   ·   DODGE / DROP, bottom-right   ·   tap an Incantation to cast"
         : keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five";
       ctx.font = "700 18px " + F.display; var hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center");
     }
@@ -1668,7 +1668,7 @@
       }
       if (it.spell) {                                     /* a big equipped-spell card for the dash screen */
         var s = it.spell; while (bt.firstChild) bt.removeChild(bt.firstChild);
-        bt.appendChild(el("span", { class: "wz-sc__top" }, icoEl(s.ico || "spark"), el("em", { class: "wz-sc__slot", text: "Spell " + s.n })));
+        bt.appendChild(el("span", { class: "wz-sc__top" }, icoEl(s.ico || "spark"), el("em", { class: "wz-sc__slot", text: "Incantation " + s.n })));
         bt.appendChild(el("b", { class: "wz-sc__name", text: s.name }));
         bt.appendChild(el("span", { class: "wz-sc__sub", text: s.cast }));
         if (s.frac != null) {
@@ -1760,8 +1760,8 @@
     UI.scene = "prep"; UI.menu = "prep";
     var c1 = !!S.cleared[1], st = calc(), owned = Object.keys(S.inc).filter(function (k) { return INC[k]; });
     var items = [], ns = incSlots();
-    /* --- spell cards --- */
-    var spx = 335, spw = ns <= 1 ? 380 : 186, spgap = 16, spy = 122, sph = 152;
+    /* --- incantation cards, centered in the middle column (631) whatever the slot count --- */
+    var spw = ns <= 1 ? 380 : 186, spgap = 16, spy = 122, sph = 152, spx = Math.round(631 - (ns * spw + (ns - 1) * spgap) / 2);
     for (var i = 0; i < ns; i++) (function (slot) {
       var idx = items.length, id = S.incEq[slot] || "poof", I = INC[id];
       function turn(d) { var free = owned.filter(function (k) { return S.incEq.indexOf(k) < 0 || S.incEq[slot] === k; }), at = free.indexOf(id); S.incEq[slot] = free[cyc(at < 0 ? 0 : at, d, free.length)]; prep(g, idx); }
@@ -1819,10 +1819,10 @@
     var owned = Object.keys(S.inc).filter(function (k) { return INC[k]; }), cur = S.incEq[slot] || "poof";
     var items = owned.map(function (id) { var I = INC[id], at = S.incEq.indexOf(id), elsewhere = at >= 0 && at !== slot, nx = mnext(id);
       return { label: I.n, ico: id, sub: I.d, cls: "wz-r" + I.r + (id === cur ? " is-owned" : ""),
-        more: [[RAR[I.r].n, "r" + I.r], [I.cast, ""], ["Mastery " + mlvl(id) + " / 10", "st"], [nx == null ? "Mastery maxed" : nx + " kills to next", nx == null ? "r4" : "dim"]].concat(elsewhere ? [["in Spell " + (at + 1), "dim"]] : []),
+        more: [[RAR[I.r].n, "r" + I.r], [I.cast, ""], ["Mastery " + mlvl(id) + " / 10", "st"], [nx == null ? "Mastery maxed" : nx + " kills to next", nx == null ? "r4" : "dim"]].concat(elsewhere ? [["in Incantation " + (at + 1), "dim"]] : []),
         act: function () { var prev = S.incEq[slot]; S.incEq[slot] = id; if (elsewhere) S.incEq[at] = prev; save(); sfx("buy"); prep(g, backFocus); } }; });
     items.push({ label: "Back", cls: "is-primary", act: function () { prep(g, backFocus); } });
-    MN(g, { cls: "is-side is-wide", kicker: "Swap Spell " + (slot + 1), title: "Choose an Incantation", sub: "Pick what this slot casts — each one's effect is shown below it.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
+    MN(g, { cls: "is-side is-wide", kicker: "Swap Incantation " + (slot + 1), title: "Choose an Incantation", sub: "Pick what this slot casts — each one's effect is shown below it.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
   }
   function wrapLines(ctx, s, maxw) { var words = ("" + s).split(" "), lines = [], cur = ""; words.forEach(function (w) { var t = cur ? cur + " " + w : w; if (ctx.measureText(t).width > maxw && cur) { lines.push(cur); cur = w; } else cur = t; }); if (cur) lines.push(cur); return lines; }
   function drawChalCard(ctx, x, y, w, h, d, done, fr) {
@@ -1862,7 +1862,16 @@
     D.text(ctx, "+200 XP and +50 Remnants.", lx + 20, ly + 224, "700 12px " + F.mono, "#ffe08a", "left");
     /* section labels */
     D.text(ctx, "JUMP TO", lx + 4, ly + 268, "800 11px " + F.mono, "#e4cf9a", "left");
-    bold(ctx, "Select Spell", 627, 112, "800 17px " + SERIF, "#f3e6c4", "center");
+    /* the Select Incantation tray — framed and centered over its cards, so it reads as a panel, not a stray label */
+    (function () {
+      var ns2 = incSlots(), spw2 = ns2 <= 1 ? 380 : 186, cw2 = ns2 * spw2 + (ns2 - 1) * 16, sx2 = Math.round(631 - cw2 / 2);
+      var tx = sx2 - 16, tw = cw2 + 32, ty = 116, th = 168;
+      var tg = ctx.createLinearGradient(0, ty, 0, ty + th); tg.addColorStop(0, "rgba(74,54,104,.42)"); tg.addColorStop(1, "rgba(44,32,64,.34)");
+      ctx.fillStyle = tg; D.rr(ctx, tx, ty, tw, th, 14); ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(232,193,90,.42)"; D.rr(ctx, tx + 0.75, ty + 0.75, tw - 1.5, th - 1.5, 13); ctx.stroke();
+      ctx.strokeStyle = "rgba(232,193,90,.28)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(631 - 70, 110); ctx.lineTo(631 + 70, 110); ctx.stroke();
+      bold(ctx, "Select Incantation", 631, 104, "800 17px " + SERIF, "#f3e6c4", "center");
+    })();
     bold(ctx, "Upgrades", 335, 366, "800 17px " + SERIF, "#f3e6c4", "left");
     bold(ctx, "Challenges", 958, 86, "800 16px " + SERIF, "#ffe08a", "left");
     /* right: the three challenges, as gilded blue & gold cards */
@@ -2160,7 +2169,7 @@
     id: "wizard-sprint", name: "Wizard of the Sprint", icon: "🧙", accent: "#8f6bff", W: W, H: H, order: 0.5, badge: "Beta",
     tags: ["Runner", "RPG loot", "Campaign"],
     tagline: "A robbed arch-wizard chases the thief's footprints through the forest. Run, jump, cast, loot, and rebuild your tower.",
-    about: "A left-to-right runner with spell combat and loot. Build your wizard, follow the tracks through the forest, fight with Incantations that level up as you use them, pick up Wizard Drip in six rarities, and spend Remnants on upgrades back at your ruined tower. This is the first level: clear its boss to unlock the shop, the wardrobe and Endless mode. More levels are on the way.",
+    about: "A left-to-right runner with Incantation combat and loot. Build your wizard, follow the tracks through the forest, fight with Incantations that level up as you use them, pick up Wizard Drip in six rarities, and spend Remnants on upgrades back at your ruined tower. This is the first level: clear its boss to unlock the shop, the wardrobe and Endless mode. More levels are on the way.",
     controls: [["Jump, hold to glide", "Space, W or Up (A)"], ["Drop through a platform", "S or Down"], ["Illusion Flash (dodge)", "Shift (LB)"], ["Keyed Incantation", "J (X)"], ["High five", "F (RB)"], ["Run pace", "1 and 2 (LT, RT)"], ["Pause", "Esc, P or Start"], ["Rebind", "Settings, inside the game"]],
     stats: function () { return [["Wiz Level", S.lvl], ["Forest", S.cleared[1] ? "Cleared" : "Not cleared yet"], ["Best Endless", fmt(S.best.endless1 || 0) + " m"], ["Remnants", fmt(S.rem)], ["Incantations", Object.keys(S.inc).length + " / 20"], ["Enemies defeated", fmt(S.cnt.kills || 0)]]; },
     poster: function (x, w, h, t) { drawForest(t * 150, t); wizSprite(lookOf(true), "run", t); blitWiz(b, 200, GY, 1); px(330 - (t * 40 % 60), GY - 12, 14, 10, "#7a5536"); drawFore(t * 150); x.imageSmoothingEnabled = false; x.drawImage(BUF, 0, 0, w, h); },
