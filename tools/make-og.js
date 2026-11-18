@@ -12,7 +12,7 @@ const CARDS = [
   { file: "uses", kicker: "Uses", title: "What I build with", sub: "The machine, the tools and the stack behind the projects.", accent: "#cd4257" },
   { file: "stream", kicker: "Stream", title: "Live from the workbench", sub: "Coding, reverse engineering, servers and game dev, live.", accent: "#9146ff" },
   { file: "links", kicker: "Links I like", title: "Sites I actually use", sub: "Places on the internet worth your click, ranked by me and by you.", accent: "#cd4257" },
-  { file: "games", kicker: "Rate-O-Pedia Forums", title: "Rate the classics", sub: "Search thousands of PlayStation games and rate them 0 to 5.", accent: "#36d39a" },
+  { file: "games", kicker: "Wiki-Chip Dex Forums", title: "Rate the classics", sub: "Search thousands of PlayStation games and rate them 0 to 5.", accent: "#36d39a" },
   { file: "support", kicker: "Support", title: "Keep the lights on", sub: "Fan projects I build for fun and run at my own cost. Chip in, no pressure.", accent: "#cd4257" },
   { file: "anderscraft", kicker: "Private WoW server · WotLK 3.3.5a", title: "AndersCraft", sub: "A Wrath-era Azeroth built around freedom — any race, any class, a level 125 arc and a hardcore realm. Sign up in a minute.", accent: "#cd4257" },
   { file: "anyps", kicker: "PlayStation launcher · Windows", title: "AnyPS", sub: "One controller-first launcher for six generations of PlayStation emulators, now with PS Vita. Bring your own games.", accent: "#3d8bff" },

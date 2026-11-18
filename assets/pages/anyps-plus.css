@@ -279,7 +279,7 @@ dialog.features .ap-fs-hide{display:none}
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* ---------------------------------------------------------------------------------------------------
-   Shared console chip (compatibility table, "will it run?"): one colour per system, as on Rate-O-Pedia
+   Shared console chip (compatibility table, "will it run?"): one colour per system, as on Wiki-Chip Dex
    --------------------------------------------------------------------------------------------------- */
 .ap-cp__sys{display:inline-block;font:600 .74rem var(--mono);letter-spacing:.05em;padding:2px 7px;border:1px solid currentColor;border-radius:6px;color:var(--ap-acc);white-space:nowrap}
 .ap-cp__sys[data-c="PS1"]{color:#9aa6b4}.ap-cp__sys[data-c="PS2"]{color:#3f83ff}.ap-cp__sys[data-c="PSP"]{color:#1ec5b3}

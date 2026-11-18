@@ -1,4 +1,4 @@
-/* Hub: "Top rated on Rate-O-Pedia" — a row of the best-scored games, right under the Rate-O-Pedia strip.
+/* Hub: "Top rated on Wiki-Chip Dex" — a row of the best-scored games, right under the Wiki-Chip Dex strip.
  * Self-contained (its own small stylesheet, no edits to hub.css / hub.js): it reads the public game_scores view
  * from Supabase with the same publishable key the games page uses, and stays hidden until something is rated.
  * Each card opens the games page searched for that title. Prefix hbt-.
@@ -46,9 +46,9 @@
     if (!Array.isArray(rows) || !rows.length) return;
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
 
-    var sec = el("section", "hbt"); sec.setAttribute("aria-label", "Top rated on Rate-O-Pedia");
+    var sec = el("section", "hbt"); sec.setAttribute("aria-label", "Top rated on Wiki-Chip Dex");
     var head = el("div", "hbt__head");
-    head.appendChild(el("h2", "hbt__h", "Top rated on Rate-O-Pedia"));
+    head.appendChild(el("h2", "hbt__h", "Top rated on Wiki-Chip Dex"));
     var all = el("a", "hbt__all", "All games →"); all.href = "games/"; head.appendChild(all);
     var nav = el("div", "hbt__nav");
     var prev = el("button", "hbt__btn", "‹"), next = el("button", "hbt__btn", "›");

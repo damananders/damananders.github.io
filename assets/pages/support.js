@@ -1,7 +1,7 @@
 /* pages/support.js: the on-site donation page (/support/).
  * Two ways to give — a one-time tip of any amount, or $5 a month — both handled on-site through Stripe
- * Checkout, gated behind the same Discord sign-in as Rate-O-Pedia. The backend (create-donation-checkout
- * edge function, donation_progress rpc, member_supporters) lives on the Rate-O-Pedia side; this file only
+ * Checkout, gated behind the same Discord sign-in as Wiki-Chip Dex. The backend (create-donation-checkout
+ * edge function, donation_progress rpc, member_supporters) lives on the Wiki-Chip Dex side; this file only
  * calls it. Everything degrades to a friendly "being set up" state until those are deployed.
  */
 import { sb, me, onAuth, signIn } from "/assets/pages/games.common.js?v=19";

@@ -1,10 +1,10 @@
 /* sync.js — cross-device account sync, loaded on every page by assets/interact.js (prefix sy-).
  *
- * The idea: sign in with Discord once on your Rate-O-Pedia profile and it shows a secret sync code
+ * The idea: sign in with Discord once on your Wiki-Chip Dex profile and it shows a secret sync code
  * (XXXX-XXXX-XXXX-XXXX). Paste that code into the "Link account" box on ANY page here and this browser
  * is linked — your trophies (and arcade progress, once the games side plugs in) follow you across devices.
  *
- * The account, the code and the cloud storage all live on the Rate-O-Pedia / Supabase side. This file only
+ * The account, the code and the cloud storage all live on the Wiki-Chip Dex / Supabase side. This file only
  * talks to three public RPCs with the site's publishable key (meant to be public):
  *   sync_pull(p_code)            -> { ok, state:{ trophies:{id->ts}, arcade:{...}, ... }, handle }
  *   sync_push(p_code,p_ns,p_patch) shallow-merges a patch into one namespace -> { ok, state:<section> }
@@ -132,7 +132,7 @@
     Site.emit("sync:changed");
   }
 
-  /* ---- Rate-O-Pedia profile (sync_profile) ----
+  /* ---- Wiki-Chip Dex profile (sync_profile) ----
      The chip and the mini profile card mirror the member's ROP customization: display name, picture, accent
      colour and a few public stats. Keyed off the sync code, so it works for the linked member regardless of
      their profile-search opt-in. 404/offline leaves whatever is cached (graceful); a bad code clears it. */
@@ -162,7 +162,7 @@
   }
 
   /* ---- Discord sign-in (shared Supabase session) ----
-     The Rate-O-Pedia side (/games/) signs people in with Discord through the Supabase JS client. Because the hub
+     The Wiki-Chip Dex side (/games/) signs people in with Discord through the Supabase JS client. Because the hub
      and /games/ are the SAME origin, that sign-in leaves a session in localStorage we can read here — so someone
      already signed in on /games/ shouldn't have to sign in again. When we spot that session we quietly fetch their
      sync code (my_sync_code(), signed-in only) and link this browser, so all the code-based machinery just works.
@@ -318,7 +318,7 @@
         });
         off.addEventListener("click", function () { unlink(); Site.sfx("toggle"); paint(); });
         body.appendChild(el("div", { class: "sy-actions" }, now, off));
-        body.appendChild(el("a", { class: "sy-help", href: profUrl, text: "View my full Rate-O-Pedia profile →" }));
+        body.appendChild(el("a", { class: "sy-help", href: profUrl, text: "View my full Wiki-Chip Dex profile →" }));
         body.appendChild(statusEl);
         /* no profile data cached yet (first open, or RPC just went live) — fetch and repaint */
         if (!p) fetchProfile().then(function (np) { if (np && dlgOpen) paint(); });
@@ -366,7 +366,7 @@
         body.appendChild(el("div", { class: "sy-authrow" }, forgot, create));
         body.appendChild(statusEl);
 
-        /* SECONDARY: Discord (same shared Supabase session Rate-O-Pedia uses) */
+        /* SECONDARY: Discord (same shared Supabase session Wiki-Chip Dex uses) */
         body.appendChild(el("div", { class: "sy-or" }, el("span", { text: "or" })));
         var dc = el("button", { type: "button", class: "btn sy-btn sy-btn--discord sy-btn--secondary" }, discordMark(), el("span", { text: "Continue with Discord" }));
         dc.addEventListener("click", function () {
@@ -379,7 +379,7 @@
         setTimeout(function () { try { (rememberedEmail ? pwI : emailI).focus(); } catch (e) {} }, 60);
       } else {
         /* accounts feature OFF — the original Discord + sync-code flow (fallback until native accounts are live) */
-        body.appendChild(el("p", { class: "sy-note", text: "Sign in with Discord to carry your profile, trophies and arcade progress across devices. If you're already signed in on Rate-O-Pedia, this picks that up automatically." }));
+        body.appendChild(el("p", { class: "sy-note", text: "Sign in with Discord to carry your profile, trophies and arcade progress across devices. If you're already signed in on Wiki-Chip Dex, this picks that up automatically." }));
 
         var dc0 = el("button", { type: "button", class: "btn sy-btn sy-btn--discord" }, discordMark(), el("span", { text: "Continue with Discord" }));
         dc0.addEventListener("click", function () {
@@ -412,7 +412,7 @@
         input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); submit(); } });
         body.appendChild(el("div", { class: "sy-form" }, input, go));
         body.appendChild(statusEl);
-        body.appendChild(el("a", { class: "sy-help", href: "/games/", text: "Open Rate-O-Pedia to find your code →" }));
+        body.appendChild(el("a", { class: "sy-help", href: "/games/", text: "Open Wiki-Chip Dex to find your code →" }));
         setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
       }
     }

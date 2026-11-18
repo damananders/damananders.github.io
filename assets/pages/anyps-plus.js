@@ -760,7 +760,7 @@
     });
   }, "anyps:hidden door");
 
-  /* Console chip shared by the compatibility table and the "will it run?" check (colours match Rate-O-Pedia). */
+  /* Console chip shared by the compatibility table and the "will it run?" check (colours match Wiki-Chip Dex). */
   function sysChip(s) { return el("span", { "class": "ap-cp__sys", "data-c": String(s), text: String(s) }); }
 
   /* =====================================================================================================

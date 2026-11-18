@@ -283,7 +283,7 @@
     app.appendChild(el("section", { class: "panel cp-jump" }, el("h2", { text: "Other owner pages" }),
       el("p", { class: "pg-actions" },
         el("a", { class: "btn ghost", href: "/b4m8t1v6/", text: "Dashboard" }),
-        el("a", { class: "btn ghost", href: "/games/ti3c20mi/", text: "Rate-O-Pedia Operation Station" }),
+        el("a", { class: "btn ghost", href: "/games/ti3c20mi/", text: "Wiki-Chip Dex Operation Station" }),
         el("a", { class: "btn ghost", href: "/links/", text: "Links I Like" }),
         el("a", { class: "btn ghost", href: "https://supabase.com/dashboard/project/zjhlhkruqzfendvbglsb", target: "_blank", rel: "noopener", text: "Supabase ↗" }),
         el("a", { class: "btn ghost", href: "https://github.com/damananders/damananders.github.io", target: "_blank", rel: "noopener", text: "GitHub ↗" }))));
@@ -640,11 +640,11 @@
     return el("div", { class: "cp-nums" }, el("label", { class: "cp-field" }, el("span", { text: "Visits from the site" }), c), el("label", { class: "cp-field" }, el("span", { text: "Public points" }), sc), b, msg);
   }
 
-  /* ---------- folder: users (Rate-O-Pedia moderation) ----------
+  /* ---------- folder: users (Wiki-Chip Dex moderation) ----------
      The panel is only the front end. Every action below runs as a server RPC that re-checks the admin session
-     (public.site_admin_session) and mutates Rate-O-Pedia's member tables; mutes, kicks and bans are enforced there
+     (public.site_admin_session) and mutates Wiki-Chip Dex's member tables; mutes, kicks and bans are enforced there
      (RLS on the posting paths) so they hold even if someone skips this page. RPC names live in MOD so they are easy
-     to re-point if the Rate-O-Pedia side finalizes different ones. Until that SQL is run, the list says so. */
+     to re-point if the Wiki-Chip Dex side finalizes different ones. Until that SQL is run, the list says so. */
   var MOD = {
     list: "site_admin_member_list", force: "site_admin_member_force_name", mute: "site_admin_member_mute",
     kick: "site_admin_member_kick", ban: "site_admin_member_ban", reset: "site_admin_member_reset",
@@ -666,7 +666,7 @@
   function drawUsers(p) {
     p.textContent = "";
     p.appendChild(el("h2", { class: "cp-pane__h", text: "Users" }));
-    p.appendChild(el("p", { class: "cp-fine", text: "Everyone verified through Discord on Rate-O-Pedia. Search, then open a member to moderate them. Mutes, kicks and bans are enforced on the server, so they hold even outside this panel." }));
+    p.appendChild(el("p", { class: "cp-fine", text: "Everyone verified through Discord on Wiki-Chip Dex. Search, then open a member to moderate them. Mutes, kicks and bans are enforced on the server, so they hold even outside this panel." }));
     var si = el("input", { type: "search", class: "cp-search", placeholder: "Search members by name or handle…", value: mQuery, "aria-label": "Search members", autocomplete: "off" });
     var refresh = el("button", { type: "button", class: "cp-mini", text: "Refresh" });
     var status = el("span", { class: "cp-msg", role: "status", "aria-live": "polite" });
@@ -693,7 +693,7 @@
         r.members.forEach(function (u) { ctx.listWrap.appendChild(memberRow(u, ctx)); });
       } else {
         ctx.status.textContent = "";
-        ctx.listWrap.appendChild(el("p", { class: "cp-empty", text: r && r.error === "unset" ? "User moderation isn't switched on yet. Run the latest Rate-O-Pedia moderation SQL (25_member_control.sql) in Supabase, then press Refresh." : why(r) }));
+        ctx.listWrap.appendChild(el("p", { class: "cp-empty", text: r && r.error === "unset" ? "User moderation isn't switched on yet. Run the latest Wiki-Chip Dex moderation SQL (25_member_control.sql) in Supabase, then press Refresh." : why(r) }));
       }
     });
   }

@@ -546,7 +546,7 @@
    * ==================================================================================================== */
   var PAGES = [
     ["hub", "/", "Home", "Back to the hub", "about"], ["anyps", "/anyps/", "AnyPS", "The PlayStation launcher", "projects"], ["anderscraft", "/anderscraft/", "AndersCraft", "Private WoW server", "projects"],
-    ["games", "/games/", "Rate-O-Pedia", "Rate & review games", "games"], ["forum", "/games/forum/", "Forums", "Talk games & projects", "games"],
+    ["games", "/games/", "Wiki-Chip Dex", "Rate & review games", "games"], ["forum", "/games/forum/", "Forums", "Talk games & projects", "games"],
     ["links", "/links/", "Links I Like", "Sites I actually use", "about"], ["stream", "/stream/", "Stream", "Watch me live", "community"],
     ["discord", "/discord/", "Discord", "Join the community", "community"], ["arcade", "/arcade/", "Arcade", "Little browser games", "games"],
     ["projects", "/projects/", "Projects", "What I'm working on", "about"], ["uses", "/uses/", "Uses", "My gear & setup", "about"], ["changelog", "/changelog/", "What's New", "Latest updates", "about"],
@@ -894,12 +894,12 @@
 
   /* ====================================================================================================
    * Site search — a small command palette. A header button or the "/" key opens it; type to jump to any
-   * page, or hit the Rate-O-Pedia action to search the games there. Keyboard-first (arrows + Enter).
+   * page, or hit the Wiki-Chip Dex action to search the games there. Keyboard-first (arrows + Enter).
    * ==================================================================================================== */
   Site.ready(function () {
     if (!feat("search") || !nav) return;
     var dlg = null, input = null, listEl = null, results = [], sel = 0;
-    /* opted-in member profiles, looked up live from Rate-O-Pedia as you type (searchable=true only) */
+    /* opted-in member profiles, looked up live from Wiki-Chip Dex as you type (searchable=true only) */
     var memberHits = [], memberQ = null, mTimer = 0, mSeq = 0;
     var SB = Site.sb || {};
 
@@ -955,8 +955,8 @@
       pool.forEach(function (r) { out.push(r.it); });
       /* opted-in member profiles matching the current query (loaded live, see lookupMembers) */
       if (q && memberQ === q) memberHits.forEach(function (it) { out.push(it); });
-      /* always offer the Rate-O-Pedia search as the last option — the fallback when a page isn't what you want */
-      if (q) out.push({ label: "Search Rate-O-Pedia for “" + q + "”", href: "/games/?q=" + encodeURIComponent(q), kind: "Search", rop: true });
+      /* always offer the Wiki-Chip Dex search as the last option — the fallback when a page isn't what you want */
+      if (q) out.push({ label: "Search Wiki-Chip Dex for “" + q + "”", href: "/games/?q=" + encodeURIComponent(q), kind: "Search", rop: true });
       return out;
     }
     function draw() {
@@ -969,7 +969,7 @@
         a.addEventListener("mousemove", function () { move(i); });
         listEl.appendChild(a);
       });
-      if (!results.length) listEl.appendChild(el("p", { class: "ch-srch__empty", text: "No pages match. Try the Rate-O-Pedia search." }));
+      if (!results.length) listEl.appendChild(el("p", { class: "ch-srch__empty", text: "No pages match. Try the Wiki-Chip Dex search." }));
       lookupMembers(q);
     }
     function move(i) {
@@ -982,7 +982,7 @@
     }
     function build() {
       if (dlg) return dlg;
-      input = el("input", { type: "search", class: "ch-srch__input", placeholder: "Search pages, or jump to Rate-O-Pedia…", "aria-label": "Search", autocomplete: "off", spellcheck: "false" });
+      input = el("input", { type: "search", class: "ch-srch__input", placeholder: "Search pages, or jump to Wiki-Chip Dex…", "aria-label": "Search", autocomplete: "off", spellcheck: "false" });
       listEl = el("ul", { class: "ch-srch__list", role: "listbox", "aria-label": "Results" });
       var body = el("div", { class: "ch-srch" }, input, listEl);
       dlg = Site.modal({ id: "ch-search", title: "Search", className: "ch-srch__modal", body: body });
