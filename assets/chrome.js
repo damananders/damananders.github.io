@@ -294,7 +294,23 @@
       btn.setAttribute("aria-pressed", String(light));
       btn.title = light ? "Switch to the dark theme" : "Switch to the light theme";
     }
-    btn.addEventListener("click", function () { switchTheme(function () { Site.theme.toggle(); }); sfx("toggle"); });
+    /* Easter egg: hammer the theme button 20× within 10s to flip the whole site to negative colours.
+       Just for fun — it's a persisted toggle; pull off the same spam again to switch it back. */
+    try { if (Site.store.get("negative", false) === true) document.documentElement.classList.add("sx-negative"); } catch (e) {}
+    var themeTaps = [];
+    btn.addEventListener("click", function () {
+      switchTheme(function () { Site.theme.toggle(); }); sfx("toggle");
+      var now = Date.now(); themeTaps.push(now);
+      themeTaps = themeTaps.filter(function (t) { return now - t <= 10000; });
+      if (themeTaps.length >= 20) {
+        themeTaps = [];
+        var on = !document.documentElement.classList.contains("sx-negative");
+        document.documentElement.classList.toggle("sx-negative", on);
+        try { Site.store.set("negative", on); } catch (e) {}
+        try { if (Site.toast) Site.toast(on ? "🙃 Negative colours unlocked — spam the theme button again to undo." : "Colours back to normal.", { type: "ok", ms: 4600 }); } catch (e) {}
+        sfx(on ? "success" : "toggle");
+      }
+    });
     Site.on("pref:theme", sync); sync();
     tools.appendChild(btn);
   }, "chrome:theme");

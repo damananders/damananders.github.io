@@ -608,3 +608,7 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
 @keyframes ch-admin-pulse{70%{box-shadow:0 0 0 9px rgba(47,191,113,0)}100%{box-shadow:0 0 0 0 rgba(47,191,113,0)}}
 [data-motion="reduce"] .ch-admin i{animation:none}
 @media print{.ch-admin{display:none}}
+
+/* Easter egg: negative-colour mode (a true full-page invert), unlocked by hammering the theme
+   button 20× in 10s (see chrome.js). Just for fun. */
+html.sx-negative{filter:invert(1)}
