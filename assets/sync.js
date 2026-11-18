@@ -214,6 +214,56 @@
     });
   }
 
+  /* ---- native DMA account (email + password) sign-in, mirroring /account/ (assets/pages/account.js) ----
+     The heavy signup/verification flow stays on /account/; this is the quick returning-user sign-in that the
+     header dialog leads with. Same Supabase client, same Turnstile captcha the owner wired for accounts. */
+  var CAPTCHA_KEY = (((Site.config || {}).captcha) || {}).turnstile || "";
+  var _capToken = "", _capLoaded = false, _capWidget = null;
+  window.__syCaptcha = function (t) { _capToken = t || ""; };
+  function mountCaptcha(host) {
+    if (!CAPTCHA_KEY || !host) return;
+    host.setAttribute("aria-hidden", "false");
+    function render() { try { if (window.turnstile && host && !host.firstChild) _capWidget = window.turnstile.render(host, { sitekey: CAPTCHA_KEY, callback: window.__syCaptcha }); } catch (e) {} }
+    if (window.turnstile) { render(); return; }
+    if (!_capLoaded) {
+      _capLoaded = true;
+      var s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      s.async = true; s.defer = true; s.onload = render;
+      document.head.appendChild(s);
+    } else { setTimeout(render, 400); }
+  }
+  function resetCaptcha() { _capToken = ""; try { if (window.turnstile && _capWidget != null) window.turnstile.reset(_capWidget); } catch (e) {} }
+  function authError(m) {
+    m = String(m || "");
+    if (/invalid login|invalid credentials/i.test(m)) return "That email or password isn't right.";
+    if (/email not confirmed/i.test(m)) return "Check your inbox and confirm your email first.";
+    if (/captcha/i.test(m)) return "Please complete the captcha and try again.";
+    if (/rate|too many/i.test(m)) return "Too many tries — wait a moment and try again.";
+    return "Couldn't sign in. Please try again.";
+  }
+  function signInPassword(email, pw) {
+    return supaClient().then(function (sb) {
+      if (!sb) return { ok: false, error: "Couldn't reach the server. Try again." };
+      var opts = { email: email, password: pw };
+      if (CAPTCHA_KEY && _capToken) opts.captchaToken = _capToken;
+      return sb.auth.signInWithPassword(opts).then(function (res) {
+        if (res && res.error) return { ok: false, error: authError(res.error.message) };
+        return { ok: true };
+      }, function () { return { ok: false, error: "Couldn't sign in. Try again." }; });
+    });
+  }
+  function sendReset(email) {
+    return supaClient().then(function (sb) {
+      if (!sb) return { ok: false };
+      var opts = { redirectTo: location.origin + "/account/?reset=1" };
+      if (CAPTCHA_KEY && _capToken) opts.captchaToken = _capToken;
+      return sb.auth.resetPasswordForEmail(email, opts).then(function (res) {
+        return { ok: !(res && res.error) };
+      }, function () { return { ok: false }; });
+    });
+  }
+
   Site.sync = { code: code, linked: linked, handle: handle, link: link, unlink: unlink, pull: pull, push: push, pretty: pretty, profile: profileData, fetchProfile: fetchProfile, hasDiscordSession: hasDiscordSession, signInDiscord: signInDiscord, adoptDiscordSession: adoptDiscordSession };
 
   /* A tiny status line used inside the dialog. */
@@ -272,18 +322,72 @@
         body.appendChild(statusEl);
         /* no profile data cached yet (first open, or RPC just went live) — fetch and repaint */
         if (!p) fetchProfile().then(function (np) { if (np && dlgOpen) paint(); });
-      } else {
-        body.appendChild(el("p", { class: "sy-note", text: "Sign in with Discord to carry your profile, trophies and arcade progress across devices. If you're already signed in on Rate-O-Pedia, this picks that up automatically." }));
+      } else if (((((Site.config || {}).features) || {}).accounts) === true) {
+        /* PRIMARY: DMA account (email + password) — the site's recommended way in. Discord is secondary.
+           Account creation + the full verified flow live on /account/ (signup sends a confirmation email). */
+        body.appendChild(el("p", { class: "sy-note", text: "Sign in to carry your profile, trophies and arcade progress across every device. A DMA account is the way in — Discord still works too." }));
 
-        /* primary: Continue with Discord (same sign-in Rate-O-Pedia uses; the session is shared across the site) */
-        var dc = el("button", { type: "button", class: "btn sy-btn sy-btn--discord" }, discordMark(), el("span", { text: "Continue with Discord" }));
+        var emailI = el("input", { type: "email", class: "sy-input", autocomplete: "email", autocapitalize: "off", spellcheck: "false", placeholder: "you@email.com", "aria-label": "Email" });
+        var pwI = el("input", { type: "password", class: "sy-input", autocomplete: "current-password", placeholder: "Password", "aria-label": "Password" });
+        var rememberedEmail = ""; try { rememberedEmail = localStorage.getItem("site.rememberEmail") || ""; } catch (e) {}
+        if (rememberedEmail) emailI.value = rememberedEmail;
+        var remCb = el("input", { type: "checkbox", class: "sy-remember__cb" }); remCb.checked = !!rememberedEmail;
+        var remLabel = el("label", { class: "sy-remember" }, remCb, el("span", { text: "Remember my email on this device" }));
+        var capHost = el("div", { class: "sy-captcha" });
+        var signIn = el("button", { type: "button", class: "btn sy-btn sy-btn--primary", text: "Sign in" });
+        var create = el("a", { class: "sy-authlink", href: "/account/", text: "Create a DMA account →" });
+        var forgot = el("button", { type: "button", class: "sy-authlink sy-authlink--btn", text: "Forgot password?" });
+
+        function doSignIn() {
+          var email = emailI.value.trim(), pw = pwI.value;
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Enter a valid email.", "err"); emailI.focus(); return; }
+          if (!pw) { say("Enter your password.", "err"); pwI.focus(); return; }
+          if (CAPTCHA_KEY && !_capToken) { say("Please complete the captcha first.", "err"); return; }
+          say("Signing in…"); signIn.disabled = true;
+          signInPassword(email, pw).then(function (r) {
+            signIn.disabled = false;
+            if (!r.ok) { say(r.error || "Couldn't sign in.", "err"); resetCaptcha(); return; }
+            try { if (remCb.checked) localStorage.setItem("site.rememberEmail", email); else localStorage.removeItem("site.rememberEmail"); } catch (e) {}
+            Site.sfx("success"); say("Signed in ✓", "ok");
+            adoptDiscordSession().then(function () { fetchProfile().then(function () { if (dlgOpen) paint(); }); });
+          });
+        }
+        signIn.addEventListener("click", doSignIn);
+        pwI.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); doSignIn(); } });
+        forgot.addEventListener("click", function () {
+          var email = emailI.value.trim();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Type your email above first, then tap Forgot password.", "err"); emailI.focus(); return; }
+          if (CAPTCHA_KEY && !_capToken) { say("Please complete the captcha first.", "err"); return; }
+          say("Sending reset email…"); forgot.disabled = true;
+          sendReset(email).then(function (r) { forgot.disabled = false; say(r.ok ? "Check your inbox for a reset link." : "Couldn't send that just now.", r.ok ? "ok" : "err"); if (!r.ok) resetCaptcha(); });
+        });
+
+        body.appendChild(el("div", { class: "sy-authform" }, emailI, pwI, remLabel, capHost, signIn));
+        body.appendChild(el("div", { class: "sy-authrow" }, forgot, create));
+        body.appendChild(statusEl);
+
+        /* SECONDARY: Discord (same shared Supabase session Rate-O-Pedia uses) */
+        body.appendChild(el("div", { class: "sy-or" }, el("span", { text: "or" })));
+        var dc = el("button", { type: "button", class: "btn sy-btn sy-btn--discord sy-btn--secondary" }, discordMark(), el("span", { text: "Continue with Discord" }));
         dc.addEventListener("click", function () {
           say("Opening Discord…"); dc.disabled = true;
-          signInDiscord().then(function (ok) { if (!ok) { dc.disabled = false; say("Couldn't start Discord sign-in. Try the sync code below instead.", "err"); } });
+          signInDiscord().then(function (ok) { if (!ok) { dc.disabled = false; say("Couldn't start Discord sign-in.", "err"); } });
         });
         body.appendChild(dc);
 
-        /* fallback: paste a sync code (for a browser where you can't sign in, e.g. a shared device) */
+        mountCaptcha(capHost);
+        setTimeout(function () { try { (rememberedEmail ? pwI : emailI).focus(); } catch (e) {} }, 60);
+      } else {
+        /* accounts feature OFF — the original Discord + sync-code flow (fallback until native accounts are live) */
+        body.appendChild(el("p", { class: "sy-note", text: "Sign in with Discord to carry your profile, trophies and arcade progress across devices. If you're already signed in on Rate-O-Pedia, this picks that up automatically." }));
+
+        var dc0 = el("button", { type: "button", class: "btn sy-btn sy-btn--discord" }, discordMark(), el("span", { text: "Continue with Discord" }));
+        dc0.addEventListener("click", function () {
+          say("Opening Discord…"); dc0.disabled = true;
+          signInDiscord().then(function (ok) { if (!ok) { dc0.disabled = false; say("Couldn't start Discord sign-in. Try the sync code below instead.", "err"); } });
+        });
+        body.appendChild(dc0);
+
         body.appendChild(el("div", { class: "sy-or" }, el("span", { text: "or paste a sync code" })));
         var input = el("input", { type: "text", class: "sy-input", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "XXXX-XXXX-XXXX-XXXX", "aria-label": "Sync code" });
         input.addEventListener("input", function () {
@@ -309,10 +413,6 @@
         body.appendChild(el("div", { class: "sy-form" }, input, go));
         body.appendChild(statusEl);
         body.appendChild(el("a", { class: "sy-help", href: "/games/", text: "Open Rate-O-Pedia to find your code →" }));
-        /* native DMA Accounts (shown only once the backend is live, i.e. features.accounts is on) */
-        if (((((Site.config || {}).features) || {}).accounts) === true) {
-          body.appendChild(el("a", { class: "sy-help sy-help--dma", href: "/account/", text: "New here? Create a DMA Account →" }));
-        }
         setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
       }
     }
