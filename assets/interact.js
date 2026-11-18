@@ -844,6 +844,6 @@
     load("seasons", 3, "seasons");
     load("sync", 6, "sync");
     /* account settings center — opt-in, loaded only when native accounts are switched on */
-    if (f.accounts === true) load("account-center", 2, "accounts");
+    if (f.accounts === true) load("account-center", 3, "accounts");
   }, "add-on loader");
 })();

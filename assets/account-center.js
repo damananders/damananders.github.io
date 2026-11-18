@@ -89,9 +89,10 @@
     saveQueue = saveQueue.then(function () {
       return rpc("set_my_settings", { p: patch }).then(function (res) {
         var d = res && res.data, err = res && res.error;
-        if (err || (d && d.ok === false)) { flashSaved(false, (d && d.error) || "Couldn't save — try again"); return; }
-        if (d && d.ok) { S = d; mirrorPreview(); flashSaved(true); }
-      }).catch(function () { flashSaved(false, "Couldn't save — check your connection"); });
+        if (err || (d && d.ok === false)) { var m = (d && d.error) || (err && err.message) || "Couldn't save — try again"; flashSaved(false, m); return { ok: false, error: m }; }
+        if (d && d.ok) { S = d; mirrorPreview(); flashSaved(true); return { ok: true }; }
+        return { ok: false, error: "Couldn't save — try again" };
+      }).catch(function () { var m = "Couldn't save — check your connection"; flashSaved(false, m); return { ok: false, error: m }; });
     });
     return saveQueue;
   }
@@ -130,7 +131,7 @@
     { id: "look", label: "Look", icon: "M12 3a9 9 0 1 0 0 18c1 0 1.7-.8 1.7-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7Zm-5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" },
     { id: "privacy", label: "Privacy", icon: "M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Zm0 6a2.5 2.5 0 0 1 2.5 2.5c0 1-.6 1.9-1.5 2.3V15h-2v-2.2a2.5 2.5 0 0 1-1.5-2.3A2.5 2.5 0 0 1 12 8Z" },
     { id: "notify", label: "Alerts", icon: "M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6-1.5-1.8V9.5A5.5 5.5 0 0 0 13 4.1V3.5a1 1 0 1 0-2 0v.6A5.5 5.5 0 0 0 6.5 9.5v4.7L5 16a1 1 0 0 0 .8 1.6h12.4A1 1 0 0 0 19 16Z" },
-    { id: "social", label: "Friends", icon: "M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 2c-3 0-6 1.5-6 4v2h8v-2c0-1 .3-1.9.9-2.7A8.5 8.5 0 0 0 8 13Zm8 0c-.5 0-1 0-1.4.1.9.9 1.4 1.9 1.4 3.2V20h8v-2c0-2.5-3-4-6-4Z" },
+    { id: "social", label: "Buddies", icon: "M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 2c-3 0-6 1.5-6 4v2h8v-2c0-1 .3-1.9.9-2.7A8.5 8.5 0 0 0 8 13Zm8 0c-.5 0-1 0-1.4.1.9.9 1.4 1.9 1.4 3.2V20h8v-2c0-2.5-3-4-6-4Z" },
     { id: "account", label: "Account", icon: "M19.4 13a7.8 7.8 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1l-.4-2.6H9.1l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.4-1-2 3.4L2.6 11a7.8 7.8 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 1.7 1l.4 2.6h5.8l.4-2.6a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.4L19.4 13ZM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z" }
   ];
 
@@ -402,9 +403,9 @@
       });
     paneEl.appendChild(grid);
     paneEl.appendChild(el("div", { class: "ac2-social-cta" },
-      el("a", { class: "btn", href: "/games/buddies/", text: "Open Friends & Messages" }),
+      el("a", { class: "btn", href: "/games/buddies/", text: "Open Buddies & Messages" }),
       el("a", { class: "btn ghost", href: "/games/buddies/?tab=requests", text: "Buddy requests" })));
-    paneEl.appendChild(el("p", { class: "ac2-fine", text: "Conversations, buddy lists and requests all live on the Friends page." }));
+    paneEl.appendChild(el("p", { class: "ac2-fine", text: "Conversations, buddy lists and requests all live on the Buddies page." }));
   }
 
   /* ---------- ACCOUNT & SECURITY ---------- */
@@ -429,7 +430,11 @@
     hbtn.addEventListener("click", function () {
       var v = hi.value.trim(); if (!/^[A-Za-z0-9_]{3,20}$/.test(v)) { hmsg.textContent = "3–20 letters, numbers or _"; hmsg.className = "ac2-fhint is-warn"; return; }
       hbtn.disabled = true; hmsg.textContent = "Saving…"; hmsg.className = "ac2-fhint";
-      save({ handle: v }).then(function () { hbtn.disabled = false; hmsg.textContent = S && S.account && S.account.handle === v ? "Handle updated ✓" : "Handle change requested"; hmsg.className = "ac2-fhint is-ok"; });
+      save({ handle: v }).then(function (r) {
+        hbtn.disabled = false;
+        if (r && r.ok) { hmsg.textContent = (S && S.account && S.account.handle === v) ? "Handle updated ✓" : "Handle change requested"; hmsg.className = "ac2-fhint is-ok"; }
+        else { hmsg.textContent = (r && r.error) || "That handle isn't available"; hmsg.className = "ac2-fhint is-warn"; }
+      });
     });
     var hf = field("Handle", el("div", { class: "ac2-row2" }, hi, hbtn), canChange ? "You can change this once every 30 days." : "You can change your handle again " + Site.fmtDate(addDays(a.handle_claimed_at, 30)) + ".");
     hf.appendChild(hmsg);

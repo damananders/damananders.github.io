@@ -610,8 +610,8 @@
     var vToggle = null, vIco = null, vLabel = null, setClose = null;
     if (hasSettings) {
       settings = makeSettingsRows();
-      setClose = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Back to pages" }, svg(ICON.close));
-      setClose.addEventListener("click", function () { showView("pages"); sfx("close"); try { (wheel.querySelector(".is-current") || nodes[0]).focus(); } catch (e) {} });
+      setClose = el("button", { type: "button", class: "ch-panel__x", "aria-label": "Close settings" }, svg(ICON.close));
+      setClose.addEventListener("click", function () { set(false); sfx("close"); try { btn.focus(); } catch (e) {} });
       var setPanel = el("div", { class: "ch-panel ch-panel--rad", role: "group", "aria-label": "Settings" },
         el("div", { class: "ch-panel__head" }, el("h2", { class: "ch-panel__title", text: "Settings" }), setClose),
         settings.box);
