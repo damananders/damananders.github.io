@@ -1050,21 +1050,45 @@
     });
     if (badges.firstChild && feat("channelBadges")) foot.appendChild(badges);
 
-    /* retro visitor counter: counts once per browser session, hides itself if the counter does not answer */
+    /* Retro visitor counter — self-healing. It caches the last number so a hiccup never blanks it,
+       and prefers the already-live GoatCounter total (reliable) with the abacus counter as a fallback. */
     var cc = (Site.config && Site.config.counter) || {};
-    if (feat("visitorCounter") && cc.provider === "abacus" && /^[\w-]{3,64}$/.test(cc.namespace || "") && /^[\w-]{1,64}$/.test(cc.key || "")) {
-      var counted = false; try { counted = sessionStorage.getItem("ch.counted") === "1"; } catch (e) {}
-      var base = "https://abacus.jasoncameron.dev/" + (counted || Site.owner ? "get" : "hit") + "/" + cc.namespace + "/" + cc.key;
-      Site.fetchJSON(base, { timeout: 5000 }).then(function (j) {
-        var n = j && typeof j.value === "number" ? j.value : null; if (n == null) return;
-        try { sessionStorage.setItem("ch.counted", "1"); } catch (e) {}
-        var digits = String(Math.max(0, Math.floor(n))); while (digits.length < 6) digits = "0" + digits;
+    var gcCode = (Site.config && Site.config.analytics && Site.config.analytics.goatcounter) || "";
+    if (feat("visitorCounter") && (cc.provider === "abacus" || cc.provider === "goatcounter")) {
+      var CKEY = "ch.count";
+      var drawCounter = function (n) {
+        n = Math.max(0, Math.floor(Number(n) || 0));
+        var old = foot.querySelector(".ch-counter"); if (old && old.parentNode) old.parentNode.removeChild(old);
+        var digits = String(n); while (digits.length < 6) digits = "0" + digits;
         var box = el("p", { class: "ch-counter", "aria-label": "Total visitors: " + n });
         box.appendChild(el("span", { class: "ch-counter__label", "aria-hidden": "true", text: "Total Visitors" }));
         var reel = el("span", { class: "ch-counter__reel", "aria-hidden": "true" });
         digits.split("").forEach(function (d) { reel.appendChild(el("i", { text: d })); });
-        box.appendChild(reel); foot.insertBefore(box, stamp);
-      }).catch(function () {});
+        box.appendChild(reel);
+        if (stamp && stamp.parentNode === foot) foot.insertBefore(box, stamp); else foot.appendChild(box);
+      };
+      /* paint the last known value right away, so the counter is never blank while we refresh */
+      try { var cv = parseInt(localStorage.getItem(CKEY) || "", 10); if (isFinite(cv)) drawCounter(cv); } catch (e) {}
+      /* source chain: GoatCounter total first (when chosen), abacus as the fallback; first good number wins */
+      var counted = false; try { counted = sessionStorage.getItem("ch.counted") === "1"; } catch (e) {}
+      var srcs = [];
+      if (cc.provider === "goatcounter" && /^[\w-]{1,64}$/.test(gcCode)) srcs.push({
+        url: "https://" + gcCode + ".goatcounter.com/counter/" + encodeURIComponent(cc.path || "TOTAL") + ".json",
+        pick: function (j) { var v = j && (j.count_unique != null ? j.count_unique : j.count); v = parseInt(String(v == null ? "" : v).replace(/[^\d]/g, ""), 10); return isFinite(v) ? v : null; }
+      });
+      if (/^[\w-]{3,64}$/.test(cc.namespace || "") && /^[\w-]{1,64}$/.test(cc.key || "")) srcs.push({
+        url: "https://abacus.jasoncameron.dev/" + (counted || Site.owner ? "get" : "hit") + "/" + cc.namespace + "/" + cc.key,
+        pick: function (j) { var v = j && (typeof j.value === "number" ? j.value : j.count); if (typeof v === "number") return v; v = parseInt(v, 10); return isFinite(v) ? v : null; }
+      });
+      (function tryNext(i) {
+        if (i >= srcs.length || !Site.fetchJSON) return;
+        Site.fetchJSON(srcs[i].url, { timeout: 5000 }).then(function (j) {
+          var n = srcs[i].pick(j);
+          if (n == null || !isFinite(n)) { tryNext(i + 1); return; }
+          try { sessionStorage.setItem("ch.counted", "1"); localStorage.setItem(CKEY, String(n)); } catch (e) {}
+          drawCounter(n);
+        }).catch(function () { tryNext(i + 1); });
+      })(0);
     }
     foot.appendChild(stamp);
     function render(dateStr) {

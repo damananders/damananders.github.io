@@ -231,9 +231,12 @@ window.SITE_EXTRA = {
     bluesky: "",
   },
 
-  /* ---- Retro visitor counter in the footer. It only counts page opens; no cookies, nothing about the visitor is stored.
-     provider "abacus" uses the free abacus.jasoncameron.dev counter. provider "" hides the counter. ---- */
-  counter: { provider: "abacus", namespace: "damananders-hub", key: "visits" },
+  /* ---- Retro visitor counter in the footer. No cookies, nothing about the visitor is stored.
+     provider "goatcounter" reads the live total from your GoatCounter (reliable, already running) and
+     needs GoatCounter's "Allow public access" / visitor-counter setting on; "path" is the counter path
+     ("TOTAL" = whole site). It falls back to the free abacus.jasoncameron.dev counter (namespace/key) if
+     GoatCounter can't be read, and shows the last cached number so it never blanks. provider "" hides it. ---- */
+  counter: { provider: "goatcounter", path: "TOTAL", namespace: "damananders-hub", key: "visits" },
 
   /* ---- Analytics (privacy friendly, no cookies). Your GoatCounter site code, e.g. "damananders". Blank = off. ---- */
   analytics: { goatcounter: "damananders" },
