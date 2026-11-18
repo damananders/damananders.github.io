@@ -616,6 +616,7 @@ export function titleSearch(req, q) {
 const NOTE_TEXT = {
   reply: (n, who) => n > 1 ? n + " new replies on your thread, latest from " + (who || "someone") : (who || "Someone") + " replied to your thread",
   reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your post",
+  review_reply: (n, who) => n > 1 ? n + " new replies on your review, latest from " + (who || "someone") : (who || "Someone") + " replied to your review",
   review_reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your review",
   follow: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more followed you" : " followed you"),
   list_like: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more liked" : " liked") + " your list",
@@ -623,7 +624,7 @@ const NOTE_TEXT = {
   buddy: (n, who, snip) => (who || "Someone") + " " + (snip || "wants to be buddies"),
   dm: (n, who) => (n > 1 ? n + " new messages from " : "New message from ") + (who || "someone"),
 };
-const NOTE_ICON = { reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥", buddy: "🤝", dm: "✉️" };
+const NOTE_ICON = { reply: "💬", review_reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥", buddy: "🤝", dm: "✉️" };
 let bellTimer = 0;
 export function bell() {
   const count = el("span", { class: "rop-bell__n", hidden: true });
