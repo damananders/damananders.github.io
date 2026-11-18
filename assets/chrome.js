@@ -83,7 +83,7 @@
      isn't listed falls into the last ("More") bucket, so a newly registered row still shows up without a code
      change here. Rows keep their registered order within a section (Site.settings.list() is already sorted). */
   var SETTINGS_GROUPS = [
-    { label: "Appearance", ids: ["theme", "season", "textSize", "contrast", "readFont", "lite", "cursor", "glyphs"] },
+    { label: "Appearance", ids: ["theme", "season", "clock24", "textSize", "contrast", "readFont", "lite", "cursor", "glyphs"] },
     { label: "Sound & motion", ids: ["motion", "sfx", "soundscape", "volume"] },
     { label: "More", ids: [] }
   ];
@@ -344,6 +344,43 @@
   }, "chrome:theme");
 
   /* ------------------------------------------------------------------------------------------------
+     Local-time clock (top-right of every page). Shows the visitor's own local time, HH:MM, 12h by
+     default with a "24-hour clock" settings toggle (stored as `clock24`, broadcast on "site:clock").
+     Updates on the minute (re-aligned after the tab is hidden), never ticks seconds.
+     ------------------------------------------------------------------------------------------------ */
+  Site.ready(function () {
+    if (!feat("clock")) return;
+    var tools = Site.tools(); if (!tools) return;
+    var clock = el("time", { class: "ch-clock", style: { order: "45" }, "aria-label": "Current local time", "aria-live": "off" });
+    function is24() { try { return Site.store.get("clock24", false) === true; } catch (e) { return false; } }
+    function fmt(d) {
+      try { return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: !is24() }); }
+      catch (e) {
+        var hh = d.getHours(), mm = ("0" + d.getMinutes()).slice(-2);
+        if (is24()) return ("0" + hh).slice(-2) + ":" + mm;
+        var ap = hh < 12 ? "AM" : "PM", h = hh % 12 || 12; return h + ":" + mm + " " + ap;
+      }
+    }
+    function tick() {
+      var d = new Date();
+      clock.textContent = fmt(d);
+      try { clock.setAttribute("datetime", d.toISOString()); } catch (e) {}
+      try { clock.title = d.toLocaleDateString([], { weekday: "long", year: "numeric", month: "long", day: "numeric" }); } catch (e) {}
+    }
+    var toMin = 0, every = 0;
+    function schedule() {
+      clearTimeout(toMin); clearInterval(every);
+      tick();
+      toMin = setTimeout(function () { tick(); every = setInterval(tick, 60000); }, 60000 - (Date.now() % 60000) + 20);
+    }
+    /* After the tab was hidden (sleep, background) the minute may have rolled over many times — resync on return. */
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) schedule(); });
+    Site.on("site:clock", schedule);     /* the 24h toggle re-renders the format at once */
+    schedule();
+    tools.appendChild(clock);
+  }, "chrome:clock");
+
+  /* ------------------------------------------------------------------------------------------------
      Settings panel
      ------------------------------------------------------------------------------------------------ */
   Site.ready(function () {
@@ -365,6 +402,14 @@
       get: function () { return Site.reducedMotion; },
       set: function (v) { Site.setPref("motion", v ? "off" : "auto"); },
       disabled: motionForcedByDevice
+    });
+
+    /* 24-hour clock for the header time display. Stored as `clock24`; flipping it re-renders the clock at once. */
+    Site.settings.register({
+      id: "clock24", label: "24-hour clock", type: "toggle", order: 25,
+      hint: function () { return "Show the header clock as 14:30 instead of 2:30 PM."; },
+      get: function () { try { return Site.store.get("clock24", false) === true; } catch (e) { return false; } },
+      set: function (v) { try { Site.store.set("clock24", !!v); } catch (e) {} try { Site.emit("site:clock", !!v); } catch (e) {} }
     });
 
     /* The settings themselves now render inside the radial menu (see "chrome:menu"); this block only
