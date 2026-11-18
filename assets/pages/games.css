@@ -1479,3 +1479,6 @@ body.pt-on .pf-hero__say{border-color:color-mix(in srgb,var(--pt-acc2) 50%,trans
 .gm-chipper small{white-space:normal;font-size:.58rem;line-height:1.2}
 .rop-me__btns > .rop-me__bud{grid-column:1/-1}
 :root[data-page="games"] .wrap > nav{margin-bottom:14px}
+.gm-mustplay__chip{display:inline-grid;width:16px;height:16px;margin-right:4px;vertical-align:-3px;--chip-bg:#1a1405}.gm-mustplay__chip svg{width:16px;height:16px}
+.gm-year{font-weight:500;color:var(--sx-muted);font-size:.85em}
+.gm-blurb{margin:-2px 0 8px;color:var(--sx-muted);font-size:.88rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

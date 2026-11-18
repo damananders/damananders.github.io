@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER } from "./games.common.js?v=24";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo } from "./games.common.js?v=24";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -98,13 +98,22 @@ function card(g, rank, group) {
       artSlot(g.id, g.title, "gm-art"),
       platformLink(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
-      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia" }, el("span", { "aria-hidden": "true", text: "★ " }), "Must Play!") : null,
+      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia · Fromie approved" }, Object.assign(chipSvg(5), { className: "rop-chip__svg gm-mustplay__chip" }), "Must Play!") : null,
       g.open_votes === undefined ? mood : null, g.open_votes === undefined ? el("span", { class: "gm-score", text: score }) : null,
       g.open_votes === undefined ? el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" }) : null),
     g.open_votes === undefined ? null : el("div", { class: "gm-card__scores" }, mood, scorePair(g)),
     altRow(group || [g], g, (x) => c.replaceWith(card(x, rank, group))),
     ratingRow(g), toggle, more);
   c.dataset.id = g.id;
+  // a one-line blurb under the name and "(year)" beside it, from the site's game info (Wikipedia / Wikidata)
+  const blurb = el("p", { class: "gm-blurb", hidden: true });
+  c.querySelector(".gm-card__top").after(blurb);
+  gameInfo(g.id).then((x) => {
+    if (x && x.y) c.querySelector(".gm-title").append(el("span", { class: "gm-year", text: " (" + x.y + ")" }));
+    const d = x && typeof x.d === "string" ? x.d.trim() : "";
+    if (d) { const one = (d.match(/^.{40,220}?[.!?](\s|$)/) || [d.slice(0, 200) + (d.length > 200 ? "…" : "")])[0].trim(); blurb.textContent = one; blurb.title = d.slice(0, 600); blurb.hidden = false; }
+  }, () => {});
+  c._redraw = (x) => { const open = !more.hidden; const n2 = card(x, rank, group); c.replaceWith(n2); if (open) n2.querySelector(".gm-toggle").click(); };
   return c;
 }
 async function load() {
@@ -202,15 +211,24 @@ async function rate(g, stars) {
     : await sb.from("ratings").upsert({ user_id: user.id, game_id: g.id, stars, updated_at: new Date().toISOString() });
   if (res.error) { say("That vote didn't save: " + res.error.message, true); return; }
   if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {} statsChanged();
-  load();
+  if (stars == null) mine.delete(g.id); else mine.set(g.id, stars);
+  refreshCard(g);
   voters();
+}
+/* after a vote only that card updates (new scores, your chip lit); the list order changes on the next load or refresh */
+async function refreshCard(g) {
+  const cols = await scoreCols();
+  const { data } = await sb.from("game_scores").select(cols).eq("id", g.id).maybeSingle();
+  const x = Object.assign({}, g, data || {});
+  document.querySelectorAll("#gm-list .gm-card").forEach((c) => { if (c.dataset.id === g.id && c._redraw) c._redraw(x); });
 }
 
 async function rateGuest(g, stars) {
   say("");
   try { await guestRate(g.id, stars); } catch (e) { say("That vote didn't save: " + e.message, true); return; }
   if (window.Site && Site.sfx) try { Site.sfx("success"); } catch (e) {}
-  load();
+  if (stars == null) mine.delete(g.id); else mine.set(g.id, stars);
+  refreshCard(g);
 }
 /* the top-rated list can rank by either score */
 function rankSwitch(show) {
