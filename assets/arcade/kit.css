@@ -185,6 +185,15 @@
 .ak-panel.is-side.wz-narrow{width:min(25em,100%)}
 .ak-panel.wz-narrow .ak-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
 .ak-panel.wz-narrow .ak-panel__title{font-size:2em}
+/* the Choose-an-Incantation swap popup — a centred, framed panel floating over the prep screen,
+   with the owned incantations as a two-column grid of cards instead of a tall left-hand rail */
+.ak-stage[data-game="wizard-sprint"] .ak-panel.wz-swap{width:min(50em,100%);max-height:90%}
+.ak-panel.wz-swap .ak-panel__title{font-size:2em}
+.ak-panel.wz-swap .ak-panel__items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5em;text-align:left}
+.ak-panel.wz-swap .ak-btn{align-items:stretch}
+.ak-panel.wz-swap .ak-btn.is-owned{border-color:#ffe08a;box-shadow:0 0 0 2px rgba(255,224,138,.35)}
+.ak-panel.wz-swap .ak-btn.is-primary{grid-column:1/-1}
+@media (max-width:620px){.ak-panel.wz-swap .ak-panel__items{grid-template-columns:1fr}}
 .ak-kv .wz-note{grid-column:1/-1;font:500 .82em var(--mono);font-style:normal;color:#8d98a6;margin-top:-.3em}
 
 /* ---- Wizard of the Sprint: carved wood, gilt and parchment on every menu ---- */
