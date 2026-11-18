@@ -194,6 +194,7 @@
   }
   function mlvl(id) { var k = (S.inc[id] || {}).k || 0, m = 0, need = 0; while (m < 10) { need += Math.round(25 * Math.pow(m + 1, 1.5)); if (k < need) break; m++; } return m; }
   function mnext(id) { var m = mlvl(id), need = 0; for (var i = 0; i <= m && i < 10; i++) need += Math.round(25 * Math.pow(i + 1, 1.5)); return m >= 10 ? null : need - ((S.inc[id] || {}).k || 0); }
+  function mfrac(id) { var m = mlvl(id); if (m >= 10) return 1; var span = Math.round(25 * Math.pow(m + 1, 1.5)), rem = mnext(id); return clamp((span - rem) / span, 0, 1); }
   function rollRarity(minR) {
     var f = clamp(calc().hap / 150, 0, 1), w = RAR.map(function (r, i) { return i === 0 ? r.w : r.w + (r.cap - r.w) * f; }), tot = 0, i;
     for (i = 0; i < w.length; i++) tot += w[i];
@@ -713,6 +714,7 @@
   function startRun(g, mode) {
     if (R && !R.over) bankRun();
     var st = calc();
+    S.speed = 0.5;                                        /* every run starts at 100% pace; adjust live with the Run Slower/Faster keys */
     S.ch.forEach(function (c) { if (chDef(c.id).run) c.p = 0; });
     R = { mode: mode, t: 0, dist: 0, y: GY, vy: 0, ground: true, plat: null, jumps: 0, dropT: 0, glide: false, hp: st.hp, maxhp: st.hp, inv: 0, st: st, look: lookOf(false),
       plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], lootCards: [], cds: {},
@@ -1493,7 +1495,13 @@
         var s = it.spell; while (bt.firstChild) bt.removeChild(bt.firstChild);
         bt.appendChild(el("span", { class: "wz-sc__top" }, icoEl("spark"), el("em", { class: "wz-sc__slot", text: "Spell " + s.n })));
         bt.appendChild(el("b", { class: "wz-sc__name", text: s.name }));
-        bt.appendChild(el("span", { class: "wz-sc__sub", text: s.cast + "  ·  Mastery " + s.m }));
+        bt.appendChild(el("span", { class: "wz-sc__sub", text: s.cast }));
+        if (s.frac != null) {
+          var mrow = el("span", { class: "wz-sc__mrow" },
+            el("em", { class: "wz-sc__mlvl", text: s.m >= 10 ? "Mastery MAX" : "Mastery " + s.m }),
+            el("span", { class: "wz-sc__mbar" }, el("i", { style: "width:" + Math.round(s.frac * 100) + "%" })));
+          bt.appendChild(mrow);
+        }
         if (s.swap) bt.appendChild(el("span", { class: "wz-sc__swap", text: "▸ tap to swap" }));
       }
       if (it.shop) {                                      /* an upgrade mini-shop tile with a price tag */
@@ -1583,20 +1591,17 @@
       var idx = items.length, id = S.incEq[slot] || "poof", I = INC[id];
       function turn(d) { var free = owned.filter(function (k) { return S.incEq.indexOf(k) < 0 || S.incEq[slot] === k; }), at = free.indexOf(id); S.incEq[slot] = free[cyc(at < 0 ? 0 : at, d, free.length)]; prep(g, idx); }
       items.push({ pos: [spx + slot * (spw + spgap), spy, spw, sph], cls: "wz-spellcard wz-r" + I.r,
-        spell: { n: slot + 1, name: I.n, cast: I.cast, m: mlvl(id), swap: owned.length > 1 },
+        spell: { n: slot + 1, name: I.n, cast: I.cast, m: mlvl(id), frac: mfrac(id), swap: owned.length > 1 },
         adj: owned.length > 1 ? turn : null, act: function () { if (owned.length > 1) spellPick(g, slot, idx); } });
     })(i);
     items.push({ pos: [335, spy + sph + 14, 416, 44], cls: "wz-spellhelp", ico: "grim", label: "What each spell does", act: function () { incList(g); } });
     /* --- upgrade mini-shop: the buff, and the run pace --- */
     var shy = 376, bid = S.buffEq[0];
     if (bid) { var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], maxed = rk >= 5, bi = items.length;
-      items.push({ pos: [335, shy, 290, 92], cls: "wz-shoptile" + (!maxed && S.orbs >= cost ? " is-hot" : ""),
+      items.push({ pos: [335, shy, 590, 92], cls: "wz-shoptile" + (!maxed && S.orbs >= cost ? " is-hot" : ""),
         shop: { name: "Buff · " + BUFF[bid].n + "  " + pips(rk, 5), sub: maxed ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s", price: maxed ? "MAXED" : "◆ " + cost + " Orbs", no: !maxed && S.orbs < cost },
         act: function () { if (maxed) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
-    } else items.push({ pos: [335, shy, 290, 92], cls: "wz-shoptile", shop: { name: "Buff", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () {} });
-    var pi = items.length;
-    items.push({ pos: [643, shy, 282, 92], cls: "wz-shoptile", shop: { name: "Run Pace · " + pacePct(st.ton) + "%", sub: "‹ slower / faster ›  up to " + paceMax(st.ton) + "%", price: null },
-      adj: function (d) { S.speed = clamp(S.speed + d * 0.1, 0, 1); prep(g, pi); }, act: function () { S.speed = S.speed >= 1 ? 0 : clamp(S.speed + 0.1, 0, 1); prep(g, pi); } });
+    } else items.push({ pos: [335, shy, 590, 92], cls: "wz-shoptile", shop: { name: "Buff", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () {} });
     /* --- start run (and endless once the forest's cleared) --- */
     if (c1) items.push({ pos: [639, 540, 286, 48], cls: "wz-endless", ico: "inf", label: "Endless Forest", act: function () { save(); startRun(g, "endless"); } });
     items.push({ pos: [639, 596, 286, 92], cls: "wz-startbtn", ico: "tree", label: "Start Run", act: function () { save(); startRun(g, "story"); } });
@@ -1638,17 +1643,18 @@
     /* left: name & info */
     var lx = 30, ly = 92, lw = 275, lh = 250;
     plate(ctx, lx, ly, lw, lh, 10);
-    bold(ctx, "The Mad Dash", lx + lw / 2, ly + 30, "800 22px " + SERIF, "#fff3c4", "center");
-    ctx.strokeStyle = "rgba(232,193,90,.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx + 22, ly + 44); ctx.lineTo(lx + lw - 22, ly + 44); ctx.stroke();
-    bold(ctx, S.wiz.name || "The Wizard", lx + lw / 2, ly + 76, "800 20px " + SERIF, "#ffe9b8", "center");
-    bold(ctx, "Wiz Level " + S.lvl, lx + lw / 2, ly + 98, "700 13px " + F.mono, "#dccb9f", "center");
-    D.text(ctx, c1 ? "Run the forest again — about" : "Follow the tracks — about", lx + 20, ly + 136, "600 12px " + F.mono, "#cbbf9f", "left");
-    D.text(ctx, "five minutes, then the boss.", lx + 20, ly + 154, "600 12px " + F.mono, "#cbbf9f", "left");
-    D.text(ctx, "Three challenges run alongside.", lx + 20, ly + 184, "600 12px " + F.mono, "#cbbf9f", "left");
-    D.text(ctx, "Finish one for +100 XP", lx + 20, ly + 206, "700 12px " + F.mono, "#ffe08a", "left");
-    D.text(ctx, "and +25 Remnants.", lx + 20, ly + 224, "700 12px " + F.mono, "#ffe08a", "left");
+    bold(ctx, "The Forest", lx + lw / 2, ly + 28, "800 22px " + SERIF, "#fff3c4", "center");
+    D.text(ctx, "Around the Tower · Level 1", lx + lw / 2, ly + 46, "700 11px " + F.mono, "#e4cf9a", "center");
+    ctx.strokeStyle = "rgba(232,193,90,.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx + 22, ly + 58); ctx.lineTo(lx + lw - 22, ly + 58); ctx.stroke();
+    bold(ctx, S.wiz.name || "The Wizard", lx + lw / 2, ly + 86, "800 19px " + SERIF, "#ffe9b8", "center");
+    bold(ctx, "Wiz Level " + S.lvl, lx + lw / 2, ly + 106, "700 12px " + F.mono, "#dccb9f", "center");
+    D.text(ctx, c1 ? "Run the forest again — about" : "Follow the tracks — about", lx + 20, ly + 140, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "five minutes, then the boss.", lx + 20, ly + 158, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "Three challenges run alongside.", lx + 20, ly + 188, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "Finish one for +100 XP", lx + 20, ly + 208, "700 12px " + F.mono, "#ffe08a", "left");
+    D.text(ctx, "and +25 Remnants.", lx + 20, ly + 226, "700 12px " + F.mono, "#ffe08a", "left");
     /* section labels */
-    bold(ctx, "Your Spells", 335, 112, "800 17px " + SERIF, "#f3e6c4", "left");
+    bold(ctx, "Select Spell", 627, 112, "800 17px " + SERIF, "#f3e6c4", "center");
     bold(ctx, "Upgrades", 335, 366, "800 17px " + SERIF, "#f3e6c4", "left");
     bold(ctx, "Challenges", 958, 86, "800 16px " + SERIF, "#ffe08a", "left");
     /* right: the three challenges, as gilded blue & gold cards */
