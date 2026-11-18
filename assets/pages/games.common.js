@@ -1077,3 +1077,24 @@ function replyItem(x, onGone) {
 /* ---------------- game-info corrections (round 39): the fields members may suggest ---------------- */
 export const INFO_FIELDS = [["d", "Description", "long"], ["y", "Year", "year"], ["dev", "Developer(s)", "list"], ["pub", "Publisher(s)", "list"], ["gn", "Genre(s)", "list"], ["an", "Also known as", "list"]];
 export const infoValue = (v) => v == null ? "" : Array.isArray(v) ? v.join(", ") : String(v);
+
+/* ---------------- Steam card (round 40): a member's linked Steam account, from the public_steam view ---------------- */
+export async function steamRow(handle) {
+  try { const { data, error } = await sb.from("public_steam").select("*").eq("handle", handle).maybeSingle(); return error ? undefined : data; } catch (e) { return undefined; }
+}
+export function steamCard(s, mine) {
+  const url = s.profile_url || "https://steamcommunity.com/profiles/" + s.steam_id;
+  const num = (v, k) => el("div", { class: "pf-ra__n" }, el("b", { text: v == null ? "–" : Number(v).toLocaleString() }), el("span", { text: k }));
+  const top = Array.isArray(s.top) ? s.top : [];
+  return el("section", { class: "pf-card pf-sec pf-steam" },
+    el("h2", { class: "gm-head pf-h", text: "Steam" }),
+    el("a", { class: "pf-ra__who", href: url, target: "_blank", rel: "noopener" },
+      s.avatar ? el("img", { class: "pf-ra__pic", src: s.avatar, alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: (e) => e.target.remove() }) : null,
+      el("span", null, el("b", { text: s.persona || "Steam account" }), el("span", { class: "pf-ra__ok", title: "Linked by signing in through Steam", text: " ✔ linked" }))),
+    s.games == null ? el("p", { class: "gm-note", text: mine ? "Your Steam game details are private, so games and hours can't show. Make them public on Steam, then Refresh on the Linked accounts page." : "Their Steam game list is private." })
+      : el("div", { class: "pf-ra__nums" }, num(s.games, "games"), num(s.hours, "hours played")),
+    top.length ? el("ol", { class: "pf-steam__top" }, ...top.map((g) => el("li", null,
+      el("img", { src: "https://cdn.cloudflare.steamstatic.com/steam/apps/" + encodeURIComponent(g.appid) + "/capsule_184x69.jpg", alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: (e) => e.target.remove() }),
+      el("span", { class: "pf-steam__t", text: g.name }), el("small", { text: Number(g.hours).toLocaleString() + " h" })))) : null,
+    mine ? el("a", { class: "linkbtn", href: "/games/steam/", text: "Manage linked accounts →" }) : null);
+}

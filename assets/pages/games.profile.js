@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText } from "./games.common.js?v=32";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText , steamRow, steamCard } from "./games.common.js?v=33";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -260,6 +260,11 @@ async function render() {
         el("small", { text: label + " · copy" }), el("b", { text: v }));
   }))) : null;
   const raBox = p.ra_user ? raCard(p, mine) : null;
+  const steamBox = el("div", { class: "pf-steamslot", hidden: true });
+  steamRow(p.handle).then((row) => {
+    if (row) { steamBox.replaceWith(steamCard(row, mine)); if (mine) sb.functions.invoke("steam-link", { body: { action: "refresh" } }).catch(() => {}); }
+    else if (row === null && mine) { steamBox.hidden = false; steamBox.append(el("a", { class: "linkbtn", href: "/games/steam/", text: "Link your Steam account →" })); }
+  });
   const aboutBox = p.bio || mine ? el("section", { class: "pf-card pf-sec pf-sec--about" }, el("h2", { class: "gm-head pf-h", text: "About" }),
     p.bio ? el("div", { class: "pf-bio" }, ...p.bio.split(/\n{2,}/).map((para) => el("p", { text: para })))
       : el("p", { class: "gm-note", text: plus ? "Tell people about yourself in Edit profile → About." : "The About box arrives with the next database update." })) : null;
@@ -304,7 +309,7 @@ async function render() {
 
   /* who-they-are cards (about, now playing, tags, RetroAchievements, stats) go in the right-hand column under the
    * account box on wide screens, and stay under the header on narrow ones; see placeSide() */
-  const side = el("div", { class: "pf-side" }, ...[aboutBox, nowBox, statsBox, linkBox, raBox].filter(Boolean));
+  const side = el("div", { class: "pf-side" }, ...[aboutBox, nowBox, statsBox, linkBox, raBox, steamBox].filter(Boolean));
   const budBox = buddiesBox(p, mine);
   const side2 = el("div", { class: "pf-side pf-side--more" }, ...[budBox, heartBox, listsBox, postsBox, revBox].filter(Boolean));
   const rewBox = mine ? rewardsCard() : null;
