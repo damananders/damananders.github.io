@@ -174,7 +174,11 @@ function browse(q) {
   const where = filterName() === "All-time" ? "every game" : filterName();
   const letters = el("div", { class: "gm-az", role: "group", "aria-label": "First letter" });
   const list = el("ol", { class: "gm-blist" });
-  const more = el("button", { class: "btn gm-btn gm-bmore", type: "button", hidden: true, text: "Show more", onclick: () => page(false) });
+  const PAGE = 24;
+  const prev = el("button", { class: "gm-pg__b", type: "button", text: "‹ Prev", onclick: () => { browseFrom = Math.max(0, browseFrom - PAGE); page(true, true); } });
+  const next = el("button", { class: "gm-pg__b", type: "button", text: "Next ›", onclick: () => { browseFrom += PAGE; page(true, true); } });
+  const pgNo = el("span", { class: "gm-pg__n" });
+  const more = el("nav", { class: "gm-pg", "aria-label": "Pages", hidden: true }, prev, pgNo, next);
   const note = el("p", { class: "gm-note", role: "status" });
   const count = el("span", { class: "gm-browse__count" });
   for (const L of ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]) letters.append(el("button", { class: "gm-az__b", type: "button", text: L, "aria-pressed": String(L === browseLetter),
@@ -190,26 +194,28 @@ function browse(q) {
     el("div", { class: "gm-browse__head" },
       el("div", null, el("h2", { class: "gm-head", text: "Browse " + where }), count),
       el("p", { class: "gm-browse__sub", text: "Pick a letter to flip through the shelf. Hover a title for a quick peek." })),
-    el("div", { class: "gm-browse__grid" },
-      el("div", { class: "gm-browse__main" }, letters, list, more, note), sup));
+    sup, el("div", { class: "gm-browse__main" }, letters, list, more, note));
   idsCount().then((n) => { if (n) count.textContent = n.toLocaleString() + (n === 1 ? " game" : " games"); });
   page(true);
   function scoped(req) { const ids = filterIds(); return ids ? (ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids)) : req; }
   async function idsCount() { try { const { count: n } = await scoped(sb.from("game_scores").select("id", { count: "exact", head: true })); return n || 0; } catch (e) { return 0; } }
-  async function page(fresh) {
+  async function page(fresh, jump) {
     let req = scoped(sb.from("game_scores").select(await scoreCols()));
     req = browseLetter === "#" ? req.filter("title", "match", "^[^A-Za-z]") : req.ilike("title", browseLetter + "%");
-    const { data, error } = await req.order("title").range(browseFrom, browseFrom + 59);
+    const { data: rows, error } = await req.order("title").range(browseFrom, browseFrom + PAGE);   // one extra row = "there's a next page"
     if (error) { note.textContent = "Couldn't load that list: " + error.message; return; }
-    if (fresh) list.replaceChildren();
+    const data = (rows || []).slice(0, PAGE), hasNext = (rows || []).length > PAGE;
+    list.replaceChildren();
     for (const g of data || []) list.append(el("li", { class: "gm-brow" },
       el("span", { class: "gm-brow__art" }, artSlot(g.id, g.title, "gm-brow__img"), el("span", { class: "gm-brow__ph", text: g.title.charAt(0) })),
       el("span", { class: "gm-brow__mid" }, hoverCard(el("a", { class: "gm-brow__t", href: gameUrl(g.id), text: g.title }), "game", g.id),
         el("span", { class: "gm-brow__meta" }, consoleChip(g.console),
           g.open_votes === undefined ? el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" }) : scorePair(g, true)))));
-    browseFrom += (data || []).length;
-    more.hidden = (data || []).length < 60;
-    note.textContent = fresh && !(data || []).length ? "No games starting with " + browseLetter + " here." : "";
+    prev.disabled = browseFrom === 0; next.disabled = !hasNext;
+    pgNo.textContent = "Page " + (Math.floor(browseFrom / PAGE) + 1);
+    more.hidden = browseFrom === 0 && !hasNext;
+    note.textContent = !data.length ? "No games starting with " + browseLetter + " here." : "";
+    if (jump) letters.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   let total = 0, rolling = false;
   async function roll() {
