@@ -110,3 +110,20 @@
 .btn.ac-action--danger:hover{border-color:var(--sx-err);color:var(--sx-err)}
 
 .ac-reset{max-width:440px}
+
+/* two-factor */
+.ac-2fa{display:flex;flex-direction:column;gap:9px;padding:15px;border-radius:13px;border:1px solid var(--sx-line-2);background:var(--sx-glass)}
+.ac-2fa h3{margin:0;font:700 1.02rem var(--sx-display);color:var(--sx-text)}
+.ac-2fa .ac-sub{margin:0}
+.ac-2fa__slot{display:flex;flex-direction:column;gap:11px}
+.ac-2fa__on{display:flex;align-items:center;gap:7px;margin:0;color:var(--sx-ok);font-weight:600}
+.ac-2fa__on .ac-tick{width:16px;height:16px;flex:none}
+.ac-2fa__enroll{display:flex;flex-direction:column;gap:10px}
+.ac-2fa__qr{align-self:flex-start;width:168px;height:168px;padding:10px;border-radius:12px;background:#fff;box-sizing:border-box}
+.ac-2fa__qr svg,.ac-2fa__qr img{display:block;width:100%;height:100%}
+.ac-2fa__key{margin:0;font-size:.9rem;color:var(--sx-muted)}
+.ac-2fa__key code{font:600 .95rem var(--sx-mono,monospace);color:var(--sx-text);letter-spacing:.08em;word-break:break-all;background:color-mix(in srgb,var(--sx-text) 8%,transparent);padding:2px 6px;border-radius:6px}
+.ac-2fa__verify{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.ac-2fa__verify .ac-input{flex:1 1 150px}
+.ac-codein{font:600 1.15rem var(--sx-mono,monospace);letter-spacing:.28em;text-align:center}
+.ac-codein::placeholder{letter-spacing:.28em}
