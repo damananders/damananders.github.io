@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Explore — DMA</title>
+<meta name="description" content="A friendly tour of everything you can do on DMA: rate and review games, your account and profile, the projects, the arcade and community, and how to make the site yours." />
+
+<meta name="theme-color" content="#07090b" />
+<meta property="og:title" content="Explore — DMA" />
+<meta property="og:description" content="Everything you can do on DMA: An Enthusiast's Haven — rate games, build a profile, play, hang out, and make the site yours." />
+<meta property="og:image" content="https://damananders.github.io/assets/og/hub.jpg?v=3" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.ico?v=5" sizes="any" />
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/icons/fav-hub.png?v=5" />
+<link rel="preload" href="/assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/fonts/fonts.css" />
+<link rel="stylesheet" href="/assets/hub.css" />
+<link rel="stylesheet" href="/assets/socials.css" />
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","explore");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<style>@view-transition{navigation:auto}</style>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png?v=5" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/interact.css" />
+<link rel="stylesheet" href="/assets/social-live.css" />
+<link rel="stylesheet" href="/assets/pages/pages.css?v=1" />
+<!-- /site:head -->
+<style>
+  /* Explore page: a readable feature tour built on the shared .panel/.pg-grid cards */
+  .ex-card h2{margin:0 0 4px}
+  .ex-lead{color:var(--sx-muted);margin:0 0 12px}
+  .ex-list{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+  .ex-list li{position:relative;padding-left:22px;line-height:1.5}
+  .ex-list li::before{content:"";position:absolute;left:4px;top:.62em;width:7px;height:7px;border-radius:2px;
+    background:var(--ex-c,var(--sx-accent));box-shadow:0 0 10px -2px var(--ex-c,var(--sx-accent))}
+  .ex-list strong{color:var(--sx-text)}
+  .ex-card--games{--ex-c:#36d39a}.ex-card--account{--ex-c:#c77dff}.ex-card--projects{--ex-c:#3d8bff}
+  .ex-card--play{--ex-c:#ffbe3d}.ex-card--yours{--ex-c:#1ec5b3}.ex-card--extras{--ex-c:#ff6076}
+  .ex-note{margin-top:34px;text-align:center;color:var(--sx-muted)}
+  .ex-note a{color:var(--sx-accent)}
+</style>
+</head>
+<body class="photo" style="--bg:url('/assets/anyps-bg.webp')">
+<div class="wrap">
+  <nav>
+    <a class="brand" href="/">&larr; DMA <span>/ explore</span></a>
+    <div class="socials">
+      <a class="social kofi" href="/support/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h12A1.5 1.5 0 0 1 18 6.5V8h.75A3.75 3.75 0 0 1 22.5 11.75v.5A3.75 3.75 0 0 1 18.75 16h-1.02A6.5 6.5 0 0 1 11.5 20h-2A6.5 6.5 0 0 1 3 13.5zM18 10v3.98c.25.01.5.02.75.02A1.75 1.75 0 0 0 20.5 12.25v-.5A1.75 1.75 0 0 0 18.75 10z"/><path fill="#fff" d="M10.5 15.6l-2.9-2.75a1.85 1.85 0 0 1 0-2.65 1.9 1.9 0 0 1 2.65 0l.25.25.25-.25a1.9 1.9 0 0 1 2.65 0 1.85 1.85 0 0 1 0 2.65z"/></svg>Donate</a>
+      <a class="social discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" aria-hidden="true" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>Discord</a>
+      <a class="social twitch" href="https://www.twitch.tv/damananders_ttv" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>Twitch</a>
+    </div>
+  </nav>
+  <header class="hero">
+    <p class="eyebrow" data-reveal>Explore</p>
+    <h1 data-reveal data-reveal-delay="60">What you can do here</h1>
+    <p class="lead" data-reveal data-reveal-delay="120">DMA is DaManAnders' corner of the internet, built around loving games old and new. You don't need an account to look around &mdash; signing up just unlocks the parts where you leave your own mark. Here's the whole place at a glance.</p>
+  </header>
+  <main class="pg-grid">
+
+    <section class="panel pg-card ex-card ex-card--games" data-reveal>
+      <h2>Rate &amp; review games</h2>
+      <p class="ex-lead">Rate-O-Pedia &mdash; the heart of the site. Over 336,000 games across ~75 platforms, from the Atari 2600 to PS5, PC and Switch.</p>
+      <ul class="ex-list">
+        <li><strong>Score any game 0&ndash;5</strong> with chips, not stars &mdash; the &ldquo;Chippers&rdquo; (Poobar, Eskritt, Meepo, Gibby, Perisa, Fromie) in their real mood colours.</li>
+        <li><strong>Write reviews</strong>, read everyone else's, and heart the games you love.</li>
+        <li><strong>Build lists</strong> &mdash; backlog, favourites, top ten &mdash; and compare games side by side.</li>
+        <li><strong>Talk in the forums</strong>, browse by platform, and check the leaderboard.</li>
+        <li><strong>Follow people</strong> and watch a feed of what they're rating and saying.</li>
+        <li><strong>Link your Steam or Battle.net</strong> library to your profile.</li>
+      </ul>
+    </section>
+
+    <section class="panel pg-card ex-card ex-card--account" data-reveal data-reveal-delay="60">
+      <h2>Your account &amp; profile</h2>
+      <p class="ex-lead">One DMA Account works across the whole site, and it's yours to shape.</p>
+      <ul class="ex-list">
+        <li><strong>Sign up / sign in</strong> with a spam check and optional <strong>two-factor (2FA)</strong>.</li>
+        <li><strong>Pick a handle</strong> &mdash; it checks instantly whether it's free and it's yours the moment you save.</li>
+        <li><strong>Customise your look</strong>: live-preview banners, frames and name styles, plus a motto, pronouns, status and bio.</li>
+        <li><strong>Add gamer tags and links</strong> so people can find you.</li>
+        <li><strong>Make buddies, send messages</strong>, follow people, and earn rewards that unlock extra cosmetics.</li>
+        <li><strong>Your sign-in syncs</strong> across your devices. The profile chip is top-right on every page.</li>
+      </ul>
+    </section>
+
+    <section class="panel pg-card ex-card ex-card--projects" data-reveal data-reveal-delay="120">
+      <h2>The projects</h2>
+      <p class="ex-lead">Two big homemade projects, each with its own page.</p>
+      <ul class="ex-list">
+        <li><strong>AnyPS</strong> &mdash; one launcher that plays across every PlayStation generation. Download it (full or lighter 32-bit build), see the screenshot gallery, roadmap and compatibility list.</li>
+        <li><strong>AndersCraft</strong> &mdash; a private <em>World of Warcraft</em> server you can sign up for, with live realm status and a couple of realms (bonus-companions and hardcore).</li>
+      </ul>
+    </section>
+
+    <section class="panel pg-card ex-card ex-card--play" data-reveal data-reveal-delay="60">
+      <h2>Play &amp; hang out</h2>
+      <p class="ex-lead">Quick fun and community, no download required.</p>
+      <ul class="ex-list">
+        <li><strong>Arcade</strong> &mdash; little browser games like <em>Wizard of the Sprint</em> and <em>Supreme Lobbing</em> (which hides a secret mode once you get good).</li>
+        <li><strong>Stream</strong> &mdash; when Anders is live on Twitch, the page embeds the stream and a chat so you can watch without leaving.</li>
+        <li><strong>Discord</strong> &mdash; join &ldquo;Friends of DaManAnders&rdquo;; live member and online counts show in the header too.</li>
+      </ul>
+    </section>
+
+    <section class="panel pg-card ex-card ex-card--yours" data-reveal data-reveal-delay="120">
+      <h2>Make it yours</h2>
+      <p class="ex-lead">Open the settings &mdash; the gear at the top-left, next to the site menu button &mdash; and the site bends to how you like it.</p>
+      <ul class="ex-list">
+        <li><strong>Light or dark theme</strong>, or &ldquo;Follow the Sun&rdquo; so it tracks daylight where you are.</li>
+        <li><strong>Seasonal skins</strong> (classic, fall, winter, spring, summer), each with its own gentle soundscape.</li>
+        <li><strong>A local-time clock</strong> in the top-right, with a 12- or 24-hour switch.</li>
+        <li><strong>Accessibility</strong>: bigger text, higher contrast, a reading font, and a &ldquo;lite&rdquo; mode for slow connections.</li>
+        <li><strong>Reduce motion</strong>, toggle UI sounds, and navigate the whole site <strong>with a controller</strong>.</li>
+        <li><strong>A floating site menu</strong> fans out every page; switch it between a playful floating layout and a tidy grid.</li>
+      </ul>
+    </section>
+
+    <section class="panel pg-card ex-card ex-card--extras" data-reveal data-reveal-delay="60">
+      <h2>Little extras &amp; learning more</h2>
+      <p class="ex-lead">The corners worth poking around.</p>
+      <ul class="ex-list">
+        <li><strong>Trophy Cabinet</strong> &mdash; earn trophies just by exploring and using the site; some are well hidden.</li>
+        <li><strong>Hidden secrets</strong> &mdash; secret words and little easter eggs are tucked around for the curious to find.</li>
+        <li><strong>Now / What's New</strong> &mdash; the landing page shows what Anders is building now; the Changelog lists site updates.</li>
+        <li><strong>Projects, Uses &amp; Résumé</strong> &mdash; the full list of what's being built, the gear behind it, and an interactive CV.</li>
+        <li><strong>Links I Like</strong> &mdash; a hand-picked, community-ranked list of sites worth a look.</li>
+        <li><strong>Support</strong> &mdash; chip in to help keep the projects online, if you'd like.</li>
+      </ul>
+    </section>
+
+  </main>
+  <p class="ex-note">The best way in is still the front door &mdash; start at the <a href="/">search bar or the Rate-O-Pedia banner</a> and wander from there.</p>
+  <footer>
+    <p>Fan projects, made for fun and learning. Non-commercial.</p>
+  </footer>
+</div>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/config.js"></script>
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/interact.js?v=30"></script>
+<script defer src="/assets/audio.js"></script>
+<script defer src="/assets/social-live.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/pages/pages.js?v=4"></script>
+<!-- /site:scripts -->
+</body>
+</html>
