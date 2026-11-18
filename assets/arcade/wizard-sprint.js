@@ -863,6 +863,13 @@
   }
   function dmgOf(id) { return INC[id].dmg * (1 + R.st.pow / 100) * (1 + 0.08 * mlvl(id)); }
   function cdOf(id) { var c = INC[id].cd; if (id === "ward") c = mlvl(id) >= 6 ? 7 : mlvl(id) >= 3 ? 9 : 12; return c / (1 + R.st.flu / 100); }
+  function spellFrac(id) {                                 /* 0..1 charge of a spell, same as the rack wand */
+    var c = R.cds[id] || { t: 0, ch: 0 };
+    if (id === "snaps") return clamp(c.ch / (mlvl(id) >= 6 ? 4 : 3), 0, 1);
+    if (id === "social") return 1;
+    if (id === "ward") return R.ward > 0 ? 1 : 1 - clamp(c.t / cdOf(id), 0, 1);
+    return 1 - clamp(c.t / cdOf(id), 0, 1);
+  }
   function live() { return R.en.filter(function (e) { var sx = e.x - R.dist; return !e.dead && sx > -10 && sx < BW - 6; }); }
   function casting(g, dt) {
     var wx = wxw(), cy = R.y - 20, list = live();
@@ -1271,23 +1278,39 @@
     /* the spell rack: one wand per Incantation */
     var eqd = S.incEq.slice(0, incSlots());
     eqd.forEach(function (id, j) {
-      var x = 22 + j * 262, y = H - 78, c = R.cds[id] || { t: 0, ch: 0 }, I = INC[id], f = 1, lab = I.n;
+      var x = 150 + j * 262, y = H - 78, c = R.cds[id] || { t: 0, ch: 0 }, I = INC[id], f = 1, lab = I.n;
       if (id === "snaps") { f = c.ch / (mlvl(id) >= 6 ? 4 : 3); lab += "  " + "●".repeat(c.ch) + "○".repeat(Math.max(0, (mlvl(id) >= 6 ? 4 : 3) - c.ch)); }
       else if (id === "social") f = 1; else if (id === "ward") { f = R.ward > 0 ? 1 : 1 - clamp(c.t / cdOf(id), 0, 1); if (R.ward > 0) lab += "  UP"; } else f = 1 - clamp(c.t / cdOf(id), 0, 1);
       plate(ctx, x, y, 250, 62);
       bold(ctx, lab, x + 12, y + 22, "800 16px " + SERIF, "#fff3c4"); bold(ctx, I.key ? keyName(keysOf("c" + (j + 1))[0]) : "AUTO", x + 238, y + 22, "800 13px " + F.mono, I.key ? "#ffe58a" : "#9ae6b4", "right");
       wand(ctx, x + 14, y + 43, 200, f, RAR[I.r].c === "rb" ? "#ffd84a" : RAR[I.r].c, t + j);
     });
-    if (R.buffT > 0 && R.buff) { plate(ctx, 22, H - 126, 250, 40); bar(ctx, 30, H - 104, 234, 12, R.buffT / R.buffMax, "#7fe3ff"); icoAt(ctx, "wing", 28, H - 126, 1.3); bold(ctx, BUFF[R.buff].n + "  " + R.buffT.toFixed(1) + "s", 54, H - 108, "800 14px " + F.mono, "#c8f6ff"); }
-    if (S.flashOn) {                                      /* Illusion Flash: a round pip bottom-right + a cooldown bar under the wizard */
+    if (R.buffT > 0 && R.buff) { plate(ctx, 150, H - 126, 250, 40); bar(ctx, 158, H - 104, 234, 12, R.buffT / R.buffMax, "#7fe3ff"); icoAt(ctx, "wing", 156, H - 126, 1.3); bold(ctx, BUFF[R.buff].n + "  " + R.buffT.toFixed(1) + "s", 182, H - 108, "800 14px " + F.mono, "#c8f6ff"); }
+    /* equipped weapon badges, bottom-left: main over off, as rarity-bordered rounded squares */
+    [S.eq.main, S.eq.off].forEach(function (it, i2) {
+      if (!it) return;
+      var bx0 = 20, bs = 56, by0 = H - 128 + i2 * 62, rc = RAR[it.r].c === "rb" ? "#ffd84a" : RAR[it.r].c;
+      ctx.fillStyle = "rgba(14,10,8,.82)"; D.rr(ctx, bx0, by0, bs, bs, 12); ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = rc; D.rr(ctx, bx0 + 2, by0 + 2, bs - 4, bs - 4, 10); ctx.stroke();
+      icoAt(ctx, i2 === 0 ? mainIco(it) : offIco(it), bx0 + 8, by0 + 8, 2.5);
+    });
+    /* under the wizard: lead-spell attack charge, with the dodge cooldown directly beneath (no labels) */
+    var lead = eqd[0];
+    if (lead) {
+      var la = clamp(spellFrac(lead), 0, 1), abw = 64, abx = WX * 2 - abw / 2, aby = H - 124;
+      ctx.fillStyle = "rgba(0,0,0,.5)"; D.rr(ctx, abx, aby, abw, 9, 3); ctx.fill();
+      ctx.fillStyle = la >= 0.999 ? "#ffe58a" : "#ffd84a"; D.rr(ctx, abx, aby, Math.max(3, abw * la), 9, 3); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.5)"; ctx.fillRect(abx + 2, aby + 1, Math.max(1, abw * la - 4), 2);
+      if (S.flashOn) {
+        var dready = R.flashCd <= 0, dff = dready ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1), dby = aby + 12;
+        ctx.fillStyle = "rgba(0,0,0,.5)"; D.rr(ctx, abx, dby, abw, 7, 3); ctx.fill();
+        ctx.fillStyle = dready ? "#9ff0c4" : "#7fdcff"; D.rr(ctx, abx, dby, Math.max(3, abw * dff), 7, 3); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.5)"; ctx.fillRect(abx + 2, dby + 1, Math.max(1, abw * dff - 4), 2);
+      }
+    }
+    if (S.flashOn) {                                      /* Illusion Flash: the round pip, bottom-right */
       var rdy = R.flashCd <= 0, ff = rdy ? 1 : 1 - clamp(R.flashCd / FLASHCD, 0, 1);
       abilityPip(ctx, W - 74, H - 78, 30, "flash", "Illusion Flash", rdy ? keyName(keysOf("flash")[0]) + " · dodge" : r1(R.flashCd) + "s", ff, rdy);
-      if (!rdy) {                                          /* under the wizard, the same clock fill as the pip */
-        var bw = 60, bx = WX * 2 - bw / 2, byw = (R.y + 30) * 2;
-        ctx.fillStyle = "rgba(0,0,0,.5)"; D.rr(ctx, bx, byw, bw, 7, 3); ctx.fill();
-        ctx.fillStyle = "#7fdcff"; D.rr(ctx, bx, byw, Math.max(3, bw * ff), 7, 3); ctx.fill();
-        ctx.fillStyle = "rgba(255,255,255,.5)"; ctx.fillRect(bx + 2, byw + 1, Math.max(1, bw * ff - 4), 2);
-      }
     }
     if (R.t < 9 && !(S.cnt.runs > 2)) { ctx.font = "700 18px " + F.display; var hs = keyName(keysOf("jump")[0]) + ": jump, hold to glide   ·   " + keyName(keysOf("drop")[0]) + ": drop down" + (S.flashOn ? "   ·   " + keyName(keysOf("flash")[0]) + ": dodge" : "") + "   ·   " + keyName(keysOf("five")[0]) + ": high five", hw = ctx.measureText(hs).width + 36; plate(ctx, W / 2 - hw / 2, H - 150, hw, 36); bold(ctx, hs, W / 2, H - 126, "700 18px " + F.display, "#fff", "center"); }
     R.fx.forEach(function (f) { if (f.k === "num") bold(ctx, f.s, (f.x - R.dist) * 2, (f.y - f.t * 30) * 2, "800 19px " + F.mono, "#fff", "center"); });
