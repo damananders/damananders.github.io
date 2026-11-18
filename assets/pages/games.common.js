@@ -168,6 +168,7 @@ export async function recheck(btn) {
   else toast("You're in! Rating and posting are unlocked.", "ok");
 }
 const listeners = [];
+let visitLogged = false;
 const FULL = "is_member,name,avatar,handle,display_name,custom_avatar,motto,motto_color,fav_games,banned,created_at";
 export async function loadMe(session, skipVerify) {
   me.user = session ? session.user : null; me.profile = null; me.member = false; me.banned = false; me.admin = false; me.staff = false;
@@ -189,6 +190,7 @@ export async function loadMe(session, skipVerify) {
   if (me.ready) { try { const s = await sb.from("profiles").select("is_staff").eq("id", me.user.id).maybeSingle(); me.staff = !!(s.data && s.data.is_staff) && !me.banned; } catch (e) {} }
   if (me.ready && !me.banned) syncTrophies();
   if (me.ready) loadOpps();
+  if (me.ready && !visitLogged) { visitLogged = true; sb.rpc("log_member_visit", { p_path: location.pathname }).then(() => {}, () => {}); }   // member traffic for the Operation Station (round 43)
   if (!me.banned) emitStats();
   if (me.staff && !staffSent) { staffSent = true; window.ROP_ADMIN = true; try { if (window.Site && Site.emit) Site.emit("rop:admin", true); } catch (e) {} }
   return me;

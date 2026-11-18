@@ -3,11 +3,11 @@
  * action is a database function that refuses anyone who isn't in public.site_admins. Nobody can add themselves to
  * that table from a browser; the owner does it once from the Supabase SQL editor.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=37";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, shortDate, ago, sfx, toast, consoleChip } from "./games.common.js?v=38";
 
 const root = $("op-root");
-const TABS = [["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"], ["visitors", "Visitors"], ["health", "Health"]];
-let tab = TABS.some(([k]) => k === location.hash.slice(1)) ? location.hash.slice(1) : "reports";
+const TABS = [["traffic", "Traffic"], ["reports", "Reports"], ["posts", "Posts"], ["comments", "Comments"], ["reviews", "Reviews"], ["members", "Members"], ["media", "Media"], ["games", "Added games"], ["visitors", "Visitors"], ["health", "Health"]];
+let tab = TABS.some(([k]) => k === location.hash.slice(1)) ? location.hash.slice(1) : "traffic";
 const people = new Map();   // user_id -> profile row (admin can read every profile)
 
 async function loadPeople(ids) {
@@ -73,7 +73,7 @@ function shell() {
 }
 function open() {
   const body = $("op-body"); body.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
-  ({ reports, posts, comments, reviews, members, media, games, visitors, health })[tab](body).catch((e) => body.replaceChildren(el("p", { class: "gm-bad", text: "Couldn't load: " + (e.message || e) })));
+  ({ traffic, reports, posts, comments, reviews, members, media, games, visitors, health })[tab](body).catch((e) => body.replaceChildren(el("p", { class: "gm-bad", text: "Couldn't load: " + (e.message || e) })));
 }
 const refresh = () => { counts(); open(); };
 function row(...kids) { return el("article", { class: "op-row" }, ...kids); }
@@ -299,3 +299,67 @@ async function games(body) {
 /* ---------------- start ---------------- */
 subnav($("rop-tabs"), "");
 onAuth(() => { authPill($("gm-auth"), { okTail: "." }); gate(); });
+
+/* ---------------- traffic (round 43) ----------------
+ * Two sources: GoatCounter (every visitor, anonymous; through the site-stats function, which holds the API token)
+ * and member_visits (signed-in members only, so Verified traffic can be told apart). */
+let tDays = 30;
+const fmtN = (v) => Number(v || 0).toLocaleString();
+const shortDay = (d) => new Date(d + "T12:00:00Z").toLocaleDateString([], { month: "short", day: "numeric" });
+function tiles(list) {
+  return el("div", { class: "op-tiles" }, ...list.map(([k, v, sub]) => el("div", { class: "op-tile" }, el("b", { text: fmtN(v) }), el("span", { text: k }), sub ? el("small", { text: sub }) : null)));
+}
+/* daily bars: series = [[key, label, cls]] stacked side by side per day */
+function bars(rows, series, label) {
+  const max = Math.max(1, ...rows.flatMap((r) => series.map(([k]) => +r[k] || 0)));
+  const chart = el("div", { class: "op-chart", role: "img", "aria-label": label });
+  for (const r of rows) chart.append(el("div", { class: "op-chart__col", title: shortDay(r.day) + ": " + series.map(([k, l]) => l + " " + fmtN(r[k])).join(", ") },
+    el("div", { class: "op-chart__bars" }, ...series.map(([k, , cls]) => el("span", { class: "op-chart__b " + cls, style: "height:" + ((+r[k] || 0) / max) * 100 + "%" }))),
+    rows.length <= 31 ? el("small", { text: new Date(r.day + "T12:00:00Z").getUTCDate() }) : null));
+  return el("div", { class: "op-chartw" }, chart,
+    el("div", { class: "op-legend" }, ...series.map(([, l, cls]) => el("span", null, el("i", { class: "op-chart__b " + cls }), l)),
+      rows.length ? el("span", { class: "gm-note", text: shortDay(rows[0].day) + " to " + shortDay(rows[rows.length - 1].day) }) : null));
+}
+function rank(rows, cols) {
+  const max = Math.max(1, ...rows.map((r) => +r[cols[0][0]] || 0));
+  return el("div", { class: "op-rank" }, ...rows.map((r) => el("div", { class: "op-rank__row" },
+    el("span", { class: "op-rank__k" }, cols.label(r)),
+    el("span", { class: "op-rank__bar" }, el("span", { style: "width:" + ((+r[cols[0][0]] || 0) / max) * 100 + "%" })),
+    el("span", { class: "op-rank__v" }, ...cols.map(([k, l]) => el("span", { text: fmtN(r[k]) + (l ? " " + l : "") }))))));
+}
+const pageLink = (path) => el("a", { href: path, target: "_blank", rel: "noopener", text: path || "/" });
+async function traffic(body) {
+  const range = el("div", { class: "gm-rankby op-range", role: "group", "aria-label": "Time range" }, el("span", { class: "gm-note", text: "Last" }),
+    ...[7, 30, 90].map((d) => el("button", { class: "gm-tab" + (tDays === d ? " is-on" : ""), type: "button", text: d + " days", onclick: () => { tDays = d; open(); } })));
+  const site = el("section", { class: "op-panel" }, el("h3", { class: "op-h", text: "Everyone who visits" }), el("p", { class: "gm-empty", text: "Loading…" }));
+  const mem = el("section", { class: "op-panel" }, el("h3", { class: "op-h", text: "Signed-in members" }), el("p", { class: "gm-empty", text: "Loading…" }));
+  body.replaceChildren(range, site, mem);
+  const [g, m] = await Promise.all([
+    sb.functions.invoke("site-stats", { body: { days: tDays } }).then((r) => r.data || { ok: false, error: (r.error && r.error.message) || "no answer" }, (e) => ({ ok: false, error: String(e) })),
+    sb.rpc("mod_traffic", { p_days: tDays })]);
+  site.lastChild.remove();
+  if (!g.ok) site.append(el("p", { class: "gm-note", text: /GOATCOUNTER_TOKEN/.test(g.error || "") ? "Visitor numbers switch on once the site-stats function has its GoatCounter token (see the setup steps)."
+      : /not found|404|Failed to send|FunctionsFetchError|FunctionsHttpError/i.test(g.error || "") ? "Visitor numbers switch on once the site-stats function is deployed (see the setup steps)." : "GoatCounter: " + g.error }));
+  else {
+    const top = g.daily.reduce((a, b) => (b.visitors > a.visitors ? b : a), { visitors: 0 });
+    site.append(tiles([["Visitors", g.visitors, "unique, last " + g.days + " days"], ["Per day", Math.round(g.visitors / Math.max(1, g.days)), "average"], ["Best day", top.visitors, top.day ? shortDay(top.day) : ""], ["Pages seen", g.pages.length, "different pages"]]),
+      bars(g.daily, [["visitors", "Visitors", "op-c1"]], "Visitors per day"),
+      el("div", { class: "op-cols" },
+        el("div", null, el("h4", { class: "op-h4", text: "Top pages" }), rank(g.pages.slice(0, 15), Object.assign([["visitors", ""]], { label: (r) => pageLink(r.path) }))),
+        el("div", null,
+          el("h4", { class: "op-h4", text: "Where they came from" }), g.refs.length ? rank(g.refs, Object.assign([["visitors", ""]], { label: (r) => el("span", { text: r.name }) })) : el("p", { class: "gm-note", text: "No referrers yet." }),
+          el("h4", { class: "op-h4", text: "Countries" }), g.locations.length ? rank(g.locations, Object.assign([["visitors", ""]], { label: (r) => el("span", { text: r.name }) })) : el("p", { class: "gm-note", text: "No data yet." }),
+          el("h4", { class: "op-h4", text: "Browsers" }), g.browsers.length ? rank(g.browsers, Object.assign([["visitors", ""]], { label: (r) => el("span", { text: r.name }) })) : el("p", { class: "gm-note", text: "No data yet." }))));
+  }
+  mem.lastChild.remove();
+  if (m.error || !m.data || !m.data.totals) { mem.append(el("p", { class: "gm-note", text: !m.error || /mod_traffic|function|schema cache/i.test(m.error.message) ? "Member traffic switches on after 43_traffic_stats.sql is run." : m.error.message })); return; }
+  const t = m.data || {}, daily = t.daily || [], sum = (k) => daily.reduce((n, r) => n + (+r[k] || 0), 0);
+  mem.append(tiles([["Active members", t.totals.members, "signed in, last " + t.days + " days"], ["Verified", t.totals.verified, "of those, Verified"], ["Member page views", t.totals.views], ["New sign-ups", sum("signups")]]),
+    bars(daily, [["members", "Active members", "op-c1"], ["verified", "Verified", "op-c2"]], "Active members per day"),
+    el("h4", { class: "op-h4", text: "What members did" }),
+    tiles([["Votes", sum("ratings")], ["Reviews", sum("reviews")], ["Forum posts", sum("posts")], ["Busy days", daily.filter((r) => (+r.ratings || 0) + (+r.reviews || 0) + (+r.posts || 0) > 0).length, "days with any activity"]]),
+    bars(daily, [["ratings", "Votes", "op-c3"], ["reviews", "Reviews", "op-c2"], ["posts", "Posts", "op-c4"]], "Member activity per day"),
+    el("div", { class: "op-cols" },
+      el("div", null, el("h4", { class: "op-h4", text: "Pages members visit" }), (t.pages || []).length ? rank(t.pages.slice(0, 15), Object.assign([["views", "views"], ["verified", "Verified"]], { label: (r) => pageLink(r.path) })) : el("p", { class: "gm-note", text: "No member visits logged yet. They start counting from now." })),
+      el("div", null, el("h4", { class: "op-h4", text: "Most active members" }), (t.people || []).length ? rank(t.people, Object.assign([["views", "views"], ["days", "days"]], { label: (r) => el("a", { href: profileUrl(r.handle), target: "_blank", rel: "noopener" }, r.name || r.handle, r.verified ? el("span", { class: "op-pill op-pill--ok", text: "Verified" }) : null) })) : el("p", { class: "gm-note", text: "Nobody yet." }))));
+}
