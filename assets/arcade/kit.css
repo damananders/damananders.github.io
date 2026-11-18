@@ -398,6 +398,21 @@
 .wz-prepmap .ak-btn.wz-shortcut:hover,.wz-prepmap .ak-btn.wz-shortcut.is-sel{border-color:#ffe08a;color:#fff3c4}
 .wz-prepmap .ak-btn.wz-shortcut .wz-ico{width:1.25em;height:1.25em;image-rendering:pixelated;flex:0 0 auto}
 .wz-prepmap .ak-btn.wz-shortcut[disabled],.wz-prepmap .ak-btn.wz-shortcut:disabled{opacity:.42;filter:grayscale(.5);cursor:default;border-color:#6a5230}
+/* ---- the tower hub: the spire itself is the menu. No side card — each station is an invisible
+   click target over its spot (the canvas draws the glowing name tag), plus Settings / How-to pips. ---- */
+.ak-stage[data-game="wizard-sprint"] .ak-menu:has(.ak-panel.wz-hubmap){place-items:stretch;padding:0;background:transparent;backdrop-filter:none}
+.ak-panel.wz-hubmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;container-type:size}
+.ak-panel.wz-hubmap .ak-panel__kicker,.ak-panel.wz-hubmap .ak-panel__title,.ak-panel.wz-hubmap .ak-panel__sub{display:none}
+.ak-panel.wz-hubmap .ak-panel__items{position:absolute;inset:0;margin:auto;display:block;gap:0;
+  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:calc(2.35 * min(1cqh, 1cqw * 9 / 16))}
+.wz-hubmap .ak-btn.wz-station{background:none !important;border:0 !important;box-shadow:none !important;min-height:0;padding:0;border-radius:6px;overflow:hidden;text-indent:-9999px;white-space:nowrap;color:transparent;cursor:pointer}
+.wz-hubmap .ak-btn.wz-station:hover,.wz-hubmap .ak-btn.wz-station.is-sel{outline:2px dashed rgba(255,224,138,.6);outline-offset:3px}
+.wz-hubmap .ak-btn.wz-station.is-new{outline:2px solid rgba(255,216,74,.85);outline-offset:3px}
+.wz-hubmap .ak-btn.wz-station[disabled],.wz-hubmap .ak-btn.wz-station:disabled{cursor:default}
+.wz-hubmap .ak-btn.wz-pip{display:flex;align-items:center;justify-content:flex-start;gap:.4em;min-height:0;padding:0 .7em;border-radius:.5em;text-align:left;
+  font:800 .82em var(--wz-serif);color:#f0ddb0;background:linear-gradient(180deg,rgba(40,24,13,.82),rgba(20,11,6,.86));border:2px solid rgba(232,193,90,.5);box-shadow:0 .15em .4em rgba(0,0,0,.45)}
+.wz-hubmap .ak-btn.wz-pip:hover,.wz-hubmap .ak-btn.wz-pip.is-sel{border-color:#ffe08a;color:#fff3c4}
+.wz-hubmap .ak-btn.wz-pip .wz-ico{width:1.2em;height:1.2em;image-rendering:pixelated;flex:0 0 auto}
 /* wizard titles list: earned title wears a gilt rim; locked ones dim with the lock icon */
 .ak-btn.wz-title.is-owned{border-color:#ffe08a;box-shadow:0 0 0 2px rgba(255,224,138,.35)}
 .ak-btn.wz-title.is-owned b{color:#ffe9b8}

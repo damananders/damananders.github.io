@@ -1467,6 +1467,12 @@
         bold(ctx, hs.name, lx, py0 + 17, "800 14px " + F.mono, on ? "#fff3c4" : "#e8d5a8", "center");
         ctx.fillStyle = on ? "#ffe08a" : "rgba(232,193,90,.6)"; ctx.beginPath(); ctx.moveTo(lx - 5, py0 + 24); ctx.lineTo(lx + 5, py0 + 24); ctx.lineTo(lx, py0 + 30); ctx.fill();
       });
+      /* the card is gone, so name the tower here, top-left */
+      var tname = (S.wiz.name || "The Wizard") + "'s Tower";
+      ctx.font = "800 22px " + SERIF; var tw = ctx.measureText(tname).width + 34;
+      plate(ctx, 24, 16, tw, 40, 9);
+      bold(ctx, tname, 24 + tw / 2, 44, "800 22px " + SERIF, "#fff3c4", "center");
+      bold(ctx, "Click a station to open it", 26, 74, "700 12px " + F.mono, "rgba(232,193,90,.8)", "left");
     }
   }
   function hubClick(g, gx, gy) {                          /* a click on the tower picks the station there */
@@ -1743,22 +1749,31 @@
     MN(g, { cls: "is-side is-wide wz-creator", kicker: "The Dressing Chamber", title: "Who Is This Wizard?", sub: "Left and right change a value. All of it is looks only.", body: box, grid: true, items: items, focus: focus });
     if (UI.ageTxt != null) ageCheck();
   }
+  /* The tower IS the menu: each station on the spire is a click target with a floating name tag
+     (drawn on canvas in drawHubScene), and Settings / How To Play sit as corner pips. No big card.
+     `focus` may be an item index or a station/pip key ("prep","equip","condenser","armoire","settings","how"). */
   function hub(g, focus) {
     UI.scene = "hub"; UI.menu = "hub"; Hb.busy = false; Hb.idleT = Math.min(Hb.idleT, 3);
     var c1 = !!S.cleared[1], nwN = S.bag.filter(function (q) { return q.nw; }).length;
-    function go(key, fn) { return function () { goStation(g, key, fn); }; }
     g.setBest(c1 ? "Forest cleared · Wiz Level " + S.lvl : "Wiz Level " + S.lvl);
-    MN(g, { cls: "is-side wz-narrow wz-hub", kicker: "Wizard of the Sprint", title: (S.wiz.name || "The Wizard") + "'s Tower",
-      sub: c1 ? txt("hub1") : txt("hub0"), focus: focus,
-      items: [
-        { label: "Prep Time", ico: "prep", tag: "prep", sub: c1 ? "Plan a Magickal Mad Dash" : "Follow the tracks", cls: "is-primary", act: go("prep", function () { prep(g, 0); }) },
-        { label: "Equipment", ico: "equip", tag: "equip", isNew: nwN ? nwN + " NEW!" : null, sub: nwN ? nwN + " new " + (nwN > 1 ? "items" : "item") + " in the bag" : "Wear or remove your Wizard Drip", cls: S.bag.length ? "is-hot" : "", act: go("equip", function () { equip(g, 0); }) },
-        { label: "Magickal Condenser", ico: c1 ? "condenser" : "lock", tag: c1 ? "condenser" : null, sub: c1 ? "Upgrades and wares for Remnants" : "Locked · clear the forest to open the caravan", disabled: !c1, act: go("condenser", function () { condenser(g, 0); }) },
-        { label: "Wizard Drip Armoire", ico: c1 ? "hat" : "lock", tag: c1 ? "armoire" : null, sub: c1 ? "Comfort wear and your hat" : "Locked · clear the forest to win back your hat", disabled: !c1, act: go("armoire", function () { armoire(g, 0); }) },
-        { label: "Still Locked", ico: "lock", sub: "Mirror of Distortion and Brags (clear 2 levels) · Bookshelf (3) · Incantation Study (4)", disabled: true },
-        { label: "Settings", ico: "gear", sub: "Sound and controls", act: function () { settings(g, 0); } },
-        { label: "How To Play", ico: "scroll", sub: "The short version", act: function () { how(g); } }
-      ] });
+    var items = [], idx = {};
+    function open(key, fn) { Hb.idleT = 0; sfx("buy"); goStation(g, key, fn); }
+    hubHotspots(S.tower || 0).forEach(function (z) {
+      var locked = (z.key === "condenser" || z.key === "armoire") && !c1;
+      idx[z.key] = items.length;
+      items.push({ pos: [(z.x + HOX) * 2, z.y * 2, z.w * 2, z.h * 2], cls: "wz-station" + (z.key === "equip" && nwN ? " is-new" : ""),
+        tag: z.key, label: z.name, disabled: locked,
+        act: function () {
+          if (z.key === "prep") open("prep", function () { prep(g, 0); });
+          else if (z.key === "equip") open("equip", function () { equip(g, 0); });
+          else if (z.key === "condenser") open("condenser", function () { condenser(g, 0); });
+          else if (z.key === "armoire") open("armoire", function () { armoire(g, 0); });
+        } });
+    });
+    idx.settings = items.length; items.push({ pos: [30, 598, 168, 44], cls: "wz-pip", ico: "gear", label: "Settings", act: function () { settings(g, 0); } });
+    idx.how = items.length; items.push({ pos: [30, 650, 168, 44], cls: "wz-pip", ico: "scroll", label: "How To Play", act: function () { how(g); } });
+    var f = typeof focus === "string" ? (idx[focus] != null ? idx[focus] : 0) : (focus || 0);
+    MN(g, { cls: "wz-hubmap", items: items, focus: f });
   }
   /* the dash prep screen: a full-bleed layout — name/info left, challenges right, big spell cards in the
      middle (tap to swap), an upgrade mini-shop, a big red Start Run and an orange-brown back arrow. */
@@ -1911,8 +1926,8 @@
         cls: "wz-card " + (it ? "wz-r" + it.r : "wz-empty") + (fit.length ? " is-hot" : "") + (nn ? " is-new" : ""), act: function () { slotMenu(g, k, 0, i); } }; });
     var nb = S.bag.filter(function (q) { return q.nw; }).length;
     items.push({ label: "Rummage In The Bag", ico: "equip", pos: [340, 650, 360, 48], cls: "wz-equipbtn is-primary" + (nb ? " is-new" : ""), act: function () { bag(g, 0, function () { equip(g, open.length); }); } });
-    items.push({ label: "Back To The Tower", ico: "back", pos: [724, 650, 260, 48], cls: "wz-equipbtn", act: function () { hub(g, 1); } });
-    MN(g, { cls: "wz-equipmap", kicker: "Wizard Drip", title: "Equipment", items: items, focus: focus, back: function () { hub(g, 1); } });
+    items.push({ label: "Back To The Tower", ico: "back", pos: [724, 650, 260, 48], cls: "wz-equipbtn", act: function () { hub(g, "equip"); } });
+    MN(g, { cls: "wz-equipmap", kicker: "Wizard Drip", title: "Equipment", items: items, focus: focus, back: function () { hub(g, "equip"); } });
   }
   function slotMenu(g, k, focus, backF) {
     UI.scene = "bag"; UI.menu = "slot";
@@ -2047,12 +2062,12 @@
   function condenser(g, focus) {
     UI.scene = "hub"; UI.menu = "condenser";
     var left = 1800 - Math.floor(Date.now() / 1000) % 1800;
-    MN(g, { cls: "is-side wz-narrow", kicker: "The caravan out front", title: "Magickal Condenser", body: el("div", { class: "ak-stats" }, tile("Remnants", fmt(S.rem), "to spend"), tile("Bag", S.bag.length + " / " + S.bagCap), tile("Wiz Level", S.lvl)), focus: focus, back: function () { hub(g, 2); },
+    MN(g, { cls: "is-side wz-narrow", kicker: "The caravan out front", title: "Magickal Condenser", body: el("div", { class: "ak-stats" }, tile("Remnants", fmt(S.rem), "to spend"), tile("Bag", S.bag.length + " / " + S.bagCap), tile("Wiz Level", S.lvl)), focus: focus, back: function () { hub(g, "condenser"); },
       items: [
         { label: "Upgrades", ico: "condenser", sub: "Jump, glide and all eight stats", cls: "is-primary", act: function () { upgrades(g, 0); } },
         { label: "Wares", ico: "equip", sub: "New stock in " + Math.floor(left / 60) + ":" + ("0" + left % 60).slice(-2), act: function () { wares(g, 0); } },
         { label: "Sell From The Bag", ico: "coin", sub: S.bag.length + " / " + S.bagCap, act: function () { bag(g, 0, function () { condenser(g, 2); }); } },
-        { label: "Back", act: function () { hub(g, 2); } }
+        { label: "Back", act: function () { hub(g, "condenser"); } }
       ] });
   }
   function upgrades(g, focus) {
@@ -2078,12 +2093,12 @@
   }
   function armoire(g, focus) {
     UI.scene = "hub"; UI.menu = "armoire";
-    MN(g, { cls: "is-side wz-narrow", kicker: "Wizard Drip Armoire", title: "The Armoire", sub: "What you wear around the tower. Runs always show your equipped gear.", focus: focus, back: function () { hub(g, 3); },
+    MN(g, { cls: "is-side wz-narrow", kicker: "Wizard Drip Armoire", title: "The Armoire", sub: "What you wear around the tower. Runs always show your equipped gear.", focus: focus, back: function () { hub(g, "armoire"); },
       items: [
         { label: "Around The Tower: " + (S.comfort ? "Comfort Wear" : "Equipped Gear"), ico: "chest", sub: "Comfort wear is the sleep cap, tunic and skivvies", act: function () { S.comfort = !S.comfort; save(); armoire(g, 0); } },
         { label: "Favorite Hat: " + (S.cos.hatOn ? "On" : "Off"), ico: "hat", sub: "Won back from the Grand Mud Imp. Worn over any headgear.", act: function () { S.cos.hatOn = !S.cos.hatOn; save(); armoire(g, 1); } },
         { label: "Wizard Titles", ico: "scroll", sub: titlesHave() + " of " + TITLES.length + " earned  ·  wearing “" + titleName() + "”", act: function () { titles(g, 0); } },
-        { label: "Back", act: function () { hub(g, 3); } }
+        { label: "Back", act: function () { hub(g, "armoire"); } }
       ] });
   }
   /* pick which earned title rides on the nameplate; locked ones show how to earn them */
@@ -2104,7 +2119,7 @@
   }
   function settings(g, focus) {
     UI.scene = "hub"; UI.menu = "settings";
-    MN(g, { cls: "is-side wz-narrow", kicker: "Wizard of the Sprint", title: "Settings", focus: focus, back: function () {  hub(g, 4); },
+    MN(g, { cls: "is-side wz-narrow", kicker: "Wizard of the Sprint", title: "Settings", focus: focus, back: function () {  hub(g, "settings"); },
       items: [
         { label: "Game Sound: " + (S.snd ? "On" : "Off"), ico: "sound", act: function () { S.snd = !S.snd; save(); sfx("buy"); settings(g, 0); } },
         { label: "Volume: " + Math.round(S.vol * 100) + "%", ico: "sound", sub: "‹  left and right  ›", adj: function (d) { S.vol = clamp(Math.round(S.vol * 10 + d) / 10, 0.1, 1); save(); sfx("rem"); settings(g, 1); }, act: function () { S.vol = S.vol >= 1 ? 0.1 : Math.round(S.vol * 10 + 1) / 10; save(); sfx("rem"); settings(g, 1); } },
@@ -2113,7 +2128,7 @@
         { label: "Controller Controls", ico: "pad", sub: "Rebind any action", act: function () { controls(g, "pad", 0); } },
         { label: "Start Over", ico: "skull", sub: "Erase this wizard and everything they own", act: function () { MN(g, { kicker: "Start over", title: "Erase Everything?", sub: "Your wizard, gear, currencies and progress are deleted on this device, and on your account at the next sync. This can't be undone.",
           items: [{ label: "Keep My Wizard", cls: "is-primary", act: function () { settings(g, 5); } }, { label: "Erase And Start Over", act: function () { var kb = S.binds, pb = S.pad; S = fresh(); S.binds = kb; S.pad = pb; fillCh(); save(); title(g); } }], back: function () { settings(g, 5); } }); } },
-        { label: "Back", act: function () {  hub(g, 4); } }
+        { label: "Back", act: function () {  hub(g, "settings"); } }
       ] });
   }
   function controls(g, kind, focus) {
@@ -2140,7 +2155,7 @@
   }
   function how(g) {
     UI.scene = "hub"; UI.menu = "how";
-    MN(g, { cls: "is-side is-wide", kicker: "Wizard of the Sprint", title: "How To Play", back: function () { hub(g, 5); },
+    MN(g, { cls: "is-side is-wide", kicker: "Wizard of the Sprint", title: "How To Play", back: function () { hub(g, "how"); },
       body: el("div", { class: "ak-panel__body" },
         el("p", { text: "You run on your own. Jump with " + keyName(keysOf("jump")[0]) + " and hold it to glide. Your jump is pitiful at first: it reaches low and middle platforms, and you climb to the high ones from a middle one. " + keyName(keysOf("drop")[0]) + " drops you through a platform." }),
         el("p", { text: "Incantations do the fighting. Magick Poof casts by itself; keyed ones use " + keyName(keysOf("c1")[0]) + ". Kills raise an Incantation's mastery." }),
@@ -2148,7 +2163,7 @@
         el("p", { text: "Illusion Flash (" + keyName(keysOf("flash")[0]) + ") blinks you out for about half a second, long enough to dodge a hit. It then needs a few seconds to recharge. Turn it off in Settings if you'd rather not have it." }),
         el("p", { text: "Remnants buy upgrades. A Whisper Orb fires your buff for 10 seconds. Grimoires are rare, and 10 of them buy a revive. Enemies sometimes drop Wizard Drip: wear it from Equipment." }),
         el("p", { text: "Press " + keyName(keysOf("five")[0]) + " as you pass a friendly for a high five. Clear the forest's boss to unlock the Condenser, the Armoire and Endless mode." })),
-      items: [{ label: "Back", cls: "is-primary", act: function () { hub(g, 5); } }] });
+      items: [{ label: "Back", cls: "is-primary", act: function () { hub(g, "how"); } }] });
   }
   function conflict(g) {
     var c = store.get(SKEY + ".conflict", null); if (!c) return false;
