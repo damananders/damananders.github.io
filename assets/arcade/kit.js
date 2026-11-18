@@ -432,7 +432,9 @@
     tile.querySelector(".ak-tile__body").appendChild(adminBtn);
     adminBtn.addEventListener("click", function () { if (window.Site && Site.hatch && typeof Site.hatch.open === "function") Site.hatch.open({ page: "arcade", game: def.id, title: def.name }); });
     g.syncAdmin = function () {
-      var ok = !!(window.Site && Site.hatch && Site.hatch.canEdit && Site.hatch.canEdit() && Site.hatch.has && Site.hatch.has(def.id));
+      /* Show on every card for a signed-in owner (with the scoped-open API). Games with no editors
+         yet open to the hatch's "nothing wired up yet" message — a visible placeholder on each card. */
+      var ok = !!(window.Site && Site.hatch && Site.hatch.canEdit && Site.hatch.canEdit() && typeof Site.hatch.open === "function");
       adminBtn.hidden = !ok;
     };
     g.syncAdmin();
