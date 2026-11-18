@@ -173,6 +173,12 @@
 .ac2-count b{font:800 1.4rem/1 var(--sx-display);color:var(--sx-text)}
 .ac2-count span{font-size:.72rem;letter-spacing:.03em;text-transform:uppercase;color:var(--sx-muted)}
 .ac2-social-cta{display:flex;flex-wrap:wrap;gap:10px}
+/* The shared .btn (hub.css) hardcodes near-black text regardless of accent; pin the account-center
+   buttons to the correct per-theme contrast pair so they stay legible on every page. */
+.ac2-modal .btn{color:var(--sx-on-accent,#06090c);background:var(--sx-accent)}
+.ac2-modal .btn.ghost{color:var(--sx-text);background:transparent;border:1px solid var(--sx-line-2)}
+.ac2-modal .btn.ghost:hover{border-color:var(--sx-accent);background:color-mix(in srgb,var(--sx-accent) 8%,transparent)}
+.ac2-social-cta .btn{flex:1 1 180px}
 
 /* account facts */
 .ac2-facts{display:flex;flex-wrap:wrap;gap:8px}
