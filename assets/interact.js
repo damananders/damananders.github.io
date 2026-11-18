@@ -17,6 +17,20 @@
   var features = (Site.config && Site.config.features) || {};
   var finePointer = window.matchMedia ? matchMedia("(hover: hover) and (pointer: fine)") : { matches: false };
 
+  /* Maintenance Hatch early stub — hatch.js loads async (via the add-on loader below), so a page's
+     editable regions can call Site.hatch.register() before it arrives (e.g. the arcade panels). This
+     synchronous stub (interact.js runs before any async module) queues those registrations; hatch.js
+     drains the queue when it defines the real API, so nothing is lost to the load race. */
+  if (!Site.hatch) {
+    Site.hatch = {
+      _queue: [],
+      _stub: true,
+      register: function (spec) { if (spec && spec.id) Site.hatch._queue.push(spec); return spec; },
+      canEdit: function () { return false; },
+      get: function () { return undefined; }
+    };
+  }
+
   function enabled(name) { return features[name] !== false; }
   function mqListen(mq, fn) { if (mq.addEventListener) mq.addEventListener("change", fn); else if (mq.addListener) mq.addListener(fn); }
   function closest(e, sel) { var t = e && e.target; return t && t.closest ? t.closest(sel) : null; }
@@ -843,8 +857,9 @@
     load("a11y", 2, "a11y");
     load("seasons", 3, "seasons");
     load("sync", 7, "sync");
-    /* whole-site Maintenance Hatch — defines Site.hatch everywhere; edit UI is admin-gated inside */
-    load("hatch", 1, "hatch");
+    /* whole-site Maintenance Hatch — defines Site.hatch everywhere; edit UI is admin-gated inside.
+       v2: hatch.js now drains the early-register queue set up at the top of this file. */
+    load("hatch", 2, "hatch");
     /* account settings center — opt-in, loaded only when native accounts are switched on */
     if (f.accounts === true) load("account-center", 5, "accounts");
   }, "add-on loader");

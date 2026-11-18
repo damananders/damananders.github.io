@@ -173,7 +173,11 @@
   }
 
   /* ---------- boot ---------- */
+  /* Drain any registrations queued against the early stub (interact.js) before this file loaded,
+     then replace the stub with the real API. Queued specs register as if they had arrived now. */
+  var early = (Site.hatch && Site.hatch._stub && Site.hatch._queue) || [];
   Site.hatch = { register: register, canEdit: canEdit, get: valueOf };
+  for (var qi = 0; qi < early.length; qi++) { try { register(early[qi]); } catch (e) {} }
   try { Site.emit && Site.emit("hatch:ready"); } catch (e) {}
   (Site.ready || function (fn) { fn(); })(function () {
     fetchAll().then(function () { hydrateAll(); if (canEdit()) ensureFab(); });
