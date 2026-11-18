@@ -1642,3 +1642,13 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 :root[data-theme="light"] .rop-fmt__b{background:#fff;color:#223}
 :root[data-theme="light"] .rop-spoil{background:#cfd6d2}
 :root[data-theme="light"] .rop-fmt__pop{background:#fff}
+
+/* ---- card "expand to full page" button + full reviews on the game page ---- */
+.gm-expand{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:8px;color:var(--rop-hi,#7ef0c0);border:1px solid color-mix(in srgb,var(--rop,#36d39a) 35%,transparent);background:rgba(0,0,0,.25);transition:background .12s,transform .12s}
+.gm-expand svg{width:15px;height:15px}
+.gm-expand:hover{background:color-mix(in srgb,var(--rop,#36d39a) 18%,transparent);transform:scale(1.06)}
+.gm-expand:focus-visible{outline:2px solid var(--rop,#36d39a);outline-offset:2px}
+.gm-card__top .gm-expand{margin-left:auto}
+.gm-card__top .gm-mustplay{margin-left:auto}
+.gm-card__top .gm-mustplay ~ .gm-expand{margin-left:0}
+.gi-reviews .gi-revlist{margin-top:6px}

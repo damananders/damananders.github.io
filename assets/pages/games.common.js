@@ -883,3 +883,97 @@ export function fmtBar(ta) {
     b("Spoiler", "Hide a spoiler (readers click to show it)", () => wrap("||", "||", "spoiler"), "rop-fmt__b--sp"),
     el("span", { class: "rop-fmt__emw" }, emb, pop));
 }
+
+/* ---------------- reviews ---------------- */
+/* Your own review shows in the list like everyone else's, with an "Edit review" button. Editing turns that same
+   review into the text box in place (one box only); Save replaces the posted text. The write box only appears when
+   you haven't reviewed the game yet. */
+export async function reviewsPanel(g, box, opts = {}) {
+  const user = me.user, member = me.member, reviews = (g2, b2) => reviewsPanel(g2, b2, opts);
+  box.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
+  const { data } = await sortReviews(sb.from("public_reviews").select("*").eq("game_id", g.id), reviewSort()).limit(opts.limit || 20);
+  box.replaceChildren();
+  if ((data || []).length > 1) box.append(el("div", { class: "gm-review__bar" }, el("span", { class: "gm-note", text: data.length + (data.length >= (opts.limit || 20) ? "+" : "") + " reviews" }), reviewSortPicker(() => reviews(g, box))));
+  const rx = await myReactions((data || []).map((r) => r.id));
+  const myHandle = me.profile && me.profile.handle;
+  let mineShown = false;
+  for (const r of data || []) {
+    const isMine = !!(myHandle && r.handle === myHandle);
+    if (isMine) mineShown = true;
+    const when = el("time", { class: "gm-review__when", datetime: r.created_at, "data-when": r.created_at, text: fmtWhen(r.created_at) });
+    const head = el("header", { class: "gm-review__head" }, avatar(r.avatar, r.name, 32), el("span", { class: "gm-review__who" }, nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null, when),
+      r.stars != null ? el("span", { class: "gm-review__mood rop-chip--" + r.stars, title: r.stars + " / 5 · " + CHIP_WORD[r.stars] }, chipSvg(r.stars), el("b", { text: String(r.stars) })) : null);
+    const body = el("div", { class: "gm-review__body" }, richText(r.body));
+    const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") + (isMine ? " gm-review--mine" : "") }, head, body, reactBar(r, rx.get(r.id)));
+    if (isMine && member) art.append(rvEditTools(g, box, art, body, r));
+    else if (r.id != null && !isMine) art.append(reportBtn("review", r.id));
+    box.append(art);
+  }
+  if (!(data || []).length) box.append(el("p", { class: "gm-empty", text: "No reviews yet." }));
+  rvWriteBox(g, box, mineShown, opts);
+}
+
+/* "Edit review" on your own posted review: the posted text becomes the editable box right there */
+function rvEditTools(g, box, art, body, r) {
+  const bar = el("div", { class: "gm-review__mine" });
+  const note = el("span", { class: "gm-note", role: "status" });
+  const edit = el("button", { class: "rop-me__btn gm-review__edit", type: "button", text: "Edit review", onclick: start });
+  bar.append(edit, note);
+  function start() {
+    const ta = el("textarea", { class: "gm-ta gm-review__ta", maxlength: "1000", rows: String(Math.min(12, Math.max(3, r.body.split("\n").length + 1))), "aria-label": "Edit your review of " + g.title });
+    ta.value = r.body;
+    const count = el("span", { class: "gm-write__count", text: ta.value.length + " / 1000" });
+    ta.addEventListener("input", () => { count.textContent = ta.value.length + " / 1000"; });
+    const save = el("button", { class: "btn gm-btn", type: "button", text: "Save changes", onclick: async () => {
+      const v = ta.value.trim(); if (v.length < 3) { note.textContent = "Write a little more first."; return; }
+      save.disabled = true;
+      const { error } = await sb.rpc("edit_my_review", { p_game: g.id, p_body: v });
+      save.disabled = false;
+      if (error) { note.textContent = /edit_my_review|function|schema cache/i.test(error.message) ? "Editing needs the latest database update." : "That didn't save: " + error.message; return; }
+      r.body = v; body.replaceChildren(richText(v)); tb.remove(); ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = "Saved.";
+      sfx("success");
+    } });
+    const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { tb.remove(); ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = ""; } });
+    const tb = fmtBar(ta);
+    body.replaceWith(tb, ta); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    note.textContent = "";
+    bar.replaceChildren(save, cancel, count, note);
+  }
+  return bar;
+}
+
+/* The write box: only when you haven't reviewed this game yet */
+async function rvWriteBox(g, box, mineShown, opts) {
+  const user = me.user, member = me.member, reviews = (g2, b2) => reviewsPanel(g2, b2, opts);
+  if (!user) { box.append(el("p", { class: "gm-note", text: "Sign in to write a review." })); return; }
+  if (!member) { box.append(el("p", { class: "gm-note", text: "Verified members can write reviews." })); return; }
+  if (mineShown) return;
+  const r = await sb.rpc("my_review", { p_game: g.id });
+  if (!r.error && r.data && r.data.length) {        // you have one, but it isn't in the list (hidden by a moderator)
+    box.append(el("p", { class: "gm-note", text: r.data[0].hidden ? "Your review of this game is hidden by a moderator." : "You've already reviewed this game." }));
+    return;
+  }
+  const wrap = el("div", { class: "gm-write" });
+  const note = el("p", { class: "gm-note", role: "status" });
+  const ta = el("textarea", { class: "gm-ta", maxlength: "1000", rows: "3", placeholder: "A few words about this game. Shift+Enter or Enter starts a new line.", "aria-label": "Your review of " + g.title });
+  const count = el("span", { class: "gm-write__count", text: "0 / 1000" });
+  ta.addEventListener("input", () => { count.textContent = ta.value.length + " / 1000"; });
+  const send = el("button", { class: "btn gm-btn", type: "button", text: "Send review", onclick: async () => {
+    const body = ta.value.trim(); if (body.length < 3) { note.textContent = "Write a little more first."; return; }
+    send.disabled = true;
+    const { error } = await sb.from("reviews").insert({ user_id: user.id, game_id: g.id, body });
+    send.disabled = false;
+    if (error) {
+      if (error.code === "23505") { note.textContent = "You've already reviewed this game."; reviews(g, box); return; }
+      note.textContent = "That didn't send: " + error.message; return;
+    }
+    sfx("success"); statsChanged();
+    if (opts.onPosted) opts.onPosted(g);
+    reviews(g, box);
+  } });
+  wrap.append(el("p", { class: "gm-write__h", text: "Write a review" }), fmtBar(ta), ta, el("div", { class: "gm-write__bar" }, send, count), note);
+  box.append(wrap);
+}
+
+/* re-draw shown times when the 12h / 24h switch changes */
+window.addEventListener("site:clock", () => document.querySelectorAll("time[data-when]").forEach((t) => { t.textContent = fmtWhen(t.dataset.when); }));
