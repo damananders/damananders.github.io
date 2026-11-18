@@ -94,6 +94,8 @@
 
   /* ---------- admin UI ---------- */
   var WRENCH = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M21.7 5.6a.6.6 0 0 0-1-.3l-2.3 2.3-2-2L18.7 3.3a.6.6 0 0 0-.3-1A5 5 0 0 0 12 8.2L3.3 16.9a2 2 0 1 0 2.8 2.8L14.8 11a5 5 0 0 0 6.9-5.4ZM5.5 19a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>';
+  var CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  var onKey = null;
   function ensureFab() {
     if (fab || !canEdit()) return;
     if (!regs.some(function (r) { return r.page === PAGE; })) return;
@@ -102,40 +104,51 @@
     doc.body.appendChild(fab);
   }
   function togglePanel() { if (panel) closePanel(); else openPanel(); }
-  function closePanel() { if (panel) { panel.remove(); panel = null; } }
+  function closePanel() {
+    if (onKey) { doc.removeEventListener("keydown", onKey); onKey = null; }
+    if (panel) { panel.remove(); panel = null; }
+  }
   function openPanel() {
     var mine = regs.filter(function (r) { return r.page === PAGE; });
-    panel = el("div", { class: "ht-panel", role: "dialog", "aria-label": "Maintenance Hatch" });
+    panel = el("div", { class: "ht-panel", role: "dialog", "aria-modal": "true", "aria-label": "Maintenance Hatch" });
+    var inner = el("div", { class: "ht-inner" });
     var head = el("div", { class: "ht-head" }, [el("strong", { text: "Maintenance Hatch" }), el("button", { class: "ht-x", type: "button", "aria-label": "Close", html: "&times;" })]);
     head.querySelector(".ht-x").addEventListener("click", closePanel);
-    panel.appendChild(head);
-    if (!adminToken()) {
-      panel.appendChild(signInBox());
-    }
+    inner.appendChild(head);
+    if (!adminToken()) inner.appendChild(signInBox());
     var list = el("div", { class: "ht-list" });
-    mine.forEach(function (reg) {
-      var row = el("button", { class: "ht-item", type: "button", text: reg.label || reg.id });
-      row.addEventListener("click", function () { openEditor(reg); });
-      list.appendChild(row);
-    });
+    mine.forEach(function (reg) { list.appendChild(buildCat(reg)); });
     if (!mine.length) list.appendChild(el("p", { class: "ht-empty", text: "Nothing on this page is wired for editing yet." }));
-    panel.appendChild(list);
+    inner.appendChild(list);
+    panel.appendChild(inner);
     doc.body.appendChild(panel);
+    onKey = function (e) { if (e.key === "Escape") closePanel(); };
+    doc.addEventListener("keydown", onKey);
   }
-  function openEditor(reg) {
-    var card = el("div", { class: "ht-editor" });
-    var back = el("button", { class: "ht-back", type: "button", html: "&larr; Back" });
-    card.appendChild(el("div", { class: "ht-head" }, [back, el("strong", { text: reg.label || reg.id })]));
-    var pane = el("div", { class: "ht-pane" });
-    var status = el("p", { class: "ht-status", role: "status" });
-    var api = apiFor(reg, status);
-    try { reg.render(pane, api); } catch (e) { pane.appendChild(el("p", { class: "ht-empty", text: "This editor failed to load." })); }
-    card.appendChild(pane);
-    var foot = el("div", { class: "ht-foot" }, [status, el("button", { class: "btn ht-save", type: "button", text: "Save" })]);
-    foot.querySelector(".ht-save").addEventListener("click", function () { api.save(); });
-    card.appendChild(foot);
-    back.addEventListener("click", function () { closePanel(); openPanel(); });
-    panel.innerHTML = ""; panel.appendChild(card);
+  // One collapsible category per registered editor. Collapsed by default; the editor
+  // (and any lazy-loaded script it pulls) is rendered the first time it's expanded.
+  function buildCat(reg) {
+    var cat = el("div", { class: "ht-cat" });
+    var head = el("button", { class: "ht-cat-head", type: "button", "aria-expanded": "false" },
+      [el("span", { class: "ht-cat-label", text: reg.label || reg.id }), el("span", { class: "ht-chev", "aria-hidden": "true", html: CHEV })]);
+    var body = el("div", { class: "ht-cat-body" });
+    var built = false;
+    head.addEventListener("click", function () {
+      var open = cat.classList.toggle("is-open");
+      head.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open && !built) {
+        built = true;
+        var pane = el("div", { class: "ht-pane" });
+        var status = el("p", { class: "ht-status", role: "status" });
+        var api = apiFor(reg, status);
+        try { reg.render(pane, api); } catch (e) { pane.appendChild(el("p", { class: "ht-empty", text: "This editor failed to load." })); }
+        var foot = el("div", { class: "ht-foot" }, [status, el("button", { class: "btn ht-save", type: "button", text: "Save" })]);
+        foot.querySelector(".ht-save").addEventListener("click", function () { api.save(); });
+        body.appendChild(pane); body.appendChild(foot);
+      }
+    });
+    cat.appendChild(head); cat.appendChild(body);
+    return cat;
   }
   function signInBox() {
     var box = el("div", { class: "ht-signin" });

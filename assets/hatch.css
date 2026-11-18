@@ -6,22 +6,30 @@
 .ht-fab:hover,.ht-fab:focus-visible{transform:translateY(-2px);background:var(--sx-accent);color:var(--sx-on-accent,#0b0d10);outline:none}
 .ht-fab svg{width:23px;height:23px}
 
-.ht-panel{position:fixed;right:18px;bottom:76px;z-index:2147482210;width:min(380px,calc(100vw - 32px));
-  max-height:min(72vh,620px);overflow:auto;display:flex;flex-direction:column;gap:12px;padding:16px;
-  border-radius:16px;border:1px solid var(--sx-line-2,rgba(255,255,255,.12));background:var(--sx-surface,#0c1014);
-  color:var(--sx-text,#eef);box-shadow:0 24px 70px rgba(0,0,0,.55)}
-.ht-head{display:flex;align-items:center;gap:10px}
-.ht-head strong{font:700 1.02rem var(--sx-display,system-ui)}
-.ht-x{margin-left:auto;background:none;border:none;color:var(--sx-muted,#9aa3ad);font-size:1.4rem;line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px}
-.ht-x:hover{color:var(--sx-text,#eef)}
-.ht-back{background:none;border:none;color:var(--sx-accent);font:600 .9rem var(--sx-display,system-ui);cursor:pointer;padding:2px 2px}
-.ht-list{display:flex;flex-direction:column;gap:8px}
-.ht-item{text-align:left;padding:12px 14px;border-radius:12px;cursor:pointer;
-  border:1px solid var(--sx-line-2,rgba(255,255,255,.12));background:var(--sx-glass,rgba(255,255,255,.03));
-  color:var(--sx-text,#eef);font:600 .95rem var(--sx-display,system-ui);transition:border-color .15s ease,background .15s ease}
-.ht-item:hover,.ht-item:focus-visible{border-color:color-mix(in srgb,var(--sx-accent) 50%,transparent);background:color-mix(in srgb,var(--sx-accent) 7%,transparent);outline:none}
+.ht-panel{position:fixed;inset:0;z-index:2147482210;width:100%;height:100%;overflow:auto;
+  background:var(--sx-surface,#0c1014);color:var(--sx-text,#eef);
+  -webkit-overflow-scrolling:touch}
+.ht-inner{max-width:880px;margin:0 auto;padding:0 20px 64px;display:flex;flex-direction:column;gap:14px}
+.ht-head{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:1;
+  padding:16px 0 14px;background:var(--sx-surface,#0c1014);border-bottom:1px solid var(--sx-line,rgba(255,255,255,.08))}
+.ht-head strong{font:700 1.1rem var(--sx-display,system-ui)}
+.ht-x{margin-left:auto;background:none;border:none;color:var(--sx-muted,#9aa3ad);font-size:1.6rem;line-height:1;cursor:pointer;padding:2px 8px;border-radius:8px}
+.ht-x:hover,.ht-x:focus-visible{color:var(--sx-text,#eef);outline:none}
+.ht-list{display:flex;flex-direction:column;gap:10px}
+.ht-cat{border:1px solid var(--sx-line-2,rgba(255,255,255,.12));border-radius:12px;overflow:hidden;
+  background:var(--sx-glass,rgba(255,255,255,.03))}
+.ht-cat-head{width:100%;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;
+  padding:15px 16px;border:none;background:none;color:var(--sx-text,#eef);
+  font:600 1rem var(--sx-display,system-ui)}
+.ht-cat-head:hover,.ht-cat-head:focus-visible{background:color-mix(in srgb,var(--sx-accent) 8%,transparent);outline:none}
+.ht-cat-label{flex:1}
+.ht-chev{display:grid;place-items:center;color:var(--sx-muted,#9aa3ad);transition:transform .18s ease}
+.ht-chev svg{width:18px;height:18px}
+.ht-cat.is-open .ht-chev{transform:rotate(180deg);color:var(--sx-accent)}
+.ht-cat.is-open>.ht-cat-head{border-bottom:1px solid var(--sx-line,rgba(255,255,255,.08))}
+.ht-cat-body{display:none;flex-direction:column;gap:10px;padding:14px 16px 16px}
+.ht-cat.is-open>.ht-cat-body{display:flex}
 .ht-empty{margin:0;color:var(--sx-muted,#9aa3ad);font-size:.9rem}
-.ht-editor{display:flex;flex-direction:column;gap:12px}
 .ht-pane{display:flex;flex-direction:column;gap:10px}
 .ht-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--sx-line,rgba(255,255,255,.08))}
 .btn.ht-save{margin-left:auto}
@@ -33,5 +41,5 @@
 .ht-input{box-sizing:border-box;width:100%;font:500 .95rem var(--sx-display,system-ui);padding:9px 11px;border-radius:9px;
   border:1px solid var(--sx-line-2,rgba(255,255,255,.14));background:var(--sx-glass,rgba(255,255,255,.03));color:var(--sx-text,#eef)}
 .ht-input:focus-visible{outline:none;border-color:var(--sx-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--sx-accent) 22%,transparent)}
-@media (prefers-reduced-motion:reduce){.ht-fab{transition:none}}
+@media (prefers-reduced-motion:reduce){.ht-fab,.ht-chev{transition:none}}
 @media print{.ht-fab,.ht-panel{display:none!important}}
