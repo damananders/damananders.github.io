@@ -164,7 +164,13 @@
   function cnt(k, n) { S.cnt[k] = (S.cnt[k] || 0) + n; }
   function fillCh() {
     S.ch = S.ch.filter(function (c) { return c && chDef(c.id); });
-    while (S.ch.length < 3) { var pool = CH.filter(function (c) { return !S.ch.some(function (a) { return a.id === c.id; }); }); S.ch.push({ id: pick(pool).id, p: 0 }); }
+    while (S.ch.length < 3) { var pool = CH.filter(function (c) { return !S.ch.some(function (a) { return a.id === c.id; }); }); S.ch.push({ id: pick(pool).id, p: 0, done: false }); }
+  }
+  /* a fresh set of 3 challenges for the next run; the three assigned are the only ones that run, then they reroll */
+  function rollChals() {
+    var pool = CH.slice(), out = [];
+    while (out.length < 3 && pool.length) { var c = pick(pool); out.push({ id: c.id, p: 0, done: false }); pool.splice(pool.indexOf(c), 1); }
+    S.ch = out;
   }
 
   /* ---------------- stats, levels, items ---------------- */
@@ -706,16 +712,17 @@
   function say(s, at, dur) { R.bub = R.bub.filter(function (q) { return (q.at || null) !== (at || null); }); R.bub.push({ s: s, at: at || null, t: dur || 2.2 }); }
   function chEv(ev, n) {
     for (var i = 0; i < S.ch.length; i++) {
-      var c = S.ch[i], d = chDef(c.id); if (d.ev !== ev) continue;
+      var c = S.ch[i], d = chDef(c.id); if (d.ev !== ev || c.done) continue;
       c.p += n;
-      if (c.p >= d.need) { R.xp += 100; R.rem += 25; G.toast("Challenge done: " + d.n + "  (+100 XP, +25 Remnants)", "gold"); sfx("ch"); cnt("ch", 1); S.ch.splice(i, 1); fillCh(); i--; }
+      /* once per run: the three assigned stay put and mark done when met, no mid-run refill; the reward is scaled up to match */
+      if (c.p >= d.need) { c.done = true; R.xp += 200; R.rem += 50; G.toast("Challenge done: " + d.n + "  (+200 XP, +50 Remnants)", "gold"); sfx("ch"); cnt("ch", 1); }
     }
   }
   function startRun(g, mode) {
     if (R && !R.over) bankRun();
     var st = calc();
     S.speed = 0.5;                                        /* every run starts at 100% pace; adjust live with the Run Slower/Faster keys */
-    S.ch.forEach(function (c) { if (chDef(c.id).run) c.p = 0; });
+    S.ch.forEach(function (c) { c.p = 0; c.done = false; });   /* the run's three challenges start fresh */
     R = { mode: mode, t: 0, dist: 0, y: GY, vy: 0, ground: true, plat: null, jumps: 0, dropT: 0, glide: false, hp: st.hp, maxhp: st.hp, inv: 0, st: st, look: lookOf(false),
       plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], lootCards: [], cds: {},
       nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
@@ -968,7 +975,7 @@
     S.rem += R.rem; S.orbs += R.orbs; S.grim += R.grim; cnt("rem", R.rem);
     R.loot.forEach(function (it) { if (S.bag.length < S.bagCap) { it.nw = 1; S.bag.push(it); o.kept++; } else { S.rem += sellPrice(it); o.sold++; } });
     var bk = R.mode === "story" ? "story1" : "endless1"; if (o.m > (S.best[bk] || 0)) S.best[bk] = o.m;
-    addXP(o.xp, G); save(); return o;
+    addXP(o.xp, G); rollChals(); save(); return o;   /* reroll the three challenges for the next run */
   }
   function endRun(win) {
     var g = G, first = win && !S.cleared[1], o = bankRun(), m = o.m, xp = o.xp, l0 = o.l0, sold = o.sold, kept = o.kept, i;
@@ -1630,7 +1637,7 @@
     if (fr > 0) { ctx.fillStyle = "#ffe58a"; D.rr(ctx, bx, by, Math.max(7, bw * fr), 9, 4); ctx.fill(); }
     ctx.font = "600 11px " + F.mono; var ls = wrapLines(ctx, d.d, w - 32);
     for (var li = 0; li < ls.length && li < 3; li++) D.text(ctx, ls[li], x + 16, y + 66 + li * 15, "600 11px " + F.mono, "#d7e2ff", "left");
-    bold(ctx, "+100 XP  ·  +25 Remnants", x + w / 2, y + h - 12, "800 11px " + F.mono, "#ffe08a", "center");
+    bold(ctx, "+200 XP  ·  +50 Remnants", x + w / 2, y + h - 12, "800 11px " + F.mono, "#ffe08a", "center");
   }
   function drawPrepScene(g, ctx) {
     var i, c1 = !!S.cleared[1];
@@ -1650,9 +1657,9 @@
     bold(ctx, "Wiz Level " + S.lvl, lx + lw / 2, ly + 106, "700 12px " + F.mono, "#dccb9f", "center");
     D.text(ctx, c1 ? "Run the forest again — about" : "Follow the tracks — about", lx + 20, ly + 140, "600 12px " + F.mono, "#cbbf9f", "left");
     D.text(ctx, "five minutes, then the boss.", lx + 20, ly + 158, "600 12px " + F.mono, "#cbbf9f", "left");
-    D.text(ctx, "Three challenges run alongside.", lx + 20, ly + 188, "600 12px " + F.mono, "#cbbf9f", "left");
-    D.text(ctx, "Finish one for +100 XP", lx + 20, ly + 208, "700 12px " + F.mono, "#ffe08a", "left");
-    D.text(ctx, "and +25 Remnants.", lx + 20, ly + 226, "700 12px " + F.mono, "#ffe08a", "left");
+    D.text(ctx, "Three challenges, once each", lx + 20, ly + 188, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "per run. Finish one for", lx + 20, ly + 206, "600 12px " + F.mono, "#cbbf9f", "left");
+    D.text(ctx, "+200 XP and +50 Remnants.", lx + 20, ly + 224, "700 12px " + F.mono, "#ffe08a", "left");
     /* section labels */
     bold(ctx, "Select Spell", 627, 112, "800 17px " + SERIF, "#f3e6c4", "center");
     bold(ctx, "Upgrades", 335, 366, "800 17px " + SERIF, "#f3e6c4", "left");
