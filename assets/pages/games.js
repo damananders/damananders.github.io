@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo } from "./games.common.js?v=25";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard } from "./games.common.js?v=26";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -445,6 +445,7 @@ async function voters() {
     const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
     const SHOW = 12, list = el("div", { class: "gm-vlist" });
     rows.forEach((v, i) => {
+      if (i < 3 && rows.length > 3) return;            // the top 3 stand on the podium above
       const place = i + 1, bs = badgesFor(v, ctx);
       const counts = full ? plural(v.votes, "vote") + (v.reviews ? " · " + plural(v.reviews, "review") : "") : plural(v.reviews, "review");
       const stats = [];
@@ -459,7 +460,7 @@ async function voters() {
       list.append(el("details", { class: "gm-vcard" + medalCls + (i >= SHOW ? " gm-vcard--more" : "") },
         el("summary", null,
           place <= 3 ? medal(place) : el("span", { class: "gm-vrank", text: "#" + place }),
-          avatar(v.avatar, v.name, place <= 3 ? 42 : 36, "gm-vav"),
+          hoverCard(avatar(v.avatar, v.name, place <= 3 ? 42 : 36, "gm-vav"), "member", v.handle),
           el("span", { class: "gm-vwho" },
             el("span", { class: "gm-vname" }, v.name, v.staff ? adminTag() : null),
             el("span", { class: "gm-vcount", text: counts })),
@@ -473,9 +474,26 @@ async function voters() {
     });
     const more = rows.length > SHOW ? el("button", { class: "linkbtn gm-vmore", type: "button", text: "Show all " + rows.length, onclick: () => { box.classList.add("gm-voters--all"); more.remove(); } }) : null;
     box.classList.remove("gm-voters--all");
+    // the podium: 2nd · 1st · 3rd, with the gap to the next place
+    const unit = full ? "vote" : "review", val = (v) => full ? v.votes : v.reviews;
+    const step = (i) => { const v = rows[i]; if (!v) return el("div", { class: "gm-pod gm-pod--empty gm-pod--" + (i + 1) }, el("span", { class: "gm-pod__name", text: "Up for grabs" }));
+      return hoverCard(el(v.handle ? "a" : "div", { class: "gm-pod gm-pod--" + (i + 1), href: v.handle ? profileUrl(v.handle) : null },
+        i === 0 ? el("span", { class: "gm-pod__crown", "aria-hidden": "true", html: '<svg viewBox="0 0 24 24"><path d="M3 18 2 7l5.5 4L12 4l4.5 7L22 7l-1 11z" fill="currentColor"/></svg>' }) : null,
+        avatar(v.avatar, v.name, i === 0 ? 64 : 52, "gm-pod__av"),
+        el("span", { class: "gm-pod__name", text: v.name }),
+        el("span", { class: "gm-pod__n", text: plural(val(v), unit) }),
+        el("span", { class: "gm-pod__step" }, el("b", { text: ["1st", "2nd", "3rd"][i] }))), "member", v.handle); };
+    const podium = el("div", { class: "gm-podium" }, step(1), step(0), step(2));
+    const meH = me.profile && me.profile.handle, myI = meH ? rows.findIndex((v) => v.handle === meH) : -1;
+    let chase = null;
+    if (myI >= 3 && rows[2]) { const gap = val(rows[2]) - val(rows[myI]) + 1; chase = "You're #" + (myI + 1) + ". " + plural(gap, "more " + unit) + " puts you on the podium."; }
+    else if (myI >= 0 && myI < 3) { const next = rows[3], gap = next ? val(rows[myI]) - val(next) : null; chase = "You're on the podium at #" + (myI + 1) + "!" + (gap != null ? " #4 is " + plural(gap, unit) + " behind you." : ""); }
+    else if (user && member && rows[2]) chase = "Rate " + plural(val(rows[2]) + 1, "game") + " to reach the podium.";
     box.replaceChildren(
       el("h2", { class: "gm-head", text: "Leaderboard" }),
-      el("p", { class: "gm-note", text: full ? "The Discord members who rate the most. Open a row for their stats and badges." : "The members who've written reviews. Open a row for their stats and badges." }),
+      el("p", { class: "gm-note", text: "The top 3 raters wear gold, silver and bronze medals on their name across the whole site. Every Verified vote counts." }),
+      rows.length > 3 ? podium : null,
+      chase ? el("p", { class: "gm-chase", text: chase }) : null,
       list);
     if (more) box.append(more);
     box.hidden = false;
@@ -492,11 +510,11 @@ async function week() {
     if (a.error || b.error) return;           // database update not run yet: leave the section out
     const col = (title, rows, line, empty) => el("div", { class: "gm-week__col" }, el("h3", { text: title }),
       rows.length ? el("ol", { class: "gm-week__list" }, ...rows.map(line)) : el("p", { class: "gm-note", text: empty }));
-    const gameLine = (tail) => (g) => el("li", null, consoleChip(g.console), el("a", { href: gameUrl(g.id), title: g.title, text: g.title }), el("span", { class: "gm-week__n", text: tail(g) }));
+    const gameLine = (tail) => (g) => el("li", null, consoleChip(g.console), hoverCard(el("a", { href: gameUrl(g.id), text: g.title }), "game", g.id), el("span", { class: "gm-week__n", text: tail(g) }));
     box.replaceChildren(el("h2", { class: "gm-head", text: "This week on Rate-O-Pedia" }), el("div", { class: "gm-week__cols" },
       col("Top rated", a.data || [], gameLine((g) => Number(g.average).toFixed(1) + " · " + g.votes + "v"), "No votes this week yet. Be the first."),
       col("Most reviewed", b.data || [], gameLine((g) => g.reviews + (g.reviews === 1 ? " review" : " reviews")), "No reviews this week yet."),
-      c.error ? null : col("Most active voters", c.data || [], (v) => el("li", null, avatar(v.avatar, v.name, 22), el("a", { href: profileUrl(v.handle), text: v.name }), el("span", { class: "gm-week__n", text: v.votes + " votes" })), "Nobody has voted this week yet.")));
+      c.error ? null : col("Most active voters", c.data || [], (v) => el("li", null, avatar(v.avatar, v.name, 22), hoverCard(el("a", { href: profileUrl(v.handle), text: v.name }), "member", v.handle), el("span", { class: "gm-week__n", text: v.votes + " votes" })), "Nobody has voted this week yet.")));
     box.hidden = false;
   } catch (e) {}
 }

@@ -728,3 +728,64 @@ export function artSlot(id, title, cls) {
   }, () => slot.remove());
   return slot;
 }
+
+/* ---------------- hover cards: a game's cover, blurb and both scores; a member's mini profile ----------------
+   Mouse and keyboard focus only (touch taps just follow the link). One card at a time. */
+let hcEl = null, hcFor = null, hcT = 0;
+const hcCache = new Map();
+function hcHide() { clearTimeout(hcT); if (hcEl) hcEl.remove(); hcEl = null; hcFor = null; }
+function hcPlace(card, a) {
+  const r = a.getBoundingClientRect(), w = card.offsetWidth, h = card.offsetHeight;
+  let x = r.left + r.width / 2 - w / 2, y = r.bottom + 8;
+  x = Math.max(8, Math.min(x, innerWidth - w - 8));
+  if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 8);
+  card.style.left = x + "px"; card.style.top = y + "px";
+}
+export function hoverCard(a, kind, key) {
+  if (!a || !key || !(window.matchMedia && matchMedia("(hover: hover)").matches)) return a;
+  const show = () => { clearTimeout(hcT); hcT = setTimeout(async () => {
+    const ck = kind + ":" + key;
+    if (!hcCache.has(ck)) hcCache.set(ck, (kind === "game" ? hcGame(key) : hcMember(key)).catch(() => null));
+    const body = await hcCache.get(ck); if (!body || !a.isConnected) return;
+    hcHide(); hcFor = a;
+    hcEl = el("div", { class: "rop-hc rop-hc--" + kind, role: "tooltip" }); hcEl.append(body.cloneNode(true));
+    document.body.append(hcEl); hcPlace(hcEl, a);
+  }, 260); };
+  const hide = () => { clearTimeout(hcT); hcT = setTimeout(() => { if (hcFor === a) hcHide(); }, 120); };
+  a.addEventListener("mouseenter", show); a.addEventListener("focus", show);
+  a.addEventListener("mouseleave", hide); a.addEventListener("blur", hide);
+  return a;
+}
+addEventListener("scroll", () => hcHide(), { passive: true });
+async function hcGame(id) {
+  const [x, sc] = await Promise.all([gameInfo(id), sb.from("game_scores").select("*").eq("id", id).maybeSingle().then((r) => r.data, () => null)]);
+  if (!sc) return null;
+  const art = el("div", { class: "rop-hc__art" });
+  let img = hasAutoArt(x) ? boxArt(x, sc.title) : null;
+  if (!img) { const c = await memberCover(id); img = c ? boxArt(c, sc.title) : null; }
+  if (img) art.append(img); else art.append(chipSvg(sc.votes ? Math.round(Number(sc.average)) : 3));
+  const d = x && typeof x.d === "string" ? x.d.trim() : "";
+  const blurb = d ? (d.match(/^.{40,240}?[.!?](\s|$)/) || [d.slice(0, 200) + "…"])[0].trim() : "";
+  const sc5 = (avg, n) => n > 0 ? el("span", { class: "rop-hc__sc rop-chip--" + Math.round(Number(avg)) }, chipSvg(Math.round(Number(avg))), el("b", { text: Number(avg).toFixed(1) }), el("small", { text: n + (n === 1 ? " vote" : " votes") }))
+    : el("span", { class: "rop-hc__sc rop-hc__sc--none", text: "Not rated yet" });
+  return el("div", { class: "rop-hc__in" }, art,
+    el("div", { class: "rop-hc__body" },
+      el("div", { class: "rop-hc__top" }, consoleChip(sc.console), x && x.y ? el("span", { class: "rop-hc__year", text: String(x.y) }) : null),
+      el("b", { class: "rop-hc__t", text: sc.title }),
+      blurb ? el("p", { class: "rop-hc__d", text: blurb }) : null,
+      el("div", { class: "rop-hc__scores" },
+        el("span", { class: "rop-hc__lab", text: "Verified" }), sc5(sc.average, sc.votes || 0),
+        "open_votes" in sc ? el("span", { class: "rop-hc__lab", text: "Open-Vote" }) : null, "open_votes" in sc ? sc5(sc.open_average, sc.open_votes || 0) : null)));
+}
+async function hcMember(handle) {
+  const { data: p } = await sb.from("member_profiles").select("*").eq("handle", handle).maybeSingle();
+  if (!p) return null;
+  const stat = (n, l) => el("span", { class: "rop-hc__st" }, el("b", { text: String(n || 0) }), el("small", { text: l }));
+  return el("div", { class: "rop-hc__in rop-hc__in--m", style: "--acc:" + accentOf(p.accent) },
+    avatar(p.avatar, p.name, 52, "rop-hc__av"),
+    el("div", { class: "rop-hc__body" },
+      el("b", { class: "rop-hc__t" }, p.name, p.is_owner ? ownerTag() : null, p.is_staff ? adminTag() : null),
+      p.motto ? el("p", { class: "rop-hc__motto " + colorClass(p.motto_color), text: "“" + p.motto + "”" }) : null,
+      el("div", { class: "rop-hc__stats" }, stat(p.votes, "votes"), stat(p.reviews, "reviews"), stat(p.posts, "posts")),
+      p.member_since ? el("small", { class: "rop-hc__since", text: "Member since " + memberSince(p.member_since) }) : null));
+}
