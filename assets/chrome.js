@@ -477,7 +477,7 @@
     ["links", "/links/", "Links I Like", "Sites I actually use"], ["stream", "/stream/", "Stream", "Watch me live"],
     ["discord", "/discord/", "Discord", "Join the community"], ["arcade", "/arcade/", "Arcade", "Little browser games"],
     ["projects", "/projects/", "Projects", "What I'm working on"], ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"],
-    ["support", "/support/", "Support", "Keep the projects online"]
+    ["support", "/support/", "Support", "Keep the projects online"], ["account", "/account/", "Account", "Your DMA Account"]
   ];
   /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from
      the middle on a ring, each an ordinary link (click or Enter to visit). Animated, colour-accented, and
