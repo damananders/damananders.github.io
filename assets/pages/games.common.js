@@ -1,4 +1,4 @@
-/* pages/games.common.js: shared pieces for every Rate-O-Pedia page (/games/, /games/forum/, /games/profile/, the owner station).
+/* pages/games.common.js: shared pieces for every Wiki-Chip Dex page (/games/, /games/forum/, /games/profile/, the owner station).
  * One Supabase client, the Discord sign-in pill, the Ratings / Forums / Profile tabs, avatars, dates and motto colours.
  * The key below is Supabase's publishable key: it is meant to be public. Every permission is enforced by the database.
  */
@@ -290,7 +290,7 @@ function hubPill(box, handle) {
 }
 /* ---------------- Buddies, Opps and messages (round 33) ----------------
  * Opps: members you've blocked. Anything they wrote (reviews, posts, comments, guestbook notes) is hidden from you on
- * every Rate-O-Pedia page. Pages opt a box out with data-no-opp-hide (the Buddies page's own Opps list, for one). */
+ * every Wiki-Chip Dex page. Pages opt a box out with data-no-opp-hide (the Buddies page's own Opps list, for one). */
 export const opps = new Set();
 let oppObs = null;
 async function loadOpps() {

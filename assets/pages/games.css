@@ -1301,7 +1301,7 @@ select.gm-input option{background:#14171c}
 }
 
 /* ===================================================================================================
-   Rate-O-Pedia palette (round 35): the landing banner's light green, accented with black, grey and gold.
+   Wiki-Chip Dex palette (round 35): the landing banner's light green, accented with black, grey and gold.
    Applies on every /games/ page. A member's own page theme (body.pt-on, below) overrides it on their profile.
    =================================================================================================== */
 :root[data-page="games"]{

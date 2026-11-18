@@ -1,4 +1,4 @@
-// Dumps every game in the live Rate-O-Pedia list (public game_scores view) to out/games.tsv: id, console, votes, title.
+// Dumps every game in the live Wiki-Chip Dex list (public game_scores view) to out/games.tsv: id, console, votes, title.
 // Used to audit the list (duplicates etc.); the runner can reach Supabase, the dev container can't.
 import fs from "node:fs";
 const SB_URL = "https://zjhlhkruqzfendvbglsb.supabase.co", SB_KEY = "sb_publishable_j-EgPXB3ZvKuz_3h8dZaNA_aLgmcQrk";

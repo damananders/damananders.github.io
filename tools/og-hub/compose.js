@@ -21,7 +21,7 @@ body::before{content:"";position:absolute;inset:0;background-image:radial-gradie
 .anyps{width:300px;left:220px;bottom:175px;transform:rotate(12deg);box-shadow:0 30px 60px -18px rgba(0,0,0,.9),0 0 40px -10px rgba(61,139,255,.6)}
 .rop{width:700px;left:-350px;bottom:84px;z-index:2;box-shadow:0 40px 80px -20px rgba(0,0,0,.95),0 0 60px -8px rgba(54,211,154,.55)}
 </style>
-<div class="head"><img class="av" src="data:image/svg+xml;base64,${b64(R+'assets/icons/logo.svg')}"><div><div class="t">DMA: <b>An Enthusiast's Haven</b></div><div class="s">Rate-O-Pedia &nbsp;·&nbsp; AnyPS &nbsp;·&nbsp; AndersCraft &nbsp;—&nbsp; by Anders</div></div></div>
+<div class="head"><img class="av" src="data:image/svg+xml;base64,${b64(R+'assets/icons/logo.svg')}"><div><div class="t">DMA: <b>An Enthusiast's Haven</b></div><div class="s">Wiki-Chip Dex &nbsp;·&nbsp; AnyPS &nbsp;·&nbsp; AndersCraft &nbsp;—&nbsp; by Anders</div></div></div>
 <div class="fan">
  <div class="c craft"><img src="data:image/png;base64,${b64(__dirname+'/craft.png')}"></div>
  <div class="c anyps"><img src="data:image/png;base64,${b64(__dirname+'/anyps.png')}"></div>

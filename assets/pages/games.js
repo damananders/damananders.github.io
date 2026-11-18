@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker, richText, fmtBar, reviewsPanel } from "./games.common.js?v=36";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker, richText, fmtBar, reviewsPanel } from "./games.common.js?v=37";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -14,7 +14,7 @@ let user = null, member = false, consoleFilter = "", famFilter = "", mine = new 
 /* ---------------- sign-in and membership (shared pill, see games.common.js) ---------------- */
 function onSession(m) {
   user = m.user; member = m.member;
-  // Discord always lands here; send people back to the Rate-O-Pedia page they signed in from
+  // Discord always lands here; send people back to the Wiki-Chip Dex page they signed in from
   if (user) { const back = takeReturn(); if (back && back !== location.pathname + location.search) { location.replace(back); return; } }
   authPill($("gm-auth"));
   load();
@@ -98,7 +98,7 @@ function card(g, rank, group) {
       artSlot(g.id, g.title, "gm-art"),
       platformLink(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
-      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia · Fromie approved" }, Object.assign(chipSvg(5), { className: "rop-chip__svg gm-mustplay__chip" }), "Must Play!") : null,
+      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Wiki-Chip Dex · Fromie approved" }, Object.assign(chipSvg(5), { className: "rop-chip__svg gm-mustplay__chip" }), "Must Play!") : null,
       g.open_votes === undefined ? mood : null, g.open_votes === undefined ? el("span", { class: "gm-score", text: score }) : null,
       g.open_votes === undefined ? el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" }) : null,
       el("a", { class: "gm-expand", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the full game page", "aria-label": "Open the full page for " + g.title,
@@ -454,7 +454,7 @@ async function week() {
     const col = (title, rows, line, empty) => el("div", { class: "gm-week__col" }, el("h3", { text: title }),
       rows.length ? el("ol", { class: "gm-week__list" }, ...rows.map(line)) : el("p", { class: "gm-note", text: empty }));
     const gameLine = (tail) => (g) => el("li", null, consoleChip(g.console), hoverCard(el("a", { href: gameUrl(g.id), text: g.title }), "game", g.id), el("span", { class: "gm-week__n", text: tail(g) }));
-    box.replaceChildren(el("h2", { class: "gm-head", text: "This week on Rate-O-Pedia" }), el("div", { class: "gm-week__cols" },
+    box.replaceChildren(el("h2", { class: "gm-head", text: "This week on Wiki-Chip Dex" }), el("div", { class: "gm-week__cols" },
       col("Top rated", a.data || [], gameLine((g) => Number(g.average).toFixed(1) + " · " + g.votes + "v"), "No votes this week yet. Be the first."),
       col("Most reviewed", b.data || [], gameLine((g) => g.reviews + (g.reviews === 1 ? " review" : " reviews")), "No reviews this week yet."),
       c.error ? null : col("Most active voters", c.data || [], (v) => el("li", null, avatar(v.avatar, v.name, 22), hoverCard(el("a", { href: profileUrl(v.handle), text: v.name }), "member", v.handle), el("span", { class: "gm-week__n", text: v.votes + " votes" })), "Nobody has voted this week yet.")));

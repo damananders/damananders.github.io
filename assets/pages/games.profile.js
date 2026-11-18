@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText , steamRow, steamCard, bnetRow } from "./games.common.js?v=36";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText , steamRow, steamCard, bnetRow } from "./games.common.js?v=37";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -119,10 +119,10 @@ function levelOf(p) {
 
 /* ---------------- badges: [key, icon, name, how to earn, test] ---------------- */
 const BADGES = [
-  ["owner", "👑", "Site Owner", "runs Rate-O-Pedia", (p) => p.is_owner],
+  ["owner", "👑", "Site Owner", "runs Wiki-Chip Dex", (p) => p.is_owner],
   ["admin", "🛡️", "Admin", "an admin on the Discord server", (p) => p.is_staff],
   ["podium", "🥇", "Podium", "top 3 on the voter leaderboard", (p, x) => x.rank > 0 && x.rank <= 3],
-  ["founder", "🌱", "Founding Member", "joined in Rate-O-Pedia's first year", (p) => p.member_since && new Date(p.member_since) < new Date("2027-01-01")],
+  ["founder", "🌱", "Founding Member", "joined in Wiki-Chip Dex's first year", (p) => p.member_since && new Date(p.member_since) < new Date("2027-01-01")],
   ["veteran", "🎖️", "Veteran", "a member for over a year", (p) => p.member_since && Date.now() - new Date(p.member_since) > 365 * 864e5],
   ["first-vote", "🗳️", "First Vote", "rated a game", (p) => p.votes >= 1],
   ["rater", "📊", "Rater", "10 ratings", (p) => p.votes >= 10],
@@ -192,7 +192,7 @@ async function render() {
     // a handle the member has since replaced forwards to their current one (round 32)
     const fwd = await sb.rpc("resolve_handle", { p_handle: handle }).then((r) => r.data, () => null);
     if (fwd && typeof fwd === "string" && fwd !== handle) { location.replace(profileUrl(fwd) + location.hash); return; }
-    notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Rate-O-Pedia" })); adminPanel(handle); return; }
+    notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Wiki-Chip Dex" })); adminPanel(handle); return; }
   const mine = !!(me.profile && me.profile.handle === p.handle);
   authPill($("gm-auth"), mine ? { hub: true } : { okTail: "." });     // your own profile: just the shortcut buttons
   const plus = "banner" in p;      // round 15 is in
@@ -200,7 +200,7 @@ async function render() {
   const ctx = { rank };
   const badges = earned(p, ctx);
   const lv = levelOf(p);
-  document.title = p.name + " — Rate-O-Pedia";
+  document.title = p.name + " — Wiki-Chip Dex";
   root.style.setProperty("--acc", accentOf(p.accent));
   pageTheme = await themeQ; applyTheme(pageTheme);
   document.querySelectorAll(".pf-pagefx").forEach((x) => x.remove());
@@ -226,7 +226,7 @@ async function render() {
         el("p", { class: "pf-sub" }, el("span", { class: "pf-title", text: lv.title }), el("span", { class: "pf-dot", "aria-hidden": "true", text: "·" }),
           el("span", { class: "pf-since", text: "Member since " + memberSince(p.member_since) }))),
       el("div", { class: "pf-actions" },
-        el("button", { class: "btn ghost gm-btn pf-share", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Rate-O-Pedia") }),
+        el("button", { class: "btn ghost gm-btn pf-share", type: "button", text: "Share", onclick: () => share(profileUrl(p.handle), p.name + " on Wiki-Chip Dex") }),
         mine ? el("button", { class: "btn gm-btn", type: "button", text: "Edit profile", onclick: () => editor(p) }) : followBtn(p),
         mine ? el("a", { class: "btn ghost gm-btn", href: "/games/buddies/", text: "Buddies & messages" }) : null,
         mine ? null : socialBtns(p))),

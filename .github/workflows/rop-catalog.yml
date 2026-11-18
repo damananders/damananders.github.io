@@ -1,7 +1,7 @@
-# Builds the Rate-O-Pedia game catalog for every platform (tools/rop-catalog) from libretro-database and
+# Builds the Wiki-Chip Dex game catalog for every platform (tools/rop-catalog) from libretro-database and
 # Wikidata / Wikipedia. Run by hand from the Actions tab. The result (catalog TSV files + info cards) is pushed to
 # the branch rop-catalog-data (replaced each run); it is reviewed and merged into main separately.
-name: Rate-O-Pedia catalog
+name: Wiki-Chip Dex catalog
 
 on:
   workflow_dispatch:
@@ -42,5 +42,5 @@ jobs:
           mkdir -p assets/data && rm -rf assets/data/catalog assets/data/gameinfo
           mv out/catalog assets/data/catalog && mv out/gameinfo assets/data/gameinfo
           git add assets/data/catalog assets/data/gameinfo
-          git commit -qm "Rate-O-Pedia catalog data ($(date -u +%F))"
+          git commit -qm "Wiki-Chip Dex catalog data ($(date -u +%F))"
           git push -f origin rop-catalog-data

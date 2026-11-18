@@ -1,4 +1,4 @@
-/* Rate-O-Pedia catalog builder: game lists for every platform in assets/pages/games.platforms.js.
+/* Wiki-Chip Dex catalog builder: game lists for every platform in assets/pages/games.platforms.js.
  *
  *   Older systems: libretro-database (No-Intro / Redump / TOSEC sets: complete retail lists, with year,
  *                  developer, publisher and genre where libretro has them).

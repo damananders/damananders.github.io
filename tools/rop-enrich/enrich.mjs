@@ -1,4 +1,4 @@
-// tools/rop-enrich/enrich.mjs — builds the Rate-O-Pedia game info cards.
+// tools/rop-enrich/enrich.mjs — builds the Wiki-Chip Dex game info cards.
 // Runs in GitHub Actions (.github/workflows/rop-enrich.yml), which has the open internet this repo's tooling needs.
 // Output: assets/data/gameinfo/<00..ff>.json, one shard per FNV-1a hash byte of the game id, plus _stats.json.
 //

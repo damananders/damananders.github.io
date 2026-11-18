@@ -3,7 +3,7 @@
  * plus a conversation view at ?dm=<handle>. Everything goes through the round-33 database functions, which only ever
  * return your own data. Messages arrive live (Realtime) with a slow poll as a fallback.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, profileUrl, toast, sfx, opps } from "./games.common.js?v=36";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, profileUrl, toast, sfx, opps } from "./games.common.js?v=37";
 
 const root = $("bd-root");
 const params = new URLSearchParams(location.search);
@@ -16,7 +16,7 @@ const dayLabel = (iso) => { const d = new Date(iso), t = new Date(); const y = n
 const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
 
 function hero(title, lead, ...extra) {
-  return el("header", { class: "hero bd-hero" }, el("div", { class: "eyebrow", text: "Rate-O-Pedia · hang out" }), el("h1", { text: title }),
+  return el("header", { class: "hero bd-hero" }, el("div", { class: "eyebrow", text: "Wiki-Chip Dex · hang out" }), el("h1", { text: title }),
     lead ? el("p", { class: "lead", text: lead }) : null, ...extra);
 }
 const who = (c, size) => el("span", { class: "bd-who" },

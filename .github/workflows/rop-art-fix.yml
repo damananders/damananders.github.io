@@ -1,6 +1,6 @@
 # Second box-art pass: checks every libretro cover against the covers that really exist on
 # github.com/libretro-thumbnails and re-matches the ones that would show nothing. Press "Run workflow".
-name: Rate-O-Pedia cover check
+name: Wiki-Chip Dex cover check
 on:
   workflow_dispatch:
     inputs:
@@ -35,5 +35,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A assets/data/gameinfo
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
-          git commit -qm "Rate-O-Pedia: re-matched covers to real thumbnails"
+          git commit -qm "Wiki-Chip Dex: re-matched covers to real thumbnails"
           for i in 1 2 3 4; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 10; done
