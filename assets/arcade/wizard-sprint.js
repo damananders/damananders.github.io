@@ -704,6 +704,9 @@
     for (i = 0; i < 26; i++) { var stx = -HOX + hash(i * 9) * (BW + HOX), sty = hash(i * 5) * 128; px(stx, sty, hash(i * 5) < 0.5 ? 2 : 1, 1, "rgba(255,247,220,.7)"); }
     /* a low moon, off to the right */
     px(430, 28, 34, 34, "#efe3bf"); px(434, 25, 27, 27, "#fff6de"); px(448, 40, 7, 7, "#e6dab6"); px(455, 50, 4, 4, "#e6dab6");
+    /* opaque forest-night backdrop for the band behind the buildings — covers the gap between the sky
+       bands and the ground so nothing (rain especially) can accumulate there frame to frame */
+    px(-HOX, 176, BW + HOX, GND - 176, "#16261c");
     /* far treeline behind the tower */
     for (x = -HOX - 4; x < BW; x += 9) { var hh = 20 + hash(x * 1.3 + 40) * 20; px(x, 150 - (hh >> 1), 9, hh + 46, "#1c3326"); }
     /* ground: dirt yard, with a grassy fringe */
