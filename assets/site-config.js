@@ -46,7 +46,7 @@ window.SITE_EXTRA = {
   vault: {
     // Optional cosmetic passphrase. Put the SHA-256 (hex) of your phrase here to turn the gate on.
     // It only hides the page from casual visitors; the real protection is Drive's Restricted sharing.
-    passphraseSha256: "",
+    passphraseSha256: "efb95ae9740cfd27eddad452389f1719f63cd2dc181dfb50c58e3750c8ad5380",
     // The Vault card is hidden on the hub until this browser has opened the site once with ?owner
     hideOnHub: true,
   },
