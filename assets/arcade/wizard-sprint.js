@@ -675,13 +675,15 @@
   var MML = 20, MMR = 254, MRDG = 196;                   /* mill shack left / right, sagging roof ridge */
   var WHX = 26, WHY = 256, WHR = 34;                     /* waterwheel centre + radius */
   var WL = SPL, WR = SPR, APEX = SAX;                    /* kept names for drawWreck: spire walls + apex */
-  var SPOT = { crate: 382, read: 352, dig: 420, prep: 312, equip: 312, armoire: 184, condenser: 102 };
-  var DOOR = { prep: 290, equip: 290, armoire: 150, condenser: 70 };   /* where the wizard steps in */
-  function hubHotspots(stage) {                           /* clickable station zones, in the hub's drawing coords */
-    var h = [{ key: "prep", name: "Prep Time", x: SPL + 8, y: 138, w: 30, h: 42, lx: SPL + 23 },
-             { key: "equip", name: "Equipment", x: SPL + 8, y: 196, w: 30, h: 42, lx: SPL + 23 }];
-    if (stage >= 1) { h.push({ key: "armoire", name: "Wardrobe", x: 132, y: 256, w: 36, h: 44, lx: 150 });
-      h.push({ key: "condenser", name: "Condenser", x: 52, y: 222, w: 36, h: 40, lx: 70 }); }
+  var SPOT = { crate: 382, read: 352, dig: 420, prep: 312, equip: 312, armoire: 214, condenser: 140 };
+  var DOOR = { prep: 290, equip: 290, armoire: 194, condenser: 118 };   /* where the wizard steps in */
+  function hubHotspots(stage) {                           /* clickable station zones, in the hub's drawing coords.
+    Spire: Prep over Equipment on the tower's vertical axis (under the roof window, over the door).
+    Mill: Condenser + Wardrobe as two matching ground-level openings, evenly spaced, clear of the wheel. */
+    var h = [{ key: "prep", name: "Prep Time", x: 275, y: 129, w: 30, h: 42, lx: 290 },
+             { key: "equip", name: "Equipment", x: 275, y: 193, w: 30, h: 42, lx: 290 }];
+    if (stage >= 1) { h.push({ key: "condenser", name: "Condenser", x: 98, y: 253, w: 40, h: 47, lx: 118 });
+      h.push({ key: "armoire", name: "Wardrobe", x: 174, y: 253, w: 40, h: 47, lx: 194 }); }
     return h;
   }
   function wreckOf() {                                    /* 0 = whole, 1 = clearly wrecked. Mends as you level, snaps whole on the forest clear */
@@ -720,15 +722,36 @@
     /* chimney with a wisp of smoke */
     px(MMR - 72, MRDG - 34, 18, 32, "#3a3444"); px(MMR - 72, MRDG - 34, 18, 5, "#4a4458");
     px(MMR - 67, MRDG - 48, 7, 7, "rgba(210,210,220,.45)"); px(MMR - 63, MRDG - 62, 8, 8, "rgba(210,210,220,.3)");
-    /* the Condenser window (lit once the forest's cleared; a dim boarded hole before) */
-    (function () { var wx = 54, wy = 224, lit = c1;
-      px(wx - 3, wy - 3, 36, 40, "#1a1422"); px(wx, wy, 30, 34, lit ? (Math.sin(t * 3) > -0.4 ? "#ffd36b" : "#e0b457") : "#2a2236");
-      if (lit) { px(wx, wy, 30, 3, "#ffe9a8"); px(wx + 13, wy, 3, 34, "#caa35a"); px(wx + 6, wy + 8, 6, 10, "#3a2a1a"); px(wx + 18, wy + 8, 6, 14, "#3a2a1a"); }
-      else { px(wx + 2, wy + 6, 26, 5, "#5c4530"); px(wx + 2, wy + 18, 26, 5, "#4a3826"); }
-      px(wx - 5, wy - 9, 40, 7, "#34303e"); })();
-    /* the Wardrobe door (a hanging sign lights up once your hat is won back) */
-    (function () { var dx = 132; px(dx, 258, 36, GND - 258, "#2a2238"); px(dx + 4, 266, 28, GND - 266, "#1a1422"); px(dx, 256, 36, 4, "#3a3048"); px(dx + 24, 288, 4, 4, "#e8c15a");
-      px(dx + 8, 250, 20, 8, c1 ? "#7b2f3e" : "#2e2838"); px(dx + 10, 252, 16, 4, c1 ? "#ffd36b" : "#4a4458"); })();
+    /* the Condenser window — an alchemist's still: a bubbling flask of glowing distillate and a coiled
+       condenser, lit cool teal (not hearth-warm) once the forest's cleared; a boarded hole before */
+    (function () { var wx = 100, wy = 256, iw = 36, ih = GND - wy, lit = c1, fx = wx + iw / 2;
+      px(wx - 4, wy - 4, iw + 8, ih + 4, "#2b2834");                                        /* stone surround */
+      px(wx, wy, iw, ih, "#10161c");                                                        /* alcove interior */
+      px(wx + 2, wy - 7, iw - 4, 8, "#423f4d"); px(wx + 7, wy - 10, iw - 14, 4, "#4a4654"); /* arched lintel */
+      if (lit) {
+        var glow = Math.sin(t * 3) > -0.4 ? "#3cf0d4" : "#28c2b2";
+        px(wx, wy, iw, 2, "#7fe8dc");                                                       /* teal cast at the mouth */
+        px(fx - 10, wy + ih - 6, 20, 6, "#0c3c3c");                                         /* brazier base */
+        px(fx - 9, wy + ih - 24, 18, 18, "#0c3c3c"); px(fx - 7, wy + ih - 21, 14, 14, glow);/* round flask + distillate */
+        px(fx - 4, wy + ih - 33, 8, 10, "#0c3c3c"); px(fx - 2, wy + ih - 32, 4, 9, glow);   /* neck */
+        for (var bi = 0; bi < 4; bi++) { var bt = (t * 1.3 + bi * 0.4) % 1; px(fx - 6 + bi * 4, wy + ih - 12 - Math.round(bt * 18), 2, 2, "#c8fff4"); }  /* bubbles */
+        px(fx + 9, wy + 6, 3, ih - 14, "#8a6a44");                                          /* coil stand */
+        for (var ci = 0; ci < 6; ci++) px(fx + 6, wy + 8 + ci * 5, 10, 2, "#b98a4e");       /* condenser coil */
+      } else { px(wx + 4, wy + 10, iw - 8, 5, "#5c4530"); px(wx + 4, wy + 24, iw - 8, 5, "#4a3826"); px(wx + iw / 2 - 1, wy + 4, 2, ih - 8, "#5c4530"); }
+    })();
+    /* the Wardrobe — an actual armoire: two panelled doors under a cornice. Once your hat's won back the
+       doors stand ajar, a robe hanging inside with the pointed hat on the shelf; shut and plain before */
+    (function () { var dx = 176, wW = 36, wy = 256, wh = GND - wy;
+      px(dx - 2, wy - 6, wW + 4, 6, c1 ? "#6b4a2e" : "#3a2f26");                             /* cornice */
+      px(dx, wy, wW, wh, "#4a3524"); px(dx, wy, wW, 2, "#6b4a2e"); px(dx, wy, 2, wh, "#3a2a1a"); px(dx + wW - 2, wy, 2, wh, "#2f2416");
+      px(dx + wW / 2 - 1, wy + 2, 2, wh - 2, "#2f2416");                                     /* seam between doors */
+      if (c1) {
+        px(dx + 4, wy + 6, 13, wh - 10, "#201528");                                          /* interior, left door open */
+        px(dx + 8, wy + 8, 6, wh - 14, "#7b2f3e"); px(dx + 8, wy + 8, 6, 2, "#9a4453");      /* hanging robe */
+        px(dx + 6, wy + 4, 11, 3, "#2a1a3a"); px(dx + 9, wy, 5, 5, "#2a1a3a");               /* the pointed hat on the shelf */
+        px(dx + wW / 2 + 4, wy + 15, 3, 3, "#e8c15a");                                       /* gold knob on the shut right door */
+      } else { px(dx + 7, wy + 15, 3, 3, "#5c4530"); px(dx + wW - 10, wy + 15, 3, 3, "#5c4530"); }
+    })();
 
     /* ================= the spire (right arm of the L) ================= */
     stone(SPL, SPR, 118, GND);                                            /* main body */
@@ -743,11 +766,22 @@
     /* a glowing arched window high in the roof — warm and bright once the chandelier's rehung (clear 3) */
     px(SAX - 9, 62, 18, 22, "#1a1226"); px(SAX - 6, 65, 12, 18, L3 ? "#ffe9a8" : (Math.sin(t * 2) > -0.6 ? "#ffd874" : "#d9a94a")); px(SAX - 1, 65, 2, 18, "#1a1226"); px(SAX - 6, 65, 12, 2, "#1a1226");
     if (L3) { px(SAX - 12, 60, 24, 3, "rgba(255,233,168,.25)"); }
-    /* the two spire windows — the stations (always lit: the spire is your home) */
-    (function () { var cols = [[SPL + 8, 138, "Prep"], [SPL + 8, 196, "Equip"]];
+    /* the two spire windows — the stations, each showing what it's for (always lit: the spire is home).
+       Prep (top) is a study with a workbench; it's also where the wizard's shadow climbs when you open Prep.
+       Equipment (below) frames a dress-form in a pointed hat with a wand — gear up. */
+    (function () { var cols = [[278, 132], [278, 196]], sh = "#241528";
       cols.forEach(function (w, k) { var wx = w[0], wy = w[1], warm = Math.sin(t * 2.2 + k * 2) > -0.5;
         px(wx - 3, wy - 3, 30, 42, "#1a1226"); px(wx, wy, 24, 36, warm ? "#ffd36b" : "#d9a94a");
-        px(wx, wy, 24, 3, "#ffe9a8"); px(wx + 10, wy, 3, 36, "#caa35a"); px(wx + 4, wy + 6, 6, 10, "#3a2a1a"); px(wx + 15, wy + 6, 6, 14, "#3a2a1a");
+        px(wx, wy, 24, 3, "#ffe9a8"); px(wx + 10, wy, 3, 36, "#caa35a");
+        if (k === 0) {                                       /* Prep: a workbench, plus the climbing shadow */
+          px(wx + 3, wy + 25, 18, 7, sh); px(wx + 4, wy + 20, 4, 12, sh);
+          if (Hb.win) { var p = clamp(Hb.win.t / Hb.win.dur, 0, 1), rise = Math.round((1 - Math.min(1, p * 1.7)) * 32), cx = wx + 13 + Math.round(Math.sin(Hb.win.t * 7)), fy = wy + 33 + rise;
+            px(cx - 5, fy - 15, 10, 15, sh); px(cx - 3, fy - 21, 6, 6, sh); px(cx - 6, fy - 23, 12, 3, sh); px(cx - 2, fy - 29, 4, 7, sh); }
+        } else {                                             /* Equipment: a dress-form on a stand, hat + wand */
+          px(wx + 9, wy + 11, 6, 15, sh); px(wx + 5, wy + 13, 14, 6, sh); px(wx + 11, wy + 26, 2, 7, sh);
+          px(wx + 7, wy + 5, 10, 3, sh); px(wx + 10, wy, 4, 6, sh);
+          px(wx + 17, wy + 9, 2, 20, "#6b4a2e"); px(wx + 16, wy + 7, 4, 3, "#caa35a");
+        }
         px(wx - 5, wy - 10, 34, 8, "#2e1c4c"); }); })();
     /* the spire door at the base */
     px(SAX - 16, 250, 34, GND - 250, "#2a2238"); px(SAX - 16, 248, 34, 4, "#3a3048"); px(SAX - 12, 258, 26, GND - 258, "#1a1422"); px(SAX + 4, 282, 4, 4, "#e8c15a"); px(SAX - 2, 258, 2, GND - 258, "#0d0a14");
@@ -1383,10 +1417,14 @@
   }
 
   /* ---------------- the hub ---------------- */
-  var Hb = { x: SPOT.crate + 4, tx: SPOT.crate + 4, act: "sit", t: 0, idleT: 6, then: null, busy: false, face: 1, moving: false };
+  var Hb = { x: SPOT.crate + 4, tx: SPOT.crate + 4, act: "sit", t: 0, idleT: 6, then: null, busy: false, face: 1, moving: false, win: null };
   function hubIdle(g, dt) {
     Hb.t += dt;
     if (UI.scene === "rebind" && UI.bind && UI.bind.kind === "pad" && g.pad) { for (var k in g.pad.hit) if (k !== "start" && k !== "select") { captureBind(k); return; } }
+    if (Hb.win) {                                          /* the wizard's shadow rising in the Prep window, before the menu opens */
+      Hb.win.t += dt; if (Hb.win.t >= Hb.win.dur) { var wf = Hb.win.then; Hb.win = null; wf(); }
+      return;
+    }
     if (Hb.enter) {                                        /* stepping through a door into the chosen room */
       var e = Hb.enter; e.t += dt; Hb.face = e.face; Hb.act = "stand";
       var edx = e.x - Hb.x;
@@ -1400,11 +1438,15 @@
     if (!Hb.busy) { Hb.idleT -= dt; if (Hb.idleT <= 0) { Hb.idleT = rnd(7, 11); Hb.act = pick(["sit", "read", "dig"]); Hb.tx = { sit: SPOT.crate + 4, read: SPOT.read - 16, dig: SPOT.dig - 14 }[Hb.act]; } }
   }
   function goStation(g, key, fn) {
-    Hb.busy = true; Hb.act = "stand"; Hb.tx = SPOT[key]; Hb.enter = null; g.closeMenu(); UI.scene = "hub";
+    Hb.busy = true; Hb.act = "stand"; Hb.tx = SPOT[key]; Hb.enter = null; Hb.win = null; g.closeMenu(); UI.scene = "hub";
     var doorX = DOOR[key];
+    function reveal() {                                    /* Prep: after stepping inside, his shadow climbs the window before the menu */
+      if (Site.reducedMotion || key !== "prep") { fn(); return; }
+      Hb.win = { t: 0, dur: 1.0, then: fn }; g.wake && g.wake();
+    }
     function enterRoom() {
-      if (Site.reducedMotion || doorX == null) { fn(); return; }
-      Hb.enter = { x: doorX, t: 0, dur: 0.6, then: fn, face: doorX < Hb.x ? -1 : 1 };
+      if (Site.reducedMotion || doorX == null) { reveal(); return; }
+      Hb.enter = { x: doorX, t: 0, dur: 0.6, then: reveal, face: doorX < Hb.x ? -1 : 1 };
       g.wake && g.wake();
     }
     if (Site.reducedMotion || Math.abs(Hb.tx - Hb.x) <= 1) { Hb.x = Hb.tx; enterRoom(); return; }
@@ -1449,7 +1491,7 @@
       b.translate(HOX, 0); drawHub(t, st);
       var pose = Hb.moving ? "run" : (Hb.busy ? (st === 1 ? "hold" : "stand") : Hb.act);
       wizSprite(lookOf(S.comfort), pose, t);
-      var fade = Hb.enter ? clamp((Hb.enter.t - (Hb.enter.dur - 0.32)) / 0.32, 0, 1) : 0;   /* dim out as he steps inside */
+      var fade = Hb.enter ? clamp((Hb.enter.t - (Hb.enter.dur - 0.32)) / 0.32, 0, 1) : (Hb.win ? 1 : 0);   /* dim out as he steps inside; stay hidden while his shadow is up in the window */
       b.save(); if (fade > 0) b.globalAlpha = 1 - fade; b.translate(Math.round(Hb.x), 0); if (Hb.face < 0) b.scale(-1, 1); blitWiz(b, 0, 300, 1); b.restore();
       if (st === 1 && pose !== "hold") { var a = S.wiz, top = 300 - (14 + Math.round(4 * a.height)) - (16 + Math.round(4 * a.height)) - 22 + (pose === "sit" ? 5 + Math.round(4 * a.height) : pose === "dig" ? 8 : 0); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top, 16, 3, "#efe2b8"); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top + 3, 16, 1, "#c9b98a"); }
     } finally { b.restore(); b.setTransform(1, 0, 0, 1, 0, 0); b.globalAlpha = 1; }
