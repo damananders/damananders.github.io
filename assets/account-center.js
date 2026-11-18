@@ -23,6 +23,35 @@
     ["follow", "New followers"], ["buddy", "Buddy requests & accepts"], ["dm", "Direct messages"],
     ["wall", "Posts on my wall"], ["reply", "Replies to me"], ["reaction", "Reactions to my posts"], ["review_reaction", "Reactions to my reviews"]
   ];
+  /* base cosmetics everyone has (mirror of games.profile.js BANNERS/FRAMES/NAME_FX). The full editor,
+   * uploads, showcase games and page themes stay canonical on /games/profile/ — we only equip here. */
+  var BANNERS = [["maroon", "Maroon"], ["sunset", "Sunset"], ["ocean", "Ocean"], ["forest", "Forest"], ["grape", "Grape"], ["ember", "Ember"],
+    ["midnight", "Midnight"], ["aurora", "Aurora"], ["synthwave", "Synthwave"], ["grid", "Retro grid"], ["stars", "Starfield"],
+    ["circuit", "Circuit"], ["carbon", "Carbon"], ["candy", "Candy"], ["gold", "Gold rush"], ["mono", "Mono"]];
+  var FRAMES = [["none", "None"], ["ring", "Ring"], ["double", "Double"], ["glow", "Glow"], ["gold", "Gold"], ["neon", "Neon"],
+    ["rainbow", "Rainbow"], ["pixel", "Pixel"], ["flame", "Flame"], ["ice", "Ice"], ["chip", "Chip"]];
+  var NAME_FX = [["plain", "Plain"], ["glow", "Glow"], ["shine", "Shine"], ["rainbow", "Rainbow"], ["pixel", "Pixel"], ["outline", "Outline"]];
+  /* approximate 2-stop gradients for banner swatches + the look preview (previews only; the canonical art renders on the profile) */
+  var BANNER_GRAD = {
+    maroon: "linear-gradient(135deg,#4a121b,#cd4257)", sunset: "linear-gradient(135deg,#ff7a1f,#ff4d7e)",
+    ocean: "linear-gradient(135deg,#0a3d62,#36d3c4)", forest: "linear-gradient(135deg,#0b3d2e,#36d39a)",
+    grape: "linear-gradient(135deg,#3a0d5a,#a06cff)", ember: "linear-gradient(135deg,#5a1606,#ff8a2b)",
+    midnight: "linear-gradient(135deg,#070b1a,#1d2a5a)", aurora: "linear-gradient(120deg,#0a2a3a,#36d39a 55%,#a06cff)",
+    synthwave: "linear-gradient(120deg,#2b0a3d,#ff4fd8 60%,#46e0ff)", grid: "linear-gradient(135deg,#120826,#46e0ff)",
+    stars: "linear-gradient(135deg,#05060f,#2a3a7a)", circuit: "linear-gradient(135deg,#071a14,#2bb6c4)",
+    carbon: "linear-gradient(135deg,#15181c,#3a4150)", candy: "linear-gradient(135deg,#ff74c3,#46e0ff)",
+    gold: "linear-gradient(135deg,#6a4a0f,#e7c94a)", mono: "linear-gradient(135deg,#15161a,#9aa3ad)",
+    "rw-dma": "linear-gradient(135deg,#1b2838,#3d8bff)", "rw-discord": "linear-gradient(135deg,#2b2f55,#5865f2)",
+    "rw-quill": "linear-gradient(135deg,#1a1510,#c9b38a)", "rw-tide": "linear-gradient(135deg,#06303a,#36d3c4)"
+  };
+  var BANNER_GRAD_X = "linear-gradient(135deg,#2a2030,#d9a441)"; /* fallback for held exclusives we don't preview exactly */
+  /* which cosmetic keys have a dedicated preview style in account-center.css (others fall back to a generic "exclusive" look) */
+  var FR_CLASSES = { none: 1, ring: 1, double: 1, glow: 1, gold: 1, neon: 1, rainbow: 1, pixel: 1, flame: 1, ice: 1, chip: 1, "rw-dma": 1, "rw-discord": 1, "rw-laurel": 1, "rw-heart": 1, "rw-platinum": 1 };
+  var FX_CLASSES = { plain: 1, glow: 1, shine: 1, rainbow: 1, pixel: 1, outline: 1, "rw-ember": 1, "rw-gilded": 1 };
+  /* gamer tags / links (mirror of games.profile.js LINKS keys; stored in profile.links) */
+  var LINKS = [["twitch", "Twitch"], ["youtube", "YouTube"], ["steam", "Steam"], ["psn", "PSN"], ["xbox", "Xbox"],
+    ["switch", "Switch friend code"], ["ra", "RetroAchievements"], ["epic", "Epic Games"], ["battlenet", "Battle.net"],
+    ["tiktok", "TikTok"], ["x", "X"], ["bluesky", "Bluesky"], ["instagram", "Instagram"]];
 
   /* ---------- lazy Supabase client (shared pattern with sync.js) ---------- */
   var SUPA_REF = (String(SB.url || "").match(/^https:\/\/([a-z0-9-]+)\.supabase/i) || [])[1] || "";
@@ -90,7 +119,7 @@
       return rpc("set_my_settings", { p: patch }).then(function (res) {
         var d = res && res.data, err = res && res.error;
         if (err || (d && d.ok === false)) { var m = (d && d.error) || (err && err.message) || "Couldn't save — try again"; flashSaved(false, m); return { ok: false, error: m }; }
-        if (d && d.ok) { S = d; mirrorPreview(); flashSaved(true); return { ok: true }; }
+        if (d && d.ok) { S = d; mirrorPreview(); mirrorLook(); flashSaved(true); return { ok: true }; }
         return { ok: false, error: "Couldn't save — try again" };
       }).catch(function () { var m = "Couldn't save — check your connection"; flashSaved(false, m); return { ok: false, error: m }; });
     });
@@ -304,8 +333,23 @@
 
     paneEl.appendChild(field("Accent colour", swatches(ACCENT_ORDER, p.accent, function (v) { save({ profile: { accent: v } }); }, "accent")));
 
+    /* links & gamer tags — part of the richer profile; saved into profile.links */
+    var linkState = Object.assign({}, p.links || {});
+    var details = el("details", { class: "ac2-links" });
+    if (Object.keys(cleanLinks(linkState)).length) details.setAttribute("open", "");
+    details.appendChild(el("summary", { class: "ac2-links__sum" }, el("span", { text: "Links & gamer tags" }), el("span", { class: "ac2-links__hint", text: "Twitch, YouTube, Steam, PSN…" })));
+    var lgrid = el("div", { class: "ac2-links__grid" });
+    LINKS.forEach(function (lk) {
+      var li = input(linkState[lk[0]], { maxlength: "40", placeholder: lk[1], autocapitalize: "off", spellcheck: "false" });
+      li.addEventListener("input", function () { linkState[lk[0]] = li.value.trim(); saveTextLater("links", { profile: { links: cleanLinks(linkState) } }); });
+      lgrid.appendChild(field(lk[1], li));
+    });
+    details.appendChild(lgrid);
+    paneEl.appendChild(details);
+
     paneEl.appendChild(deepLink("/games/profile/?edit", "Edit avatar, banner, showcase games & pinned badges on your profile →"));
   }
+  function cleanLinks(o) { var r = {}; Object.keys(o).forEach(function (k) { if (o[k]) r[k] = o[k]; }); return r; }
   function swatches(order, current, onPick, label) {
     var row = el("div", { class: "ac2-swatches", role: "group", "aria-label": label || "colour" });
     order.forEach(function (name) {
@@ -318,38 +362,89 @@
   }
 
   /* ---------- LOOK & COSMETICS ---------- */
+  var lookPv = null, _lookRedraw = null;
   function tabLook() {
-    paneEl.appendChild(el("p", { class: "ac2-lead", text: "Cosmetics you've earned. Equip them here; the full banner, frame and name-style galleries live on your profile." }));
-    var list = el("div", { class: "ac2-rewards" }, el("p", { class: "ac2-empty", text: "Loading cosmetics…" }));
-    paneEl.appendChild(list);
-    paneEl.appendChild(deepLink("/games/profile/?edit", "Open the full look editor on your profile →"));
+    var held = { banner: [], frame: [], name_fx: [] };
+    paneEl.appendChild(el("p", { class: "ac2-lead", text: "Your look at a glance. Pick a banner, frame or name style — equipped straight away. Uploads, showcase games and page themes live on your profile." }));
+
+    lookPv = buildLookPreview();
+    paneEl.appendChild(lookPv);
+    mirrorLook();
+
+    var groups = el("div", { class: "ac2-cosgroups" });
+    paneEl.appendChild(groups);
+    _lookRedraw = function () {
+      groups.replaceChildren();
+      groups.appendChild(cosGroup("Banner", "banner", BANNERS, held.banner, "banner"));
+      groups.appendChild(cosGroup("Frame", "frame", FRAMES, held.frame, "frame"));
+      groups.appendChild(cosGroup("Name style", "name_fx", NAME_FX, held.name_fx, "fx"));
+    };
+    _lookRedraw();
+
+    paneEl.appendChild(deepLink("/games/profile/?edit", "Upload a banner, pick showcase games & page themes on your profile →"));
+
     rpc("my_rewards").then(function (res) {
       var d = res && res.data;
-      list.replaceChildren();
-      if (!d || d.ok === false || !Array.isArray(d.rewards)) { list.appendChild(el("p", { class: "ac2-empty", text: "No cosmetics yet — earn them through rewards." })); return; }
-      var cos = d.rewards.filter(function (r) { return r.kind === "banner" || r.kind === "frame" || r.kind === "name_fx"; });
-      if (!cos.length) { list.appendChild(el("p", { class: "ac2-empty", text: "No cosmetics yet — earn them through rewards." })); return; }
-      cos.forEach(function (r) { list.appendChild(rewardRow(r)); });
-    }).catch(function () { list.replaceChildren(el("p", { class: "ac2-empty", text: "Couldn't load cosmetics right now." })); });
+      if (!d || d.ok === false || !Array.isArray(d.rewards)) return;
+      d.rewards.forEach(function (r) { if (r.value && held[r.kind]) held[r.kind].push([r.value, r.name || r.value]); });
+      if (held.banner.length || held.frame.length || held.name_fx.length) _lookRedraw();
+    }).catch(function () {});
   }
-  function rewardRow(r) {
-    var row = el("div", { class: "ac2-reward" + (r.equipped ? " is-on" : "") },
-      el("span", { class: "ac2-reward__kind", text: (r.kind || "").replace("_", " ") }),
-      el("span", { class: "ac2-reward__name", text: r.name || r.value || r.id }));
-    var btn = el("button", { type: "button", class: "btn ghost ac2-reward__btn", text: r.equipped ? "Equipped" : "Equip" });
-    if (r.equipped) btn.classList.add("is-on");
-    btn.addEventListener("click", function () {
-      var on = !row.classList.contains("is-on"); btn.disabled = true;
-      rpc("equip_reward", { p_id: r.id, p_on: on }).then(function (res) {
-        btn.disabled = false; var d = res && res.data;
-        if (!d || d.ok === false) { flashSaved(false, "Couldn't change that"); return; }
-        row.classList.toggle("is-on", !!d.equipped); btn.textContent = d.equipped ? "Equipped" : "Equip"; btn.classList.toggle("is-on", !!d.equipped);
-        flashSaved(true);
-      }).catch(function () { btn.disabled = false; flashSaved(false, "Couldn't change that"); });
+  /* the live "how your profile reads" card at the top of the Look tab */
+  function buildLookPreview() {
+    return el("div", { class: "ac2-look" },
+      el("div", { class: "ac2-look__ban", "aria-hidden": "true" }),
+      el("div", { class: "ac2-look__av" }),
+      el("div", { class: "ac2-look__who" },
+        el("div", { class: "ac2-look__nameline" }, el("span", { class: "ac2-look__name" }), el("span", { class: "ac2-look__flair", hidden: true })),
+        el("div", { class: "ac2-look__handle" })));
+  }
+  function mirrorLook() {
+    if (!lookPv || !lookPv.isConnected || !S) return;
+    var p = S.profile || {}, a = S.account || {};
+    lookPv.style.setProperty("--ac2-accent", ACCENTS[p.accent] || ACCENTS.maroon);
+    var name = p.name || p.discord_name || a.handle || "You";
+    var ban = lookPv.querySelector(".ac2-look__ban");
+    if (typeof p.banner === "string" && /^https?:\/\//.test(p.banner)) ban.style.background = "center/cover no-repeat url('" + p.banner.replace(/'/g, "%27") + "')";
+    else ban.style.background = BANNER_GRAD[p.banner] || BANNER_GRAD_X;
+    var av = lookPv.querySelector(".ac2-look__av");
+    av.className = "ac2-look__av ac2-cos-fr--" + cosClass(p.frame, FR_CLASSES, "none");
+    av.replaceChildren();
+    if (p.avatar) av.appendChild(el("img", { class: "ac2-look__img", src: p.avatar, alt: "" }));
+    else { av.classList.add("is-initial"); av.textContent = (name.replace(/[^A-Za-z0-9]/g, "")[0] || "★").toUpperCase(); }
+    var nm = lookPv.querySelector(".ac2-look__name");
+    nm.className = "ac2-look__name ac2-cos-fx--" + cosClass(p.name_fx, FX_CLASSES, "plain");
+    nm.setAttribute("data-text", name); nm.textContent = name;
+    var fl = lookPv.querySelector(".ac2-look__flair");
+    fl.textContent = a.flair ? a.flair.toUpperCase() : ""; fl.hidden = !a.flair;
+    lookPv.querySelector(".ac2-look__handle").textContent = a.handle ? "@" + a.handle : "";
+  }
+  /* a labelled row of equip tiles for one look field (banner | frame | name_fx) */
+  function cosGroup(title, fieldKey, baseList, heldList, vis) {
+    var def = fieldKey === "banner" ? "maroon" : fieldKey === "frame" ? "none" : "plain";
+    var cur = (S.profile || {})[fieldKey] || def;
+    var g = el("section", { class: "ac2-cosgroup" }, el("p", { class: "ac2-cosgroup__h", text: title }));
+    var row = el("div", { class: "ac2-costiles" });
+    baseList.concat(heldList).forEach(function (it) {
+      var key = it[0], on = key === cur;
+      var tile = el("button", { type: "button", class: "ac2-costile" + (on ? " is-on" : ""), title: it[1], "aria-label": it[1], "aria-pressed": on ? "true" : "false" },
+        cosVisual(vis, key), el("span", { class: "ac2-costile__n", text: it[1] }));
+      tile.addEventListener("click", function () {
+        if (tile.getAttribute("aria-pressed") === "true") return;
+        var patch = {}; patch[fieldKey] = key;
+        save({ profile: patch }).then(function (r) { if (r && r.ok) { mirrorLook(); if (_lookRedraw) _lookRedraw(); } });
+      });
+      row.appendChild(tile);
     });
-    row.appendChild(btn);
-    return row;
+    g.appendChild(row);
+    return g;
   }
+  function cosVisual(vis, key) {
+    if (vis === "banner") { var b = el("span", { class: "ac2-costile__ban" }); b.style.background = BANNER_GRAD[key] || BANNER_GRAD_X; return b; }
+    if (vis === "frame") return el("span", { class: "ac2-costile__fr ac2-cos-fr--" + cosClass(key, FR_CLASSES, "none") });
+    return el("span", { class: "ac2-costile__fx ac2-cos-fx--" + cosClass(key, FX_CLASSES, "plain"), text: "Aa" });
+  }
+  function cosClass(key, table, fallback) { return key && table[key] ? key : (key && /^(rw|adm|own)-/.test(key) ? "x" : fallback); }
 
   /* ---------- PRIVACY ---------- */
   function tabPrivacy() {
