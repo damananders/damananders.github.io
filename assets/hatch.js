@@ -64,7 +64,7 @@
     spec.page = spec.page || PAGE;
     regs.push(spec);
     if (fetched) hydrate(spec);        // late registration: hydrate immediately
-    if (canEdit() && spec.page === PAGE) ensureFab();
+    if (canEdit() && spec.page === PAGE) { ensureFab(); emitFab(); }
     return spec;
   }
 
@@ -108,46 +108,64 @@
     if (onKey) { doc.removeEventListener("keydown", onKey); onKey = null; }
     if (panel) { panel.remove(); panel = null; }
   }
-  function openPanel() {
-    var mine = regs.filter(function (r) { return r.page === PAGE; });
+  function emitFab() { try { Site.emit && Site.emit("hatch:fab"); } catch (e) {} }
+  // Does this page have any editors (optionally for a given game)? Used by callers (e.g. the arcade cards)
+  // to decide whether to show a per-game "open the hatch" entry point.
+  function hasGame(game) { return regs.some(function (r) { return r.page === PAGE && (!game || r.game === game); }); }
+  // Public opener. Pass { game, title } to open the panel scoped to one game's editors (pre-expanded);
+  // no opts opens the whole page (what the floating wrench does).
+  function openFor(opts) { if (!canEdit()) return; ensureFab(); if (panel) closePanel(); openPanel(opts || {}); }
+  function openPanel(opts) {
+    opts = opts || {};
+    var scoped = !!opts.game;
+    var mine = regs.filter(function (r) { return r.page === PAGE && (!scoped || r.game === opts.game); });
     panel = el("div", { class: "ht-panel", role: "dialog", "aria-modal": "true", "aria-label": "Maintenance Hatch" });
     var inner = el("div", { class: "ht-inner" });
-    var head = el("div", { class: "ht-head" }, [el("strong", { text: "Maintenance Hatch" }), el("button", { class: "ht-x", type: "button", "aria-label": "Close", html: "&times;" })]);
+    var titleTxt = scoped && opts.title ? opts.title + " — hatch" : "Maintenance Hatch";
+    var head = el("div", { class: "ht-head" }, [el("strong", { text: titleTxt }), el("button", { class: "ht-x", type: "button", "aria-label": "Close", html: "&times;" })]);
     head.querySelector(".ht-x").addEventListener("click", closePanel);
     inner.appendChild(head);
+    if (scoped) {
+      var back = el("button", { class: "ht-back", type: "button", text: "← All editors on this page" });
+      back.addEventListener("click", function () { closePanel(); openPanel(); });
+      inner.appendChild(back);
+    }
     if (!adminToken()) inner.appendChild(signInBox());
     var list = el("div", { class: "ht-list" });
-    mine.forEach(function (reg) { list.appendChild(buildCat(reg)); });
-    if (!mine.length) list.appendChild(el("p", { class: "ht-empty", text: "Nothing on this page is wired for editing yet." }));
+    mine.forEach(function (reg) { list.appendChild(buildCat(reg, scoped)); });
+    if (!mine.length) list.appendChild(el("p", { class: "ht-empty", text: scoped ? "This game has no editors wired up yet." : "Nothing on this page is wired for editing yet." }));
     inner.appendChild(list);
     panel.appendChild(inner);
     doc.body.appendChild(panel);
     onKey = function (e) { if (e.key === "Escape") closePanel(); };
     doc.addEventListener("keydown", onKey);
   }
-  // One collapsible category per registered editor. Collapsed by default; the editor
+  // One collapsible category per registered editor. Collapsed by default (unless openNow); the editor
   // (and any lazy-loaded script it pulls) is rendered the first time it's expanded.
-  function buildCat(reg) {
+  function buildCat(reg, openNow) {
     var cat = el("div", { class: "ht-cat" });
     var head = el("button", { class: "ht-cat-head", type: "button", "aria-expanded": "false" },
       [el("span", { class: "ht-cat-label", text: reg.label || reg.id }), el("span", { class: "ht-chev", "aria-hidden": "true", html: CHEV })]);
     var body = el("div", { class: "ht-cat-body" });
     var built = false;
-    head.addEventListener("click", function () {
-      var open = cat.classList.toggle("is-open");
+    function build() {
+      if (built) return; built = true;
+      var pane = el("div", { class: "ht-pane" });
+      var status = el("p", { class: "ht-status", role: "status" });
+      var api = apiFor(reg, status);
+      try { reg.render(pane, api); } catch (e) { pane.appendChild(el("p", { class: "ht-empty", text: "This editor failed to load." })); }
+      var foot = el("div", { class: "ht-foot" }, [status, el("button", { class: "btn ht-save", type: "button", text: "Save" })]);
+      foot.querySelector(".ht-save").addEventListener("click", function () { api.save(); });
+      body.appendChild(pane); body.appendChild(foot);
+    }
+    function setOpen(open) {
+      cat.classList.toggle("is-open", open);
       head.setAttribute("aria-expanded", open ? "true" : "false");
-      if (open && !built) {
-        built = true;
-        var pane = el("div", { class: "ht-pane" });
-        var status = el("p", { class: "ht-status", role: "status" });
-        var api = apiFor(reg, status);
-        try { reg.render(pane, api); } catch (e) { pane.appendChild(el("p", { class: "ht-empty", text: "This editor failed to load." })); }
-        var foot = el("div", { class: "ht-foot" }, [status, el("button", { class: "btn ht-save", type: "button", text: "Save" })]);
-        foot.querySelector(".ht-save").addEventListener("click", function () { api.save(); });
-        body.appendChild(pane); body.appendChild(foot);
-      }
-    });
+      if (open) build();
+    }
+    head.addEventListener("click", function () { setOpen(!cat.classList.contains("is-open")); });
     cat.appendChild(head); cat.appendChild(body);
+    if (openNow) setOpen(true);
     return cat;
   }
   function signInBox() {
@@ -176,10 +194,10 @@
   /* Drain any registrations queued against the early stub (interact.js) before this file loaded,
      then replace the stub with the real API. Queued specs register as if they had arrived now. */
   var early = (Site.hatch && Site.hatch._stub && Site.hatch._queue) || [];
-  Site.hatch = { register: register, canEdit: canEdit, get: valueOf };
+  Site.hatch = { register: register, canEdit: canEdit, get: valueOf, open: openFor, has: hasGame };
   for (var qi = 0; qi < early.length; qi++) { try { register(early[qi]); } catch (e) {} }
   try { Site.emit && Site.emit("hatch:ready"); } catch (e) {}
   (Site.ready || function (fn) { fn(); })(function () {
-    fetchAll().then(function () { hydrateAll(); if (canEdit()) ensureFab(); });
+    fetchAll().then(function () { hydrateAll(); if (canEdit()) { ensureFab(); emitFab(); } });
   }, "hatch");
 })();
