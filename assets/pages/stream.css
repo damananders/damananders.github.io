@@ -1,0 +1,14 @@
+/* stream.css — the custom on-brand live chat on /stream/ (see stream-chat.js). Prefix sc-. */
+.pg-chat{display:flex;flex-direction:column;background:rgba(10,12,16,.6)}
+.sc-head{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--sx-line,rgba(255,255,255,.08));flex:none}
+.sc-title{font:700 .9rem var(--sx-display,system-ui);letter-spacing:.02em}
+.sc-post{margin-left:auto;font:600 .8rem var(--sx-display,system-ui);color:#9146ff;text-decoration:none}
+.sc-post:hover,.sc-post:focus-visible{text-decoration:underline}
+.sc-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:10px 12px;display:block}
+.sc-msgs{display:flex;flex-direction:column;gap:5px}
+.sc-msg{font:400 .86rem/1.4 var(--sx-body,system-ui);word-wrap:break-word;overflow-wrap:anywhere}
+.sc-name{font-weight:700;color:var(--sx-accent)}
+.sc-text{color:var(--sx-text,#e9edf2)}
+.sc-note{font:italic 400 .8rem var(--sx-body,system-ui);color:var(--sx-muted,#9aa3ad);padding:3px 0}
+.sc-scroll::-webkit-scrollbar{width:8px}
+.sc-scroll::-webkit-scrollbar-thumb{background:var(--sx-line-2,rgba(255,255,255,.14));border-radius:8px}
