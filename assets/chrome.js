@@ -79,6 +79,19 @@
   function st_locked(row) { return typeof row.disabled === "function" && !!row.disabled(); }
   function st_hint(row) { return typeof row.hint === "function" ? row.hint() : row.hint; }
 
+  /* Settings are grouped into labelled sections in the menu. A row's id decides its section; any row whose id
+     isn't listed falls into the last ("More") bucket, so a newly registered row still shows up without a code
+     change here. Rows keep their registered order within a section (Site.settings.list() is already sorted). */
+  var SETTINGS_GROUPS = [
+    { label: "Appearance", ids: ["theme", "season", "textSize", "contrast", "readFont", "lite", "cursor", "glyphs"] },
+    { label: "Sound & motion", ids: ["motion", "sfx", "soundscape", "volume"] },
+    { label: "More", ids: [] }
+  ];
+  function settingsGroupIndex(id) {
+    for (var g = 0; g < SETTINGS_GROUPS.length; g++) { if (SETTINGS_GROUPS[g].ids.indexOf(id) >= 0) return g; }
+    return SETTINGS_GROUPS.length - 1;
+  }
+
   function buildSettingRow(row, n, syncers) {
     if (!row || !row.label || (!row.pref && typeof row.get !== "function")) return null;
     var base = "ch-set-" + n, lid = base + "-l", hid = base + "-h", key = String(row.id);
@@ -145,7 +158,22 @@
     function draw() {
       var act = document.activeElement, key = act && box.contains(act) ? act.getAttribute("data-ch-key") : null;
       syncers.length = 0; box.textContent = "";
-      Site.settings.list().forEach(function (row, i) { var n = null; try { n = buildSettingRow(row, i, syncers); } catch (e) { console.error("[site] settings row", e); } if (n) box.appendChild(n); });
+      /* Bucket the (already order-sorted) rows into their sections, then render each non-empty section under its
+         label. Sections appear in SETTINGS_GROUPS order; rows keep their order within each one. */
+      var buckets = [];
+      Site.settings.list().forEach(function (row, i) {
+        var g = settingsGroupIndex(String(row.id));
+        (buckets[g] = buckets[g] || []).push({ row: row, i: i });
+      });
+      for (var g = 0; g < SETTINGS_GROUPS.length; g++) {
+        if (!buckets[g]) continue;
+        var built = [];
+        buckets[g].forEach(function (e) { var n = null; try { n = buildSettingRow(e.row, e.i, syncers); } catch (err) { console.error("[site] settings row", err); } if (n) built.push(n); });
+        if (!built.length) continue;
+        var gl = SETTINGS_GROUPS[g] && SETTINGS_GROUPS[g].label;
+        if (gl) box.appendChild(el("p", { class: "ch-group__label", text: gl }));
+        built.forEach(function (n) { box.appendChild(n); });
+      }
       syncAll();
       if (key != null) {
         var again = null;
