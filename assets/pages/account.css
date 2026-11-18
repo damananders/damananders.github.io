@@ -127,3 +127,38 @@
 .ac-2fa__verify .ac-input{flex:1 1 150px}
 .ac-codein{font:600 1.15rem var(--sx-mono,monospace);letter-spacing:.28em;text-align:center}
 .ac-codein::placeholder{letter-spacing:.28em}
+
+/* ---- account home: card layout (facelift) ---- */
+.ac-head2{display:flex;align-items:center;gap:15px}
+.ac-avatar{width:56px;height:56px;flex:none;display:grid;place-items:center;border-radius:16px;
+  font:700 1.5rem/1 var(--sx-display);color:var(--sx-on-accent,#fff);
+  background:linear-gradient(135deg,var(--sx-accent),color-mix(in srgb,var(--sx-accent) 55%,#000));
+  box-shadow:0 8px 22px -10px color-mix(in srgb,var(--sx-accent) 80%,transparent)}
+.ac-idblock{min-width:0;display:flex;flex-direction:column;gap:3px}
+.ac-idblock__name{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ac-idblock__nm{font:700 1.3rem var(--sx-display);color:var(--sx-text)}
+.ac-idblock__at{color:var(--sx-muted);font:500 .95rem var(--sx-mono)}
+.ac-idblock__edit{margin:2px 0 0;font:600 .86rem var(--sx-display);color:var(--sx-muted)}
+.ac-idblock__edit a{color:var(--sx-accent);text-decoration:none}
+.ac-idblock__edit a:hover{text-decoration:underline}
+
+.ac-card2{display:flex;flex-direction:column;gap:0;padding:6px 15px 9px;border-radius:14px;border:1px solid var(--sx-line);background:color-mix(in srgb,var(--sx-text) 3%,transparent)}
+.ac-card2__h{margin:0;padding:11px 2px 5px;font:700 .68rem/1 var(--sx-display);letter-spacing:.12em;text-transform:uppercase;color:var(--sx-muted)}
+.ac-card2 .ac-2fa{border:0;background:transparent;padding:10px 2px}
+
+.ac-svc{display:flex;align-items:center;gap:13px;padding:11px 2px;border-top:1px solid var(--sx-line)}
+.ac-card2__h + .ac-svc{border-top:0}
+.ac-svc__badge{width:32px;height:32px;flex:none;border-radius:10px;background:var(--sx-muted)}
+.ac-svc__badge--dma{background:var(--sx-accent)}
+.ac-svc__badge--discord{background:#5865f2}
+.ac-svc__badge--craft{background:#ff7a1f}
+.ac-svc__badge--anyps{background:#3d8bff}
+.ac-svc__badge--games{background:#36d39a}
+.ac-svc__badge--steam{background:#1b2838}
+.ac-svc__badge--bnet{background:#148eff}
+.ac-svc__badge--key{background:color-mix(in srgb,var(--sx-accent) 45%,#000)}
+.ac-svc__t{min-width:0;display:flex;flex-direction:column;gap:1px}
+.ac-svc__name{font:700 1rem var(--sx-display);color:var(--sx-text)}
+.ac-svc__sub{font-size:.84rem;color:var(--sx-muted)}
+.ac-svc__r{margin-left:auto;flex:none;display:flex;align-items:center;gap:9px}
+.btn.ac-svc__btn{font-size:.86rem;padding:8px 13px}

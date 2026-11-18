@@ -392,61 +392,97 @@ function paintAccount(sb, a, body) {
   var hasDiscord = !!a.has_discord, hasDma = !!a.has_dma, joint = hasDiscord && hasDma;
   var name = a.name || "You", handle = a.handle || "";
 
-  var hello = el("p", { class: "ac-hello", html: "Signed in as <strong>" + escapeHtml(name) + "</strong>" + (handle ? ' <span class="ac-at">@' + escapeHtml(handle) + "</span>" : "") });
-  body.appendChild(hello);
+  /* avatar header */
+  var head = el("div", { class: "ac-head2" });
+  head.appendChild(el("div", { class: "ac-avatar", "aria-hidden": "true", text: (name.trim()[0] || "D").toUpperCase() }));
+  var idb = el("div", { class: "ac-idblock" });
+  var nm = el("div", { class: "ac-idblock__name" });
+  nm.appendChild(el("span", { class: "ac-idblock__nm", text: name }));
+  if (a.verified) nm.appendChild(el("span", { class: "ac-badge ac-badge--verified", html: TICK_SVG + "<span>Verified</span>" }));
+  if (a.cooldown_until) nm.appendChild(el("span", { class: "ac-badge ac-badge--cool", text: "New account" }));
+  if (a.restricted) nm.appendChild(el("span", { class: "ac-badge ac-badge--restricted", text: "Restricted" }));
+  idb.appendChild(nm);
+  if (handle) idb.appendChild(el("span", { class: "ac-idblock__at", text: "@" + handle }));
+  idb.appendChild(el("p", { class: "ac-idblock__edit", html: 'Edit public profile, avatar &amp; bio over on <a href="/games/profile/">your profile →</a>' }));
+  head.appendChild(idb);
+  body.appendChild(head);
 
-  var marks = el("div", { class: "ac-marks" });
-  if (a.verified) marks.appendChild(el("span", { class: "ac-badge ac-badge--verified", html: TICK_SVG + "<span>Verified</span>" }));
-  if (a.cooldown_until) marks.appendChild(el("span", { class: "ac-badge ac-badge--cool", text: "New account — full voting soon" }));
-  if (a.restricted) marks.appendChild(el("span", { class: "ac-badge ac-badge--restricted", text: "Restricted" }));
-  if (marks.childNodes.length) body.appendChild(marks);
+  /* sign-in methods */
+  var c1 = acCard("Sign-in methods");
+  c1.appendChild(svcRow({ cls: "dma", title: "DMA Account", sub: hasDma ? "Email & password" : "Not set up yet", on: hasDma, chip: "Active", action: hasDma ? null : "Add", fn: function () { addDma(sb); } }));
+  c1.appendChild(svcRow({ cls: "discord", title: "Discord", sub: hasDiscord ? "Linked" : "Continue with Discord", on: hasDiscord, chip: "Linked", action: hasDiscord ? null : "Link", primary: true, fn: function () { linkDiscord(sb); } }));
+  body.appendChild(c1);
 
-  /* linked logins */
-  var links = el("div", { class: "ac-links" });
-  links.appendChild(identRow("DMA Account", hasDma, "email + password", !hasDma ? "Add a password login" : null, function () { addDma(sb); }));
-  links.appendChild(identRow("Discord", hasDiscord, "linked", !hasDiscord ? "Link Discord" : null, function () { linkDiscord(sb); }));
-  body.appendChild(links);
+  /* access across projects — one DMA Account spans all three (informational) */
+  var c2 = acCard("Access across projects");
+  c2.appendChild(svcRow({ cls: "craft", title: "AndersCraft", sub: "Sign-ups & realm status", on: true, chip: "Linked" }));
+  c2.appendChild(svcRow({ cls: "anyps", title: "AnyPS", sub: "Downloads & licence", on: true, chip: "Linked" }));
+  c2.appendChild(svcRow({ cls: "games", title: "Rate-O-Pedia", sub: "Ratings, reviews & lists", on: true, chip: "Linked" }));
+  body.appendChild(c2);
 
-  /* two-factor */
-  if (hasDma) body.appendChild(twoFactorBlock(sb));
+  /* security */
+  var c3 = acCard("Security");
+  if (hasDma) {
+    c3.appendChild(twoFactorBlock(sb));
+    c3.appendChild(svcRow({ cls: "key", title: "Password", sub: "Change your account password", action: "Change", fn: function () { changePw(sb); } }));
+  } else {
+    c3.appendChild(el("p", { class: "ac-sub", text: "Add a DMA Account (email + password) above to turn on two-factor and manage a password." }));
+  }
+  body.appendChild(c3);
 
-  /* flair picker (Verified ✔ is separate and always shown) */
-  var flair = el("div", { class: "ac-flair" });
-  flair.appendChild(el("h3", { text: "Profile flair" }));
-  flair.appendChild(el("p", { class: "ac-sub", text: joint ? "You've linked both — show your Discord flair, your DMA flair, or both." : "The badge shown next to your name. More unlock as you link accounts." }));
+  /* game libraries — the linking itself lives on /games/steam/ */
+  var c4 = acCard("Game libraries");
+  c4.appendChild(svcRow({ cls: "steam", title: "Steam", sub: "Show your games & hours on your profile", action: "Link", href: "/games/steam/" }));
+  c4.appendChild(svcRow({ cls: "bnet", title: "Battle.net", sub: "Link your Blizzard account", action: "Link", href: "/games/steam/" }));
+  body.appendChild(c4);
+
+  /* profile flair (Verified ✔ is separate and always shown) */
   var choices = el("div", { class: "ac-flair__row" });
   if (hasDiscord) choices.appendChild(flairChip("discord", "Discord", a.flair));
   if (hasDma) choices.appendChild(flairChip("dma", "DMA", a.flair));
   if (joint) choices.appendChild(flairChip("both", "Both", a.flair));
-  choices.addEventListener("click", function (e) {
-    var chip = e.target.closest(".ac-flair__chip"); if (!chip) return;
-    choices.querySelectorAll(".ac-flair__chip").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
-    chip.setAttribute("aria-pressed", "true");
-    saveFlair(sb, chip.dataset.flair);
-  });
-  flair.appendChild(choices);
-  body.appendChild(flair);
+  if (choices.childNodes.length) {
+    var c5 = acCard("Profile flair");
+    c5.appendChild(el("p", { class: "ac-sub", text: joint ? "You've linked both — show your Discord flair, your DMA flair, or both." : "The badge shown next to your name. More unlock as you link accounts." }));
+    choices.addEventListener("click", function (e) {
+      var chip = e.target.closest(".ac-flair__chip"); if (!chip) return;
+      choices.querySelectorAll(".ac-flair__chip").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+      chip.setAttribute("aria-pressed", "true");
+      saveFlair(sb, chip.dataset.flair);
+    });
+    c5.appendChild(choices);
+    body.appendChild(c5);
+  }
 
   /* actions */
   var sec = el("div", { class: "ac-actions" });
-  if (hasDma) sec.appendChild(actionBtn("Change password", function () { changePw(sb); }));
   sec.appendChild(actionBtn("Download my data", function () { toast("Data export is coming soon.", "info"); }));
   var out = actionBtn("Sign out", function () { signOut(sb); });
   out.classList.add("ac-action--danger");
   sec.appendChild(out);
   body.appendChild(sec);
   body.appendChild(el("p", { class: "ac-msg", id: "ac-home-msg", role: "status" }));
-  body.appendChild(el("p", { class: "ac-fine", html: 'Manage your public profile, avatar and bio over on <a href="/games/profile/">your profile →</a>' }));
 }
 
-function identRow(label, on, detail, actionLabel, onAction) {
-  var row = el("div", { class: "ac-ident" + (on ? " is-on" : "") });
-  var head = el("div", { class: "ac-ident__head" });
-  head.appendChild(el("span", { class: "ac-ident__dot", "aria-hidden": "true" }));
-  head.appendChild(el("span", { class: "ac-ident__name", text: label }));
-  if (on) head.appendChild(el("span", { class: "ac-ident__state", html: TICK_SVG + "<span>" + escapeHtml(detail || "Linked") + "</span>" }));
-  row.appendChild(head);
-  if (actionLabel) { var b = el("button", { class: "ac-link", type: "button", text: actionLabel }); b.addEventListener("click", onAction); row.appendChild(b); }
+/* a labelled card that service rows (svcRow) drop into */
+function acCard(title) {
+  var c = el("section", { class: "ac-card2" });
+  c.appendChild(el("p", { class: "ac-card2__h", text: title }));
+  return c;
+}
+/* one row: coloured badge, name + sub, and a status chip or a Link/Manage control (button, or <a> when href set) */
+function svcRow(o) {
+  var row = el("div", { class: "ac-svc" + (o.on ? " is-on" : "") });
+  row.appendChild(el("span", { class: "ac-svc__badge ac-svc__badge--" + (o.cls || "x"), "aria-hidden": "true" }));
+  var t = el("div", { class: "ac-svc__t" });
+  t.appendChild(el("span", { class: "ac-svc__name", text: o.title }));
+  if (o.sub) t.appendChild(el("span", { class: "ac-svc__sub", text: o.sub }));
+  row.appendChild(t);
+  var r = el("div", { class: "ac-svc__r" });
+  if (o.on && o.chip) r.appendChild(el("span", { class: "ac-badge ac-badge--verified", html: TICK_SVG + "<span>" + escapeHtml(o.chip) + "</span>" }));
+  if (o.href) { var aLink = el("a", { class: "btn ac-svc__btn" + (o.primary ? "" : " ghost"), href: o.href }); aLink.textContent = o.action || "Open"; r.appendChild(aLink); }
+  else if (o.action) { var b = el("button", { class: "btn ac-svc__btn" + (o.primary ? "" : " ghost"), type: "button", text: o.action }); b.addEventListener("click", o.fn); r.appendChild(b); }
+  row.appendChild(r);
   return row;
 }
 function flairChip(value, label, current) { return el("button", { class: "ac-flair__chip", type: "button", "data-flair": value, "aria-pressed": current === value ? "true" : "false", text: label }); }
