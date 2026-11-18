@@ -675,13 +675,15 @@
   var MML = 20, MMR = 254, MRDG = 196;                   /* mill shack left / right, sagging roof ridge */
   var WHX = 26, WHY = 256, WHR = 34;                     /* waterwheel centre + radius */
   var WL = SPL, WR = SPR, APEX = SAX;                    /* kept names for drawWreck: spire walls + apex */
-  var SPOT = { crate: 382, read: 352, dig: 420, prep: 312, equip: 312, armoire: 184, condenser: 102 };
-  var DOOR = { prep: 290, equip: 290, armoire: 150, condenser: 70 };   /* where the wizard steps in */
-  function hubHotspots(stage) {                           /* clickable station zones, in the hub's drawing coords */
-    var h = [{ key: "prep", name: "Prep Time", x: SPL + 8, y: 138, w: 30, h: 42, lx: SPL + 23 },
-             { key: "equip", name: "Equipment", x: SPL + 8, y: 196, w: 30, h: 42, lx: SPL + 23 }];
-    if (stage >= 1) { h.push({ key: "armoire", name: "Wardrobe", x: 132, y: 256, w: 36, h: 44, lx: 150 });
-      h.push({ key: "condenser", name: "Condenser", x: 52, y: 222, w: 36, h: 40, lx: 70 }); }
+  var SPOT = { crate: 382, read: 352, dig: 420, prep: 312, equip: 312, armoire: 214, condenser: 140 };
+  var DOOR = { prep: 290, equip: 290, armoire: 194, condenser: 118 };   /* where the wizard steps in */
+  function hubHotspots(stage) {                           /* clickable station zones, in the hub's drawing coords.
+    Spire: Prep over Equipment on the tower's vertical axis (under the roof window, over the door).
+    Mill: Condenser + Wardrobe as two matching ground-level openings, evenly spaced, clear of the wheel. */
+    var h = [{ key: "prep", name: "Prep Time", x: 275, y: 129, w: 30, h: 42, lx: 290 },
+             { key: "equip", name: "Equipment", x: 275, y: 193, w: 30, h: 42, lx: 290 }];
+    if (stage >= 1) { h.push({ key: "condenser", name: "Condenser", x: 98, y: 253, w: 40, h: 47, lx: 118 });
+      h.push({ key: "armoire", name: "Wardrobe", x: 174, y: 253, w: 40, h: 47, lx: 194 }); }
     return h;
   }
   function wreckOf() {                                    /* 0 = whole, 1 = clearly wrecked. Mends as you level, snaps whole on the forest clear */
@@ -722,21 +724,24 @@
     px(MMR - 67, MRDG - 48, 7, 7, "rgba(210,210,220,.45)"); px(MMR - 63, MRDG - 62, 8, 8, "rgba(210,210,220,.3)");
     /* the Condenser window — an alchemist's still: a bubbling flask of glowing distillate and a coiled
        condenser, lit cool teal (not hearth-warm) once the forest's cleared; a boarded hole before */
-    (function () { var wx = 54, wy = 224, lit = c1;
-      px(wx - 3, wy - 3, 36, 40, "#141a22"); px(wx, wy, 30, 34, lit ? "#123038" : "#2a2236");
+    (function () { var wx = 100, wy = 256, iw = 36, ih = GND - wy, lit = c1, fx = wx + iw / 2;
+      px(wx - 4, wy - 4, iw + 8, ih + 4, "#2b2834");                                        /* stone surround */
+      px(wx, wy, iw, ih, "#10161c");                                                        /* alcove interior */
+      px(wx + 2, wy - 7, iw - 4, 8, "#423f4d"); px(wx + 7, wy - 10, iw - 14, 4, "#4a4654"); /* arched lintel */
       if (lit) {
         var glow = Math.sin(t * 3) > -0.4 ? "#3cf0d4" : "#28c2b2";
-        px(wx, wy, 30, 3, "#8ff0e4"); px(wx + 14, wy, 2, 34, "#1a6a64");
-        px(wx + 4, wy + 19, 14, 13, "#0c3c3c"); px(wx + 5, wy + 22, 12, 9, glow);          /* flask body + liquid */
-        px(wx + 8, wy + 11, 6, 9, "#0c3c3c"); px(wx + 9, wy + 12, 4, 8, glow);              /* neck */
-        for (var bi = 0; bi < 3; bi++) { var bt = (t * 1.4 + bi * 0.45) % 1; px(wx + 8 + bi * 3, wy + 29 - Math.round(bt * 16), 2, 2, "#c8fff4"); }  /* rising bubbles */
-        px(wx + 20, wy + 6, 3, 9, "#8a6a44");                                               /* coil stand */
-        for (var ci = 0; ci < 4; ci++) px(wx + 18, wy + 8 + ci * 4, 8, 2, "#b98a4e");       /* condenser coil */
-      } else { px(wx + 2, wy + 6, 26, 5, "#5c4530"); px(wx + 2, wy + 18, 26, 5, "#4a3826"); }
-      px(wx - 5, wy - 9, 40, 7, "#34303e"); })();
+        px(wx, wy, iw, 2, "#7fe8dc");                                                       /* teal cast at the mouth */
+        px(fx - 10, wy + ih - 6, 20, 6, "#0c3c3c");                                         /* brazier base */
+        px(fx - 9, wy + ih - 24, 18, 18, "#0c3c3c"); px(fx - 7, wy + ih - 21, 14, 14, glow);/* round flask + distillate */
+        px(fx - 4, wy + ih - 33, 8, 10, "#0c3c3c"); px(fx - 2, wy + ih - 32, 4, 9, glow);   /* neck */
+        for (var bi = 0; bi < 4; bi++) { var bt = (t * 1.3 + bi * 0.4) % 1; px(fx - 6 + bi * 4, wy + ih - 12 - Math.round(bt * 18), 2, 2, "#c8fff4"); }  /* bubbles */
+        px(fx + 9, wy + 6, 3, ih - 14, "#8a6a44");                                          /* coil stand */
+        for (var ci = 0; ci < 6; ci++) px(fx + 6, wy + 8 + ci * 5, 10, 2, "#b98a4e");       /* condenser coil */
+      } else { px(wx + 4, wy + 10, iw - 8, 5, "#5c4530"); px(wx + 4, wy + 24, iw - 8, 5, "#4a3826"); px(wx + iw / 2 - 1, wy + 4, 2, ih - 8, "#5c4530"); }
+    })();
     /* the Wardrobe — an actual armoire: two panelled doors under a cornice. Once your hat's won back the
        doors stand ajar, a robe hanging inside with the pointed hat on the shelf; shut and plain before */
-    (function () { var dx = 132, wW = 36, wy = 256, wh = GND - wy;
+    (function () { var dx = 176, wW = 36, wy = 256, wh = GND - wy;
       px(dx - 2, wy - 6, wW + 4, 6, c1 ? "#6b4a2e" : "#3a2f26");                             /* cornice */
       px(dx, wy, wW, wh, "#4a3524"); px(dx, wy, wW, 2, "#6b4a2e"); px(dx, wy, 2, wh, "#3a2a1a"); px(dx + wW - 2, wy, 2, wh, "#2f2416");
       px(dx + wW / 2 - 1, wy + 2, 2, wh - 2, "#2f2416");                                     /* seam between doors */
@@ -764,7 +769,7 @@
     /* the two spire windows — the stations, each showing what it's for (always lit: the spire is home).
        Prep (top) is a study with a workbench; it's also where the wizard's shadow climbs when you open Prep.
        Equipment (below) frames a dress-form in a pointed hat with a wand — gear up. */
-    (function () { var cols = [[SPL + 8, 138], [SPL + 8, 196]], sh = "#241528";
+    (function () { var cols = [[278, 132], [278, 196]], sh = "#241528";
       cols.forEach(function (w, k) { var wx = w[0], wy = w[1], warm = Math.sin(t * 2.2 + k * 2) > -0.5;
         px(wx - 3, wy - 3, 30, 42, "#1a1226"); px(wx, wy, 24, 36, warm ? "#ffd36b" : "#d9a94a");
         px(wx, wy, 24, 3, "#ffe9a8"); px(wx + 10, wy, 3, 36, "#caa35a");
