@@ -356,6 +356,10 @@
 .wz-spellcard .wz-sc__slot{font:800 .62em var(--mono);font-style:normal;color:var(--lc,#e8c15a);text-transform:uppercase;letter-spacing:.05em}
 .wz-spellcard .wz-sc__name{font:800 1.04em var(--wz-serif);color:#fff6de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:.12em}
 .wz-spellcard .wz-sc__sub{font:700 .64em var(--mono);color:#cdbc94}
+.wz-spellcard .wz-sc__mrow{display:flex;align-items:center;gap:.5em;width:100%;margin-top:.22em}
+.wz-spellcard .wz-sc__mlvl{font:800 .58em var(--mono);color:#ffe08a;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.wz-spellcard .wz-sc__mbar{flex:1;height:.5em;min-width:0;background:rgba(0,0,0,.5);border-radius:.3em;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.wz-spellcard .wz-sc__mbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd84a,#ffe9a6);border-radius:.3em}
 .wz-spellcard .wz-sc__swap{margin-top:.12em;font:800 .6em var(--mono);color:#ffe08a;letter-spacing:.02em}
 /* upgrade mini-shop tiles */
 .wz-prepmap .ak-btn.wz-shoptile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.1em;padding:.4em .7em;border-radius:.5em;text-align:left;min-height:0;overflow:hidden;
