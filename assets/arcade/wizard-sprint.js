@@ -1885,7 +1885,7 @@
         more: [[RAR[I.r].n, "r" + I.r], [I.cast, ""], ["Mastery " + mlvl(id) + " / 10", "st"], [nx == null ? "Mastery maxed" : nx + " kills to next", nx == null ? "r4" : "dim"]].concat(elsewhere ? [["in Incantation " + (at + 1), "dim"]] : []),
         act: function () { var prev = S.incEq[slot]; S.incEq[slot] = id; if (elsewhere) S.incEq[at] = prev; save(); sfx("buy"); prep(g, backFocus); } }; });
     items.push({ label: "Back", cls: "is-primary", act: function () { prep(g, backFocus); } });
-    MN(g, { cls: "is-side is-wide", kicker: "Swap Incantation " + (slot + 1), title: "Choose an Incantation", sub: "Pick what this slot casts — each one's effect is shown below it.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
+    MN(g, { cls: "wz-swap", kicker: "Swap Incantation " + (slot + 1), title: "Choose an Incantation", sub: "Pick what this slot casts — each one's effect is shown below it.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
   }
   function wrapLines(ctx, s, maxw) { var words = ("" + s).split(" "), lines = [], cur = ""; words.forEach(function (w) { var t = cur ? cur + " " + w : w; if (ctx.measureText(t).width > maxw && cur) { lines.push(cur); cur = w; } else cur = t; }); if (cur) lines.push(cur); return lines; }
   function drawChalCard(ctx, x, y, w, h, d, done, fr) {
