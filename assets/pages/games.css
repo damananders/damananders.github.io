@@ -1670,3 +1670,30 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 .rop-reps__write{display:grid;gap:4px;margin-left:14px}
 .rop-reps__acts{display:flex;align-items:center;gap:10px}
 :root[data-theme="light"] .rop-rep{background:#f2f6f3}
+
+/* ---- game-info corrections (/games/fixes/ + the suggest button) ---- */
+.gi-fixrow{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.fx-head{display:grid;gap:4px;margin-bottom:12px}
+.fx-h{margin:0;font-size:1.5rem}
+.fx-sec{display:grid;gap:10px;margin-bottom:22px}
+.fx-list{display:grid;gap:10px}
+.fx-item{display:grid;gap:8px;padding:12px 14px;border-radius:14px;background:var(--rop-panel,#0c110f);border:1px solid color-mix(in srgb,var(--rop,#36d39a) 22%,transparent)}
+.fx-item__head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.fx-item__t{font-weight:800;color:inherit}
+.fx-st{padding:2px 9px;border-radius:999px;font:700 .7rem var(--sx-mono,"DM Mono",monospace);text-transform:uppercase;letter-spacing:.05em}
+.fx-st--wait{background:rgba(227,181,74,.15);color:var(--rop-gold-hi,#f6d488)}
+.fx-st--ok{background:color-mix(in srgb,var(--rop,#36d39a) 18%,transparent);color:var(--rop-hi,#7ef0c0)}
+.fx-st--no{background:rgba(255,93,93,.14);color:#ff8a8a}
+.fx-item__when{margin-left:auto}
+.fx-note{margin:0;font-style:italic;color:#b9c2bd}
+.fx-diff{display:grid;gap:6px}
+.fx-row{display:grid;grid-template-columns:120px minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:start}
+.fx-k{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--rop-grey,#8d9691);padding-top:6px}
+.fx-val{font-size:.85rem;line-height:1.4;padding:6px 8px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:10em;overflow:auto}
+.fx-val--old{background:rgba(255,93,93,.07);color:#c9b3b3;text-decoration:line-through;text-decoration-color:rgba(255,120,120,.4)}
+.fx-val--new{background:color-mix(in srgb,var(--rop,#36d39a) 9%,transparent)}
+.fx-arrow{padding-top:6px;color:var(--rop,#36d39a)}
+.fx-acts{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.fx-replyin{flex:1;min-width:200px}
+.fx-decline{color:#ff8a8a}
+@media (max-width:640px){.fx-row{grid-template-columns:1fr}.fx-arrow{display:none}.fx-k{padding-top:0}}

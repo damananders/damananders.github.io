@@ -246,6 +246,7 @@ export function authPill(box, opts) {
   if (handle) btns.append(el("a", { class: (me.member || me.restricted ? "btn gm-btn rop-me__main" : "rop-me__btn"), href: profileUrl(handle), text: "My profile" }));
   if (handle && me.member) btns.append(el("a", { class: "rop-me__btn", href: "/games/feed/", text: "Following" }), el("a", { class: "rop-me__btn", href: "/games/lists/", text: "Lists" }));
   if (handle) btns.append(buddiesBtn());
+  if (me.admin || me.staff) btns.append(el("a", { class: "rop-me__btn", href: "/games/fixes/", text: "Corrections" }));
   box.append(btns);
   const out = el("button", { class: "rop-me__out", type: "button", text: "Sign out", title: "Sign out", onclick: async () => { await sb.auth.signOut(); } });
   const clk = el("button", { class: "rop-me__clock", type: "button", "aria-pressed": clock24() ? "true" : "false", title: "How review and post times are shown",
@@ -279,6 +280,7 @@ function hubPill(box, handle) {
   if (me.member) row.append(a("", "/games/feed/", "Following", HUB_ICO.following), a("", "/games/lists/", "Lists", HUB_ICO.lists));
   row.append(unreadBadge(el("a", { class: "rop-hub__b rop-hub__b--bud", href: "/games/buddies/", title: "Buddies & messages", "aria-label": "Buddies & messages", html: BUD_ICO })));
   if (me.admin) row.append(a("rop-hub__b--op", "/games/ti3c20mi/", "Operation Station", OP_ICO));
+  if (me.admin || me.staff) row.append(a("rop-hub__b--fx", "/games/fixes/", "Game info corrections", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>'));
   row.append(el("button", { class: "rop-hub__b rop-hub__b--out", type: "button", title: "Sign out", "aria-label": "Sign out", html: HUB_ICO.out, onclick: async () => { await sb.auth.signOut(); } }));
   box.append(row);
 }
@@ -616,6 +618,8 @@ export function titleSearch(req, q) {
 const NOTE_TEXT = {
   reply: (n, who) => n > 1 ? n + " new replies on your thread, latest from " + (who || "someone") : (who || "Someone") + " replied to your thread",
   reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your post",
+  info_approved: (n, who) => (who || "An approver") + " approved your correction" + (n > 1 ? "s" : ""),
+  info_declined: (n, who) => (who || "An approver") + " declined your correction" + (n > 1 ? "s" : ""),
   review_reply: (n, who) => n > 1 ? n + " new replies on your review, latest from " + (who || "someone") : (who || "Someone") + " replied to your review",
   review_reaction: (n, who) => (who || "A visitor") + (n > 1 ? " and " + (n - 1) + " more reacted" : " reacted") + " to your review",
   follow: (n, who) => (who || "Someone") + (n > 1 ? " and " + (n - 1) + " more followed you" : " followed you"),
@@ -624,7 +628,7 @@ const NOTE_TEXT = {
   buddy: (n, who, snip) => (who || "Someone") + " " + (snip || "wants to be buddies"),
   dm: (n, who) => (n > 1 ? n + " new messages from " : "New message from ") + (who || "someone"),
 };
-const NOTE_ICON = { reply: "💬", review_reply: "💬", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥", buddy: "🤝", dm: "✉️" };
+const NOTE_ICON = { reply: "💬", review_reply: "💬", info_approved: "✅", info_declined: "📝", reaction: "✨", review_reaction: "👍", wall: "📝", follow: "👋", list_like: "♥", buddy: "🤝", dm: "✉️" };
 let bellTimer = 0;
 export function bell() {
   const count = el("span", { class: "rop-bell__n", hidden: true });
@@ -1069,3 +1073,7 @@ function replyItem(x, onGone) {
   }
   return item;
 }
+
+/* ---------------- game-info corrections (round 39): the fields members may suggest ---------------- */
+export const INFO_FIELDS = [["d", "Description", "long"], ["y", "Year", "year"], ["dev", "Developer(s)", "list"], ["pub", "Publisher(s)", "list"], ["gn", "Genre(s)", "list"], ["an", "Also known as", "list"]];
+export const infoValue = (v) => v == null ? "" : Array.isArray(v) ? v.join(", ") : String(v);

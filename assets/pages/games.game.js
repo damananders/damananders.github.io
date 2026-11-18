@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt , plainText , reviewsPanel } from "./games.common.js?v=31";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt , plainText , reviewsPanel , INFO_FIELDS, infoValue } from "./games.common.js?v=32";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -48,6 +48,7 @@ async function render() {
   fact("Released", info.y);
   if (info.pl && info.pl.length) facts.append(el("dt", { text: "Platforms" }), el("dd", { class: "gi-plats" }, ...info.pl.map((p) => el("span", { class: "gi-plat", text: p }))));
   else fact("Platforms", game.console);
+  fact("Also known as", info.an);
   fact("Publisher", info.pub);
   fact("Developer", info.dev);
   fact("Genre", Array.isArray(info.gn) ? info.gn.filter((x) => !/^video game (with|featuring|based on)|^LGBT/i.test(x)).map((x) => x.replace(/ video game$/i, "")) : info.gn);
@@ -72,7 +73,9 @@ async function render() {
       el("aside", { class: "gi-side" }, scoreBox(), playBox(title), compatBox())),
     reviewBox(),
     mediaBox(),
-    me.admin ? el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Correct this card (owner)", onclick: fixer }) : null);
+    el("div", { class: "gi-fixrow" },
+      me.user && me.member ? el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Suggest a correction", onclick: suggester }) : null,
+      me.admin ? el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Correct this card (owner)", onclick: fixer }) : null));
   root.replaceChildren(el("a", { class: "linkbtn fr-back", href: "/games/?q=" + encodeURIComponent(game.title), text: "← Rate-O-Pedia" }), card);
 }
 
@@ -356,3 +359,37 @@ function fixer() {
 
 subnav($("rop-tabs"), "ratings");
 onAuth(render);
+
+/* members: suggest a correction (round 39). Only the fields you change are sent; approvers see old vs new. */
+function suggester() {
+  const f = {};
+  const note = el("p", { class: "gm-note", role: "status" });
+  const why = el("textarea", { class: "gm-ta", rows: "2", maxlength: "500", "aria-label": "Why (optional)", placeholder: "Where did you get this? (optional, helps the approvers)" });
+  const fields = INFO_FIELDS.flatMap(([k, label, kind]) => {
+    f[k] = el(kind === "long" ? "textarea" : "input", { class: kind === "long" ? "gm-ta" : "gm-search pf-in", rows: kind === "long" ? "6" : null, "aria-label": label,
+      inputmode: kind === "year" ? "numeric" : null, placeholder: kind === "list" ? "comma separated" : null });
+    f[k].value = infoValue(info[k]); f[k].dataset.was = f[k].value;
+    return [el("label", { class: "pf-lab", text: label }), f[k]];
+  });
+  const d = el("dialog", { class: "sx-modal pf-dlg" },
+    el("div", { class: "pf-dlg__head" }, el("h2", { text: "Suggest a correction" }), el("button", { class: "sx-x pf-x", type: "button", "aria-label": "Close", text: "✕", onclick: () => d.close() })),
+    el("p", { class: "gm-note", text: "Fix what's wrong and leave the rest. The owner or a Discord Admin reviews it, and you'll get a notification either way." }),
+    ...fields, el("label", { class: "pf-lab", text: "Why" }), why,
+    el("div", { class: "pf-dlg__foot" },
+      el("button", { class: "btn gm-btn", type: "button", text: "Send suggestion", onclick: async (e) => {
+        const out = {};
+        for (const [k, , kind] of INFO_FIELDS) {
+          const v = f[k].value.trim(); if (v === f[k].dataset.was.trim() || !v) continue;
+          out[k] = kind === "list" ? v.split(",").map((x) => x.trim()).filter(Boolean) : kind === "year" ? +v : v;
+        }
+        if (!Object.keys(out).length) { note.textContent = "Change at least one field first."; return; }
+        e.currentTarget.disabled = true;
+        const { data, error } = await sb.rpc("suggest_game_info", { p_game: id, p_fields: out, p_note: why.value });
+        e.currentTarget.disabled = false;
+        if (error || !data || !data.ok) { note.textContent = (data && data.error) || (error && (/function|schema cache/i.test(error.message) ? "Suggestions switch on after the next database update." : error.message)) || "That didn't send."; return; }
+        toast("Thanks! Sent for review", "ok"); sfx("success"); d.close();
+      } }),
+      el("a", { class: "linkbtn", href: "/games/fixes/", text: "Your suggestions" }), note));
+  d.addEventListener("close", () => d.remove());
+  document.body.append(d); d.showModal();
+}
