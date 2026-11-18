@@ -23,6 +23,7 @@
 
   var games = [], active = null, wrap = null, grid = null, filters = null, fullHost = null, sheet = null;
   var DPR_CAP = 2, PAD_DEAD = 0.18, ROUTE = Site.page === "arcade";
+  var MIN_FRAME_MS = 1000 / 64;   /* frame-rate cap (~60fps): don't overdraw on high-refresh displays */
 
   /* ---- public play counters: total plays and combined playtime per game, shared across everyone via Supabase ---- */
   var SB = (Site.sb && Site.sb.url) ? Site.sb : null, STAT = {}, statTimer = 0;
@@ -406,6 +407,11 @@
     function frame(now) {
       raf = 0;
       if (doc.hidden || active !== g || !open) return;
+      var keep = (!Site.reducedMotion || g.state === "play" || def.alwaysAnimate);
+      /* cap the loop to ~60fps: on a high-refresh display an uncapped rAF renders 144+ fps,
+         which needlessly saturates the GPU and can starve other apps (e.g. a video on a second
+         screen). dt-based logic keeps motion identical at any paint rate. */
+      if (now - last < MIN_FRAME_MS) { if (keep) raf = requestAnimationFrame(frame); return; }
       var dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
       g.pad = pollPad(g.pad);
       if (g.pad.hit.start && captured(g) && !menuSpec) { if (g.state === "play") g.pause(); }
@@ -413,7 +419,7 @@
       else if (def.idle) { try { def.idle(g, dt); } catch (e) {} }
       paint();
       g.keyHits = {};
-      if (!Site.reducedMotion || g.state === "play" || def.alwaysAnimate) raf = requestAnimationFrame(frame);
+      if (keep) raf = requestAnimationFrame(frame);
     }
     g.wake = function () { if (!raf && active === g && open && !doc.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
     g.paint = paint;
