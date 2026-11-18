@@ -1186,7 +1186,10 @@
   }
   function drawRun(g, ctx) {
     var d = R.dist, t = R.t, i, x, y, wx = WX;
-    b.save(); if (R.shake > 0) b.translate(ri(-2, 2), ri(-1, 1));
+    b.setTransform(1, 0, 0, 1, 0, 0); b.globalAlpha = 1;   /* a thrown-and-caught draw last frame can't leave the buffer skewed */
+    b.save();
+    try {
+    if (R.shake > 0) b.translate(ri(-2, 2), ri(-1, 1));
     drawForest(d, t);
     R.haz.forEach(function (h) {
       x = Math.round(h.x - d);
@@ -1231,7 +1234,7 @@
       else if (f.k === "flash") { var fr = 1 - q; for (i = 0; i < 16; i++) { var fa = i / 16 * TAU; px(x + Math.cos(fa) * (10 + q * 26) - 1, f.y + Math.sin(fa) * (12 + q * 26) - 1, 2, 2, "rgba(190,225,255," + fr.toFixed(2) + ")"); } px(x - 14, f.y - 24, 28, 44, "rgba(150,210,255," + (fr * 0.5).toFixed(2) + ")"); }
     });
     drawFore(d);
-    b.restore();
+    } finally { b.restore(); b.setTransform(1, 0, 0, 1, 0, 0); b.globalAlpha = 1; }
     ctx.imageSmoothingEnabled = false; ctx.drawImage(BUF, 0, 0, W, H);
     hud(g, ctx);
   }
@@ -1440,13 +1443,16 @@
   }
   function drawHubScene(g, ctx) {
     var t = Hb.t, st = S.tower || 0;
-    b.save(); b.translate(HOX, 0); drawHub(t, st);
-    var pose = Hb.moving ? "run" : (Hb.busy ? (st === 1 ? "hold" : "stand") : Hb.act);
-    wizSprite(lookOf(S.comfort), pose, t);
-    var fade = Hb.enter ? clamp((Hb.enter.t - (Hb.enter.dur - 0.32)) / 0.32, 0, 1) : 0;   /* dim out as he steps inside */
-    b.save(); if (fade > 0) b.globalAlpha = 1 - fade; b.translate(Math.round(Hb.x), 0); if (Hb.face < 0) b.scale(-1, 1); blitWiz(b, 0, 300, 1); b.restore();
-    if (st === 1 && pose !== "hold") { var a = S.wiz, top = 300 - (14 + Math.round(4 * a.height)) - (16 + Math.round(4 * a.height)) - 22 + (pose === "sit" ? 5 + Math.round(4 * a.height) : pose === "dig" ? 8 : 0); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top, 16, 3, "#efe2b8"); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top + 3, 16, 1, "#c9b98a"); }
-    b.restore();
+    b.setTransform(1, 0, 0, 1, 0, 0); b.globalAlpha = 1;   /* a thrown-and-caught draw last frame can't leave the buffer skewed */
+    b.save();
+    try {
+      b.translate(HOX, 0); drawHub(t, st);
+      var pose = Hb.moving ? "run" : (Hb.busy ? (st === 1 ? "hold" : "stand") : Hb.act);
+      wizSprite(lookOf(S.comfort), pose, t);
+      var fade = Hb.enter ? clamp((Hb.enter.t - (Hb.enter.dur - 0.32)) / 0.32, 0, 1) : 0;   /* dim out as he steps inside */
+      b.save(); if (fade > 0) b.globalAlpha = 1 - fade; b.translate(Math.round(Hb.x), 0); if (Hb.face < 0) b.scale(-1, 1); blitWiz(b, 0, 300, 1); b.restore();
+      if (st === 1 && pose !== "hold") { var a = S.wiz, top = 300 - (14 + Math.round(4 * a.height)) - (16 + Math.round(4 * a.height)) - 22 + (pose === "sit" ? 5 + Math.round(4 * a.height) : pose === "dig" ? 8 : 0); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top, 16, 3, "#efe2b8"); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top + 3, 16, 1, "#c9b98a"); }
+    } finally { b.restore(); b.setTransform(1, 0, 0, 1, 0, 0); b.globalAlpha = 1; }
     if (st < 2) drawRain(t);
     ctx.imageSmoothingEnabled = false; ctx.drawImage(BUF, 0, 0, W, H);
     /* name tags over each station, so you can click the tower itself to open it; the picked one glows */
