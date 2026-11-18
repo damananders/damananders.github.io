@@ -516,22 +516,43 @@
     if (facts.childNodes.length) paneEl.appendChild(facts);
     if (a.member_since) paneEl.appendChild(el("p", { class: "ac2-fine", text: "Member since " + Site.fmtDate(a.member_since) + "." }));
 
-    /* handle */
+    /* handle — auto-accept any free handle live, one change per 30 days (#1) */
     var canChange = !a.handle_claimed_at || daysSince(a.handle_claimed_at) >= 30;
     var hi = input(a.handle, { maxlength: "20", placeholder: "yourhandle", autocapitalize: "off", spellcheck: "false" });
     var hmsg = el("span", { class: "ac2-fhint" });
     hi.disabled = !canChange;
-    var hbtn = el("button", { type: "button", class: "btn ghost", text: "Change", disabled: !canChange });
+    var hbtn = el("button", { type: "button", class: "btn ghost", text: "Change", disabled: true });
+    var HRE = /^[A-Za-z0-9_]{3,20}$/;
+    var curHandle = a.handle || "", hAvail = false, hT = 0;
+    function setHMsg(t, kind) { hmsg.textContent = t; hmsg.className = "ac2-fhint" + (kind ? " is-" + kind : ""); }
+    function gate() { hbtn.disabled = !(canChange && hAvail); }
+    function checkHandle() {
+      clearTimeout(hT); hAvail = false; gate();
+      var v = hi.value.trim();
+      if (!v || v === curHandle) { setHMsg(""); return; }
+      if (!HRE.test(v)) { setHMsg("3–20 letters, numbers or _", "warn"); return; }
+      setHMsg("Checking…");
+      hT = setTimeout(function () {
+        rpc("handle_available", { p_handle: v }).then(function (res) {
+          if (hi.value.trim() !== v) return; /* a newer keystroke is pending */
+          var d = res && res.data;
+          if (d && d.available) { hAvail = true; setHMsg("✓ @" + v + " is free — it's yours the moment you save", "ok"); }
+          else { hAvail = false; setHMsg((d && d.reason) || "That handle's already taken", "warn"); }
+          gate();
+        }).catch(function () { setHMsg(""); });
+      }, 400);
+    }
+    if (canChange) hi.addEventListener("input", checkHandle);
     hbtn.addEventListener("click", function () {
-      var v = hi.value.trim(); if (!/^[A-Za-z0-9_]{3,20}$/.test(v)) { hmsg.textContent = "3–20 letters, numbers or _"; hmsg.className = "ac2-fhint is-warn"; return; }
-      hbtn.disabled = true; hmsg.textContent = "Saving…"; hmsg.className = "ac2-fhint";
+      var v = hi.value.trim(); if (!HRE.test(v)) { setHMsg("3–20 letters, numbers or _", "warn"); return; }
+      hbtn.disabled = true; setHMsg("Saving…");
       save({ handle: v }).then(function (r) {
-        hbtn.disabled = false;
-        if (r && r.ok) { hmsg.textContent = (S && S.account && S.account.handle === v) ? "Handle updated ✓" : "Handle change requested"; hmsg.className = "ac2-fhint is-ok"; }
-        else { hmsg.textContent = (r && r.error) || "That handle isn't available"; hmsg.className = "ac2-fhint is-warn"; }
+        if (r && r.ok && S && S.account && S.account.handle === v) { curHandle = v; hAvail = false; setHMsg("Handle updated ✓", "ok"); }
+        else if (r && r.ok) { setHMsg("Handle change requested", "ok"); }
+        else { setHMsg((r && r.error) || "That handle isn't available", "warn"); gate(); }
       });
     });
-    var hf = field("Handle", el("div", { class: "ac2-row2" }, hi, hbtn), canChange ? "You can change this once every 30 days." : "You can change your handle again " + Site.fmtDate(addDays(a.handle_claimed_at, 30)) + ".");
+    var hf = field("Handle", el("div", { class: "ac2-row2" }, hi, hbtn), canChange ? "Pick any handle that's free and it's yours right away. You can change it once every 30 days." : "You can change your handle again " + Site.fmtDate(addDays(a.handle_claimed_at, 30)) + ".");
     hf.appendChild(hmsg);
     paneEl.appendChild(hf);
 
