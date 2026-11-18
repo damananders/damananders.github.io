@@ -262,13 +262,62 @@ function doSignIn(btn, msg) {
         else say(msg, "That email and password don't match.", "err");
         return;
       }
-      say(msg, "Welcome back! Taking you in…", "ok");
-      var back = "/games/profile/";
-      try { back = localStorage.getItem("site.syncReturn") || back; localStorage.removeItem("site.syncReturn"); } catch (e) {}
-      location.href = back;
+      afterPasswordLogin(sb, msg, function () {
+        say(msg, "Welcome back! Taking you in…", "ok");
+        var back = "/games/profile/";
+        try { back = localStorage.getItem("site.syncReturn") || back; localStorage.removeItem("site.syncReturn"); } catch (e) {}
+        location.href = back;
+      });
     }).catch(done);
   });
   function done() { lock(btn, false); say(msg, "Accounts are being set up — check back soon. 💛"); }
+}
+
+/* ---------- two-factor at sign-in (TOTP challenge) ---------- */
+function afterPasswordLogin(sb, msg, onDone) {
+  if (!sb.auth.mfa || !sb.auth.mfa.getAuthenticatorAssuranceLevel) { onDone(); return; }
+  sb.auth.mfa.getAuthenticatorAssuranceLevel().then(function (r) {
+    var d = r && r.data;
+    if (d && d.nextLevel === "aal2" && d.currentLevel !== "aal2") renderMfaPrompt(sb, onDone);
+    else onDone();
+  }).catch(function () { onDone(); });
+}
+function renderMfaPrompt(sb, onDone) {
+  clear();
+  var card = el("section", { class: "panel pg-card ac-form ac-2fa-gate", "data-reveal": "" });
+  card.appendChild(el("h2", { text: "Two-factor code" }));
+  card.appendChild(el("p", { class: "ac-sub", text: "Enter the 6-digit code from your authenticator app to finish signing in." }));
+  var f = el("form", { class: "ac-fields", novalidate: "" });
+  var wrap = el("label", { class: "ac-field", for: "ac-mfa-code" });
+  wrap.appendChild(el("span", { class: "ac-label", text: "Authenticator code" }));
+  var inp = el("input", { class: "ac-input ac-codein", id: "ac-mfa-code", type: "text", inputmode: "numeric", autocomplete: "one-time-code", maxlength: "7", placeholder: "123456" });
+  wrap.appendChild(inp); f.appendChild(wrap);
+  var m = el("p", { class: "ac-msg", role: "status" }); f.appendChild(m);
+  var b = el("button", { class: "btn ac-cta", type: "submit", text: "Verify & sign in" }); f.appendChild(b);
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var code = (inp.value || "").replace(/\s+/g, "");
+    if (!/^\d{6}$/.test(code)) { say(m, "Enter the 6-digit code.", "warn"); return; }
+    lock(b, true, "Verifying…"); say(m, "Checking…");
+    sb.auth.mfa.listFactors().then(function (lf) {
+      var tf = (lf && lf.data && lf.data.totp) || [];
+      var fac = tf.filter(function (x) { return x.status === "verified"; })[0] || tf[0];
+      if (!fac) { lock(b, false); say(m, "No authenticator is set up on this account.", "err"); return; }
+      sb.auth.mfa.challenge({ factorId: fac.id }).then(function (ch) {
+        if (ch.error) { lock(b, false); say(m, "Couldn't start the check — try again.", "err"); return; }
+        sb.auth.mfa.verify({ factorId: fac.id, challengeId: ch.data.id, code: code }).then(function (v) {
+          lock(b, false);
+          if (v.error) { say(m, "That code didn't match — enter the current one.", "err"); return; }
+          onDone();
+        }).catch(function () { lock(b, false); say(m, "Couldn't verify — try again.", "err"); });
+      }).catch(function () { lock(b, false); say(m, "Couldn't start the check — try again.", "err"); });
+    }).catch(function () { lock(b, false); say(m, "Couldn't reach your account — try again.", "err"); });
+  });
+  var cancel = el("button", { class: "ac-link", type: "button", text: "Cancel and sign out" });
+  cancel.addEventListener("click", function () { sb.auth.signOut().then(boot).catch(boot); });
+  f.appendChild(cancel);
+  card.appendChild(f); root.appendChild(card); revealIn();
+  try { inp.focus(); } catch (e) {}
 }
 
 /* ---------- password reset ---------- */
@@ -358,6 +407,9 @@ function paintAccount(sb, a, body) {
   links.appendChild(identRow("Discord", hasDiscord, "linked", !hasDiscord ? "Link Discord" : null, function () { linkDiscord(sb); }));
   body.appendChild(links);
 
+  /* two-factor */
+  if (hasDma) body.appendChild(twoFactorBlock(sb));
+
   /* flair picker (Verified ✔ is separate and always shown) */
   var flair = el("div", { class: "ac-flair" });
   flair.appendChild(el("h3", { text: "Profile flair" }));
@@ -378,7 +430,6 @@ function paintAccount(sb, a, body) {
   /* actions */
   var sec = el("div", { class: "ac-actions" });
   if (hasDma) sec.appendChild(actionBtn("Change password", function () { changePw(sb); }));
-  sec.appendChild(actionBtn("Set up 2FA", function () { toast("Two-factor sign-in is coming with the security phase.", "info"); }));
   sec.appendChild(actionBtn("Download my data", function () { toast("Data export is coming soon.", "info"); }));
   var out = actionBtn("Sign out", function () { signOut(sb); });
   out.classList.add("ac-action--danger");
@@ -440,6 +491,84 @@ function saveFlair(sb, choice) {
 function signOut(sb) {
   sb.auth.signOut().then(function () { try { if (AUTH_LS) localStorage.removeItem(AUTH_LS); } catch (e) {} toast("Signed out.", "info"); boot(); })
     .catch(function () { boot(); });
+}
+
+/* ---------- two-factor: manage (enroll / disable) ---------- */
+function twoFactorBlock(sb) {
+  var box = el("div", { class: "ac-2fa" });
+  box.appendChild(el("h3", { text: "Two-factor authentication" }));
+  box.appendChild(el("p", { class: "ac-sub", text: "Add a second step at sign-in with an authenticator app (Google Authenticator, Authy, 1Password…)." }));
+  var slot = el("div", { class: "ac-2fa__slot" }); box.appendChild(slot);
+  var msg = el("p", { class: "ac-msg", role: "status" }); box.appendChild(msg);
+  function refresh() {
+    slot.innerHTML = ""; slot.appendChild(el("p", { class: "ac-sub", text: "Checking…" }));
+    if (!sb.auth.mfa || !sb.auth.mfa.listFactors) { slot.innerHTML = ""; slot.appendChild(el("p", { class: "ac-sub", text: "Two-factor isn't available on the server yet." })); return; }
+    sb.auth.mfa.listFactors().then(function (r) {
+      var tf = (r && r.data && r.data.totp) || [];
+      var on = tf.filter(function (x) { return x.status === "verified"; });
+      slot.innerHTML = "";
+      if (on.length) {
+        slot.appendChild(el("p", { class: "ac-2fa__on", html: TICK_SVG + "<span>Two-factor is <strong>on</strong>.</span>" }));
+        var off = el("button", { class: "btn ghost ac-action ac-action--danger", type: "button", text: "Turn off two-factor" });
+        off.addEventListener("click", function () {
+          if (!window.confirm("Turn off two-factor? You'll sign in with just your password.")) return;
+          say(msg, "Turning off…");
+          sb.auth.mfa.unenroll({ factorId: on[0].id }).then(function (res) {
+            if (res.error) say(msg, (res.error.message || "Couldn't turn it off") + " — sign in again with a code first, then retry.", "err");
+            else { say(msg, "Two-factor turned off.", "ok"); refresh(); }
+          }).catch(function () { say(msg, "Couldn't turn it off — try again.", "err"); });
+        });
+        slot.appendChild(off);
+      } else {
+        var start = el("button", { class: "btn ac-action", type: "button", text: "Turn on two-factor" });
+        start.addEventListener("click", function () { startEnroll(sb, slot, msg, refresh, tf); });
+        slot.appendChild(start);
+      }
+    }).catch(function () { slot.innerHTML = ""; slot.appendChild(el("p", { class: "ac-sub", text: "Couldn't check your two-factor status." })); });
+  }
+  refresh();
+  return box;
+}
+function startEnroll(sb, slot, msg, refresh, existing) {
+  say(msg, "Setting up…");
+  (existing || []).filter(function (x) { return x.status !== "verified"; }).forEach(function (x) { try { sb.auth.mfa.unenroll({ factorId: x.id }); } catch (e) {} });
+  sb.auth.mfa.enroll({ factorType: "totp", friendlyName: "Authenticator " + Date.now() }).then(function (r) {
+    if (r.error) { say(msg, r.error.message || "Couldn't start setup — make sure two-factor is enabled on the server.", "err"); return; }
+    say(msg, "");
+    var d = r.data, fid = d.id, totp = d.totp || {};
+    slot.innerHTML = "";
+    var step = el("div", { class: "ac-2fa__enroll" });
+    step.appendChild(el("p", { class: "ac-sub", text: "1. Scan this in your authenticator app, or type the key by hand." }));
+    var qr = el("div", { class: "ac-2fa__qr" });
+    if (totp.qr_code) { if (/^\s*<svg/i.test(totp.qr_code)) qr.innerHTML = totp.qr_code; else { var img = el("img", { alt: "Two-factor QR code" }); img.src = totp.qr_code; qr.appendChild(img); } }
+    step.appendChild(qr);
+    if (totp.secret) step.appendChild(el("p", { class: "ac-2fa__key", html: "Key: <code>" + escapeHtml(totp.secret) + "</code>" }));
+    step.appendChild(el("p", { class: "ac-sub", text: "2. Enter the 6-digit code it shows." }));
+    var row = el("div", { class: "ac-2fa__verify" });
+    var inp = el("input", { class: "ac-input ac-codein", type: "text", inputmode: "numeric", autocomplete: "one-time-code", maxlength: "7", placeholder: "123456" });
+    var go = el("button", { class: "btn", type: "button", text: "Verify" });
+    row.appendChild(inp); row.appendChild(go); step.appendChild(row);
+    var cancel = el("button", { class: "ac-link", type: "button", text: "Cancel" });
+    cancel.addEventListener("click", function () { try { sb.auth.mfa.unenroll({ factorId: fid }); } catch (e) {} refresh(); });
+    step.appendChild(cancel);
+    slot.appendChild(step);
+    try { inp.focus(); } catch (e) {}
+    go.addEventListener("click", function () {
+      var code = (inp.value || "").replace(/\s+/g, "");
+      if (!/^\d{6}$/.test(code)) { say(msg, "Enter the 6-digit code.", "warn"); return; }
+      go.disabled = true; say(msg, "Verifying…");
+      sb.auth.mfa.challenge({ factorId: fid }).then(function (ch) {
+        if (ch.error) { go.disabled = false; say(msg, "Couldn't verify — try again.", "err"); return; }
+        sb.auth.mfa.verify({ factorId: fid, challengeId: ch.data.id, code: code }).then(function (v) {
+          go.disabled = false;
+          if (v.error) { say(msg, "That code didn't match — enter the current one.", "err"); return; }
+          say(msg, "Two-factor is on. 💛", "ok");
+          try { if (window.Site && Site.sfx) Site.sfx("win"); } catch (e) {}
+          refresh();
+        }).catch(function () { go.disabled = false; say(msg, "Couldn't verify — try again.", "err"); });
+      }).catch(function () { go.disabled = false; say(msg, "Couldn't verify — try again.", "err"); });
+    });
+  }).catch(function () { say(msg, "Couldn't start setup — try again.", "err"); });
 }
 
 /* ---------- boot + return-link handling ---------- */
