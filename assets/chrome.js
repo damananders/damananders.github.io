@@ -677,6 +677,9 @@
         var ia = pa < 0 ? 999 : pa, ib = pb < 0 ? 999 : pb;
         return ia !== ib ? ia - ib : a - b;
       });
+      /* Home is always the first item in the menu, whatever the order */
+      var hpos = -1; for (var j = 0; j < idx.length; j++) { if (PAGES[idx[j]][0] === "hub") { hpos = j; break; } }
+      if (hpos > 0) { idx.unshift(idx.splice(hpos, 1)[0]); }
       return idx;
     }
     /* Place each card on a ring slot following the current page order. shuffle only applies in "pick" mode,
@@ -703,7 +706,8 @@
       seq.forEach(function (pi, k) {
         var ord = (k + 1) * 10;
         nodes[pi].style.order = String(ord);
-        if (order === "group") { var cat = PAGES[pi][4]; if (cat !== lastCat) { if (headers[cat]) headers[cat].style.order = String(ord - 5); lastCat = cat; } }
+        /* group headers precede each category's first card; Home sits bare on top, so it gets no header */
+        if (order === "group" && PAGES[pi][0] !== "hub") { var cat = PAGES[pi][4]; if (cat !== lastCat) { if (headers[cat]) headers[cat].style.order = String(ord - 5); lastCat = cat; } }
       });
       if (mode === "float") layoutFloat(false);
       if (persist) { try { Site.store.set("menu.order", order); } catch (x) {} }
