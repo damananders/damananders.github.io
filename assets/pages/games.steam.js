@@ -1,7 +1,7 @@
 /* pages/games.steam.js: Linked accounts (/games/steam/). Prefix ln-.
  * "Sign in through Steam" uses Steam's own sign-in page (OpenID 2.0); the steam-link function confirms Steam's answer
  * with Steam before saving anything, so nobody can claim someone else's account. Unlinking deletes the stored data. */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, toast, sfx, steamRow, steamCard, bnetRow, profileUrl } from "./games.common.js?v=36";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, toast, sfx, steamRow, steamCard, bnetRow, profileUrl } from "./games.common.js?v=37";
 
 const root = $("ln-root");
 const RETURN_TO = location.origin + "/games/steam/";
@@ -61,7 +61,7 @@ async function render() {
         if (data && data.ok && !data.cached) render();
       } }),
       el("button", { class: "linkbtn fx-decline", type: "button", text: "Unlink Steam", onclick: async () => {
-        if (!confirm("Unlink Steam? Your Steam name, games and hours are deleted from Rate-O-Pedia.")) return;
+        if (!confirm("Unlink Steam? Your Steam name, games and hours are deleted from Wiki-Chip Dex.")) return;
         const { error } = await sb.rpc("unlink_steam"); if (error) { toast(error.message, "err"); return; }
         toast("Steam unlinked", "ok"); render();
       } }), note));
@@ -72,13 +72,13 @@ async function render() {
         el("li", { text: "You sign in on Steam's own page. Your Steam password never reaches this site." }),
         el("li", { text: "We store your Steam id, Steam name, avatar, number of games, total hours and your 6 most-played games. Games only show if your Steam \"Game details\" are public." }),
         el("li", { text: "Shown on your public profile. Unlinking deletes all of it." }),
-        el("li", { text: "Rate-O-Pedia isn't affiliated with or endorsed by Valve or Steam." })));
+        el("li", { text: "Wiki-Chip Dex isn't affiliated with or endorsed by Valve or Steam." })));
   }
   const bnSec = el("section", { class: "fx-sec ln-sec" }, el("h2", { class: "gm-head", text: "Battle.net" }));
   if (bn === undefined) bnSec.append(el("p", { class: "gm-note", text: "Battle.net linking switches on after the next database update (round 41)." }));
   else if (bn) bnSec.append(el("div", { class: "ln-bn" }, el("span", { class: "ln-bn__tag", text: bn.battletag }), el("span", { class: "pf-ra__ok", text: " ✔ linked" })),
     el("button", { class: "linkbtn fx-decline", type: "button", text: "Unlink Battle.net", onclick: async () => {
-      if (!confirm("Unlink Battle.net? Your BattleTag is deleted from Rate-O-Pedia.")) return;
+      if (!confirm("Unlink Battle.net? Your BattleTag is deleted from Wiki-Chip Dex.")) return;
       const { error } = await sb.rpc("unlink_bnet"); if (error) { toast(error.message, "err"); return; } toast("Battle.net unlinked", "ok"); render();
     } }));
   else bnSec.append(el("button", { class: "ln-bnet", type: "button", text: "Sign in with Battle.net", onclick: async (e) => {

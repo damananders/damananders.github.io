@@ -1,7 +1,7 @@
-# Builds the Rate-O-Pedia game info cards (assets/data/gameinfo/*.json) from Wikidata, Wikipedia and the
+# Builds the Wiki-Chip Dex game info cards (assets/data/gameinfo/*.json) from Wikidata, Wikipedia and the
 # emulator compatibility lists. Run by hand from the Actions tab (or `gh workflow run rop-enrich.yml`).
 # The result is pushed to the branch rop-gameinfo-data (replaced each run); it is reviewed and merged separately.
-name: Rate-O-Pedia game info
+name: Wiki-Chip Dex game info
 
 on:
   workflow_dispatch:
@@ -38,5 +38,5 @@ jobs:
           git rm -rq --cached .
           mkdir -p assets/data && rm -rf assets/data/gameinfo && mv out/gameinfo assets/data/gameinfo
           git add assets/data/gameinfo
-          git commit -qm "Rate-O-Pedia game info data ($(date -u +%F))"
+          git commit -qm "Wiki-Chip Dex game info data ($(date -u +%F))"
           git push -f origin rop-gameinfo-data

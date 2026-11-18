@@ -2,7 +2,7 @@
  * Without ?p= it lists every platform by family (optionally one family with ?f=). With ?p= it shows that platform's
  * numbers, its own leaderboard (top rated, most voted), its top raters, recent reviews, a random pick and browsing.
  */
-import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores , plainText } from "./games.common.js?v=36";
+import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores , plainText } from "./games.common.js?v=37";
 
 const qs = new URLSearchParams(location.search);
 if (/^(Mac|Linux)$/.test(qs.get("p") || "")) { qs.set("p", "PC"); location.replace("?" + qs); }   // merged into PC (round 23)
@@ -22,9 +22,9 @@ async function counts() {
 async function index() {
   const m = await counts();
   const fams = fam && FAMILY[fam] ? FAMILIES.filter(([k]) => k === fam) : FAMILIES;
-  document.title = (fam && FAMILY[fam] ? FAMILY[fam].name + " platforms" : "Platforms") + " — Rate-O-Pedia";
+  document.title = (fam && FAMILY[fam] ? FAMILY[fam].name + " platforms" : "Platforms") + " — Wiki-Chip Dex";
   root.replaceChildren(
-    el("header", { class: "hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Rate-O-Pedia · platform hubs" }),
+    el("header", { class: "hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Wiki-Chip Dex · platform hubs" }),
       el("h1", { text: fam && FAMILY[fam] ? FAMILY[fam].name : "Every platform" }),
       el("p", { class: "lead", text: "Each console, handheld and computer has its own hub: its leaderboard, its top raters, recent reviews and a random pick." }),
       fam ? el("a", { class: "linkbtn", href: "/games/platform/", text: "← All families" }) : null),
@@ -40,7 +40,7 @@ async function index() {
 
 async function hub(p) {
   const color = (FAMILY[p.fam] || {}).color || "#cd4257";
-  document.title = p.name + " hub — Rate-O-Pedia";
+  document.title = p.name + " hub — Wiki-Chip Dex";
   const m = await counts();
   const c = m.get(p.id) || {};
   const note = el("p", { class: "gm-note", role: "status" });

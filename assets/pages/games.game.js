@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt , plainText , reviewsPanel , INFO_FIELDS, infoValue } from "./games.common.js?v=36";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt , plainText , reviewsPanel , INFO_FIELDS, infoValue } from "./games.common.js?v=37";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -22,7 +22,7 @@ async function staticInfo() {
 /* ---------------- render ---------------- */
 async function render() {
   authPill($("gm-auth"), { okTail: ", you can rate and upload." });
-  if (!id) { root.replaceChildren(el("p", { class: "gm-empty", text: "No game picked. " }, el("a", { href: "/games/", text: "Search Rate-O-Pedia" }))); return; }
+  if (!id) { root.replaceChildren(el("p", { class: "gm-empty", text: "No game picked. " }, el("a", { href: "/games/", text: "Search Wiki-Chip Dex" }))); return; }
   const [g, base, fix] = await Promise.all([
     scoreCols().then((c) => sb.from("game_scores").select(c).eq("id", id).maybeSingle()),
     staticInfo(),
@@ -32,10 +32,10 @@ async function render() {
     const a = await sb.from("game_aliases").select("new_id").eq("old_id", id).maybeSingle();
     if (a.data && a.data.new_id) { location.replace("/games/game/?id=" + encodeURIComponent(a.data.new_id)); return; }
   }
-  if (!game) { root.replaceChildren(el("section", { class: "pf-card pf-notice" }, el("h2", { text: "Game not found" }), el("a", { class: "linkbtn", href: "/games/", text: "← Back to Rate-O-Pedia" }))); return; }
+  if (!game) { root.replaceChildren(el("section", { class: "pf-card pf-notice" }, el("h2", { text: "Game not found" }), el("a", { class: "linkbtn", href: "/games/", text: "← Back to Wiki-Chip Dex" }))); return; }
   info = Object.assign({}, base, (fix.data && fix.data.data) || {});
   const title = info.t || game.title, sub = info.st || "";
-  document.title = title + (sub ? " — " + sub : "") + " · Rate-O-Pedia";
+  document.title = title + (sub ? " — " + sub : "") + " · Wiki-Chip Dex";
   let shareHref = "/games/game/?id=" + encodeURIComponent(id);
   shareUrlFor(id).then((u) => { shareHref = u; });
 
@@ -76,7 +76,7 @@ async function render() {
     el("div", { class: "gi-fixrow" },
       me.user && me.member ? el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Suggest a correction", onclick: suggester }) : null,
       me.admin ? el("button", { class: "linkbtn gi-fixbtn", type: "button", text: "Correct this card (owner)", onclick: fixer }) : null));
-  root.replaceChildren(el("a", { class: "linkbtn fr-back", href: "/games/?q=" + encodeURIComponent(game.title), text: "← Rate-O-Pedia" }), card);
+  root.replaceChildren(el("a", { class: "linkbtn fr-back", href: "/games/?q=" + encodeURIComponent(game.title), text: "← Wiki-Chip Dex" }), card);
 }
 
 /* ---------------- score + rating ---------------- */
@@ -84,7 +84,7 @@ function scoreBox() {
   const box = el("section", { class: "gi-box gi-score" });
   const avg = game.votes > 0 ? Number(game.average).toFixed(1) : "–";
   const open = game.open_votes !== undefined;
-  if (!open) box.append(el("h2", { class: "gi-h", text: "Rate-O-Pedia score" }),
+  if (!open) box.append(el("h2", { class: "gi-h", text: "Wiki-Chip Dex score" }),
     el("p", { class: "gi-big" }, el("b", { text: avg }), el("span", { text: " / 5" })),
     el("p", { class: "gm-note", text: game.votes ? plural(game.votes, "vote") : "Not rated yet" }));
   else {

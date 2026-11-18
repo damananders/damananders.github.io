@@ -2318,12 +2318,12 @@
     if (hatchDone || !window.Site || !Site.hatch || typeof Site.hatch.register !== "function") return;
     hatchDone = true;
     Site.hatch.register({
-      id: "arcade-wizard-balance", page: "arcade", label: "Wizard — balance tunables",
+      id: "arcade-wizard-balance", page: "arcade", game: "wizard-sprint", label: "Wizard — balance tunables",
       render: function (pane, api) { try { balanceEditor(pane, api); } catch (e) {} },
       load: function (value) { try { TUNE = sanitizeTune(value); } catch (e) { TUNE = {}; } }
     });
     Site.hatch.register({
-      id: "arcade-wizard-story", page: "arcade", label: "Wizard — story & dialogue",
+      id: "arcade-wizard-story", page: "arcade", game: "wizard-sprint", label: "Wizard — story & dialogue",
       render: function (pane, api) { try { mountStory(pane, api); } catch (e) {} },
       load: function (value) { try { if (value !== undefined) WS.apply(value); } catch (e) {} }
     });

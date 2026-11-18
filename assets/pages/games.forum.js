@@ -1,8 +1,8 @@
-/* pages/games.forum.js: Rate-O-Pedia Forums (/games/forum/ and /games/forum/?p=<id>). Prefix fr-.
+/* pages/games.forum.js: Wiki-Chip Dex Forums (/games/forum/ and /games/forum/?p=<id>). Prefix fr-.
  * Everyone can read. Discord-server members can post, comment, react and report. Posts and comments are plain
  * text (links become clickable); nothing a member writes is ever inserted as HTML.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact , reportBtn } from "./games.common.js?v=36";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ownerTag, adminTag, ago, share, sfx, toast, INVITE, guestReactions, guestReact , reportBtn } from "./games.common.js?v=37";
 
 const CATS = [["", "All"], ["anyps", "AnyPS"], ["games", "Games"], ["general", "General"], ["help", "Help"], ["offtopic", "Off-topic"]];
 const catName = (k) => (CATS.find(([c]) => c === k) || [k, k])[1];
@@ -151,7 +151,7 @@ function composer() {
 }
 
 function listShell() {
-  document.title = "Forums — Rate-O-Pedia";
+  document.title = "Forums — Wiki-Chip Dex";
   const tabs = el("div", { class: "gm-tabs fr-cats", role: "group", "aria-label": "Category" });
   const drawTabs = () => tabs.replaceChildren(...CATS.map(([k, label]) => el("button", { type: "button", class: "gm-tab fr-cat-tab" + (k === cat ? " is-on" : ""), "data-c": k || "all", "aria-pressed": k === cat ? "true" : "false", text: label,
     onclick: () => { cat = k; drawTabs(); history.replaceState(null, "", k ? "?c=" + k : location.pathname); listView(); composer(); } })));
@@ -176,7 +176,7 @@ async function postView() {
   const { data: f, error } = await sb.from("forum_feed").select("*").eq("id", postId).maybeSingle();
   if (error) return root.replaceChildren(el("p", { class: "gm-empty", text: "The forums switch on as soon as the site's database update goes in. Check back soon." }));
   if (!f) return root.replaceChildren(el("section", { class: "fr-post" }, el("h2", { text: "Post not found" }), el("p", { class: "gm-note", text: "It may have been deleted." }), el("a", { class: "linkbtn", href: "/games/forum/", text: "← All posts" })));
-  document.title = f.title + " — Rate-O-Pedia Forums";
+  document.title = f.title + " — Wiki-Chip Dex Forums";
   await loadMyReacts([f.id]);
   const mine = !!(me.profile && me.profile.handle === f.handle);
   const tools = el("span", { class: "fr-tools-inline" });

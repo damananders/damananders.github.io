@@ -1,4 +1,4 @@
-// tools/rop-share/build.mjs: link-preview pages for Rate-O-Pedia games (games/s/<platform>/<game>.html).
+// tools/rop-share/build.mjs: link-preview pages for Wiki-Chip Dex games (games/s/<platform>/<game>.html).
 // Game pages are drawn by JavaScript, so Discord, X and friends see no title, score or picture when someone pastes a
 // link. These tiny static pages carry the preview (title, both scores, description, box art) and send people on to
 // the real game page. One page per game that has at least one vote; .github/workflows/rop-share.yml rebuilds them daily.
@@ -51,14 +51,14 @@ for (const g of res.rows) {
   const img = artOf(x);
   const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<title>${esc(title)} · Rate-O-Pedia</title>
+<title>${esc(title)} · Wiki-Chip Dex</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
 <link rel="canonical" href="${esc(url)}">
 <meta name="description" content="${esc(desc)}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Rate-O-Pedia">
-<meta property="og:title" content="${esc(title)} (${esc(con)}) · ${g.votes > 0 ? Number(g.average).toFixed(1) + "/5" : "Rate-O-Pedia"}">
+<meta property="og:site_name" content="Wiki-Chip Dex">
+<meta property="og:title" content="${esc(title)} (${esc(con)}) · ${g.votes > 0 ? Number(g.average).toFixed(1) + "/5" : "Wiki-Chip Dex"}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(url)}">
 <meta property="og:image" content="${esc(img || SITE + "/assets/og/games.jpg")}">
@@ -66,7 +66,7 @@ for (const g of res.rows) {
 <meta name="theme-color" content="#cd4257">
 <meta http-equiv="refresh" content="0;url=${esc(url)}">
 <script>location.replace(${JSON.stringify("/games/game/?id=" + encodeURIComponent(g.id))})</script>
-</head><body><p><a href="${esc(url)}">${esc(title)} on Rate-O-Pedia</a></p></body></html>
+</head><body><p><a href="${esc(url)}">${esc(title)} on Wiki-Chip Dex</a></p></body></html>
 `;
   const file = path.join(OUT, rel);
   fs.mkdirSync(path.dirname(file), { recursive: true });

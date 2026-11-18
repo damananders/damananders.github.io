@@ -1,4 +1,4 @@
-/* pages/games.platforms.js: every platform Rate-O-Pedia knows. Shared by the pages (filters, badges, add-a-game)
+/* pages/games.platforms.js: every platform Wiki-Chip Dex knows. Shared by the pages (filters, badges, add-a-game)
  * and by tools/rop-catalog (which builds the game lists). The id is what the database stores in games.console and
  * the prefix of each game id ("SNES:chrono-trigger"), so ids must never change once games use them.
  *   wp  = English Wikipedia article of the platform (the catalog builder looks its Wikidata item up from this)

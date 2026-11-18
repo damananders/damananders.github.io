@@ -2,7 +2,7 @@
  * Scores, votes, hearts, reviews and backlog counts come live from the database; facts from the static info cards
  * (with the owner's corrections on top). The better number in each row is highlighted.
  */
-import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=36";
+import { sb, $, el, onAuth, authPill, subnav, share, consoleChip, platformLink, gameUrl, compareUrl, gameInfo, chipSvg, CHIP_WORD, platformName, scoreCols, titleSearch , boxArt , hasSearchKey } from "./games.common.js?v=37";
 
 const root = $("cmp-root");
 const qs = new URLSearchParams(location.search);
@@ -45,14 +45,14 @@ async function render() {
   authPill($("gm-auth"), { okTail: "." });
   root.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
   const [A, B] = await Promise.all([load(pick.a), load(pick.b)]);
-  const head = el("header", { class: "hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Rate-O-Pedia · head to head" }), el("h1", { text: A && B ? A.g.title + " vs " + B.g.title : "Compare two games" }));
+  const head = el("header", { class: "hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Wiki-Chip Dex · head to head" }), el("h1", { text: A && B ? A.g.title + " vs " + B.g.title : "Compare two games" }));
   const side = (X, k) => X ? el("div", { class: "pf-slot" }, consoleChip(X.g.console), el("span", { class: "pf-fav__t", text: X.g.title }), el("button", { class: "linkbtn", type: "button", text: "Change", onclick: () => { pick[k] = ""; go(); } })) : searcher(k);
   const picker = el("div", { class: "cmp-pick" }, side(A, "a"), el("span", { class: "cmp-vs", text: "VS" }), side(B, "b"));
   const tools = A && B ? el("div", { class: "ph-btns" },
     el("button", { class: "linkbtn", type: "button", text: "⇄ Swap sides", onclick: () => { [pick.a, pick.b] = [pick.b, pick.a]; go(); } }),
     el("button", { class: "linkbtn", type: "button", text: "Share this matchup", onclick: () => share(compareUrl(pick.a, pick.b), A.g.title + " vs " + B.g.title) })) : null;
   root.replaceChildren(...[head, picker, tools, A || B ? grid(A, B) : el("p", { class: "gm-note", text: "Search for two games to put them side by side. Tip: the Compare button on any game's info card starts a matchup with that game." })].filter(Boolean));
-  document.title = (A && B ? A.g.title + " vs " + B.g.title : "Compare games") + " — Rate-O-Pedia";
+  document.title = (A && B ? A.g.title + " vs " + B.g.title : "Compare games") + " — Wiki-Chip Dex";
 }
 
 function grid(A, B) {

@@ -2,13 +2,13 @@
  * The latest ratings, reviews and lists from the members you follow, from the database function my_feed(),
  * which only ever returns your own feed. Follow people with the Follow button on their profile.
  */
-import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, INVITE, consoleChip, gameUrl, artSlot, chipSvg, CHIP_WORD, profileUrl } from "./games.common.js?v=36";
+import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, ago, INVITE, consoleChip, gameUrl, artSlot, chipSvg, CHIP_WORD, profileUrl } from "./games.common.js?v=37";
 
 const root = $("fd-root");
 let oldest = null;
 
 function hero(...extra) {
-  return el("header", { class: "hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Rate-O-Pedia · following" }), el("h1", { text: "Following" }),
+  return el("header", { class: "hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Wiki-Chip Dex · following" }), el("h1", { text: "Following" }),
     el("p", { class: "lead", text: "What the members you follow have been rating, reviewing and listing." }), ...extra);
 }
 

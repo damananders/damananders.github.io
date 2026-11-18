@@ -1,4 +1,4 @@
-// tools/rop-art/art.mjs: box art + missing facts for the Rate-O-Pedia info cards, from libretro.
+// tools/rop-art/art.mjs: box art + missing facts for the Wiki-Chip Dex info cards, from libretro.
 //   node tools/rop-art/art.mjs <games.tsv>      (games.tsv = id, console, votes, title; e.g. from the rop-dump branch)
 // For every platform with a libretro-database list it reads the .rdb, matches each game by its tidied title, and:
 //   * stores the box-art path as "a" ("<libretro system>/<No-Intro name>"); pages load

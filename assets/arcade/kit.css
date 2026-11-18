@@ -45,6 +45,13 @@
 .ak.is-compact .ak-tile__pitch{font-size:.86rem}
 .ak.is-compact .ak-play,.ak.is-compact .ak-info{min-height:46px}
 .ak.is-compact .ak-info{width:46px}
+/* owner-only per-card admin-hatch bar (gold = admin accent); hidden for everyone but a signed-in owner */
+.ak-tile__admin{width:100%;min-height:40px;margin-top:8px;border-radius:12px;cursor:pointer;
+  font:700 .88rem/1 var(--display);letter-spacing:.02em;color:#ffe08a;
+  background:rgba(255,224,138,.10);border:1px solid rgba(255,224,138,.4)}
+.ak-tile__admin[hidden]{display:none}
+.ak-tile__admin:hover{background:rgba(255,224,138,.18);border-color:#ffe08a}
+.ak-tile__admin:focus-visible{outline:3px solid #fff;outline-offset:3px}
 
 .ak-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;justify-content:center}
 .ak-filters[hidden]{display:none}

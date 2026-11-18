@@ -3,7 +3,7 @@
  * (save_list, delete_list, toggle_list_like) that checks the member and the limits, so nothing here is trusted.
  */
 import { sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, profileUrl, nameLink, ago, share, sfx, toast, INVITE,
-  consoleChip, gameUrl, artSlot, hasSearchKey, titleSearch, scoreCols, scorePair , statsChanged } from "./games.common.js?v=36";
+  consoleChip, gameUrl, artSlot, hasSearchKey, titleSearch, scoreCols, scorePair , statsChanged } from "./games.common.js?v=37";
 
 const root = $("ls-root");
 const qs = new URLSearchParams(location.search);
@@ -13,7 +13,7 @@ const canWrite = () => me.user && me.member && me.ready && !me.banned;
 const notReady = (e) => /game_lists|public_lists|save_list|relation|function|schema cache/i.test((e && e.message) || "");
 
 function hero(title, sub, ...btns) {
-  return el("header", { class: "hero ls-hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Rate-O-Pedia · lists" }), el("h1", { text: title }),
+  return el("header", { class: "hero ls-hero", style: "padding:0 0 10px" }, el("div", { class: "eyebrow", text: "Wiki-Chip Dex · lists" }), el("h1", { text: title }),
     sub ? el("p", { class: "lead", text: sub }) : null, btns.length ? el("div", { class: "ph-btns" }, ...btns) : null);
 }
 const waitNote = () => el("p", { class: "gm-note", text: "Lists switch on after the owner runs 21_rateopedia_lists_follows.sql." });
@@ -54,7 +54,7 @@ async function index() {
       : el("a", { class: "ls-card ls-card--private", href: "/games/lists/?id=" + x.id }, el("div", { class: "ls-mosaic" }), el("div", { class: "ls-card__b" }, el("b", { class: "ls-card__t", text: x.title }), el("span", { class: "gm-note", text: (x.is_public ? "public" : "🔒 private") + " · " + ago(x.updated_at) })))));
     if (!(m.data || []).length) mine.append(el("p", { class: "gm-note", text: "You haven't made a list yet." }));
   }
-  document.title = "Game lists — Rate-O-Pedia";
+  document.title = "Game lists — Wiki-Chip Dex";
 }
 
 /* ---------------- one list ---------------- */
@@ -109,7 +109,7 @@ async function view() {
   root.replaceChildren(el("a", { class: "linkbtn fr-back", href: "/games/lists/", text: "← All lists" }),
     hero(l.title, l.description || "", ...btns), by,
     rows.length ? list : el("p", { class: "gm-note", text: "This list is empty." + (mine ? " Press Edit to add games." : "") }));
-  document.title = l.title + " — Rate-O-Pedia lists";
+  document.title = l.title + " — Wiki-Chip Dex lists";
 }
 
 /* ---------------- editor (new or existing list) ---------------- */

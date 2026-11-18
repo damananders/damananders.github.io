@@ -1,6 +1,6 @@
 # Box art for modern games (PS4, PS5, Switch, Xbox, PC...) from Steam via Wikidata, plus RAWG when the
 # RAWG_API_KEY secret is set (free key from https://rawg.io/apidocs). Runs monthly; press "Run workflow" to run now.
-name: Rate-O-Pedia modern box art
+name: Wiki-Chip Dex modern box art
 on:
   workflow_dispatch:
     inputs:
@@ -32,5 +32,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A assets/data/gameinfo
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
-          git commit -qm "Rate-O-Pedia: modern box art (Steam/RAWG)"
+          git commit -qm "Wiki-Chip Dex: modern box art (Steam/RAWG)"
           for i in 1 2 3 4; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 10; done

@@ -426,6 +426,17 @@
     g.key = function (code) { return !!g.keys[code]; };
     g.hit = function (code) { return !!g.keyHits[code]; };
 
+    /* owner-only: a bar button under the card that opens this game's Maintenance Hatch (balance, story, …).
+       Hidden for everyone except a signed-in owner, and only when the hatch has editors for this game. */
+    var adminBtn = el("button", { type: "button", class: "ak-tile__admin", hidden: "", text: "🔧 Admin hatch", "aria-label": "Admin hatch — " + def.name, title: "Open this game's admin hatch" });
+    tile.querySelector(".ak-tile__body").appendChild(adminBtn);
+    adminBtn.addEventListener("click", function () { if (window.Site && Site.hatch && typeof Site.hatch.open === "function") Site.hatch.open({ page: "arcade", game: def.id, title: def.name }); });
+    g.syncAdmin = function () {
+      var ok = !!(window.Site && Site.hatch && Site.hatch.canEdit && Site.hatch.canEdit() && Site.hatch.has && Site.hatch.has(def.id));
+      adminBtn.hidden = !ok;
+    };
+    g.syncAdmin();
+
     host(); grid.appendChild(tile); wrap.appendChild(shelf);
     playBtn.addEventListener("click", function () { if (open) g.full(true); else { bumpPlay(g); g.open(); } });
     infoBtn.addEventListener("click", function () { Site.sfx("open"); openSheet(g); });
@@ -615,6 +626,11 @@
   if (Site.gamepad) Site.gamepad.on(function (b) { if (b !== "start" || (active && active.isOpen()) || sheet || Site.page !== "arcade") return; var g = games.filter(function (x) { return x.id === Site.store.get("arcade.pick", null); })[0] || games[0]; if (g) g.open(); });
   doc.addEventListener("fullscreenchange", function () { if (active) setTimeout(function () { active.paint(); }, 50); });
 
+  /* the hatch loads async and the owner-signed-in state can land after the cards do, so re-check
+     every card's admin button whenever the hatch announces it's ready / the owner can edit. */
+  function syncAllAdmin() { games.forEach(function (g) { try { g.syncAdmin && g.syncAdmin(); } catch (e) {} }); }
+  try { if (Site.on) { Site.on("hatch:ready", syncAllAdmin); Site.on("hatch:fab", syncAllAdmin); } } catch (e) {}
+
   window.Arcade = {
     register: function (def) {
       if (!host()) return null;
@@ -623,7 +639,7 @@
       g.setState("title");
       if (def.title) def.title(g);
       games.slice().sort(function (a, b) { return (a.def.order || 99) - (b.def.order || 99); }).forEach(function (x) { grid.appendChild(x.tile); });
-      paintFilters(); paintContinue(); paintStat(g); scheduleStats();
+      paintFilters(); paintContinue(); paintStat(g); scheduleStats(); syncAllAdmin();
       if (ROUTE && location.hash === "#" + g.id) setTimeout(function () { if (!g.isOpen()) g.open({ fromRoute: true }); }, 0);
       if (def.sync) sySoon(4000);                 /* after sync.js's own pull on page load */
       return g;

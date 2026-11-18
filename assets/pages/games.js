@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker, richText, fmtBar, reviewsPanel } from "./games.common.js?v=36";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker, richText, fmtBar, reviewsPanel } from "./games.common.js?v=37";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -14,7 +14,7 @@ let user = null, member = false, consoleFilter = "", famFilter = "", mine = new 
 /* ---------------- sign-in and membership (shared pill, see games.common.js) ---------------- */
 function onSession(m) {
   user = m.user; member = m.member;
-  // Discord always lands here; send people back to the Rate-O-Pedia page they signed in from
+  // Discord always lands here; send people back to the Wiki-Chip Dex page they signed in from
   if (user) { const back = takeReturn(); if (back && back !== location.pathname + location.search) { location.replace(back); return; } }
   authPill($("gm-auth"));
   load();
@@ -98,7 +98,7 @@ function card(g, rank, group) {
       artSlot(g.id, g.title, "gm-art"),
       platformLink(g.console),
       el("h3", { class: "gm-title" }, el("a", { class: "gm-title__a", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the info card", text: g.title })),
-      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Rate-O-Pedia · Fromie approved" }, Object.assign(chipSvg(5), { className: "rop-chip__svg gm-mustplay__chip" }), "Must Play!") : null,
+      rank && rank <= 10 ? el("span", { class: "gm-mustplay", title: "Top 10 on Wiki-Chip Dex · Fromie approved" }, Object.assign(chipSvg(5), { className: "rop-chip__svg gm-mustplay__chip" }), "Must Play!") : null,
       g.open_votes === undefined ? mood : null, g.open_votes === undefined ? el("span", { class: "gm-score", text: score }) : null,
       g.open_votes === undefined ? el("span", { class: "gm-votes", text: g.votes === 1 ? "1 vote" : g.votes + " votes" }) : null,
       el("a", { class: "gm-expand", href: "/games/game/?id=" + encodeURIComponent(g.id), title: "Open the full game page", "aria-label": "Open the full page for " + g.title,
@@ -174,7 +174,11 @@ function browse(q) {
   const where = filterName() === "All-time" ? "every game" : filterName();
   const letters = el("div", { class: "gm-az", role: "group", "aria-label": "First letter" });
   const list = el("ol", { class: "gm-blist" });
-  const more = el("button", { class: "btn gm-btn gm-bmore", type: "button", hidden: true, text: "Show more", onclick: () => page(false) });
+  const PAGE = 24;
+  const prev = el("button", { class: "gm-pg__b", type: "button", text: "‹ Prev", onclick: () => { browseFrom = Math.max(0, browseFrom - PAGE); page(true, true); } });
+  const next = el("button", { class: "gm-pg__b", type: "button", text: "Next ›", onclick: () => { browseFrom += PAGE; page(true, true); } });
+  const pgNo = el("span", { class: "gm-pg__n" });
+  const more = el("nav", { class: "gm-pg", "aria-label": "Pages", hidden: true }, prev, pgNo, next);
   const note = el("p", { class: "gm-note", role: "status" });
   const count = el("span", { class: "gm-browse__count" });
   for (const L of ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]) letters.append(el("button", { class: "gm-az__b", type: "button", text: L, "aria-pressed": String(L === browseLetter),
@@ -190,26 +194,28 @@ function browse(q) {
     el("div", { class: "gm-browse__head" },
       el("div", null, el("h2", { class: "gm-head", text: "Browse " + where }), count),
       el("p", { class: "gm-browse__sub", text: "Pick a letter to flip through the shelf. Hover a title for a quick peek." })),
-    el("div", { class: "gm-browse__grid" },
-      el("div", { class: "gm-browse__main" }, letters, list, more, note), sup));
+    sup, el("div", { class: "gm-browse__main" }, letters, list, more, note));
   idsCount().then((n) => { if (n) count.textContent = n.toLocaleString() + (n === 1 ? " game" : " games"); });
   page(true);
   function scoped(req) { const ids = filterIds(); return ids ? (ids.length === 1 ? req.eq("console", ids[0]) : req.in("console", ids)) : req; }
   async function idsCount() { try { const { count: n } = await scoped(sb.from("game_scores").select("id", { count: "exact", head: true })); return n || 0; } catch (e) { return 0; } }
-  async function page(fresh) {
+  async function page(fresh, jump) {
     let req = scoped(sb.from("game_scores").select(await scoreCols()));
     req = browseLetter === "#" ? req.filter("title", "match", "^[^A-Za-z]") : req.ilike("title", browseLetter + "%");
-    const { data, error } = await req.order("title").range(browseFrom, browseFrom + 59);
+    const { data: rows, error } = await req.order("title").range(browseFrom, browseFrom + PAGE);   // one extra row = "there's a next page"
     if (error) { note.textContent = "Couldn't load that list: " + error.message; return; }
-    if (fresh) list.replaceChildren();
+    const data = (rows || []).slice(0, PAGE), hasNext = (rows || []).length > PAGE;
+    list.replaceChildren();
     for (const g of data || []) list.append(el("li", { class: "gm-brow" },
       el("span", { class: "gm-brow__art" }, artSlot(g.id, g.title, "gm-brow__img"), el("span", { class: "gm-brow__ph", text: g.title.charAt(0) })),
       el("span", { class: "gm-brow__mid" }, hoverCard(el("a", { class: "gm-brow__t", href: gameUrl(g.id), text: g.title }), "game", g.id),
         el("span", { class: "gm-brow__meta" }, consoleChip(g.console),
           g.open_votes === undefined ? el("span", { class: "gm-brow__s", text: g.votes > 0 ? Number(g.average).toFixed(1) + " / 5" : "not rated" }) : scorePair(g, true)))));
-    browseFrom += (data || []).length;
-    more.hidden = (data || []).length < 60;
-    note.textContent = fresh && !(data || []).length ? "No games starting with " + browseLetter + " here." : "";
+    prev.disabled = browseFrom === 0; next.disabled = !hasNext;
+    pgNo.textContent = "Page " + (Math.floor(browseFrom / PAGE) + 1);
+    more.hidden = browseFrom === 0 && !hasNext;
+    note.textContent = !data.length ? "No games starting with " + browseLetter + " here." : "";
+    if (jump) letters.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   let total = 0, rolling = false;
   async function roll() {
@@ -454,7 +460,7 @@ async function week() {
     const col = (title, rows, line, empty) => el("div", { class: "gm-week__col" }, el("h3", { text: title }),
       rows.length ? el("ol", { class: "gm-week__list" }, ...rows.map(line)) : el("p", { class: "gm-note", text: empty }));
     const gameLine = (tail) => (g) => el("li", null, consoleChip(g.console), hoverCard(el("a", { href: gameUrl(g.id), text: g.title }), "game", g.id), el("span", { class: "gm-week__n", text: tail(g) }));
-    box.replaceChildren(el("h2", { class: "gm-head", text: "This week on Rate-O-Pedia" }), el("div", { class: "gm-week__cols" },
+    box.replaceChildren(el("h2", { class: "gm-head", text: "This week on Wiki-Chip Dex" }), el("div", { class: "gm-week__cols" },
       col("Top rated", a.data || [], gameLine((g) => Number(g.average).toFixed(1) + " · " + g.votes + "v"), "No votes this week yet. Be the first."),
       col("Most reviewed", b.data || [], gameLine((g) => g.reviews + (g.reviews === 1 ? " review" : " reviews")), "No reviews this week yet."),
       c.error ? null : col("Most active voters", c.data || [], (v) => el("li", null, avatar(v.avatar, v.name, 22), hoverCard(el("a", { href: profileUrl(v.handle), text: v.name }), "member", v.handle), el("span", { class: "gm-week__n", text: v.votes + " votes" })), "Nobody has voted this week yet.")));
