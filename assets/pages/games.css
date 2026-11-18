@@ -1482,3 +1482,14 @@ body.pt-on .pf-hero__say{border-color:color-mix(in srgb,var(--pt-acc2) 50%,trans
 .gm-mustplay__chip{display:inline-grid;width:16px;height:16px;margin-right:4px;vertical-align:-3px;--chip-bg:#1a1405}.gm-mustplay__chip svg{width:16px;height:16px}
 .gm-year{font-weight:500;color:var(--sx-muted);font-size:.85em}
 .gm-blurb{margin:-2px 0 8px;color:var(--sx-muted);font-size:.88rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* own profile: the account card shrinks to a row of shortcut icons */
+.gm-auth.rop-me.rop-me--hub{padding:8px 10px;gap:0}
+.rop-hub{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px}
+.rop-hub .rop-bell__wrap{margin:0}
+.rop-hub__b{all:unset;cursor:pointer;position:relative;display:grid;place-items:center;width:36px;height:36px;border-radius:12px;color:var(--sx-text);border:1px solid var(--sx-line-2);background:var(--sx-surface-2);box-sizing:border-box}
+.rop-hub__b svg{width:19px;height:19px}
+.rop-hub__b:hover,.rop-hub__b:focus-visible{border-color:var(--sx-accent);outline:none}
+.rop-hub__b--me{color:var(--sx-on-accent);background:var(--sx-accent);border-color:transparent}
+.rop-hub__b--bud{color:#fff;background:linear-gradient(135deg,#ff4f8b,#e0243c);border-color:transparent}
+.rop-hub__b--op{color:#ffcc4d;border-color:rgba(255,204,77,.5);background:rgba(255,204,77,.08)}
+.rop-hub__b--out{color:#fff;background:#e5262f;border-color:transparent;margin-left:6px}

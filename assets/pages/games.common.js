@@ -212,7 +212,7 @@ export function onAuth(fn) {
 /* The slim pill under the Donate / Discord / Twitch banner */
 export function authPill(box, opts) {
   box.replaceChildren();
-  box.classList.add("rop-me");
+  box.classList.add("rop-me"); box.classList.remove("rop-me--hub");
   const o = opts || {};
   if (!me.user) {
     box.append(
@@ -224,6 +224,7 @@ export function authPill(box, opts) {
     return;
   }
   const handle = me.ready && me.profile && me.profile.handle;
+  if (o.hub && handle) return hubPill(box, handle);
   const flair = el("span", { class: "rop-me__flair" }, me.admin ? ownerTag() : null, me.staff ? adminTag() : null);
   const status = me.banned ? el("span", { class: "rop-me__sub gm-bad", text: "This account is suspended." })
     : me.restricted ? el("span", { class: "rop-me__sub gm-bad", text: me.restricted.kicked_until
@@ -261,6 +262,25 @@ export function authPill(box, opts) {
     const i = (data || []).findIndex((x) => x.handle === handle);
     if (i >= 0) flair.append(el("span", { class: "rop-me__medal rop-me__medal--" + ["gold", "silver", "bronze"][i], title: "Top " + (i + 1) + " voter on the leaderboard", text: ["1st", "2nd", "3rd"][i] }));
   }, () => {});
+}
+/* On your own profile the card above is redundant: just the buttons, as a slim row of icons */
+const HUB_ICO = {
+  profile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  following: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l2 2 4-4"/></svg>',
+  lists: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg>',
+  out: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg>'
+};
+function hubPill(box, handle) {
+  box.classList.add("rop-me--hub");
+  const a = (cls, href, label, ico) => el("a", { class: "rop-hub__b " + cls, href, title: label, "aria-label": label, html: ico });
+  const row = el("nav", { class: "rop-hub", "aria-label": "Your shortcuts" });
+  if (me.ready) row.append(bell());
+  row.append(a("rop-hub__b--me", profileUrl(handle), "My profile", HUB_ICO.profile));
+  if (me.member) row.append(a("", "/games/feed/", "Following", HUB_ICO.following), a("", "/games/lists/", "Lists", HUB_ICO.lists));
+  row.append(unreadBadge(el("a", { class: "rop-hub__b rop-hub__b--bud", href: "/games/buddies/", title: "Buddies & messages", "aria-label": "Buddies & messages", html: BUD_ICO })));
+  if (me.admin) row.append(a("rop-hub__b--op", "/games/ti3c20mi/", "Operation Station", OP_ICO));
+  row.append(el("button", { class: "rop-hub__b rop-hub__b--out", type: "button", title: "Sign out", "aria-label": "Sign out", html: HUB_ICO.out, onclick: async () => { await sb.auth.signOut(); } }));
+  box.append(row);
 }
 /* ---------------- Buddies, Opps and messages (round 33) ----------------
  * Opps: members you've blocked. Anything they wrote (reviews, posts, comments, guestbook notes) is hidden from you on

@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps } from "./games.common.js?v=24";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps } from "./games.common.js?v=25";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -194,6 +194,7 @@ async function render() {
     if (fwd && typeof fwd === "string" && fwd !== handle) { location.replace(profileUrl(fwd) + location.hash); return; }
     notice("No one here", "That profile doesn't exist, or the member isn't around any more.", el("a", { class: "linkbtn", href: "/games/", text: "Back to Rate-O-Pedia" })); adminPanel(handle); return; }
   const mine = !!(me.profile && me.profile.handle === p.handle);
+  authPill($("gm-auth"), mine ? { hub: true } : { okTail: "." });     // your own profile: just the shortcut buttons
   const plus = "banner" in p;      // round 15 is in
   const rank = ((top.data || []).findIndex((x) => x.handle === p.handle)) + 1;
   const ctx = { rank };
