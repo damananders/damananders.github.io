@@ -1884,7 +1884,7 @@
     neck:  [20,  86, 182, 78], head:  [212,  86, 182, 78], shoulder: [404,  86, 182, 78],
     back:  [20, 174, 182, 78], chest: [212, 174, 182, 78], hands:    [404, 174, 182, 78],
     waist: [20, 262, 182, 78], legs:  [212, 262, 182, 78], feet:     [404, 262, 182, 78],
-    main:  [628, 566, 170, 64], off: [812, 566, 170, 64],
+    main:  [628, 578, 170, 60], off: [812, 578, 170, 60],
     sim1: [20, 384, 182, 68], sim2: [212, 384, 182, 68], sim3: [404, 384, 182, 68],
     sim4: [20, 458, 182, 68], sim5: [212, 458, 182, 68], sim6: [404, 458, 182, 68]
   };
@@ -2011,10 +2011,10 @@
     ell(ctx, wx2, footY + 8, 112, 19, "rgba(0,0,0,.4)");
     wizSprite(lookOf(S.comfort), (t % 8) < 5 ? "stand" : (t % 8) < 6.5 ? "five" : "stand", t);
     ctx.imageSmoothingEnabled = false; blitWiz(ctx, wx2, footY, 4.8);
-    plate(ctx, wx2 - 124, mcy + mry + 6, 248, 62, 9);
-    D.text(ctx, "— " + titleName() + " —", wx2, mcy + mry + 23, "800 12px " + F.mono, "#ffd98a", "center");
-    bold(ctx, S.wiz.name || "The Wizard", wx2, mcy + mry + 43, "800 19px " + SERIF, "#fff3c4", "center");
-    bold(ctx, "Wiz Level " + S.lvl, wx2, mcy + mry + 60, "700 12px " + F.mono, "#dccb9f", "center");
+    plate(ctx, wx2 - 124, mcy + mry - 2, 248, 58, 9);
+    D.text(ctx, "— " + titleName() + " —", wx2, mcy + mry + 15, "800 12px " + F.mono, "#ffd98a", "center");
+    bold(ctx, S.wiz.name || "The Wizard", wx2, mcy + mry + 34, "800 19px " + SERIF, "#fff3c4", "center");
+    bold(ctx, "Wiz Level " + S.lvl, wx2, mcy + mry + 50, "700 12px " + F.mono, "#dccb9f", "center");
     /* right-hand stat stack: a base number, with a green bump from whatever gear is on */
     var tot = calc(), base = {}; SK.forEach(function (k) { base[k] = Math.min(STAT[k].cap, r1((S.ranks[k] || 0) * STAT[k].rank)); });
     var px0 = 992, pw = 262, py0 = 134, rh = 50;
