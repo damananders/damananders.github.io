@@ -175,6 +175,27 @@
     if (!AUTH_LS) return false;
     try { var raw = localStorage.getItem(AUTH_LS); if (!raw) return false; var s = JSON.parse(raw); var sess = (s && s.currentSession) || s; return !!(sess && sess.access_token); } catch (e) { return false; }
   }
+  /* the raw access token from the stored Supabase session (any provider) — lets us make one authenticated
+     call without loading the heavy supabase-js client, so signed-out pages still pay nothing */
+  function sessionToken() {
+    if (!AUTH_LS) return "";
+    try { var raw = localStorage.getItem(AUTH_LS); if (!raw) return ""; var s = JSON.parse(raw); var sess = (s && s.currentSession) || s; return (sess && sess.access_token) || ""; } catch (e) { return ""; }
+  }
+  /* Member traffic: log this page view for the owner's ops-station analytics (log_member_visit, 44_traffic_stats.sql).
+     Only fires for a signed-in member, once per page load, and the RPC itself sanitises the path and rate-limits. */
+  var _visitLogged = false;
+  function logMemberVisit() {
+    if (_visitLogged || feat("memberTraffic") === false) return;
+    var tok = sessionToken(); if (!tok || !SB.url || !SB.key || !window.fetch) return;
+    _visitLogged = true;
+    try {
+      fetch(SB.url + "/rest/v1/rpc/log_member_visit", {
+        method: "POST", keepalive: true,
+        headers: { apikey: SB.key, Authorization: "Bearer " + tok, "Content-Type": "application/json" },
+        body: JSON.stringify({ p_path: location.pathname })
+      }).catch(function () {});
+    } catch (e) {}
+  }
   var _sb = null, _sbLoad = null;
   function supaClient() {
     if (_sb) return Promise.resolve(_sb);
@@ -469,6 +490,7 @@
     setTimeout(function () {
       if (linked()) { pull({ loud: false }); fetchProfile(); }
       else adoptDiscordSession().then(function (sc) { if (sc) { pull({ loud: false }); fetchProfile(); } });
+      logMemberVisit();
     }, 1500);
 
     /* live: a trophy earned on this browser goes up to the account */

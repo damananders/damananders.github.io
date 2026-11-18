@@ -856,7 +856,7 @@
     } catch (e) {}
     load("a11y", 2, "a11y");
     load("seasons", 3, "seasons");
-    load("sync", 7, "sync");
+    load("sync", 8, "sync");
     /* whole-site Maintenance Hatch — defines Site.hatch everywhere; edit UI is admin-gated inside.
        v2: hatch.js now drains the early-register queue set up at the top of this file. */
     load("hatch", 3, "hatch");
