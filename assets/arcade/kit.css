@@ -319,7 +319,7 @@
 .ak-panel.wz-equipmap .ak-panel__kicker,.ak-panel.wz-equipmap .ak-panel__title,.ak-panel.wz-equipmap .ak-panel__sub{display:none}
 /* the items area is a centred 16:9 box that exactly overlays the letterboxed canvas, so cards track it at any window ratio */
 .ak-panel.wz-equipmap .ak-panel__items{position:absolute;inset:0;margin:auto;display:block;gap:0;
-  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:2.35cqh}
+  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:calc(2.35 * min(1cqh, 1cqw * 9 / 16))}
 .wz-equipmap .ak-btn.wz-card{display:flex;flex-direction:row;align-items:center;gap:.45em;padding:.25em .45em;border-radius:.45em;text-align:left;min-height:0;overflow:hidden;
   border:1.5px solid var(--lc,rgba(232,193,90,.5));background:linear-gradient(180deg,rgba(54,34,17,.94),rgba(32,19,9,.96));box-shadow:inset 0 0 .7em rgba(0,0,0,.4),0 .1em .4em rgba(0,0,0,.45)}
 .wz-card.wz-r0{--lc:#e8e8e8}.wz-card.wz-r1{--lc:#4ed16a}.wz-card.wz-r2{--lc:#4aa3ff}.wz-card.wz-r3{--lc:#b46bff}.wz-card.wz-r4{--lc:#ff9a2e}.wz-card.wz-r5{--lc:#ff6bd6}
@@ -347,7 +347,7 @@
 .ak-panel.wz-prepmap{width:100%;max-width:none;height:100%;margin:0;padding:0;background:none !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;overflow:visible;container-type:size}
 .ak-panel.wz-prepmap .ak-panel__kicker,.ak-panel.wz-prepmap .ak-panel__title,.ak-panel.wz-prepmap .ak-panel__sub{display:none}
 .ak-panel.wz-prepmap .ak-panel__items{position:absolute;inset:0;margin:auto;display:block;gap:0;
-  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:2.35cqh}
+  width:min(100cqw,calc(100cqh * 16 / 9));height:min(100cqh,calc(100cqw * 9 / 16));container-type:size;font-size:calc(2.35 * min(1cqh, 1cqw * 9 / 16))}
 /* spell cards */
 .wz-prepmap .ak-btn.wz-spellcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.12em;padding:.45em .6em;border-radius:.5em;text-align:left;min-height:0;overflow:hidden;
   border:2px solid var(--lc,rgba(232,193,90,.6));background:linear-gradient(180deg,rgba(54,34,17,.95),rgba(30,18,8,.97));box-shadow:inset 0 0 .8em rgba(0,0,0,.45),0 .15em .5em rgba(0,0,0,.5)}
