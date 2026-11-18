@@ -1038,7 +1038,7 @@
       var lb = el("div", { class: "wz-lootgrid" });
       R.loot.forEach(function (it) {
         lb.appendChild(el("div", { class: "wz-lootcard is-r" + it.r },
-          el("div", { class: "wz-lootcard__img" }, icoEl(slotIco(it.s))),
+          el("div", { class: "wz-lootcard__img" }, icoEl(itemIco(it))),
           el("div", { class: "wz-lootcard__meta" },
             el("b", { text: it.n }),
             el("span", { class: "wz-lootcard__slot", text: "NEW · " + slotName(it.s) }),
@@ -1455,7 +1455,7 @@
     ctx.fillStyle = "rgba(0,0,0,.4)"; D.rr(ctx, bx, by, bs, bs, 8); ctx.fill();
     ctx.save(); ctx.globalAlpha *= 0.2; ctx.fillStyle = rc; D.rr(ctx, bx + 3, by + 3, bs - 6, bs - 6, 6); ctx.fill(); ctx.restore();
     ctx.lineWidth = 2.5; ctx.strokeStyle = rc; D.rr(ctx, bx + 1.5, by + 1.5, bs - 3, bs - 3, 7); ctx.stroke();
-    ctx.save(); ctx.imageSmoothingEnabled = false; var isc = (bs - 18) / 16; icoAt(ctx, slotIco(it.s), bx + 9, by + 9, isc); ctx.restore();
+    ctx.save(); ctx.imageSmoothingEnabled = false; var isc = (bs - 18) / 16; icoAt(ctx, itemIco(it), bx + 9, by + 9, isc); ctx.restore();
     var tx = bx + bs + 14;
     bold(ctx, it.n, tx, y + 52, "800 16px " + SERIF, "#fff6de", "left");
     bold(ctx, "NEW  ·  " + slotName(it.s), tx, y + 72, "800 12px " + F.mono, rc, "left");
@@ -1517,6 +1517,17 @@
   ICO.back = function (r) { r(2, 7, 12, 2, "#e8c15a"); r(4, 5, 2, 6, "#e8c15a"); r(6, 3, 2, 10, "#e8c15a"); r(3, 6, 1, 4, "#e8c15a"); };
   ICO.flash = function (r) { r(8, 1, 3, 6, "#bfe3ff"); r(5, 6, 4, 3, "#bfe3ff"); r(6, 7, 3, 7, "#7fd0ff"); r(9, 5, 2, 4, "#e6f6ff"); r(3, 8, 2, 2, "#e6f6ff"); r(12, 4, 2, 2, "#e6f6ff"); r(7, 8, 2, 3, "#fff"); };
   ICO.syl = function (r) { r(5, 1, 6, 2, "#6a45c2"); r(4, 3, 3, 10, "#8f6bff"); r(9, 3, 3, 6, "#6a45c2"); r(8, 9, 4, 5, "#8f6bff"); r(6, 6, 4, 2, "#c9b3ff"); r(5, 4, 1, 7, "#3d2575"); r(10, 10, 1, 3, "#3d2575"); r(2, 7, 2, 2, "#f0c23a"); r(13, 11, 2, 2, "#f0c23a"); };
+  /* per-type weapon icons (main hand: Stick / Wand / Staff / Ladle · off hand: Tome / Orb / Lantern) */
+  ICO.w_stick = function (r) { r(2, 12, 3, 3, "#5c4530"); r(5, 10, 2, 2, "#6b4a2a"); r(7, 8, 2, 2, "#7a5a3a"); r(9, 6, 2, 2, "#7a5a3a"); r(11, 4, 2, 2, "#8a6a44"); r(13, 2, 2, 2, "#8a6a44"); r(10, 5, 2, 1, "#6b4a2a"); r(11, 3, 1, 2, "#6b4a2a"); r(13, 2, 1, 1, "#a67c52"); r(14, 1, 1, 1, "#4f9a3f"); };
+  ICO.w_wand = function (r) { r(2, 12, 3, 3, "#3a2414"); r(4, 10, 2, 2, "#54361f"); r(6, 8, 2, 2, "#6b4a2a"); r(8, 6, 2, 2, "#6b4a2a"); r(10, 4, 2, 2, "#54361f"); r(11, 1, 3, 3, "#ffe58a"); r(12, 2, 1, 1, "#fff"); r(10, 1, 1, 1, "#fff7b0"); r(13, 0, 1, 1, "#fff7b0"); r(11, 0, 1, 1, "#fff7b0"); };
+  ICO.w_staff = function (r) { r(7, 5, 2, 10, "#6b4a2a"); r(7, 5, 1, 10, "#54361f"); r(5, 4, 6, 1, "#8a6a44"); r(5, 2, 1, 3, "#8a6a44"); r(10, 2, 1, 3, "#8a6a44"); r(6, 1, 4, 4, "#8f6bff"); r(7, 2, 2, 2, "#c9b3ff"); r(7, 1, 1, 1, "#fff"); r(6, 14, 4, 1, "#54361f"); };
+  ICO.w_ladle = function (r) { r(12, 2, 2, 2, "#b9c2cd"); r(10, 4, 2, 2, "#b9c2cd"); r(8, 6, 2, 2, "#b9c2cd"); r(6, 8, 2, 2, "#9aa6b4"); r(2, 10, 6, 4, "#b9c2cd"); r(3, 11, 4, 2, "#6b7686"); r(2, 10, 6, 1, "#eef0f3"); r(13, 2, 1, 1, "#eef0f3"); };
+  ICO.o_tome = function (r) { r(3, 2, 10, 12, "#8a5a2b"); r(3, 2, 10, 2, "#a67c52"); r(3, 2, 2, 12, "#6b4420"); r(12, 3, 1, 10, "#efe2b8"); r(4, 13, 8, 1, "#e8d9b8"); r(7, 5, 3, 4, "#e8c15a"); r(8, 6, 1, 2, "#fff3c4"); r(6, 10, 4, 1, "#e8c15a"); };
+  ICO.o_orb = function (r) { r(5, 2, 6, 1, "#8f6bff"); r(4, 3, 8, 6, "#8f6bff"); r(5, 9, 6, 1, "#6a45c2"); r(5, 3, 6, 1, "#c9b3ff"); r(5, 4, 5, 4, "#a789ff"); r(6, 4, 2, 2, "#fff"); r(4, 10, 8, 1, "#8a6a44"); r(5, 11, 2, 2, "#6b4420"); r(9, 11, 2, 2, "#6b4420"); r(4, 13, 8, 1, "#54361f"); };
+  ICO.o_lantern = function (r) { r(7, 0, 2, 1, "#b9c2cd"); r(6, 1, 4, 1, "#8a6a44"); r(4, 3, 8, 9, "#8a6a44"); r(5, 4, 6, 6, "#ffe9a8"); r(7, 5, 2, 4, "#ff8a3e"); r(7, 5, 2, 2, "#ffd84a"); r(7, 4, 1, 1, "#fff7b0"); r(7, 4, 1, 6, "#6b4420"); r(4, 12, 8, 2, "#6b4420"); r(5, 13, 6, 1, "#54361f"); };
+  function mainIco(it) { return (it && ["w_stick", "w_wand", "w_staff", "w_ladle"][it.k]) || "main"; }
+  function offIco(it) { return (it && ["o_tome", "o_orb", "o_lantern"][it.k]) || "off"; }
+  function itemIco(it) { return it ? (it.s === "main" ? mainIco(it) : it.s === "off" ? offIco(it) : slotIco(it.s)) : "spark"; }
   function icoEl(k) { var c = el("canvas", { class: "wz-ico", width: "16", height: "16", "aria-hidden": "true" }), x = c.getContext("2d"); (ICO[k] || ICO.spark)(function (a, b2, w, h, col) { x.fillStyle = col; x.fillRect(a, b2, w, h); }); return c; }
   function icoAt(ctx, k, x, y, s) { ICO[k](function (a, b2, w, h, col) { ctx.fillStyle = col; ctx.fillRect(x + a * s, y + b2 * s, w * s, h * s); }); }
   function slotIco(k) { return /^sim/.test(k) ? "sim" : k === "back" ? "cape" : k; }
@@ -1541,7 +1552,7 @@
       if (it.card) {                                      /* a body-map slot: rarity-bordered icon preview, slot name, item name, level */
         var c = it.card, itm = c.it, rc = itm ? (RAR[itm.r].c === "rb" ? "#ffd84a" : RAR[itm.r].c) : "";
         while (bt.firstChild) bt.removeChild(bt.firstChild);
-        var imgBox = el("span", { class: "wz-card__img" }, icoEl(slotIco(c.k))); if (rc) imgBox.style.setProperty("--lc", rc);
+        var imgBox = el("span", { class: "wz-card__img" }, icoEl(itm ? itemIco(itm) : slotIco(c.k))); if (rc) imgBox.style.setProperty("--lc", rc);
         bt.appendChild(imgBox);
         bt.appendChild(el("span", { class: "wz-card__meta" },
           el("em", { class: "wz-card__slot", text: slotName(c.k) }),
@@ -1788,7 +1799,7 @@
     var kind = /^sim/.test(k) ? "sim" : k, cur = S.eq[k];
     function leave() { S.bag.forEach(function (q) { if (q.s === kind) delete q.nw; }); save(); equip(g, backF); }
     var items = S.bag.filter(function (q) { return q.s === kind; }).sort(function (x, y) { return (y.nw || 0) - (x.nw || 0) || y.r - x.r || y.il - x.il; }).map(function (it) {
-      return { label: it.n, ico: slotIco(k), chips: itemChips(it), isNew: !!it.nw, cls: "wz-r" + it.r, act: function () { S.bag.splice(S.bag.indexOf(it), 1); delete it.nw; if (cur) S.bag.push(cur); S.eq[k] = it; sfx("buy"); leave(); } }; });
+      return { label: it.n, ico: itemIco(it), chips: itemChips(it), isNew: !!it.nw, cls: "wz-r" + it.r, act: function () { S.bag.splice(S.bag.indexOf(it), 1); delete it.nw; if (cur) S.bag.push(cur); S.eq[k] = it; sfx("buy"); leave(); } }; });
     if (cur) items.push({ label: "Take Off " + cur.n, sub: S.bag.length >= S.bagCap ? "The bag is full" : "Back into the bag", disabled: S.bag.length >= S.bagCap, act: function () { S.bag.push(cur); delete S.eq[k]; leave(); } });
     items.push({ label: "Back", act: leave });
     var body = cur ? el("div", { class: "wz-worn" }, el("span", { text: "Wearing now" }), el("b", { class: "wz-rt" + cur.r, text: cur.n }), (function () { var bx = el("span", { class: "wz-chips" }); itemChips(cur).forEach(function (c) { bx.appendChild(el("i", { class: "wz-chip " + (c[1] ? "is-" + c[1] : ""), text: c[0] })); }); return bx; })()) : null;
@@ -1832,7 +1843,7 @@
     var picked = S.bag.filter(function (q) { return sel[q.id]; }), sellSum = picked.reduce(function (a, it) { return a + sellPrice(it); }, 0);
     var oblPicked = picked.filter(canObliviate);
     var items = list.map(function (it) { var i = list.indexOf(it), on = !!sel[it.id], ob = canObliviate(it);
-      return { label: (on ? "✓  " : "") + it.n, ico: slotIco(it.s), isNew: !!it.nw, cls: "wz-r" + it.r + (on ? " is-picked" : ""),
+      return { label: (on ? "✓  " : "") + it.n, ico: itemIco(it), isNew: !!it.nw, cls: "wz-r" + it.r + (on ? " is-picked" : ""),
         chips: itemChips(it, [["◆ " + sellPrice(it), "rem"]].concat(ob ? [["Obliviate", "r" + it.r]] : [])),
         act: function () { if (sel[it.id]) delete sel[it.id]; else sel[it.id] = 1; sfx("rem"); reopen(i); } }; });
     /* bottom action row keeps item focus stable (items always start at index 0) */
@@ -1937,7 +1948,7 @@
   function wares(g, focus) {
     UI.scene = "hub"; UI.menu = "condenser";
     var st = stock(), items = st.map(function (it, i) { var pr = buyPrice(it);
-      return { label: it.n, ico: slotIco(it.s), chips: itemChips(it, [["◆ " + fmt(pr), S.rem >= pr ? "rem" : "no"]]), cls: "wz-r" + it.r + (S.rem >= pr ? " is-hot" : ""),
+      return { label: it.n, ico: itemIco(it), chips: itemChips(it, [["◆ " + fmt(pr), S.rem >= pr ? "rem" : "no"]]), cls: "wz-r" + it.r + (S.rem >= pr ? " is-hot" : ""),
         act: function () { if (S.rem < pr) { g.toast("Not enough Remnants"); return; } if (S.bag.length >= S.bagCap) { g.toast("The bag is full"); return; } S.rem -= pr; cnt("spent", pr); st.splice(st.indexOf(it), 1); it.nw = 1; S.bag.push(it); save(); sfx("buy"); wares(g, Math.min(i, st.length)); } }; });
     [["social", 600], ["rainy", 1500]].forEach(function (w) { if (S.inc[w[0]]) return; var I = INC[w[0]], idx = items.length;
       items.push({ label: "Incantation: " + I.n, ico: w[0], sub: I.cast + ". " + I.d, chips: null, cls: "is-gold", price: w[1], act: function () { if (S.rem < w[1]) { g.toast("Not enough Remnants"); return; } S.rem -= w[1]; cnt("spent", w[1]); giveInc(w[0], g); save(); sfx("buy"); wares(g, Math.min(idx, items.length - 2)); } }); });
