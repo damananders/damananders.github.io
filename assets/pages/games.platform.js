@@ -2,7 +2,7 @@
  * Without ?p= it lists every platform by family (optionally one family with ?f=). With ?p= it shows that platform's
  * numbers, its own leaderboard (top rated, most voted), its top raters, recent reviews, a random pick and browsing.
  */
-import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores } from "./games.common.js?v=27";
+import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores , plainText } from "./games.common.js?v=28";
 
 const qs = new URLSearchParams(location.search);
 if (/^(Mac|Linux)$/.test(qs.get("p") || "")) { qs.set("p", "PC"); location.replace("?" + qs); }   // merged into PC (round 23)
@@ -94,7 +94,7 @@ async function hub(p) {
     recent.lastChild.replaceWith(rows.length ? el("ul", { class: "pf-list" }, ...rows.map((r) => el("li", null,
       el("a", { href: gameUrl(r.game_id), text: titles.get(r.game_id) || "A game" }),
       el("span", { class: "gm-note", text: " · " + (r.stars != null ? r.stars + " / 5 · " : "") + "by " + r.name + " · " + ago(r.created_at) }),
-      el("p", { class: "pf-snip", text: r.body.length > 140 ? r.body.slice(0, 137) + "…" : r.body }))))
+      el("p", { class: "pf-snip", text: (() => { const t = plainText(r.body); return t.length > 140 ? t.slice(0, 137) + "…" : t; })() }))))
       : el("p", { class: "gm-note", text: "No reviews yet." }));
   });
 }

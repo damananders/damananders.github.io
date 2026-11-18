@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps } from "./games.common.js?v=27";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText } from "./games.common.js?v=28";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -349,7 +349,7 @@ async function render() {
       return el("li", null,
         el("a", { href: gameUrl(r.game_id), text: gm ? gm.title : "A game" }),
         r.stars != null ? el("span", { class: "gm-note", text: " · " + r.stars + " / 5" + rx }) : null,
-        el("p", { class: "pf-snip", text: r.body.length > 160 ? r.body.slice(0, 157) + "…" : r.body }));
+        el("p", { class: "pf-snip", text: (() => { const t = plainText(r.body); return t.length > 160 ? t.slice(0, 157) + "…" : t; })() }));
     })));
   });
 }

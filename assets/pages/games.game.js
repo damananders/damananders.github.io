@@ -3,7 +3,7 @@
  * emulator compatibility lists), with the owner's corrections from game_info_fix laid on top. Ratings, reviews,
  * hearts and member screenshots/videos come live from the database.
  */
-import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt } from "./games.common.js?v=27";
+import { chipRow, sb, $, el, me, onAuth, authPill, subnav, signIn, avatar, nameLink, adminTag, ago, share, sfx, toast, INVITE, consoleChip, platformLink, compareUrl, backlogPicker, RA_PLATFORMS, raSearchUrl, BACKLOG, platformName, reactBar, myReactions, scoreCols, guestRatings, guestRate, VISITOR_NOTE , reportBtn , boxArt , shareUrlFor , statsChanged , memberCover, forgetCover, hasAutoArt , plainText } from "./games.common.js?v=28";
 
 const id = (new URLSearchParams(location.search).get("id") || "").slice(0, 160);
 const root = $("gi-root");
@@ -175,7 +175,7 @@ function reviewBox() {
     if (!rows.length) { box.append(el("p", { class: "gm-note", text: "No reviews yet." }), el("a", { class: "linkbtn", href: "/games/?q=" + encodeURIComponent(game.title), text: "Write the first one →" })); return; }
     // the snippet: the highest-scored review, newest first among ties
     const r = rows.slice().sort((a, b) => (b.stars ?? -1) - (a.stars ?? -1))[0];
-    const body = r.body.length > 280 ? r.body.slice(0, 277).replace(/\s+\S*$/, "") + "…" : r.body;
+    const pt = plainText(r.body), body = pt.length > 280 ? pt.slice(0, 277).replace(/\s+\S*$/, "") + "…" : pt;
     box.append(el("blockquote", { class: "gm-review gi-quote" }, el("p", { text: "“" + body + "”" }),
       el("footer", null, avatar(r.avatar, r.name, 20), nameLink(r.handle, r.name), r.is_staff ? adminTag() : null, r.stars != null ? "  ·  " + r.stars + " / 5" : null),
       reactBar(r, (await myReactions([r.id])).get(r.id))),

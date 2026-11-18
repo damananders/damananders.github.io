@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker } from "./games.common.js?v=27";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker, richText, fmtBar } from "./games.common.js?v=28";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -286,7 +286,7 @@ async function reviews(g, box) {
     const when = el("time", { class: "gm-review__when", datetime: r.created_at, "data-when": r.created_at, text: fmtWhen(r.created_at) });
     const head = el("header", { class: "gm-review__head" }, avatar(r.avatar, r.name, 32), el("span", { class: "gm-review__who" }, nameLink(r.handle, r.name || "A member"), r.is_staff ? adminTag() : null, when),
       r.stars != null ? el("span", { class: "gm-review__mood rop-chip--" + r.stars, title: r.stars + " / 5 · " + CHIP_WORD[r.stars] }, chipSvg(r.stars), el("b", { text: String(r.stars) })) : null);
-    const body = el("p", { class: "gm-review__body", text: r.body });
+    const body = el("div", { class: "gm-review__body" }, richText(r.body));
     const art = el("article", { class: "gm-review" + (r.stars != null ? " gm-review--s" + r.stars : "") + (isMine ? " gm-review--mine" : "") }, head, body, reactBar(r, rx.get(r.id)));
     if (isMine && member) art.append(editTools(g, box, art, body, r));
     else if (r.id != null && !isMine) art.append(reportBtn("review", r.id));
@@ -313,11 +313,12 @@ function editTools(g, box, art, body, r) {
       const { error } = await sb.rpc("edit_my_review", { p_game: g.id, p_body: v });
       save.disabled = false;
       if (error) { note.textContent = /edit_my_review|function|schema cache/i.test(error.message) ? "Editing needs the latest database update." : "That didn't save: " + error.message; return; }
-      r.body = v; body.textContent = v; ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = "Saved.";
+      r.body = v; body.replaceChildren(richText(v)); tb.remove(); ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = "Saved.";
       sfx("success");
     } });
-    const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = ""; } });
-    body.replaceWith(ta); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    const cancel = el("button", { class: "linkbtn gm-cancel", type: "button", text: "Cancel", onclick: () => { tb.remove(); ta.replaceWith(body); bar.replaceChildren(edit, note); note.textContent = ""; } });
+    const tb = fmtBar(ta);
+    body.replaceWith(tb, ta); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
     note.textContent = "";
     bar.replaceChildren(save, cancel, count, note);
   }
@@ -352,7 +353,7 @@ async function writeBox(g, box, mineShown) {
     reviewCounts.set(g.id, (reviewCounts.get(g.id) || 0) + 1);
     reviews(g, box);
   } });
-  wrap.append(el("p", { class: "gm-write__h", text: "Write a review" }), ta, el("div", { class: "gm-write__bar" }, send, count), note);
+  wrap.append(el("p", { class: "gm-write__h", text: "Write a review" }), fmtBar(ta), ta, el("div", { class: "gm-write__bar" }, send, count), note);
   box.append(wrap);
 }
 

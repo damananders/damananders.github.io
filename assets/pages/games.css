@@ -1612,3 +1612,33 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 .rop-rsort__s:focus-visible{outline:2px solid var(--rop,#36d39a);outline-offset:1px}
 :root[data-theme="light"] .rop-rsort__s{background:#fff;color:#122}
 @media (max-width:640px){.rop-rx .rop-rx__l{display:none}}
+
+/* ---- review formatting: toolbar + rendered marks (one font throughout) ---- */
+.gm-review__body{white-space:normal}
+.rop-rt__p{margin:0 0 .5em}
+.rop-rt__p:last-child{margin-bottom:0}
+.rop-rt__list{margin:.2em 0 .6em;padding-left:1.4em}
+.rop-rt__list li{margin:.15em 0}
+.rop-rt__list li::marker{color:var(--rop,#36d39a)}
+.gm-review__body strong{font-weight:800}
+.gm-review__body em{font-style:italic}
+.rop-spoil{background:#2a302d;color:transparent;border-radius:4px;padding:0 4px;cursor:pointer;transition:color .15s,background .15s;user-select:none}
+.rop-spoil *{color:transparent}
+.rop-spoil:hover{background:#353c38}
+.rop-spoil:focus-visible{outline:2px solid var(--rop,#36d39a);outline-offset:1px}
+.rop-spoil.is-shown{background:rgba(255,255,255,.07);color:inherit;user-select:text;cursor:default}
+.rop-spoil.is-shown *{color:inherit}
+.rop-fmt{position:relative;display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.rop-fmt__b{all:unset;box-sizing:border-box;cursor:pointer;height:28px;min-width:30px;padding:0 9px;display:inline-grid;place-items:center;border-radius:7px;font-size:.8rem;color:#c9d1cc;
+  border:1px solid color-mix(in srgb,var(--rop,#36d39a) 22%,transparent);background:rgba(0,0,0,.28)}
+.rop-fmt__b:hover{color:#fff;border-color:var(--rop,#36d39a)}
+.rop-fmt__b:focus-visible{outline:2px solid var(--rop,#36d39a);outline-offset:1px}
+.rop-fmt__b--sp{background:#2a302d}
+.rop-fmt__emw{position:relative}
+.rop-fmt__pop{position:absolute;z-index:50;top:32px;left:0;display:grid;grid-template-columns:repeat(5,34px);gap:2px;padding:6px;border-radius:10px;background:var(--rop-panel,#0c110f);border:1px solid color-mix(in srgb,var(--rop,#36d39a) 35%,transparent);box-shadow:0 12px 28px rgba(0,0,0,.5)}
+.rop-fmt__pop[hidden]{display:none}
+.rop-fmt__em{all:unset;cursor:pointer;width:34px;height:34px;display:grid;place-items:center;font-size:1.2rem;border-radius:7px}
+.rop-fmt__em:hover,.rop-fmt__em:focus-visible{background:rgba(255,255,255,.08)}
+:root[data-theme="light"] .rop-fmt__b{background:#fff;color:#223}
+:root[data-theme="light"] .rop-spoil{background:#cfd6d2}
+:root[data-theme="light"] .rop-fmt__pop{background:#fff}

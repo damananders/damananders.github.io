@@ -807,3 +807,79 @@ async function hcMember(handle) {
       el("div", { class: "rop-hc__stats" }, stat(p.votes, "votes"), stat(p.reviews, "reviews"), stat(p.posts, "posts")),
       p.member_since ? el("small", { class: "rop-hc__since", text: "Member since " + memberSince(p.member_since) }) : null));
 }
+
+/* ---------------- review formatting (stored as plain text with light marks; rendered as DOM, never as HTML) ----------------
+ * **bold**   *italic*   ||spoiler||   lines starting "- " make a bullet list, "1. " a numbered list. One font throughout. */
+const RT_INLINE = /(\*\*([^*\n]+?)\*\*|\|\|([^|\n]+?)\|\||\*([^*\n]+?)\*|_([^_\n]+?)_)/;
+function rtInline(s) {
+  const f = document.createDocumentFragment();
+  while (s) {
+    const m = s.match(RT_INLINE);
+    if (!m) { f.append(s); break; }
+    if (m.index) f.append(s.slice(0, m.index));
+    if (m[2] != null) f.append(el("strong", null, rtInline(m[2])));
+    else if (m[3] != null) {
+      const sp = el("span", { class: "rop-spoil", role: "button", tabindex: "0", title: "Spoiler: click to show", "aria-label": "Spoiler, click to show" }, rtInline(m[3]));
+      const flip = (e) => { e.stopPropagation(); sp.classList.toggle("is-shown"); sp.setAttribute("aria-label", sp.classList.contains("is-shown") ? "Spoiler shown" : "Spoiler, click to show"); };
+      sp.addEventListener("click", flip); sp.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(e); } });
+      f.append(sp);
+    } else f.append(el("em", null, rtInline(m[4] != null ? m[4] : m[5])));
+    s = s.slice(m.index + m[0].length);
+  }
+  return f;
+}
+export function richText(src) {
+  const f = document.createDocumentFragment();
+  let list = null, kind = "", para = null;
+  for (const line of String(src || "").split("\n")) {
+    const ub = line.match(/^\s*[-*•]\s+(.*)$/), ob = line.match(/^\s*\d{1,3}[.)]\s+(.*)$/);
+    const k = ub ? "ul" : ob ? "ol" : "";
+    if (k) {
+      if (kind !== k) { list = el(k, { class: "rop-rt__list" }); f.append(list); kind = k; }
+      list.append(el("li", null, rtInline((ub || ob)[1]))); para = null; continue;
+    }
+    kind = ""; list = null;
+    if (!line.trim()) { para = null; continue; }
+    if (para) para.append(el("br"), rtInline(line));
+    else { para = el("p", { class: "rop-rt__p" }, rtInline(line)); f.append(para); }
+  }
+  return f;
+}
+/* for short snippets: marks removed, spoilers hidden */
+export function plainText(src) {
+  return String(src || "").replace(/\|\|[^|\n]+?\|\|/g, "[spoiler]").replace(/\*\*([^*\n]+?)\*\*/g, "$1").replace(/\*([^*\n]+?)\*/g, "$1").replace(/_([^_\n]+?)_/g, "$1")
+    .replace(/^\s*(?:[-*•]|\d{1,3}[.)])\s+/gm, "• ");
+}
+const RT_EMOJI = ["🔥", "😂", "😍", "🤯", "😭", "😤", "👍", "👎", "💯", "🎮", "🕹️", "🏆", "💀", "👀", "🤔", "😴", "❤️", "⭐", "🎉", "🫡"];
+export function fmtBar(ta) {
+  const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
+  const wrap = (a, b, ph) => {
+    const s = ta.selectionStart, e = ta.selectionEnd, sel = ta.value.slice(s, e) || ph;
+    ta.setRangeText(a + sel + b, s, e, "end");
+    if (s === e) { ta.selectionStart = s + a.length; ta.selectionEnd = s + a.length + sel.length; }
+    ta.focus(); fire();
+  };
+  const lines = (mk) => {
+    const s = ta.value.lastIndexOf("\n", ta.selectionStart - 1) + 1, e0 = ta.value.indexOf("\n", ta.selectionEnd), e = e0 < 0 ? ta.value.length : e0;
+    const out = ta.value.slice(s, e).split("\n").map((l, i) => l.replace(/^\s*(?:[-*•]|\d{1,3}[.)])\s+/, "")).map((l, i) => mk(i) + l).join("\n");
+    ta.setRangeText(out, s, e, "end"); ta.focus(); fire();
+  };
+  const b = (label, title, fn, cls) => el("button", { class: "rop-fmt__b " + (cls || ""), type: "button", title, "aria-label": title, onmousedown: (e) => e.preventDefault(), onclick: fn }, label);
+  const pop = el("div", { class: "rop-fmt__pop", hidden: true, role: "menu" });
+  for (const em of RT_EMOJI) pop.append(el("button", { class: "rop-fmt__em", type: "button", text: em, onmousedown: (e) => e.preventDefault(),
+    onclick: () => { ta.setRangeText(em, ta.selectionStart, ta.selectionEnd, "end"); pop.hidden = true; ta.focus(); fire(); } }));
+  const emb = b("😀", "Emoji", () => { pop.hidden = !pop.hidden; });
+  document.addEventListener("click", (e) => { if (!pop.hidden && !pop.contains(e.target) && e.target !== emb) pop.hidden = true; });
+  ta.addEventListener("keydown", (e) => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === "b") { e.preventDefault(); wrap("**", "**", "bold"); } else if (k === "i") { e.preventDefault(); wrap("*", "*", "italic"); }
+  });
+  return el("div", { class: "rop-fmt", role: "toolbar", "aria-label": "Formatting" },
+    b(el("b", { text: "Bold" }), "Bold (Ctrl+B)", () => wrap("**", "**", "bold")),
+    b(el("i", { text: "Italic" }), "Italic (Ctrl+I)", () => wrap("*", "*", "italic")),
+    b("• List", "Bullet list", () => lines(() => "- ")),
+    b("1. List", "Numbered list", () => lines((i) => (i + 1) + ". ")),
+    b("Spoiler", "Hide a spoiler (readers click to show it)", () => wrap("||", "||", "spoiler"), "rop-fmt__b--sp"),
+    el("span", { class: "rop-fmt__emw" }, emb, pop));
+}
