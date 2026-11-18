@@ -15,4 +15,5 @@
   <url><loc>https://damananders.github.io/arcade/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://damananders.github.io/trophies/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://damananders.github.io/support/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://damananders.github.io/explore/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
