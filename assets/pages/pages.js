@@ -55,13 +55,17 @@
       var base = "parent=" + encodeURIComponent(host());
       stage.textContent = "";
       stage.appendChild(el("div", { class: "pg-player" }, el("iframe", { src: "https://player.twitch.tv/?channel=" + encodeURIComponent(channel) + "&" + base + "&muted=true", title: "Live stream", allowfullscreen: "", allow: "autoplay; fullscreen" })));
-      stage.appendChild(el("div", { class: "pg-chat" }, el("iframe", { src: "https://www.twitch.tv/embed/" + encodeURIComponent(channel) + "/chat?" + base + "&darkpopout", title: "Stream chat" })));
+      var chat = el("div", { class: "pg-chat" });
+      stage.appendChild(chat);
+      /* custom on-brand chat (anonymous IRC read); falls back to the Twitch chat embed if it isn't loaded */
+      if (window.StreamChat) window.StreamChat.mount(chat, channel);
+      else chat.appendChild(el("iframe", { src: "https://www.twitch.tv/embed/" + encodeURIComponent(channel) + "/chat?" + base + "&darkpopout", title: "Stream chat" }));
       stage.hidden = false; off.hidden = true;
       if (lead) lead.textContent = s && s.uptime ? "Live now, on air for " + s.uptime + "." : "Live now.";
       Site.sfx("success");
     }
     function hide() {
-      if (shown) { stage.textContent = ""; shown = false; }
+      if (shown) { try { if (window.StreamChat) window.StreamChat.unmount(); } catch (e) {} stage.textContent = ""; shown = false; }
       stage.hidden = true; off.hidden = false;
       if (lead) lead.textContent = "The stream is off at the moment.";
     }
