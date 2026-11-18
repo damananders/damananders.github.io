@@ -1601,29 +1601,49 @@
         spell: { n: slot + 1, name: I.n, cast: I.cast, m: mlvl(id), frac: mfrac(id), swap: owned.length > 1 },
         adj: owned.length > 1 ? turn : null, act: function () { if (owned.length > 1) spellPick(g, slot, idx); } });
     })(i);
-    items.push({ pos: [335, spy + sph + 14, 416, 44], cls: "wz-spellhelp", ico: "grim", label: "What each spell does", act: function () { incList(g); } });
-    /* --- upgrade mini-shop: the buff, and the run pace --- */
+    /* --- upgrade mini-shop: the buff opens its own detailed panel --- */
     var shy = 376, bid = S.buffEq[0];
-    if (bid) { var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], maxed = rk >= 5, bi = items.length;
+    if (bid) { var rk = S.buffs[bid] || 0, cost = ORBCOST[rk], maxed = rk >= 5;
       items.push({ pos: [335, shy, 590, 92], cls: "wz-shoptile" + (!maxed && S.orbs >= cost ? " is-hot" : ""),
-        shop: { name: "Buff · " + BUFF[bid].n + "  " + pips(rk, 5), sub: maxed ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s", price: maxed ? "MAXED" : "◆ " + cost + " Orbs", no: !maxed && S.orbs < cost },
-        act: function () { if (maxed) return; if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); prep(g, bi); } });
-    } else items.push({ pos: [335, shy, 590, 92], cls: "wz-shoptile", shop: { name: "Buff", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () {} });
+        shop: { name: "Buff · " + BUFF[bid].n + "  " + pips(rk, 5), sub: maxed ? "Fully upgraded · lasts " + r1(10 + st.ret + rk) + "s" : "Lasts " + r1(10 + st.ret + rk) + "s · tap for details", price: maxed ? "MAXED" : "◆ " + cost + " Orbs", no: !maxed && S.orbs < cost },
+        act: function () { buffPanel(g, 0); } });
+    } else items.push({ pos: [335, shy, 590, 92], cls: "wz-shoptile", shop: { name: "Buff · Locked", sub: "Pick up a Whisper Orb on a run to earn one", price: "LOCKED" }, act: function () { buffPanel(g, 0); } });
     /* --- start run (and endless once the forest's cleared) --- */
     if (c1) items.push({ pos: [639, 540, 286, 48], cls: "wz-endless", ico: "inf", label: "Endless Forest", act: function () { save(); startRun(g, "endless"); } });
     items.push({ pos: [639, 596, 286, 92], cls: "wz-startbtn", ico: "tree", label: "Start Run", act: function () { save(); startRun(g, "story"); } });
     items.push({ pos: [30, 596, 270, 92], cls: "wz-backarrow", ico: "back", label: "Back To The Tower", act: function () { save(); hub(g, 0); } });
     MN(g, { cls: "wz-prepmap", kicker: "Prep Time", title: "Plan The Dash", items: items, focus: focus || 0, back: function () { save(); hub(g, 0); } });
   }
+  /* the buff's own detailed panel: effect, what each rank adds, current rank/duration, and the upgrade */
+  function buffPanel(g, focus) {
+    UI.scene = "hub"; UI.menu = "prep";
+    var bid = S.buffEq[0], st = calc();
+    if (!bid) {
+      MN(g, { cls: "is-side wz-narrow", kicker: "Upgrades", title: "Buff · Locked", sub: "Pick up a Whisper Orb on a run to unlock and equip your buff.",
+        items: [{ label: "Back", cls: "is-primary", act: function () { prep(g, 0); } }], back: function () { prep(g, 0); } });
+      return;
+    }
+    var B = BUFF[bid], rk = S.buffs[bid] || 0, cost = ORBCOST[rk], maxed = rk >= 5, dur = r1(10 + st.ret + rk);
+    var body = el("div", {},
+      el("p", { class: "wz-bp", text: B.up }),
+      el("div", { class: "ak-stats" }, tile("Rank", pips(rk, 5)), tile("Lasts", dur + "s"), tile("Your Orbs", "◆ " + S.orbs)));
+    var items = [];
+    if (maxed) items.push({ label: "Fully Upgraded", cls: "is-primary", disabled: true });
+    else items.push({ label: "Upgrade  ·  ◆ " + cost + " Orbs", cls: "is-primary", disabled: S.orbs < cost,
+      act: function () { if (S.orbs < cost) { g.toast("Not enough Whisper Orbs"); return; } S.orbs -= cost; S.buffs[bid] = rk + 1; save(); sfx("buy"); buffPanel(g, 0); } });
+    items.push({ label: "Back", act: function () { prep(g, 0); } });
+    MN(g, { cls: "is-side wz-narrow", kicker: "Upgrades · Buff", title: B.n, sub: B.d, body: body, items: items, focus: focus || 0, back: function () { prep(g, 0); } });
+  }
   /* pick an incantation for a spell slot (the spell-card popup switcher) */
   function spellPick(g, slot, backFocus) {
     UI.scene = "prep"; UI.menu = "prep";
     var owned = Object.keys(S.inc).filter(function (k) { return INC[k]; }), cur = S.incEq[slot] || "poof";
-    var items = owned.map(function (id) { var I = INC[id], at = S.incEq.indexOf(id), elsewhere = at >= 0 && at !== slot;
-      return { label: I.n, ico: "spark", sub: I.cast + "  ·  Mastery " + mlvl(id) + (elsewhere ? "  ·  in Spell " + (at + 1) : ""), chips: [[RAR[I.r].n, "r" + I.r]], cls: "wz-r" + I.r + (id === cur ? " is-owned" : ""),
+    var items = owned.map(function (id) { var I = INC[id], at = S.incEq.indexOf(id), elsewhere = at >= 0 && at !== slot, nx = mnext(id);
+      return { label: I.n, ico: "spark", sub: I.d, cls: "wz-r" + I.r + (id === cur ? " is-owned" : ""),
+        more: [[RAR[I.r].n, "r" + I.r], [I.cast, ""], ["Mastery " + mlvl(id) + " / 10", "st"], [nx == null ? "Mastery maxed" : nx + " kills to next", nx == null ? "r4" : "dim"]].concat(elsewhere ? [["in Spell " + (at + 1), "dim"]] : []),
         act: function () { var prev = S.incEq[slot]; S.incEq[slot] = id; if (elsewhere) S.incEq[at] = prev; save(); sfx("buy"); prep(g, backFocus); } }; });
     items.push({ label: "Back", cls: "is-primary", act: function () { prep(g, backFocus); } });
-    MN(g, { cls: "is-side is-wide", kicker: "Swap Spell " + (slot + 1), title: "Choose an Incantation", sub: "What this slot casts on the dash.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
+    MN(g, { cls: "is-side is-wide", kicker: "Swap Spell " + (slot + 1), title: "Choose an Incantation", sub: "Pick what this slot casts — each one's effect is shown below it.", items: items, focus: Math.max(0, owned.indexOf(cur)), back: function () { prep(g, backFocus); } });
   }
   function wrapLines(ctx, s, maxw) { var words = ("" + s).split(" "), lines = [], cur = ""; words.forEach(function (w) { var t = cur ? cur + " " + w : w; if (ctx.measureText(t).width > maxw && cur) { lines.push(cur); cur = w; } else cur = t; }); if (cur) lines.push(cur); return lines; }
   function drawChalCard(ctx, x, y, w, h, d, done, fr) {
