@@ -2301,6 +2301,15 @@
     });
     pane.appendChild(root);
   }
+  /* Story editor, now in the Maintenance Hatch (moved out of the control panel). The editor script is
+     loaded on demand — only when the owner actually opens the panel — so no extra weight for players. */
+  function mountStory(pane, api) {
+    function go() { try { window.WizStoryAdmin.mount(pane, api); } catch (e) { pane.appendChild(el("p", { class: "wzh-note", text: "The story editor failed to load." })); } }
+    if (window.WizStoryAdmin && typeof window.WizStoryAdmin.mount === "function") return go();
+    var s = document.createElement("script"); s.src = "/assets/arcade/wizard-story-admin.js?v=3";
+    s.onload = go; s.onerror = function () { pane.appendChild(el("p", { class: "wzh-note", text: "Couldn't load the story editor (offline?)." })); };
+    (document.head || document.documentElement).appendChild(s);
+  }
   var hatchDone = false;
   function registerHatch() {
     if (hatchDone || !window.Site || !Site.hatch || typeof Site.hatch.register !== "function") return;
@@ -2309,6 +2318,11 @@
       id: "arcade-wizard-balance", page: "arcade", label: "Wizard — balance tunables",
       render: function (pane, api) { try { balanceEditor(pane, api); } catch (e) {} },
       load: function (value) { try { TUNE = sanitizeTune(value); } catch (e) { TUNE = {}; } }
+    });
+    Site.hatch.register({
+      id: "arcade-wizard-story", page: "arcade", label: "Wizard — story & dialogue",
+      render: function (pane, api) { try { mountStory(pane, api); } catch (e) {} },
+      load: function (value) { try { if (value !== undefined) WS.apply(value); } catch (e) {} }
     });
   }
   try { if (window.Site && Site.on) Site.on("hatch:ready", registerHatch); } catch (e) {}
