@@ -588,12 +588,16 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
   border-color:color-mix(in srgb,var(--ac) 55%,var(--sx-line-2))}
 .ch-rad__pin:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
 /* category label heading each group in the "Grouped" order (neat grid + mobile column only) */
-.ch-rad__ghead{display:none;grid-column:1/-1;align-items:center;gap:12px;margin:10px 2px 1px;
-  font:800 .78rem/1.2 var(--sx-display);letter-spacing:.1em;text-transform:uppercase;
-  color:color-mix(in srgb,var(--sx-text) 78%,transparent)}
-.ch-rad__ghead:first-of-type{margin-top:2px}
+.ch-rad__ghead{display:none;position:relative;z-index:1;grid-column:1/-1;align-items:center;gap:12px;margin:18px 2px 5px}
+.ch-rad__ghead:first-of-type{margin-top:6px}
+.ch-rad__ghead > span{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border-radius:999px;white-space:nowrap;
+  background:color-mix(in srgb,var(--sx-accent) 15%,var(--sx-surface));
+  border:1px solid color-mix(in srgb,var(--sx-accent) 42%,var(--sx-line-2));
+  font:800 .76rem/1 var(--sx-display);letter-spacing:.1em;text-transform:uppercase;color:var(--sx-text)}
+.ch-rad__ghead > span::before{content:"";width:8px;height:8px;border-radius:2px;
+  background:var(--sx-accent);box-shadow:0 0 9px -1px var(--sx-accent)}
 .ch-rad__ghead::after{content:"";flex:1 1 auto;height:1px;
-  background:linear-gradient(90deg,color-mix(in srgb,var(--sx-text) 24%,transparent),transparent)}
+  background:linear-gradient(90deg,color-mix(in srgb,var(--sx-text) 26%,transparent),transparent)}
 .ch-radial[data-order="group"][data-layout="neat"] .ch-rad__ghead{display:flex}
 @media (max-width:720px){.ch-radial[data-order="group"] .ch-rad__ghead{display:flex}}
 /* the order control wraps on narrow screens so four pills never overflow */
@@ -616,11 +620,13 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
 .ch-rad__settingsbtn.is-on{background:var(--sx-accent);border-color:transparent;color:var(--sx-on-accent,#fff)}
 .ch-rad__settingsbtn:focus-visible{outline:2px solid var(--sx-accent);outline-offset:2px}
 .ch-radial[data-view="settings"] .ch-rad__wheel{display:none}
-.ch-rad__settings{display:none;position:relative;z-index:4;width:min(390px,92vw)}
+.ch-rad__settings{display:none;position:relative;z-index:4;width:min(600px,94vw)}
 .ch-radial[data-view="settings"] .ch-rad__settings{display:block}
 .ch-panel.ch-panel--rad{position:static;top:auto;right:auto;left:auto;width:100%;max-width:none;
-  max-height:min(62vh,560px);opacity:1;transform:none;transform-origin:center}
-@media (max-width:720px){.ch-rad__settings{width:min(360px,90vw)}.ch-panel.ch-panel--rad{max-height:56vh}}
+  max-height:min(84vh,820px);padding:22px 26px 26px;opacity:1;transform:none;transform-origin:center}
+.ch-panel.ch-panel--rad .ch-panel__title{font-size:1.4rem}
+.ch-panel.ch-panel--rad .ch-row{padding:16px 0}
+@media (max-width:720px){.ch-rad__settings{width:min(440px,92vw)}.ch-panel.ch-panel--rad{max-height:76vh;padding:18px 18px 20px}}
 
 @media print{.ch-menu__box,.ch-radial{display:none}}
 
