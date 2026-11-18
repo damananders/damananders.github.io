@@ -147,20 +147,22 @@
       wiz: { name: "", body: 0, skin: 6, head: 0, shape: 0.4, age: 104, hair: 2, hairCol: 0, brow: 1, beard: 0, height: 0.5 },
       rem: 0, orbs: 0, grim: 0, syl: 0, xp: 0, lvl: 1, rank: 0, cleared: {}, tower: 0, story: {},
       inc: { poof: { k: 0 } }, incEq: ["poof"], buffs: {}, buffEq: [], ranks: {}, bag: [], eq: starter(), bagCap: 12, speed: 0.5,
-      binds: {}, pad: {}, snd: true, vol: 0.7, flashOn: true, comfort: false, cos: {}, cnt: {}, best: {}, ch: [], shop: { slot: 0, items: [] }, nid: 10 };
+      binds: {}, pad: {}, snd: true, vol: 0.7, flashOn: true, comfort: false, cos: {}, cnt: {}, best: {}, ch: [], shop: { slot: 0, items: [] }, nid: 10, title: "robbed", tseen: {} };
   }
   function load() {
     var s = store.get(SKEY, null), f = fresh(); S = f;
     if (s && typeof s === "object") for (var k in s) if (s[k] != null) S[k] = s[k];
-    ["wiz", "cleared", "story", "inc", "buffs", "ranks", "eq", "binds", "pad", "cos", "cnt", "best", "shop"].forEach(function (k) { if (!S[k] || typeof S[k] !== "object" || Array.isArray(S[k])) S[k] = fresh()[k]; });
+    ["wiz", "cleared", "story", "inc", "buffs", "ranks", "eq", "binds", "pad", "cos", "cnt", "best", "shop", "tseen"].forEach(function (k) { if (!S[k] || typeof S[k] !== "object" || Array.isArray(S[k])) S[k] = fresh()[k]; });
     ["incEq", "buffEq", "bag", "ch"].forEach(function (k) { if (!Array.isArray(S[k])) S[k] = fresh()[k]; });
     for (var w in f.wiz) if (S.wiz[w] == null) S.wiz[w] = f.wiz[w];
     if (!S.inc.poof) S.inc.poof = { k: 0 };
     if (!S.incEq.length) S.incEq = ["poof"];
     if (S.speed == null || S.speed === 1) S.speed = 0.5;   /* pace slider re-centred to neutral (old default was 1) */
+    if (!S.title) S.title = "robbed";
     fillCh();
+    TITLES.forEach(function (t) { if (titleUnlocked(t.id)) S.tseen[t.id] = 1; });   /* silent baseline: only newly-earned titles toast from here on */
   }
-  function save() { S.ts = Date.now(); store.set(SKEY, S); }
+  function save() { S.ts = Date.now(); if (typeof checkTitles === "function") checkTitles(); store.set(SKEY, S); }
   function cnt(k, n) { S.cnt[k] = (S.cnt[k] || 0) + n; }
   function fillCh() {
     S.ch = S.ch.filter(function (c) { return c && chDef(c.id); });
@@ -201,6 +203,48 @@
   function mlvl(id) { var k = (S.inc[id] || {}).k || 0, m = 0, need = 0; while (m < 10) { need += Math.round(25 * Math.pow(m + 1, 1.5)); if (k < need) break; m++; } return m; }
   function mnext(id) { var m = mlvl(id), need = 0; for (var i = 0; i <= m && i < 10; i++) need += Math.round(25 * Math.pow(i + 1, 1.5)); return m >= 10 ? null : need - ((S.inc[id] || {}).k || 0); }
   function mfrac(id) { var m = mlvl(id); if (m >= 10) return 1; var span = Math.round(25 * Math.pow(m + 1, 1.5)), rem = mnext(id); return clamp((span - rem) / span, 0, 1); }
+  /* --- Wizard titles: 25 unlockable nameplate titles, each firing off stuff the game already tracks --- */
+  function bestDist() { return Math.max(S.best.story1 || 0, S.best.endless1 || 0); }
+  function eqAny(fn) { return Object.keys(S.eq).some(function (k) { var it = S.eq[k]; return it && fn(it); }); }
+  function eqCount(fn) { return Object.keys(S.eq).filter(function (k) { var it = S.eq[k]; return it && fn(it); }).length; }
+  function ownedInc() { return Object.keys(S.inc).filter(function (id) { return INC[id]; }); }
+  var TITLES = [
+    { id: "robbed",   n: "The Robbed",          d: "Start your first run (default)",      chk: function () { return true; } },
+    { id: "tracks",   n: "Tracks Follower",     d: "Reach 500 m in a run",                chk: function () { return bestDist() >= 500; } },
+    { id: "runner",   n: "Forest Runner",       d: "Reach 2,000 m in a run",              chk: function () { return bestDist() >= 2000; } },
+    { id: "relent",   n: "The Relentless",      d: "Reach 5,000 m in Endless",            chk: function () { return (S.best.endless1 || 0) >= 5000; } },
+    { id: "impbane",  n: "Imp's Bane",          d: "Defeat 500 Mud Imps",                 chk: function () { return (S.cnt.imps || 0) >= 500; } },
+    { id: "boss",     n: "Boss Flattener",      d: "Beat the forest boss",                chk: function () { return !!S.cleared[1]; } },
+    { id: "drip",     n: "Drip Lord",           d: "Fill every equipment slot at once",   chk: function () { return openSlots().every(function (k) { return !!S.eq[k]; }); } },
+    { id: "thunder",  n: "Thunderstruck",       d: "Equip a Thunderfuck-rarity item",     chk: function () { return eqAny(function (it) { return it.r >= 5; }); } },
+    { id: "dressed",  n: "Well Dressed",        d: "Wear 3 Splendiforous+ items at once", chk: function () { return eqCount(function (it) { return it.r >= 4; }) >= 3; } },
+    { id: "spark",    n: "Spark Master",        d: "Take any Incantation to Mastery 6",   chk: function () { return ownedInc().some(function (id) { return mlvl(id) >= 6; }); } },
+    { id: "polyglot", n: "Polyglot",            d: "Own 8 different Incantations",        chk: function () { return ownedInc().length >= 8; } },
+    { id: "nimble",   n: "Nimble",              d: "Dodge 100 times with Illusion Flash", chk: function () { return (S.cnt.flash || 0) >= 100; } },
+    { id: "untouch",  n: "Untouchable",         d: "Finish a run without taking a hit",   chk: function () { return (S.cnt.cleanwin || 0) >= 1; } },
+    { id: "fiver",    n: "High Fiver",          d: "High-five 50 friendlies",             chk: function () { return (S.cnt.fives || 0) >= 50; } },
+    { id: "savior",   n: "Squirrel Savior",     d: "Rescue 25 squirrel families",         chk: function () { return (S.cnt.rescues || 0) >= 25; } },
+    { id: "orbs",     n: "Orb Hoarder",         d: "Collect 100 Whisper Orbs",            chk: function () { return (S.cnt.orbs || 0) >= 100; } },
+    { id: "baron",    n: "Remnant Baron",       d: "Bank 10,000 Remnants",                chk: function () { return (S.cnt.rem || 0) >= 10000; } },
+    { id: "grimoire", n: "Grimoire Keeper",     d: "Hold 25 Grimoires",                   chk: function () { return S.grim >= 25; } },
+    { id: "chaser",   n: "Challenge Chaser",    d: "Complete 50 challenges",              chk: function () { return (S.cnt.ch || 0) >= 50; } },
+    { id: "platsnob", n: "Platform Snob",       d: "Land on 500 platforms",               chk: function () { return (S.cnt.plats || 0) >= 500; } },
+    { id: "collect",  n: "The Collector",       d: "Loot 100 pieces of Wizard Drip",      chk: function () { return (S.cnt.loot || 0) >= 100; } },
+    { id: "obliv",    n: "Obliviator",          d: "Obliviate 25 items",                  chk: function () { return (S.cnt.obliv || 0) >= 25; } },
+    { id: "arch",     n: "Archmage",            d: "Reach Wiz Level 50",                  chk: function () { return S.lvl >= 50; } },
+    { id: "legend",   n: "Legend of the Tower", d: "Reach Wiz Level 100",                 chk: function () { return S.lvl >= 100; } },
+    { id: "bingus",   n: "Bingus the Great",    d: "Name your wizard “Bingus”", chk: function () { return (S.wiz.name || "").trim().toLowerCase() === "bingus"; } }
+  ];
+  function titleDef(id) { for (var i = 0; i < TITLES.length; i++) if (TITLES[i].id === id) return TITLES[i]; return TITLES[0]; }
+  function titleUnlocked(id) { try { return !!titleDef(id).chk(); } catch (e) { return false; } }
+  function curTitle() { var id = S.title || "robbed"; return titleUnlocked(id) ? titleDef(id) : TITLES[0]; }
+  function titleName() { return curTitle().n; }
+  function titlesHave() { return TITLES.filter(function (t) { return titleUnlocked(t.id); }).length; }
+  function checkTitles() {            /* toast any title that just unlocked; S.tseen keeps it from re-toasting */
+    if (!S.tseen) S.tseen = {};
+    for (var i = 0; i < TITLES.length; i++) { var t = TITLES[i];
+      if (t.id !== "robbed" && !S.tseen[t.id] && titleUnlocked(t.id)) { S.tseen[t.id] = 1; if (G && G.toast) G.toast("Title unlocked: " + t.n, "gold"); } }
+  }
   function rollRarity(minR) {
     var f = clamp(calc().hap / 150, 0, 1), w = RAR.map(function (r, i) { return i === 0 ? r.w : r.w + (r.cap - r.w) * f; }), tot = 0, i;
     for (i = 0; i < w.length; i++) tot += w[i];
@@ -725,7 +769,7 @@
     S.ch.forEach(function (c) { c.p = 0; c.done = false; });   /* the run's three challenges start fresh */
     R = { mode: mode, t: 0, dist: 0, y: GY, vy: 0, ground: true, plat: null, jumps: 0, dropT: 0, glide: false, hp: st.hp, maxhp: st.hp, inv: 0, st: st, look: lookOf(false),
       plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], lootCards: [], cds: {},
-      nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
+      nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, hurt: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
       bossAt: (mode === "story" ? 300 : 390) * BASE, win: 0, over: false, revived: false, fiveT: 0, fiveWin: 0, shake: 0, mud: 0, chat: 5, tap: false, flashCd: 0, flashT: 0,
       nextOrb: rnd(40, 60) * BASE, nextGrim: rnd(110, 170) * BASE, nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12 };
     S.incEq.forEach(function (id) { R.cds[id] = { t: 0.8, ch: 3, r: 0 }; });
@@ -787,7 +831,7 @@
   function hurt(n) {
     if (R.inv > 0 || R.over || R.win) return;
     if (R.ward > 0) { R.ward = 0; R.inv = 0.6; sfx("ward"); fxAdd("ring", wxw(), R.y - 20, { c: "#9fe8ff" }); return; }
-    R.hp -= n * (1 - R.st.con / 100); R.inv = 1.2; R.shake = 0.3; sfx("hit"); cnt("hits", 1);
+    R.hp -= n * (1 - R.st.con / 100); R.inv = 1.2; R.shake = 0.3; R.hurt++; sfx("hit"); cnt("hits", 1);
     if (R.hp <= 0.01) { R.hp = 0; die(); } else say(line("hit"));
   }
   function die() {
@@ -801,7 +845,7 @@
     }
     endRun(false);
   }
-  function lootDrop(minR) { var it = makeItem(minR); R.loot.push(it); R.lootCards.push({ it: it, t: 0 }); if (R.lootCards.length > 4) R.lootCards.shift(); sfx(it.r >= 4 ? "lootBig" : "loot"); fxAdd("ring", wxw(), R.y - 20, { c: RAR[it.r].c }); }
+  function lootDrop(minR) { var it = makeItem(minR); R.loot.push(it); R.lootCards.push({ it: it, t: 0 }); if (R.lootCards.length > 4) R.lootCards.shift(); cnt("loot", 1); sfx(it.r >= 4 ? "lootBig" : "loot"); fxAdd("ring", wxw(), R.y - 20, { c: RAR[it.r].c }); }
   function damage(e, n, src) {
     if (e.dead) return;
     e.hp -= n; e.fl = 0.1; cnt("dmg", n); fxAdd("num", e.x, e.y - e.h - 4, { s: String(Math.max(1, Math.round(n))), d: 0.6 });
@@ -814,7 +858,7 @@
       else { lootDrop(1); R.tough *= 1.15; R.bossN++; R.bossAt = R.dist + 390 * BASE; R.nx = R.dist + BW + 80; G.toast("The imps are getting tougher.", "info"); }
       return;
     }
-    R.xp += 5 * (e.elite ? 3 : 1) * (e.gold ? 6 : 1); R.rem += e.gold ? 40 : 2; chEv("kill", 1); if (e.k === "imp") chEv("imp", 1);
+    R.xp += 5 * (e.elite ? 3 : 1) * (e.gold ? 6 : 1); R.rem += e.gold ? 40 : 2; chEv("kill", 1); if (e.k === "imp") { chEv("imp", 1); cnt("imps", 1); }
     if (Math.random() < (e.gold ? 1 : e.elite ? 0.25 : 0.065)) lootDrop(e.gold ? 2 : 0);
   }
   function dmgOf(id) { return INC[id].dmg * (1 + R.st.pow / 100) * (1 + 0.08 * mlvl(id)); }
@@ -899,7 +943,7 @@
       R.vy += GRAV * dt; if (R.vy < 0 && !held) R.vy += GRAV * 1.3 * dt;
       if (R.vy > 0 && held) { R.vy = Math.min(R.vy, R.st.glide); R.glide = true; cnt("glide", sp * dt / M); }
       R.y += R.vy * dt;
-      if (R.vy >= 0 && R.dropT <= 0) for (i = 0; i < R.plats.length; i++) { var pl = R.plats[i]; if (wx >= pl.x - 4 && wx <= pl.x + pl.w + 4 && py <= pl.y + 1 && R.y >= pl.y) { R.y = pl.y; R.vy = 0; R.ground = true; R.plat = pl; R.jumps = 0; sfx("land"); chEv("plat", 1); break; } }
+      if (R.vy >= 0 && R.dropT <= 0) for (i = 0; i < R.plats.length; i++) { var pl = R.plats[i]; if (wx >= pl.x - 4 && wx <= pl.x + pl.w + 4 && py <= pl.y + 1 && R.y >= pl.y) { R.y = pl.y; R.vy = 0; R.ground = true; R.plat = pl; R.jumps = 0; sfx("land"); chEv("plat", 1); cnt("plats", 1); break; } }
       if (R.y >= GY) { R.y = GY; R.vy = 0; if (!R.ground) sfx("land"); R.ground = true; R.plat = null; R.jumps = 0; }
     } else if (R.plat && (wx < R.plat.x - 4 || wx > R.plat.x + R.plat.w + 4)) { R.ground = false; R.plat = null; R.jumps = 1; }
     if (R.inv > 0) R.inv -= dt; if (R.shake > 0) R.shake -= dt; if (R.fiveT > 0) R.fiveT -= dt; if (R.buffT > 0) R.buffT -= dt;
@@ -978,6 +1022,7 @@
     addXP(o.xp, G); rollChals(); save(); return o;   /* reroll the three challenges for the next run */
   }
   function endRun(win) {
+    if (win && R && !R.hurt) cnt("cleanwin", 1);           /* Untouchable: cleared a run without taking a single hit */
     var g = G, first = win && !S.cleared[1], o = bankRun(), m = o.m, xp = o.xp, l0 = o.l0, sold = o.sold, kept = o.kept, i;
     var extra = [];
     if (first) { S.cleared[1] = true; S.tower = 1; S.cos.hat = true; giveInc("snaps", null); extra.push("New Incantation: Spark Snaps", "Your favorite hat is back (wear it at the Armoire)", "Unlocked: Magickal Condenser, Wizard Drip Armoire, Endless mode"); }
@@ -1684,8 +1729,9 @@
     bold(ctx, "The Forest", lx + lw / 2, ly + 28, "800 22px " + SERIF, "#fff3c4", "center");
     D.text(ctx, "Around the Tower · Level 1", lx + lw / 2, ly + 46, "700 11px " + F.mono, "#e4cf9a", "center");
     ctx.strokeStyle = "rgba(232,193,90,.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx + 22, ly + 58); ctx.lineTo(lx + lw - 22, ly + 58); ctx.stroke();
-    bold(ctx, S.wiz.name || "The Wizard", lx + lw / 2, ly + 86, "800 19px " + SERIF, "#ffe9b8", "center");
-    bold(ctx, "Wiz Level " + S.lvl, lx + lw / 2, ly + 106, "700 12px " + F.mono, "#dccb9f", "center");
+    bold(ctx, S.wiz.name || "The Wizard", lx + lw / 2, ly + 84, "800 19px " + SERIF, "#ffe9b8", "center");
+    D.text(ctx, "“" + titleName() + "”", lx + lw / 2, ly + 101, "700 11px " + F.mono, "#ffd98a", "center");
+    bold(ctx, "Wiz Level " + S.lvl, lx + lw / 2, ly + 119, "700 12px " + F.mono, "#dccb9f", "center");
     D.text(ctx, c1 ? "Run the forest again — about" : "Follow the tracks — about", lx + 20, ly + 140, "600 12px " + F.mono, "#cbbf9f", "left");
     D.text(ctx, "five minutes, then the boss.", lx + 20, ly + 158, "600 12px " + F.mono, "#cbbf9f", "left");
     D.text(ctx, "Three challenges, once each", lx + 20, ly + 188, "600 12px " + F.mono, "#cbbf9f", "left");
@@ -1772,7 +1818,8 @@
     for (i = 0; i < 64; i++) { an = i / 64 * TAU; x = 640 + Math.cos(an) * 676; y = 375 + Math.sin(an) * 388; ctx.save(); ctx.translate(x, y); ctx.rotate(an + Math.PI / 2); ctx.fillStyle = "#f0dcae"; ctx.fillRect(-10, -2, 20, 4); ctx.restore(); }
     for (i = 0; i < 12; i++) { an = -Math.PI + (i + 0.5) / 12 * Math.PI; x = 640 + Math.cos(an) * 652; y = 380 + Math.sin(an) * 370; if (y < 8) continue; ell(ctx, x, y, 13, 13, "#e8c15a"); ell(ctx, x, y, 7, 7, "#1a0f08"); }
     ctx.strokeStyle = "#d9c08a"; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(1150, 40); ctx.quadraticCurveTo(1230, 90 + Math.sin(t) * 4, 1200, 190); ctx.quadraticCurveTo(1180, 250, 1236, 300); ctx.stroke(); ell(ctx, 1238, 306, 12, 16, "#b98a4e");
-    plate(ctx, 890, 34, 300, 40); D.text(ctx, (S.wiz.name || "The Wizard") + "  ·  Wiz Lv " + S.lvl, 1040, 61, "700 20px " + SERIF, "#f3e6c4", "center");
+    plate(ctx, 884, 30, 312, 52); D.text(ctx, (S.wiz.name || "The Wizard") + "  ·  Wiz Lv " + S.lvl, 1040, 54, "700 20px " + SERIF, "#f3e6c4", "center");
+    D.text(ctx, "“" + titleName() + "”", 1040, 72, "700 12px " + F.mono, "#ffd98a", "center");
   }
   function statWord(k) { return STAT[k].d.split(" ")[0]; }
   function drawEquipScene(g, ctx) {
@@ -1797,9 +1844,10 @@
     ell(ctx, wx2, footY + 8, 112, 19, "rgba(0,0,0,.4)");
     wizSprite(lookOf(S.comfort), (t % 8) < 5 ? "stand" : (t % 8) < 6.5 ? "five" : "stand", t);
     ctx.imageSmoothingEnabled = false; blitWiz(ctx, wx2, footY, 4.8);
-    plate(ctx, wx2 - 118, mcy + mry + 10, 236, 46, 9);
-    bold(ctx, S.wiz.name || "The Wizard", wx2, mcy + mry + 30, "800 19px " + SERIF, "#fff3c4", "center");
-    bold(ctx, "Wiz Level " + S.lvl, wx2, mcy + mry + 48, "700 13px " + F.mono, "#dccb9f", "center");
+    plate(ctx, wx2 - 124, mcy + mry + 6, 248, 62, 9);
+    D.text(ctx, "— " + titleName() + " —", wx2, mcy + mry + 23, "800 12px " + F.mono, "#ffd98a", "center");
+    bold(ctx, S.wiz.name || "The Wizard", wx2, mcy + mry + 43, "800 19px " + SERIF, "#fff3c4", "center");
+    bold(ctx, "Wiz Level " + S.lvl, wx2, mcy + mry + 60, "700 12px " + F.mono, "#dccb9f", "center");
     /* right-hand stat stack: a base number, with a green bump from whatever gear is on */
     var tot = calc(), base = {}; SK.forEach(function (k) { base[k] = Math.min(STAT[k].cap, r1((S.ranks[k] || 0) * STAT[k].rank)); });
     var px0 = 992, pw = 262, py0 = 134, rh = 50;
@@ -1852,8 +1900,25 @@
       items: [
         { label: "Around The Tower: " + (S.comfort ? "Comfort Wear" : "Equipped Gear"), ico: "chest", sub: "Comfort wear is the sleep cap, tunic and skivvies", act: function () { S.comfort = !S.comfort; save(); armoire(g, 0); } },
         { label: "Favorite Hat: " + (S.cos.hatOn ? "On" : "Off"), ico: "hat", sub: "Won back from the Grand Mud Imp. Worn over any headgear.", act: function () { S.cos.hatOn = !S.cos.hatOn; save(); armoire(g, 1); } },
+        { label: "Wizard Titles", ico: "scroll", sub: titlesHave() + " of " + TITLES.length + " earned  ·  wearing “" + titleName() + "”", act: function () { titles(g, 0); } },
         { label: "Back", act: function () { hub(g, 3); } }
       ] });
+  }
+  /* pick which earned title rides on the nameplate; locked ones show how to earn them */
+  function titles(g, focus) {
+    UI.scene = "hub"; UI.menu = "armoire";
+    var cur = S.title || "robbed";
+    var items = TITLES.map(function (t) {
+      var un = titleUnlocked(t.id), sel = t.id === cur && un;
+      return { label: t.n, ico: un ? (sel ? "quill" : "scroll") : "lock",
+        sub: un ? (sel ? "Worn on your nameplate now" : "Earned — tap to wear it") : "Locked  ·  " + t.d,
+        cls: "wz-title" + (sel ? " is-owned" : "") + (un ? "" : " is-locked"), disabled: !un,
+        act: un ? function () { S.title = t.id; save(); sfx("buy"); titles(g, TITLES.indexOf(t)); } : null };
+    });
+    items.push({ label: "Back", cls: "is-primary", act: function () { armoire(g, 2); } });
+    MN(g, { cls: "is-side is-wide", kicker: "Wizard Drip Armoire", title: "Wizard Titles",
+      sub: "Earned " + titlesHave() + " of " + TITLES.length + ". The one you wear shows on your nameplate across the tower.",
+      items: items, focus: focus || 0, back: function () { armoire(g, 2); } });
   }
   function settings(g, focus) {
     UI.scene = "hub"; UI.menu = "settings";
