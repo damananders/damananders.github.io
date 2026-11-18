@@ -254,6 +254,8 @@
 .ak-menu:has(.ak-panel.wz-bag){background:none}
 .ak-stage[data-game="wizard-sprint"] .ak-panel.wz-bag{background:linear-gradient(180deg,rgba(40,24,13,.90),rgba(20,11,6,.93));border:3px dashed #e3c890;box-shadow:0 0 0 5px #5a3a1c,0 0 0 7px #2a1a0e,0 1.4em 3em -0.6em rgba(0,0,0,.9)}
 .ak-panel.wz-bag .ak-panel__items.is-grid .ak-btn{border-radius:.9em .9em .3em .3em;border-style:dashed;border-color:rgba(227,200,144,.55);background:linear-gradient(180deg,rgba(120,80,44,.45),rgba(60,38,20,.45))}
+.ak-panel.wz-bag .ak-btn.is-picked{border-color:#ffe08a;box-shadow:0 0 0 2px rgba(255,224,138,.4),inset 0 0 0 99px rgba(255,224,138,.08)}
+.ak-panel.wz-bag .ak-btn.is-picked>b{color:#ffe9b8}
 .wz-worn{display:flex;flex-direction:column;gap:.2em;margin:.3em 0 .5em;padding:.6em .8em;border-radius:.3em;background:linear-gradient(180deg,#f6e9c4,#e0cc98);border:1px solid #8a6a3a}
 .wz-worn>span:first-child{font:800 .62em var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#6b4a22}
 .wz-worn>b{font:800 1.2em var(--wz-serif);color:#2a1a0e}
