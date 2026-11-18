@@ -1,6 +1,10 @@
 {
   "_help": "Site-wide news. Newest first is not required (the site sorts by date). tag is one of: site, anyps, anderscraft, games, vault. url is optional and may be a path on this site. Leave date as \"\" for an undated note.",
   "items": [
+    { "date": "2026-11-18", "tag": "site", "title": "Two-step sign-in for your account", "body": "Turn on two-factor authentication from your account page and add a code from your authenticator app at sign-in. Your password is never enough on its own after that.", "url": "/account/" },
+    { "date": "2026-11-18", "tag": "site", "title": "Your account page, redesigned", "body": "The account screen is now a set of clear cards: how you sign in, what you're linked to across the projects, your security, and your game libraries. Everything in one glance.", "url": "/account/" },
+    { "date": "2026-11-18", "tag": "site", "title": "Watch the stream with chat built in", "body": "The stream page now carries its own live chat right beside the player while I'm broadcasting, in the site's own style — no pop-outs, no ads to read.", "url": "/stream/" },
+    { "date": "2026-11-18", "tag": "site", "title": "Settings, tidied into sections", "body": "The settings panel now groups everything into Appearance and Sound & motion, so the theme, skin, text size, sounds and motion controls are easier to find.", "url": "/" },
     { "date": "2026-11-13", "tag": "site", "title": "A floating page menu", "body": "The top-left menu is now a constellation of page cards you can drift through, each with a short description. Prefer it calmer? Flip it to a neat grid with the toggle inside.", "url": "/" },
     { "date": "2026-11-13", "tag": "site", "title": "Search the whole site", "body": "Press the “/” key or the new search button in the header to jump straight to any page, or on to the game ratings.", "url": "/" },
     { "date": "2026-11-13", "tag": "site", "title": "The Trophy Cabinet", "body": "Every trophy in one place at /trophies/, with tiers, earned dates and filters. A few new ones, and some secret codes, are hiding in there too.", "url": "/trophies/" },
