@@ -15,6 +15,8 @@
 .ht-head strong{font:700 1.1rem var(--sx-display,system-ui)}
 .ht-x{margin-left:auto;background:none;border:none;color:var(--sx-muted,#9aa3ad);font-size:1.6rem;line-height:1;cursor:pointer;padding:2px 8px;border-radius:8px}
 .ht-x:hover,.ht-x:focus-visible{color:var(--sx-text,#eef);outline:none}
+.ht-back{align-self:flex-start;margin:-4px 0 0;background:none;border:none;color:var(--sx-muted,#9aa3ad);font:600 .9rem/1 var(--sx-display,system-ui);cursor:pointer;padding:6px 2px;border-radius:8px}
+.ht-back:hover,.ht-back:focus-visible{color:var(--sx-text,#eef);text-decoration:underline;outline:none}
 .ht-list{display:flex;flex-direction:column;gap:10px}
 .ht-cat{border:1px solid var(--sx-line-2,rgba(255,255,255,.12));border-radius:12px;overflow:hidden;
   background:var(--sx-glass,rgba(255,255,255,.03))}
