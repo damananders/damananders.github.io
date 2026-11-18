@@ -545,14 +545,18 @@
    * The private pages are deliberately not listed, and the résumé is left out at the owner's request (the footer's hire link leads there). features.navMenu = false removes it.
    * ==================================================================================================== */
   var PAGES = [
-    ["hub", "/", "Home", "Back to the hub"], ["anyps", "/anyps/", "AnyPS", "The PlayStation launcher"], ["anderscraft", "/anderscraft/", "AndersCraft", "Private WoW server"],
-    ["games", "/games/", "Rate-O-Pedia", "Rate & review games"], ["forum", "/games/forum/", "Forums", "Talk games & projects"],
-    ["links", "/links/", "Links I Like", "Sites I actually use"], ["stream", "/stream/", "Stream", "Watch me live"],
-    ["discord", "/discord/", "Discord", "Join the community"], ["arcade", "/arcade/", "Arcade", "Little browser games"],
-    ["projects", "/projects/", "Projects", "What I'm working on"], ["uses", "/uses/", "Uses", "My gear & setup"], ["changelog", "/changelog/", "What's New", "Latest updates"],
-    ["support", "/support/", "Support", "Keep the projects online"], ["account", "/account/", "Account", "Your DMA Account"],
-    ["explore", "/explore/", "Explore", "A tour of everything here"]
+    ["hub", "/", "Home", "Back to the hub", "about"], ["anyps", "/anyps/", "AnyPS", "The PlayStation launcher", "projects"], ["anderscraft", "/anderscraft/", "AndersCraft", "Private WoW server", "projects"],
+    ["games", "/games/", "Rate-O-Pedia", "Rate & review games", "games"], ["forum", "/games/forum/", "Forums", "Talk games & projects", "games"],
+    ["links", "/links/", "Links I Like", "Sites I actually use", "about"], ["stream", "/stream/", "Stream", "Watch me live", "community"],
+    ["discord", "/discord/", "Discord", "Join the community", "community"], ["arcade", "/arcade/", "Arcade", "Little browser games", "games"],
+    ["projects", "/projects/", "Projects", "What I'm working on", "about"], ["uses", "/uses/", "Uses", "My gear & setup", "about"], ["changelog", "/changelog/", "What's New", "Latest updates", "about"],
+    ["support", "/support/", "Support", "Keep the projects online", "you"], ["account", "/account/", "Account", "Your DMA Account", "you"],
+    ["explore", "/explore/", "Explore", "A tour of everything here", "about"]
   ];
+  /* Categories, in display order — used by the menu's "Grouped" ordering (see chrome:menu). */
+  var CATS = [["projects", "Projects"], ["games", "Games"], ["community", "Community"], ["about", "Around the site"], ["you", "You"]];
+  var CAT_LABEL = {}; CATS.forEach(function (c) { CAT_LABEL[c[0]] = c[1]; });
+  function catRank(id) { for (var i = 0; i < CATS.length; i++) if (CATS[i][0] === id) return i; return CATS.length; }
   /* A radial "wheel" of the site's pages. The header button opens a centered overlay; the pages fan out from
      the middle on a ring, each an ordinary link (click or Enter to visit). Animated, colour-accented, and
      drivable by mouse, keyboard (Tab, or arrows to step around the ring) or a controller. The dim backdrop,
@@ -589,7 +593,15 @@
     var center = el("button", { type: "button", class: "ch-rad__center", "aria-label": "Close menu", title: "Close" },
       svg('<path d="M6 6l12 12M18 6 6 18"/>'));
     wheel.appendChild(center);
-    var N = PAGES.length, nodes = [], SLOTS = [];
+    var N = PAGES.length, nodes = [], SLOTS = [], pinBtns = [];
+    /* how the pages are ordered: "pick" (hand-picked, the default), "group" (by category),
+       "az" (A–Z), or "custom" (your pinned pages first). Remembered per browser. */
+    var ORDERS = { pick: 1, group: 1, az: 1, custom: 1 };
+    var order = Site.store.get("menu.order", "pick"); if (!ORDERS[order]) order = "pick";
+    var orderBtns = null;
+    var pins = Site.store.get("menu.pins", []); if (!Array.isArray(pins)) pins = [];
+    pins = pins.filter(function (id) { return PAGES.some(function (p) { return p[0] === id; }); });
+    var PIN_ICO = '<path d="M9.5 2.5h5l-.6 4.2 2.6 2.4v2.4h-4.1V18l-1.4 3-1.4-3v-4.1H4V11.5l2.6-2.4z"/>';
     /* Precompute the ring slots (two loose rings so wide cards never crowd: 7 outer, the rest tucked inside).
        Each card gets its accent + opacity delay at build; its float POSITION comes from a slot, reassigned —
        and shuffled — every time the menu opens, so the floaty constellation lands in a fresh order each time. */
@@ -609,6 +621,27 @@
               el("span", { class: "ch-rad__t", text: p[2] }),
               el("span", { class: "ch-rad__s", text: p[3] || "" })),
             el("span", { class: "ch-rad__glare", "aria-hidden": "true" }))));
+      /* a pin toggle, shown only in the "Custom" order — pins the page to the front of the menu */
+      var isPinned = pins.indexOf(p[0]) >= 0;
+      var pin = el("span", { class: "ch-rad__pin" + (isPinned ? " is-pinned" : ""), role: "button", tabindex: "-1",
+        "aria-label": (isPinned ? "Unpin " : "Pin ") + p[2], "aria-pressed": String(isPinned), title: isPinned ? "Unpin" : "Pin to front" },
+        svg(PIN_ICO, { fill: "currentColor", stroke: "none" }));
+      pin.__pid = p[0];
+      function togglePin(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        var at = pins.indexOf(p[0]), now;
+        if (at >= 0) { pins.splice(at, 1); now = false; } else { pins.push(p[0]); now = true; }
+        try { Site.store.set("menu.pins", pins); } catch (x) {}
+        pin.classList.toggle("is-pinned", now);
+        pin.setAttribute("aria-pressed", String(now));
+        pin.setAttribute("aria-label", (now ? "Unpin " : "Pin ") + p[2]);
+        pin.title = now ? "Unpin" : "Pin to front";
+        sfx("tap"); applyOrder(true);
+      }
+      pin.addEventListener("click", togglePin);
+      pin.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") togglePin(e); });
+      card.querySelector(".ch-rad__in").appendChild(pin);
+      pinBtns.push(pin);
       /* per-card 3D tilt + glare follow (mouse only) — the AnyPS-card feel */
       var inEl = card.querySelector(".ch-rad__in");
       function tilt(e) {
@@ -627,13 +660,32 @@
       card.addEventListener("pointercancel", untilt);
       wheel.appendChild(card); nodes.push(card);
     });
-    /* Reassign the ring slots to the cards. shuffle=true lands a fresh random arrangement (used on each open
-       in float mode); each card also gets a fresh idle-float duration + delay so nothing drifts in lockstep. */
+    /* ---- page ordering: pick / group / az / custom ---- */
+    /* category labels that head each group in the "Grouped" order (shown in the neat grid + on mobile) */
+    var headers = {};
+    CATS.forEach(function (c) {
+      var h = el("div", { class: "ch-rad__ghead", "data-cat": c[0], "aria-hidden": "true" }, el("span", { text: c[1] }));
+      headers[c[0]] = h; wheel.appendChild(h);
+    });
+    var visualOrder = nodes.slice();
+    function pageSeq() {
+      var idx = []; for (var i = 0; i < N; i++) idx.push(i);
+      if (order === "az") idx.sort(function (a, b) { var A = PAGES[a][2].toLowerCase(), B = PAGES[b][2].toLowerCase(); return A < B ? -1 : A > B ? 1 : 0; });
+      else if (order === "group") idx.sort(function (a, b) { var r = catRank(PAGES[a][4]) - catRank(PAGES[b][4]); return r !== 0 ? r : a - b; });
+      else if (order === "custom") idx.sort(function (a, b) {
+        var pa = pins.indexOf(PAGES[a][0]), pb = pins.indexOf(PAGES[b][0]);
+        var ia = pa < 0 ? 999 : pa, ib = pb < 0 ? 999 : pb;
+        return ia !== ib ? ia - ib : a - b;
+      });
+      return idx;
+    }
+    /* Place each card on a ring slot following the current page order. shuffle only applies in "pick" mode,
+       so grouped / A–Z / custom stay legible around the ring; each card gets a fresh idle-float timing too. */
     function layoutFloat(shuffle) {
-      var order = SLOTS.map(function (_, idx) { return idx; });
-      if (shuffle) { for (var a = order.length - 1; a > 0; a--) { var b = Math.floor(Math.random() * (a + 1)), t = order[a]; order[a] = order[b]; order[b] = t; } }
-      nodes.forEach(function (card, idx) {
-        var s = SLOTS[order[idx]];
+      var seq = pageSeq(), slotIdx = SLOTS.map(function (_, i) { return i; });
+      if (shuffle && order === "pick") { for (var a = slotIdx.length - 1; a > 0; a--) { var b = Math.floor(Math.random() * (a + 1)), t = slotIdx[a]; slotIdx[a] = slotIdx[b]; slotIdx[b] = t; } }
+      seq.forEach(function (pi, k) {
+        var card = nodes[pi], s = SLOTS[slotIdx[k]];
         card.style.setProperty("--x", s.x.toFixed(3));
         card.style.setProperty("--y", s.y.toFixed(3));
         card.style.setProperty("--dp", s.depth + "px");
@@ -642,7 +694,20 @@
         card.style.setProperty("--fd", (Math.random() * 2.4).toFixed(2) + "s");
       });
     }
-    layoutFloat(false);
+    /* Reflow the cards (and the group headers) for the current order, and remember the choice. */
+    function applyOrder(persist) {
+      if (overlay) overlay.setAttribute("data-order", order);
+      if (orderBtns) orderBtns.forEach(function (b) { var on = b.getAttribute("data-o") === order; b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on)); });
+      var seq = pageSeq(), lastCat = null;
+      visualOrder = seq.map(function (pi) { return nodes[pi]; });
+      seq.forEach(function (pi, k) {
+        var ord = (k + 1) * 10;
+        nodes[pi].style.order = String(ord);
+        if (order === "group") { var cat = PAGES[pi][4]; if (cat !== lastCat) { if (headers[cat]) headers[cat].style.order = String(ord - 5); lastCat = cat; } }
+      });
+      if (mode === "float") layoutFloat(false);
+      if (persist) { try { Site.store.set("menu.order", order); } catch (x) {} }
+    }
     var scrim = el("div", { class: "ch-rad__scrim" });
     var overlay = el("div", { class: "ch-radial", id: "ch-radial", hidden: true }, scrim, wheel);
     (document.body || document.documentElement).appendChild(overlay);
@@ -675,13 +740,22 @@
         b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on));
       });
       if (mode !== "float") { wheel.style.setProperty("--px", 0); wheel.style.setProperty("--py", 0); }
+      else layoutFloat(false);                                      /* make sure float positions exist when swapping in */
       if (save) { try { Site.store.set("menu.layout", mode); } catch (e) {} }
     }
     segBtns.forEach(function (b) { b.addEventListener("click", function () { applyMode(b.getAttribute("data-m"), true); sfx("tap"); }); });
-    /* the bar sits UNDER the page wheel: the layout toggle, plus (below) a Settings button */
-    var bar = el("div", { class: "ch-rad__bar" }, seg);
+
+    /* order control: how the pages are sorted — hand-picked, grouped by category, A–Z, or your pinned ones first */
+    var orderDefs = [["pick", "Picks", "The hand-picked order"], ["group", "Grouped", "Grouped by category"], ["az", "A–Z", "Alphabetical"], ["custom", "Custom", "Your pinned pages first"]];
+    orderBtns = orderDefs.map(function (d) { return el("button", { type: "button", class: "ch-rad__segb", "data-o": d[0], title: d[2] }, el("span", { text: d[1] })); });
+    var orderSeg = el("div", { class: "ch-rad__seg ch-rad__seg--order", role: "group", "aria-label": "Page order" });
+    orderBtns.forEach(function (b) { orderSeg.appendChild(b); b.addEventListener("click", function () { order = b.getAttribute("data-o"); applyOrder(true); sfx("tap"); }); });
+
+    /* the bar sits UNDER the page wheel: the order + layout toggles, plus (below) a Settings button */
+    var bar = el("div", { class: "ch-rad__bar" }, orderSeg, seg);
     overlay.appendChild(bar);
     applyMode(mode, false);
+    applyOrder(false);
 
     /* Share lives here now (tucked out of the crowded header). Native share sheet, or copy the link. */
     if (feat("shareButton")) {
@@ -798,12 +872,12 @@
       var step = 0;
       if (view === "pages" && (e.key === "ArrowRight" || e.key === "ArrowDown")) step = 1;
       else if (view === "pages" && (e.key === "ArrowLeft" || e.key === "ArrowUp")) step = -1;
-      if (step && nodes.length) {
+      if (step && visualOrder.length) {
         e.preventDefault();
-        var cur = nodes.indexOf(document.activeElement);
+        var cur = visualOrder.indexOf(document.activeElement);
         if (cur < 0) cur = step > 0 ? -1 : 0;
-        var next = (cur + step + nodes.length) % nodes.length;
-        try { nodes[next].focus(); sfx("hover"); } catch (x) {}
+        var next = (cur + step + visualOrder.length) % visualOrder.length;
+        try { visualOrder[next].focus(); sfx("hover"); } catch (x) {}
         return;
       }
       if (e.key === "Tab") {   /* keep focus inside the wheel */
