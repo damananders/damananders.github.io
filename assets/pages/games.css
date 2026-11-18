@@ -1709,3 +1709,8 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 .pf-steam__top img{width:92px;height:34px;object-fit:cover;border-radius:4px;background:#1b2838}
 .pf-steam__t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pf-steam__top small{color:var(--rop-grey,#8d9691)}
+.ln-bnet{justify-self:start;padding:10px 18px;border-radius:10px;font-weight:800;color:#fff;background:linear-gradient(180deg,#148eff,#0a5fbf);border:0;cursor:pointer;box-shadow:0 6px 20px -8px rgba(20,142,255,.7)}
+.ln-bnet:hover{filter:brightness(1.1)}
+.ln-bnet:disabled{opacity:.6;cursor:wait}
+.ln-bn{display:flex;align-items:center;gap:4px}
+.ln-bn__tag{font-weight:800;font-size:1.05rem}

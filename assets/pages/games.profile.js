@@ -6,7 +6,7 @@
  * Badges and the level are worked out here from the public counts, so nobody can fake them.
  */
 import { sb, $, el, me, onAuth, loadMe, authPill, subnav, signIn, avatar, colorClass, COLORS, memberSince, ago, profileUrl, ownerTag, adminTag, share, sfx, toast, SB_URL,
-  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText , steamRow, steamCard } from "./games.common.js?v=33";
+  consoleChip, platformLink, gameUrl, compareUrl, ACCENTS, accentOf, BACKLOG, BACKLOG_LABEL, raUserUrl, FAMILY, familyOf, platformName, INVITE, titleSearch , reportBtn , hasSearchKey , statsChanged , opps , plainText , steamRow, steamCard, bnetRow } from "./games.common.js?v=34";
 
 const params = new URLSearchParams(location.search);
 const wanted = (params.get("u") || "").slice(0, 40);
@@ -264,6 +264,13 @@ async function render() {
   steamRow(p.handle).then((row) => {
     if (row) { steamBox.replaceWith(steamCard(row, mine)); if (mine) sb.functions.invoke("steam-link", { body: { action: "refresh" } }).catch(() => {}); }
     else if (row === null && mine) { steamBox.hidden = false; steamBox.append(el("a", { class: "linkbtn", href: "/games/steam/", text: "Link your Steam account →" })); }
+  });
+  bnetRow(p.handle).then((b) => {
+    if (!b) return;
+    const card = el("section", { class: "pf-card pf-sec pf-bnet" }, el("h2", { class: "gm-head pf-h", text: "Battle.net" }),
+      el("button", { class: "pf-link pf-link--bnet", type: "button", title: "Copy BattleTag", onclick: async () => { try { await navigator.clipboard.writeText(b.battletag); toast("BattleTag copied", "ok"); } catch (e) {} } },
+        el("small", { text: "BattleTag · copy" }), el("b", { text: b.battletag }), el("span", { class: "pf-ra__ok", text: " ✔ linked" })));
+    (document.querySelector(".pf-side") || document.body).append(card);
   });
   const aboutBox = p.bio || mine ? el("section", { class: "pf-card pf-sec pf-sec--about" }, el("h2", { class: "gm-head pf-h", text: "About" }),
     p.bio ? el("div", { class: "pf-bio" }, ...p.bio.split(/\n{2,}/).map((para) => el("p", { text: para })))

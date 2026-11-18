@@ -1098,3 +1098,8 @@ export function steamCard(s, mine) {
       el("span", { class: "pf-steam__t", text: g.name }), el("small", { text: Number(g.hours).toLocaleString() + " h" })))) : null,
     mine ? el("a", { class: "linkbtn", href: "/games/steam/", text: "Manage linked accounts →" }) : null);
 }
+
+/* Battle.net (round 41): just the BattleTag */
+export async function bnetRow(handle) {
+  try { const { data, error } = await sb.from("public_bnet").select("battletag").eq("handle", handle).maybeSingle(); return error ? undefined : data; } catch (e) { return undefined; }
+}
