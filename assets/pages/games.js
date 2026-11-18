@@ -4,7 +4,7 @@
  * are in the server. The database enforces that rule itself, so nothing here is trusted for security.
  * The key below is Supabase's publishable key: it is meant to be public.
  */
-import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard } from "./games.common.js?v=26";
+import { chipRow, chipSvg, CHIP_WORD, sb, $, el, INVITE, CONSOLES, me, onAuth, authPill, subnav, takeReturn, avatar, nameLink, adminTag, colorClass, memberSince, profileUrl, sfx, consoleChip, PLATFORMS, FAMILIES, FAMILY, platformName, PLATFORM, reactBar, myReactions, platformUrl, compareUrl, gameUrl, platformLink, scoreCols, hasOpenScores, scorePair, guestRatings, guestRate, VISITOR_NOTE, titleSearch , reportBtn , artSlot , hasSearchKey , statsChanged, fmtWhen, CHIPPER, gameInfo, hoverCard, sortReviews, reviewSort, reviewSortPicker } from "./games.common.js?v=27";
 
 const say = (msg, bad) => { const s = $("gm-status"); s.textContent = msg || ""; s.classList.toggle("gm-bad", !!bad); };
 const slug = (t) => t.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -274,8 +274,9 @@ function rankSwitch(show) {
    you haven't reviewed the game yet. */
 async function reviews(g, box) {
   box.replaceChildren(el("p", { class: "gm-empty", text: "Loading…" }));
-  const { data } = await sb.from("public_reviews").select("*").eq("game_id", g.id).order("created_at", { ascending: false }).limit(20);
+  const { data } = await sortReviews(sb.from("public_reviews").select("*").eq("game_id", g.id), reviewSort()).limit(20);
   box.replaceChildren();
+  if ((data || []).length > 1) box.append(el("div", { class: "gm-review__bar" }, el("span", { class: "gm-note", text: data.length + (data.length >= 20 ? "+" : "") + " reviews" }), reviewSortPicker(() => reviews(g, box))));
   const rx = await myReactions((data || []).map((r) => r.id));
   const myHandle = me.profile && me.profile.handle;
   let mineShown = false;

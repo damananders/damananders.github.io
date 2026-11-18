@@ -448,7 +448,24 @@ export function backlogPicker(gameId, onChange) {
 }
 
 /* ---------------- review reactions: helpful / funny / agree ---------------- */
-export const REACTS = [["helpful", "Helpful", "👍"], ["funny", "Funny", "😂"], ["agree", "Agree", "🤝"]];
+export const REACTS = [["helpful", "Helpful", "👍"], ["funny", "Funny", "😂"], ["agree", "Agree", "🤝"],
+  ["fire", "Fire", "🔥"], ["mind", "Mind-blown", "🤯"], ["love", "Love", "❤️"], ["disagree", "Disagree", "👎"]];
+/* review sorting: [key, label, apply(order on a public_reviews query)]. The choice is remembered per browser. */
+export const REVIEW_SORTS = [
+  ["new", "Newest", (q) => q.order("created_at", { ascending: false })],
+  ["old", "Oldest", (q) => q.order("created_at", { ascending: true })],
+  ["helpful", "Most helpful", (q) => q.order("helpful", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false })],
+  ["high", "Highest score", (q) => q.order("stars", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false })],
+  ["low", "Lowest score", (q) => q.order("stars", { ascending: true, nullsFirst: false }).order("created_at", { ascending: false })]];
+export function reviewSort() { try { const k = localStorage.getItem("rop.revsort"); if (REVIEW_SORTS.some((x) => x[0] === k)) return k; } catch (e) {} return "new"; }
+export function sortReviews(q, key) { return (REVIEW_SORTS.find((x) => x[0] === key) || REVIEW_SORTS[0])[2](q); }
+export function reviewSortPicker(onChange) {
+  const sel = el("select", { class: "rop-rsort__s", "aria-label": "Sort reviews" });
+  for (const [k, label] of REVIEW_SORTS) sel.append(el("option", { value: k, text: label }));
+  sel.value = reviewSort();
+  sel.addEventListener("change", () => { try { localStorage.setItem("rop.revsort", sel.value); } catch (e) {} onChange(sel.value); });
+  return el("label", { class: "rop-rsort" }, el("span", { text: "Sort" }), sel);
+}
 /* which of these reviews you've reacted to: Map(review id -> Set(kind)) */
 export async function myReactions(ids) {
   const out = new Map();
@@ -469,6 +486,7 @@ export function reactBar(r, mine) {
   const asMember = me.member && me.ready;
   const bar = el("div", { class: "rop-rx", role: "group", "aria-label": "Reactions to this review" });
   for (const [k, label, icon] of REACTS) {
+    if (!(k in r)) continue;   // newer kinds appear once their SQL round is in
     let n = +r[k] || 0, on = set.has(k);
     const b = el("button", { class: "rop-rx__b" + (on ? " is-on" : ""), type: "button", "aria-pressed": on ? "true" : "false", disabled: own, title: own ? "Your own review" : label });
     const draw = () => { b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); b.replaceChildren(el("span", { "aria-hidden": "true", text: icon }), el("span", { class: "rop-rx__l", text: label }), el("b", { text: n ? String(n) : "" })); };

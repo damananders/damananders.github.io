@@ -1604,3 +1604,11 @@ a.gm-pod:hover .gm-pod__name{text-decoration:underline}
 :root[data-theme="light"] .gm-sup__t{color:#122}
 :root[data-theme="light"] .gm-sup__d,:root[data-theme="light"] .gm-sup__idle{color:#3d4a44}
 :root[data-theme="light"][data-page="games"] .gm-brow{background:#fff}
+
+/* ---- review sort picker ---- */
+.gm-review__bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.rop-rsort{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--rop-grey,#8d9691)}
+.rop-rsort__s{font:600 .8rem inherit;font-family:inherit;color:var(--sx-text,#e9efe9);background:rgba(0,0,0,.3);border:1px solid color-mix(in srgb,var(--rop,#36d39a) 35%,transparent);border-radius:8px;padding:4px 8px;cursor:pointer}
+.rop-rsort__s:focus-visible{outline:2px solid var(--rop,#36d39a);outline-offset:1px}
+:root[data-theme="light"] .rop-rsort__s{background:#fff;color:#122}
+@media (max-width:640px){.rop-rx .rop-rx__l{display:none}}
