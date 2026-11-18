@@ -648,7 +648,9 @@
   var MOD = {
     list: "site_admin_member_list", force: "site_admin_member_force_name", mute: "site_admin_member_mute",
     kick: "site_admin_member_kick", ban: "site_admin_member_ban", reset: "site_admin_member_reset",
-    wipe: "site_admin_member_wipe", banlist: "site_admin_banlist"
+    wipe: "site_admin_member_wipe", banlist: "site_admin_banlist",
+    warn: "site_admin_member_warn", warnings: "site_admin_member_warnings", warnClear: "site_admin_member_warn_clear",
+    log: "site_admin_log_action", actionLog: "site_admin_action_log"
   };
   var mQuery = "", mOpen = {}, mUsers = null;
   var WIPES = [["reviews", "Reviews"], ["comments", "Comments"], ["posts", "Posts"], ["ratings", "Ratings"], ["lists", "Lists"], ["wall", "Wall"], ["media", "Media"], ["reactions", "Reactions"], ["all", "Everything"]];
@@ -681,6 +683,14 @@
     p.appendChild(el("h3", { class: "cp-h3", text: "Ban list" }));
     p.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Permanently banned members. Unban to let them back in." }));
     p.appendChild(banWrap);
+    /* audit log — a record of control-panel actions, loaded on demand */
+    var logWrap = el("div", { class: "cp-log" });
+    var logDet = el("details", { class: "cp-logbox" });
+    logDet.appendChild(el("summary", { class: "cp-logbox__sum", text: "Recent moderation actions" }));
+    logDet.appendChild(logWrap);
+    var logLoaded = false;
+    logDet.addEventListener("toggle", function () { if (logDet.open && !logLoaded) { logLoaded = true; loadActionLog(logWrap); } });
+    p.appendChild(logDet);
     loadMembers(ctx); loadBanlist(ctx);
   }
   function loadMembers(ctx) {
@@ -709,11 +719,55 @@
       });
     });
   }
+  function loadActionLog(wrap) {
+    wrap.textContent = ""; wrap.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Loading…" }));
+    rpc(MOD.actionLog, { p_token: token, p_limit: 80 }).then(function (r) {
+      wrap.textContent = "";
+      if (!r || !r.ok || !Array.isArray(r.actions)) { wrap.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: r && r.error === "unset" ? "The action log switches on once 43_member_warnings_and_log.sql is run in Supabase." : why(r) })); return; }
+      if (!r.actions.length) { wrap.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "No actions logged yet." })); return; }
+      r.actions.forEach(function (a) {
+        wrap.appendChild(el("div", { class: "cp-logrow" },
+          el("span", { class: "cp-logrow__act", text: a.action }),
+          el("span", { class: "cp-logrow__who", text: a.name ? a.name + " (@" + (a.handle || "?") + ")" : (a.handle ? "@" + a.handle : "") }),
+          a.detail ? el("span", { class: "cp-logrow__det cp-fine", text: a.detail }) : null,
+          el("span", { class: "cp-logrow__when cp-fine", text: when(a.at) })));
+      });
+    });
+  }
+  function loadWarnings(u, wrap) {
+    wrap.setAttribute("data-loaded", "1"); wrap.textContent = "";
+    rpc(MOD.warnings, { p_token: token, p_handle: u.handle }).then(function (r) {
+      wrap.textContent = "";
+      if (!r || !r.ok || !Array.isArray(r.warnings)) { if (r && r.error === "unset") wrap.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Warnings switch on once 43_member_warnings_and_log.sql is run in Supabase." })); return; }
+      var active = r.warnings.filter(function (w) { return !w.cleared; });
+      if (!active.length) { wrap.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "No active warnings." })); return; }
+      active.forEach(function (w) {
+        var clr = el("button", { type: "button", class: "cp-mini", text: "Clear" });
+        clr.addEventListener("click", function () { clr.disabled = true; rpc(MOD.warnClear, { p_token: token, p_id: w.id }).then(function (r2) { if (r2 && r2.ok) loadWarnings(u, wrap); else clr.disabled = false; }); });
+        wrap.appendChild(el("div", { class: "cp-warn" }, el("span", { class: "cp-warn__txt", text: w.reason }), el("span", { class: "cp-warn__when cp-fine", text: when(w.created_at) }), clr));
+      });
+    });
+  }
+  /* readable labels for the audit log; each action records who/what/when after it succeeds */
+  var LOGLAB = {};
+  LOGLAB[MOD.force] = function (e) { return e.p_name ? "Forced display name" : "Cleared forced name"; };
+  LOGLAB[MOD.mute] = function (e) { return e.p_on ? "Muted" : "Unmuted"; };
+  LOGLAB[MOD.kick] = function (e) { return e.p_until ? "Kicked" : "Lifted kick"; };
+  LOGLAB[MOD.ban] = function (e) { return e.p_on ? "Banned" : "Unbanned"; };
+  LOGLAB[MOD.reset] = function () { return "Reset profile"; };
+  LOGLAB[MOD.wipe] = function (e) { return "Wiped " + (e.p_what || "content"); };
+  LOGLAB[MOD.warn] = function () { return "Warned"; };
+  function nameFor(handle) { if (mUsers) for (var i = 0; i < mUsers.length; i++) if (mUsers[i].handle === handle) return mUsers[i].forced_name || mUsers[i].name || mUsers[i].discord_name || handle; return handle; }
+  function logAction(name, extra) {
+    var f = LOGLAB[name]; if (!f || !extra || !extra.p_handle) return;
+    var detail = extra.p_reason || (extra.p_name || "") || (extra.p_until ? "until " + when(extra.p_until) : "") || (extra.p_what || "");
+    rpc(MOD.log, { p_token: token, p_action: f(extra), p_handle: extra.p_handle, p_name: nameFor(extra.p_handle), p_detail: String(detail || "").slice(0, 200) });
+  }
   function act(ctx, name, extra, onok) {
     ctx.status.textContent = "Working…";
     var body = { p_token: token }; for (var k in extra) body[k] = extra[k];
     rpc(name, body).then(function (r) {
-      if (r && r.ok) { ctx.status.textContent = "Done."; Site.sfx("toggle"); if (onok) onok(r); loadMembers(ctx); loadBanlist(ctx); }
+      if (r && r.ok) { ctx.status.textContent = "Done."; Site.sfx("toggle"); try { logAction(name, extra); } catch (e) {} if (onok) onok(r); loadMembers(ctx); loadBanlist(ctx); }
       else { ctx.status.textContent = why(r); Site.sfx("error"); }
     });
   }
@@ -739,7 +793,10 @@
     var meta = el("span", { class: "cp-user__meta", text: "@" + u.handle + (u.forced_name ? " · name forced" : "") + " · " + ((u.reviews || 0) + " reviews, " + (u.comments || 0) + " comments") });
     var sum = el("summary", { class: "cp-user__sum" }, av, el("span", { class: "cp-user__id" }, nm, meta), chips);
     var d = el("details", { class: "cp-user" + (u.is_owner ? " cp-user--owner" : ""), open: mOpen[u.handle] ? "" : null });
-    d.addEventListener("toggle", function () { if (d.open) mOpen[u.handle] = true; else delete mOpen[u.handle]; });
+    d.addEventListener("toggle", function () {
+      if (d.open) { mOpen[u.handle] = true; var ww = d.querySelector(".cp-warns"); if (ww && !ww.getAttribute("data-loaded")) loadWarnings(u, ww); }
+      else delete mOpen[u.handle];
+    });
     d.appendChild(sum);
     d.appendChild(u.is_owner
       ? el("div", { class: "cp-user__body" }, el("p", { class: "cp-fine", text: "This is the site owner — moderation actions don't apply." }))
@@ -748,6 +805,22 @@
   }
   function memberActions(u, ctx) {
     var box = el("div", { class: "cp-user__body" });
+
+    /* the full picture — everything on record for this member, at a glance */
+    var dRows = [
+      ["Discord", u.discord_name || "—"], ["Handle", "@" + u.handle],
+      ["Verified", when(u.verified_since) || "—"], ["Last seen", when(u.last_seen) || "—"],
+      ["Standing", u.banned ? "Banned" : (isKicked(u) ? "Kicked" : (u.muted ? "Muted" : (u.is_member ? "Active" : "Not a member")))],
+      ["Role", u.is_staff ? "Staff" : "Member"]
+    ];
+    var dl = el("div", { class: "cp-detail" });
+    dRows.forEach(function (row) { dl.appendChild(el("div", { class: "cp-detail__it" }, el("span", { class: "cp-detail__k", text: row[0] }), el("span", { class: "cp-detail__v", text: row[1] }))); });
+    box.appendChild(dl);
+    var CNT = [["ratings", "Ratings"], ["reviews", "Reviews"], ["posts", "Posts"], ["comments", "Comments"], ["wall_notes", "Wall"], ["media", "Media"], ["lists", "Lists"]];
+    var cg = el("div", { class: "cp-counts" });
+    CNT.forEach(function (c) { if (u[c[0]] != null) cg.appendChild(el("span", { class: "cp-count" }, el("b", { text: String(u[c[0]]) }), el("i", { text: c[1] }))); });
+    if (cg.firstChild) box.appendChild(cg);
+    if (u.banned && u.ban_reason) box.appendChild(el("p", { class: "cp-fine cp-fine--tight", text: "Ban reason: " + u.ban_reason }));
 
     /* forced name */
     var fn = el("input", { type: "text", maxlength: "40", value: u.forced_name || "", placeholder: u.name || "Display name" });
@@ -761,6 +834,17 @@
     var mute = el("button", { type: "button", class: "cp-mini" + (u.muted ? " is-on" : ""), text: u.muted ? "Unmute" : "Mute" });
     mute.addEventListener("click", function () { act(ctx, MOD.mute, { p_handle: u.handle, p_on: !u.muted }); });
     box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Mute" + (u.muted ? " — on (no reviews, comments or posts)" : " (stops reviews, comments and posts)") }), el("div", { class: "cp-act__row" }, mute)));
+
+    /* warnings — a written penalty short of a mute/kick/ban. Listed per member; the member can read their own. */
+    var warnWrap = el("div", { class: "cp-warns" });
+    var warnIn = el("input", { type: "text", maxlength: "300", placeholder: "Reason for the warning" });
+    var warnBtn = el("button", { type: "button", class: "cp-mini", text: "Issue warning" });
+    warnBtn.addEventListener("click", function () {
+      var rz = warnIn.value.trim(); if (!rz) { warnIn.focus(); return; }
+      act(ctx, MOD.warn, { p_handle: u.handle, p_reason: rz }, function () { warnIn.value = ""; loadWarnings(u, warnWrap); });
+    });
+    box.appendChild(el("div", { class: "cp-act" }, el("span", { class: "cp-act__lab", text: "Warnings (a written penalty — the member sees their active ones)" }), warnWrap, el("div", { class: "cp-act__row" }, warnIn, warnBtn)));
+    if (mOpen[u.handle]) loadWarnings(u, warnWrap);
 
     /* kick (temp ban) */
     var ksel = el("select", {}); KICKS.forEach(function (o) { ksel.appendChild(el("option", { value: o[0], text: o[1] })); });
