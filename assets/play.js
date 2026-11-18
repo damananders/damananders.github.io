@@ -146,6 +146,130 @@
     { id: "collect90", name: "Obsessed",          desc: "Earned ninety trophies.", secret: true, rarity: "epic" },
     { id: "collect100", name: "Centurion",        desc: "Earned one hundred trophies.", secret: true, rarity: "legendary" },
     { id: "grandtour", name: "Grand Tour",        desc: "Visited every page in the menu.", secret: true, rarity: "epic" },
+    { id: "rop-rate5", name: "Second Opinion", desc: "Rated 5 games on Wiki-Chip Dex.", rarity: "common" },
+    { id: "rop-rate75", name: "Sharp Eye", desc: "Rated 75 games on Wiki-Chip Dex.", rarity: "rare" },
+    { id: "rop-rate150", name: "Hard to Impress", desc: "Rated 150 games on Wiki-Chip Dex.", rarity: "rare" },
+    { id: "rop-rate750", name: "Human Metacritic", desc: "Rated 750 games on Wiki-Chip Dex.", secret: true, rarity: "legendary" },
+    { id: "rop-rate2000", name: "The Archivist", desc: "Rated 2,000 games on Wiki-Chip Dex.", secret: true, rarity: "legendary" },
+    { id: "rop-review5", name: "Getting Wordy", desc: "Wrote 5 reviews on Wiki-Chip Dex.", rarity: "common" },
+    { id: "rop-review50", name: "Columnist", desc: "Wrote 50 reviews on Wiki-Chip Dex.", rarity: "rare" },
+    { id: "rop-review75", name: "Staff Writer", desc: "Wrote 75 reviews on Wiki-Chip Dex.", rarity: "epic" },
+    { id: "rop-review100", name: "Critic Laureate", desc: "Wrote 100 reviews on Wiki-Chip Dex.", secret: true, rarity: "legendary" },
+    { id: "rop-list3", name: "Shortlist", desc: "Made 3 game lists on Wiki-Chip Dex.", rarity: "common" },
+    { id: "rop-list10", name: "Listmaniac", desc: "Made 10 game lists on Wiki-Chip Dex.", rarity: "uncommon" },
+    { id: "rop-list25", name: "Master Curator", desc: "Made 25 game lists on Wiki-Chip Dex.", rarity: "rare" },
+    { id: "rop-list50", name: "The Librarian's Librarian", desc: "Made 50 game lists on Wiki-Chip Dex.", secret: true, rarity: "epic" },
+    { id: "rop-follow5", name: "Making Friends", desc: "Followed 5 members on Wiki-Chip Dex.", rarity: "common" },
+    { id: "rop-follow25", name: "Social Butterfly", desc: "Followed 25 members on Wiki-Chip Dex.", rarity: "uncommon" },
+    { id: "rop-follow50", name: "Pillar of the Community", desc: "Followed 50 members on Wiki-Chip Dex.", rarity: "rare" },
+    { id: "rop-follow100", name: "Everybody Knows Your Name", desc: "Followed 100 members on Wiki-Chip Dex.", secret: true, rarity: "epic" },
+    { id: "collect15", name: "Growing Collection", desc: "Earned fifteen trophies.", rarity: "common" },
+    { id: "collect25", name: "Quarter Shelf", desc: "Earned twenty-five trophies.", rarity: "uncommon" },
+    { id: "collect35", name: "Steady Hauler", desc: "Earned thirty-five trophies.", rarity: "uncommon" },
+    { id: "collect45", name: "Cabinet Maker", desc: "Earned forty-five trophies.", rarity: "uncommon" },
+    { id: "collect55", name: "Over the Hump", desc: "Earned fifty-five trophies.", rarity: "rare" },
+    { id: "collect70", name: "Seventy Strong", desc: "Earned seventy trophies.", rarity: "rare" },
+    { id: "collect85", name: "Deep Shelf", desc: "Earned eighty-five trophies.", rarity: "epic" },
+    { id: "collect110", name: "Past the Hundred", desc: "Earned one hundred and ten trophies.", secret: true, rarity: "epic" },
+    { id: "collect125", name: "Half the Cabinet", desc: "Earned one hundred and twenty-five trophies.", secret: true, rarity: "epic" },
+    { id: "collect150", name: "Three Fifths", desc: "Earned one hundred and fifty trophies.", secret: true, rarity: "legendary" },
+    { id: "collect175", name: "The Home Stretch", desc: "Earned one hundred and seventy-five trophies.", secret: true, rarity: "legendary" },
+    { id: "collect200", name: "Double Century", desc: "Earned two hundred trophies.", secret: true, rarity: "legendary" },
+    { id: "collect225", name: "Almost Everything", desc: "Earned two hundred and twenty-five trophies.", secret: true, rarity: "legendary" },
+    { id: "collect240", name: "So, So Close", desc: "Earned two hundred and forty trophies.", secret: true, rarity: "legendary" },
+    { id: "days30", name: "Monthly Regular", desc: "Came back on thirty different days.", rarity: "rare" },
+    { id: "days50", name: "Half-Century Fan", desc: "Came back on fifty different days.", secret: true, rarity: "epic" },
+    { id: "days100", name: "Hundred Days", desc: "Came back on one hundred different days.", secret: true, rarity: "legendary" },
+    { id: "days200", name: "Resident", desc: "Came back on two hundred different days.", secret: true, rarity: "legendary" },
+    { id: "streak14", name: "Two-Week Streak", desc: "Came back fourteen days in a row.", secret: true, rarity: "epic" },
+    { id: "streak30", name: "Unbroken Month", desc: "Came back thirty days in a row.", secret: true, rarity: "legendary" },
+    { id: "lunch", name: "Lunch Break", desc: "Dropped in around midday.", secret: true, rarity: "common" },
+    { id: "teatime", name: "Teatime", desc: "Dropped in in the mid-afternoon.", secret: true, rarity: "common" },
+    { id: "primetime", name: "Prime Time", desc: "Dropped in in the evening.", secret: true, rarity: "common" },
+    { id: "witching", name: "Witching Hour", desc: "Here as the clock struck midnight.", secret: true, rarity: "rare" },
+    { id: "dayparts", name: "Round the Clock Club", desc: "Visited in the morning, afternoon, evening and dead of night.", secret: true, rarity: "epic" },
+    { id: "newyear", name: "Auld Lang Syne", desc: "Rang in the new year here.", secret: true, rarity: "rare" },
+    { id: "valentines", name: "Secret Admirer", desc: "Visited on Valentine's Day.", secret: true, rarity: "rare" },
+    { id: "aprilfool", name: "No Foolin'", desc: "Visited on April Fools' Day.", secret: true, rarity: "rare" },
+    { id: "halloween", name: "Trick or Treat", desc: "Visited on Halloween.", secret: true, rarity: "rare" },
+    { id: "blackfriday", name: "Doorbuster", desc: "Visited the day after US Thanksgiving.", secret: true, rarity: "rare" },
+    { id: "yuletide", name: "Yuletide", desc: "Visited on Christmas Day.", secret: true, rarity: "rare" },
+    { id: "leapday", name: "Leap of Faith", desc: "Visited on a leap day.", secret: true, rarity: "legendary" },
+    { id: "themehop25", name: "Flip-Flopper", desc: "Flipped the theme twenty-five times.", secret: true, rarity: "rare" },
+    { id: "comfyreader", name: "Comfy Reader", desc: "Turned on reduced motion and the reading font.", rarity: "uncommon" },
+    { id: "calmwaters", name: "Calm Waters", desc: "Turned on reduced motion.", rarity: "common" },
+    { id: "textbig", name: "Big Print", desc: "Bumped up the text size.", rarity: "common" },
+    { id: "highcontrast", name: "High Contrast", desc: "Turned on high contrast.", rarity: "common" },
+    { id: "readfont", name: "Easy on the Eyes", desc: "Switched on the reading font.", rarity: "common" },
+    { id: "comfort", name: "Creature Comforts", desc: "Turned on the soundscape and reduced motion.", rarity: "uncommon" },
+    { id: "accessible", name: "Accessible All Round", desc: "Tried reduced motion and every reading aid.", rarity: "rare" },
+    { id: "settler", name: "Putting Down Roots", desc: "Fifty trophies and thirty days visited.", secret: true, rarity: "epic" },
+    { id: "regular-critic", name: "Regular at the Dex", desc: "Fifty ratings and ten reviews in.", rarity: "rare" },
+    { id: "v-explore", name: "Tourist", desc: "Visited the Explore page.", rarity: "common" },
+    { id: "faithful", name: "Faithful Patron", desc: "Stopped by Support with seven days on the books.", rarity: "uncommon" },
+    { id: "cardcarrier", name: "Card-Carrying Member", desc: "Visited the Discord page and followed the invite.", rarity: "uncommon" },
+    { id: "v-dash", name: "Dashboard Diver", desc: "Found the live dashboard.", secret: true, rarity: "uncommon" },
+    { id: "tourguide", name: "Guided Tour", desc: "Toured the Explore page and the Deep Cuts.", rarity: "uncommon" },
+    { id: "homebody", name: "Knows Every Room", desc: "Visited every page that has its own visit trophy.", secret: true, rarity: "epic" },
+    { id: "globetrotter", name: "Seen It All", desc: "Finished the Grand Tour and the Deep Cuts.", rarity: "rare" },
+    { id: "projectfan", name: "Project Scout", desc: "Opened three different project cards.", rarity: "uncommon" },
+    { id: "acct-complete", name: "Fully Furnished", desc: "Filled in every part of your profile.", rarity: "rare" },
+    { id: "acct-early", name: "Charter Member", desc: "Set up a native account, claimed a handle and got verified.", rarity: "rare" },
+    { id: "acct-decorated", name: "Decorated", desc: "Earned a flair and became a Supporter.", secret: true, rarity: "epic" },
+    { id: "acct-social", name: "Plugged In", desc: "Signed in, linked Discord and claimed your handle.", rarity: "uncommon" },
+    { id: "bottom10", name: "Marathon Scroller", desc: "Reached the bottom of ten different pages.", rarity: "uncommon" },
+    { id: "share3", name: "Megaphone", desc: "Used the share button three times.", rarity: "uncommon" },
+    { id: "curious", name: "Curious Cat", desc: "Opened the menu, the settings, the shortcut map and the trophy list.", rarity: "uncommon" },
+    { id: "firstsecret", name: "First Secret", desc: "Earned your first hidden trophy.", secret: true, rarity: "uncommon" },
+    { id: "prankster", name: "Prankster", desc: "Messed with gravity, a barrel roll, the disco, the matrix and the snow.", secret: true, rarity: "epic" },
+    { id: "secretagent", name: "Secret Agent", desc: "Set off every on-screen effect the secret words can trigger.", secret: true, rarity: "legendary" },
+    { id: "soundvision", name: "Sound and Vision", desc: "Ran the soundscape, CRT mode and full vaporwave.", secret: true, rarity: "rare" },
+    { id: "chameleon", name: "Chameleon", desc: "Wore both themes, the Classic skin and all four seasons.", rarity: "uncommon" },
+    { id: "insomniac", name: "Insomniac", desc: "Here as a night owl, an early bird and at the witching hour.", secret: true, rarity: "epic" },
+    { id: "truecritic", name: "The Real Critic", desc: "Rated a hundred games, wrote twenty-five reviews and made five lists.", rarity: "epic" },
+    { id: "ratingmachine", name: "Rating Machine", desc: "Rated five hundred games and wrote fifty reviews.", secret: true, rarity: "legendary" },
+    { id: "peopleperson", name: "People Person", desc: "Followed ten members, wrote a review and made a list.", rarity: "uncommon" },
+    { id: "socialite", name: "Socialite", desc: "Followed twenty-five members, hit the forums and joined the Discord.", rarity: "rare" },
+    { id: "longhauler", name: "Long Hauler", desc: "Fifty days in, with a two-week streak behind you.", secret: true, rarity: "epic" },
+    { id: "weekendregular", name: "Weekend Regular", desc: "A weekend visit and seven days on the books.", rarity: "uncommon" },
+    { id: "grinder", name: "No Days Off", desc: "A hundred days visited and a hundred trophies earned.", secret: true, rarity: "legendary" },
+    { id: "mapmaker", name: "Here Be Dragons", desc: "A Cartographer who also finished the Grand Tour.", rarity: "rare" },
+    { id: "welcomewagon", name: "Welcome Wagon", desc: "Signed in, set an avatar and wrote a motto.", rarity: "common" },
+    { id: "supporterplus", name: "True Believer", desc: "A verified Supporter.", rarity: "rare" },
+    { id: "themefan", name: "Wardrobe Change", desc: "Flipped the theme ten times and tried every skin.", rarity: "uncommon" },
+    { id: "dawndusk", name: "Dawn and Dusk", desc: "Here at first light and again in the evening.", secret: true, rarity: "rare" },
+    { id: "wordofmouth", name: "Town Crier", desc: "Shared the site, voted on a link and joined the Discord.", rarity: "uncommon" },
+    { id: "bookworm", name: "Bookworm", desc: "A hundred ratings, with lists and reviews to match.", secret: true, rarity: "epic" },
+    { id: "allrarities", name: "One of Each", desc: "Hold a Common, Uncommon, Rare, Epic and Legendary trophy at once.", secret: true, rarity: "epic" },
+    { id: "halfsecret", name: "Shadow Collector", desc: "Uncovered twenty hidden trophies.", secret: true, rarity: "epic" },
+    { id: "earlyriser", name: "Morning Person", desc: "An early bird who dropped in for lunch and teatime too.", secret: true, rarity: "rare" },
+    { id: "deepdiver", name: "Deep Diver", desc: "Found the dashboard, the Explore tour and every secret door.", secret: true, rarity: "legendary" },
+    { id: "patronsaint", name: "Keeping Us Afloat", desc: "A Supporter who stopped by the Support page.", rarity: "rare" },
+    { id: "firstweek", name: "Settling In", desc: "Five days in with ten trophies on the shelf.", rarity: "uncommon" },
+    { id: "nightshifter", name: "Burning Oil", desc: "A night owl with a seven-day streak.", secret: true, rarity: "epic" },
+    { id: "completokraut", name: "The Long Game", desc: "Two hundred trophies and two hundred days.", secret: true, rarity: "legendary" },
+    { id: "jackofall", name: "Jack of All Trades", desc: "Rated, reviewed, listed, followed and posted on the forums.", rarity: "rare" },
+    { id: "showoff", name: "Show-Off", desc: "A full profile, a claimed handle and a flair to boot.", secret: true, rarity: "epic" },
+    { id: "collect65", name: "Two Thirds Up", desc: "Earned sixty-five trophies.", rarity: "rare" },
+    { id: "collect95", name: "Knocking on 100", desc: "Earned ninety-five trophies.", secret: true, rarity: "epic" },
+    { id: "collect135", name: "Past the Middle", desc: "Earned one hundred and thirty-five trophies.", secret: true, rarity: "legendary" },
+    { id: "collect160", name: "Two Thirds of 250", desc: "Earned one hundred and sixty trophies.", secret: true, rarity: "legendary" },
+    { id: "collect190", name: "The Final Push", desc: "Earned one hundred and ninety trophies.", secret: true, rarity: "legendary" },
+    { id: "collect210", name: "Running the Table", desc: "Earned two hundred and ten trophies.", secret: true, rarity: "legendary" },
+    { id: "rop-rate300", name: "Opinionated", desc: "Rated 300 games on Wiki-Chip Dex.", rarity: "epic" },
+    { id: "rop-review15", name: "Three on the Board", desc: "Wrote 15 reviews on Wiki-Chip Dex.", rarity: "uncommon" },
+    { id: "friday13", name: "Bad Luck", desc: "Visited on a Friday the 13th.", secret: true, rarity: "rare" },
+    { id: "piday", name: "Pi Day", desc: "Visited on the fourteenth of March.", secret: true, rarity: "rare" },
+    { id: "may4", name: "May the Fourth", desc: "Visited on the fourth of May.", secret: true, rarity: "rare" },
+    { id: "newmonth", name: "New Month, New Me", desc: "Dropped in on the first of a month.", secret: true, rarity: "uncommon" },
+    { id: "allnighter", name: "All-Nighter", desc: "A night owl at the witching hour, three days running.", secret: true, rarity: "legendary" },
+    { id: "tastemaker", name: "Tastemaker", desc: "Rated 250 games and followed 25 members.", secret: true, rarity: "epic" },
+    { id: "veteran", name: "Old Timer", desc: "Fifty days in, with fifty trophies on the shelf.", secret: true, rarity: "epic" },
+    { id: "devotee", name: "Devotee", desc: "A hundred days and a hundred and fifty trophies.", secret: true, rarity: "legendary" },
+    { id: "penpal", name: "Pen Pal", desc: "Fifty reviews and twenty-five members followed.", secret: true, rarity: "epic" },
+    { id: "decorator", name: "Interior Decorator", desc: "Flipped the theme and tried the Classic skin.", rarity: "common" },
+    { id: "homesteader", name: "Homesteader", desc: "Landed on the hub, AndersCraft and AnyPS all in one trip.", rarity: "uncommon" },
+    { id: "the-full-dex", name: "The Full Dex", desc: "Rated, reviewed, listed, followed, posted and claimed a handle.", secret: true, rarity: "legendary" },
     { id: "all",       name: "Completionist",     desc: "Earned every other trophy.", rarity: "platinum" },
     /* special: sits below Completionist, never counts toward it, and is only given to members Anders has made
        an Admin in Discord. The Wiki-Chip Dex pages confirm that with the server and emit "rop:admin". */
@@ -353,7 +477,10 @@
     if (seen.discord) setTimeout(function () { award("clubhouse"); }, 1500);
     /* a trophy for setting foot on each page in the menu */
     var VKEY = { hub: "v-hub", anderscraft: "v-craft", anyps: "v-anyps", games: "v-games", resume: "v-resume", links: "v-links",
-      stream: "v-stream", uses: "v-uses", changelog: "v-changelog", trophies: "v-trophies", account: "v-account", projects: "v-projects" };
+      stream: "v-stream", uses: "v-uses", changelog: "v-changelog", trophies: "v-trophies", account: "v-account", projects: "v-projects",
+      explore: "v-explore", dash: "v-dash" };
+    /* earned when a visitor has set foot on every page that carries its own visit trophy (homebody) */
+    if (Object.keys(VKEY).every(function (k) { return seen[k]; })) setTimeout(function () { award("homebody"); }, 3400);
     Object.keys(VKEY).forEach(function (k) { if (seen[k]) setTimeout(function () { award(VKEY[k]); }, 1600); });
     /* the grand tour: every page in the menu, secret */
     var TOUR = ["hub", "anderscraft", "anyps", "games", "resume", "links", "changelog", "uses", "stream", "support", "discord", "arcade"];
@@ -361,10 +488,14 @@
     if (/^\/games\/forum\//.test(location.pathname)) setTimeout(function () { award("forum"); }, 1500);
     try {
       var now = new Date(), day = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(), days = Site.store.get("days", []) || [];
-      if (days.indexOf(day) < 0) { days.push(day); days = days.slice(-45); Site.store.set("days", days); }
+      if (days.indexOf(day) < 0) { days.push(day); days = days.slice(-400); Site.store.set("days", days); }
       if (days.length >= 3) setTimeout(function () { award("regular"); }, 3400);
       if (days.length >= 7) setTimeout(function () { award("days7"); }, 3450);
       if (days.length >= 14) setTimeout(function () { award("days14"); }, 3500);
+      if (days.length >= 30) setTimeout(function () { award("days30"); }, 3500);
+      if (days.length >= 50) setTimeout(function () { award("days50"); }, 3500);
+      if (days.length >= 100) setTimeout(function () { award("days100"); }, 3500);
+      if (days.length >= 200) setTimeout(function () { award("days200"); }, 3500);
       if (now.getDay() === 0 || now.getDay() === 6) setTimeout(function () { award("weekend"); }, 3550);
       /* days in a row: the longest run of consecutive calendar days among the ones on record */
       var nums = days.map(function (sd) { var p = sd.split("-"); return Math.round(new Date(+p[0], +p[1] - 1, +p[2]).getTime() / 86400000); })
@@ -376,8 +507,34 @@
       }
       if (runMax >= 3) setTimeout(function () { award("streak"); }, 3600);
       if (runMax >= 7) setTimeout(function () { award("streak7"); }, 3650);
-      if (now.getHours() < 4) setTimeout(function () { award("nightowl"); }, 4200);
-      if (now.getHours() >= 5 && now.getHours() < 7) setTimeout(function () { award("earlybird"); }, 4200);
+      if (runMax >= 14) setTimeout(function () { award("streak14"); }, 3700);
+      if (runMax >= 30) setTimeout(function () { award("streak30"); }, 3750);
+      /* time of day */
+      var hr = now.getHours();
+      if (hr < 4) setTimeout(function () { award("nightowl"); }, 4200);
+      if (hr >= 5 && hr < 7) setTimeout(function () { award("earlybird"); }, 4200);
+      if (hr >= 11 && hr < 13) setTimeout(function () { award("lunch"); }, 4200);
+      if (hr >= 15 && hr < 17) setTimeout(function () { award("teatime"); }, 4200);
+      if (hr >= 19 && hr < 22) setTimeout(function () { award("primetime"); }, 4200);
+      if (hr === 0) setTimeout(function () { award("witching"); }, 4200);
+      /* all four times of day across visits (morning / afternoon / evening / night) */
+      var dp = Site.store.get("dayparts", {}) || {}, part = hr < 5 ? "night" : hr < 12 ? "morning" : hr < 18 ? "afternoon" : "evening";
+      if (!dp[part]) { dp[part] = 1; Site.store.set("dayparts", dp); }
+      if (dp.morning && dp.afternoon && dp.evening && dp.night) setTimeout(function () { award("dayparts"); }, 4300);
+      /* calendar days (month is 0-based) */
+      var mo = now.getMonth(), dt = now.getDate(), dow = now.getDay();
+      if (mo === 0 && dt === 1) setTimeout(function () { award("newyear"); }, 4400);
+      if (mo === 1 && dt === 14) setTimeout(function () { award("valentines"); }, 4400);
+      if (mo === 1 && dt === 29) setTimeout(function () { award("leapday"); }, 4400);
+      if (mo === 2 && dt === 14) setTimeout(function () { award("piday"); }, 4400);
+      if (mo === 3 && dt === 1) setTimeout(function () { award("aprilfool"); }, 4400);
+      if (mo === 4 && dt === 4) setTimeout(function () { award("may4"); }, 4400);
+      if (mo === 9 && dt === 31) setTimeout(function () { award("halloween"); }, 4400);
+      if (mo === 11 && dt === 25) setTimeout(function () { award("yuletide"); }, 4400);
+      /* US Black Friday: the day after the fourth Thursday of November */
+      if (mo === 10 && dow === 5 && dt >= 23 && dt <= 29) setTimeout(function () { award("blackfriday"); }, 4400);
+      if (dow === 5 && dt === 13) setTimeout(function () { award("friday13"); }, 4400);
+      if (dt === 1) setTimeout(function () { award("newmonth"); }, 4450);
     } catch (e) {}
     /* skins: only a choice the visitor makes counts, not the calendar */
     Site.on("pref:season", function (v) {
@@ -389,12 +546,15 @@
       if (tried.classic && tried.fall && tried.winter && tried.spring && tried.summer) award("skinmaster");
     });
     var accTried = Site.store.get("accessTried", {}) || {};
+    var ACC_T = { textSize: "textbig", contrast: "highcontrast", readFont: "readfont" };   /* each reading aid, on its own */
     ["textSize", "contrast", "readFont"].forEach(function (k) {
       Site.on("pref:" + k, function (v) {
-        if (v && v !== "normal") { award("access"); accTried[k] = 1; Site.store.set("accessTried", accTried);
+        if (v && v !== "normal") { award("access"); award(ACC_T[k]); accTried[k] = 1; Site.store.set("accessTried", accTried);
           if (accTried.textSize && accTried.contrast && accTried.readFont) award("access-all"); }
       });
     });
+    /* reduced motion, on its own */
+    Site.on("pref:motion", function (v) { if (v && v.detail != null) v = v.detail; if (v === "off" || v === "reduce" || v === true) award("calmwaters"); });
     /* five wrong codes at the hidden door */
     if (Site.codeMiss && !Site.codeMiss.pl) {
       var say = Site.codeMiss, misses = 0;
@@ -408,21 +568,16 @@
       var s = (v && v.detail) || v;
       if (!s || typeof s !== "object") return;
       var votes = +s.votes || 0, reviews = +s.reviews || 0, lists = +s.lists || 0, following = +s.following || 0;
-      if (votes >= 1) award("rop-rate1");
-      if (votes >= 10) award("rop-rate10");
-      if (votes >= 25) award("rop-rate25");
-      if (votes >= 50) award("rop-rate50");
-      if (votes >= 100) award("rop-rate100");
-      if (votes >= 250) award("rop-rate250");
-      if (votes >= 500) award("rop-rate500");
-      if (votes >= 1000) award("rop-rate1000");
-      if (reviews >= 1) award("rop-review");
-      if (reviews >= 10) award("rop-review10");
-      if (reviews >= 25) award("rop-review25");
-      if (lists >= 1) award("rop-list");
-      if (lists >= 5) award("rop-list5");
-      if (following >= 1) award("rop-follow");
-      if (following >= 10) award("rop-follow10");
+      /* each ladder: award every tier the tally has reached */
+      [[1, "rop-rate1"], [5, "rop-rate5"], [10, "rop-rate10"], [25, "rop-rate25"], [50, "rop-rate50"], [75, "rop-rate75"],
+       [100, "rop-rate100"], [150, "rop-rate150"], [250, "rop-rate250"], [300, "rop-rate300"], [500, "rop-rate500"],
+       [750, "rop-rate750"], [1000, "rop-rate1000"], [2000, "rop-rate2000"]].forEach(function (p) { if (votes >= p[0]) award(p[1]); });
+      [[1, "rop-review"], [5, "rop-review5"], [10, "rop-review10"], [15, "rop-review15"], [25, "rop-review25"],
+       [50, "rop-review50"], [75, "rop-review75"], [100, "rop-review100"]].forEach(function (p) { if (reviews >= p[0]) award(p[1]); });
+      [[1, "rop-list"], [3, "rop-list3"], [5, "rop-list5"], [10, "rop-list10"], [25, "rop-list25"], [50, "rop-list50"]]
+        .forEach(function (p) { if (lists >= p[0]) award(p[1]); });
+      [[1, "rop-follow"], [5, "rop-follow5"], [10, "rop-follow10"], [25, "rop-follow25"], [50, "rop-follow50"], [100, "rop-follow100"]]
+        .forEach(function (p) { if (following >= p[0]) award(p[1]); });
     }
     Site.on("rop:stats", ropStats);
     if (window.ROP_STATS) setTimeout(function () { ropStats(window.ROP_STATS); }, 2000);
@@ -444,6 +599,8 @@
       if (p.pronouns) award("acct-pronouns");
       if (p.now_playing) award("acct-now");
       if (p.accent) award("acct-accent");
+      /* every part of the profile filled in */
+      if (p.avatar && p.motto && p.bio && (p.status_text || p.status_emoji) && p.pronouns && p.accent && p.now_playing) award("acct-complete");
     }
     Site.on("account:settings", acctCheck);
     if (window.ACCT_SETTINGS) setTimeout(function () { acctCheck(window.ACCT_SETTINGS); }, 2000);
@@ -459,32 +616,104 @@
     Site.on("resume:card", function () { award("card"); });   /* opened a project dropdown on the résumé */
     Site.on("ui:settings-shown", function () { award("settings"); });   /* settings now live inside the radial menu */
     /* collection milestones + combos — re-checked on every award. */
-    var MILES = [[5, "collect5"], [10, "collect10"], [20, "collect20"], [30, "collect30"], [40, "collect40"],
-      [50, "collect50"], [60, "collect60"], [75, "collect75"], [90, "collect90"], [100, "collect100"]];
+    var MILES = [[5, "collect5"], [10, "collect10"], [15, "collect15"], [20, "collect20"], [25, "collect25"], [30, "collect30"], [35, "collect35"], [40, "collect40"]
+      , [45, "collect45"], [50, "collect50"], [55, "collect55"], [60, "collect60"], [65, "collect65"], [70, "collect70"], [75, "collect75"], [85, "collect85"]
+      , [90, "collect90"], [95, "collect95"], [100, "collect100"], [110, "collect110"], [125, "collect125"], [135, "collect135"], [150, "collect150"], [160, "collect160"]
+      , [175, "collect175"], [190, "collect190"], [200, "collect200"], [210, "collect210"], [225, "collect225"], [240, "collect240"]];
+    /* combos: award the first trophy once every required trophy is held (re-checked on every award) */
+    var COMBOS = [
+      ["comfort", ["dj", "calmwaters"]],
+      ["comfyreader", ["calmwaters", "readfont"]],
+      ["accessible", ["calmwaters", "access-all"]],
+      ["settler", ["collect50", "days30"]],
+      ["regular-critic", ["rop-rate50", "rop-review10"]],
+      ["decorator", ["theme", "classic"]],
+      ["faithful", ["support", "days7"]],
+      ["cardcarrier", ["clubhouse", "seeyou"]],
+      ["tourguide", ["v-explore", "deepcuts"]],
+      ["prankster", ["freefall", "barrel", "dancefever", "redpill", "snowday"]],
+      ["secretagent", ["australia", "dancefever", "redpill", "snowday", "barrel", "freefall", "tubelife", "aesthetic"]],
+      ["soundvision", ["dj", "tubelife", "aesthetic"]],
+      ["chameleon", ["theme", "skinmaster"]],
+      ["insomniac", ["nightowl", "earlybird", "witching"]],
+      ["truecritic", ["rop-rate100", "rop-review25", "rop-list5"]],
+      ["ratingmachine", ["rop-rate500", "rop-review50"]],
+      ["peopleperson", ["rop-follow10", "rop-review", "rop-list"]],
+      ["socialite", ["rop-follow25", "forum", "seeyou"]],
+      ["longhauler", ["days50", "streak14"]],
+      ["weekendregular", ["weekend", "days7"]],
+      ["grinder", ["days100", "collect100"]],
+      ["mapmaker", ["explorer", "grandtour"]],
+      ["welcomewagon", ["acct", "acct-avatar", "acct-motto"]],
+      ["supporterplus", ["acct-supporter", "acct-verified"]],
+      ["themefan", ["themehop10", "skinmaster"]],
+      ["dawndusk", ["earlybird", "primetime"]],
+      ["wordofmouth", ["share", "voter", "seeyou"]],
+      ["bookworm", ["rop-rate100", "rop-list5", "rop-review10"]],
+      ["earlyriser", ["earlybird", "lunch", "teatime"]],
+      ["deepdiver", ["v-dash", "tourguide", "twodoors"]],
+      ["patronsaint", ["acct-supporter", "support"]],
+      ["firstweek", ["regular", "collect10"]],
+      ["nightshifter", ["nightowl", "streak7"]],
+      ["completokraut", ["collect200", "days200"]],
+      ["jackofall", ["rop-rate1", "rop-review", "rop-list", "rop-follow", "forum"]],
+      ["showoff", ["acct-complete", "acct-handle", "acct-flair"]],
+      ["globetrotter", ["grandtour", "deepcuts"]],
+      ["acct-early", ["acct-dma", "acct-handle", "acct-verified"]],
+      ["acct-decorated", ["acct-flair", "acct-supporter"]],
+      ["acct-social", ["acct", "acct-discord", "acct-handle"]],
+      ["allnighter", ["nightowl", "witching", "streak"]],
+      ["tastemaker", ["rop-rate250", "rop-follow25"]],
+      ["veteran", ["days50", "collect50"]],
+      ["devotee", ["days100", "collect150"]],
+      ["penpal", ["rop-review50", "rop-follow25"]],
+      ["homesteader", ["v-hub", "v-craft", "v-anyps"]],
+      ["curious", ["menu", "settings", "shortcuts", "room"]],
+      ["the-full-dex", ["rop-rate1", "rop-review", "rop-list", "rop-follow", "forum", "acct-handle"]]
+    ];
+    var RSET = ["common", "uncommon", "rare", "epic", "legendary"];
     function metacheck() {
       var n = count();
       if (n >= Math.ceil(CORE.length / 2)) award("halfway");
       for (var i = 0; i < MILES.length; i++) if (n >= MILES[i][0]) award(MILES[i][1]);
       if (got.nightowl && got.earlybird) award("nightandday");
       if (got.share && got.seeyou) award("shareall");
+      for (var c = 0; c < COMBOS.length; c++) {
+        var req = COMBOS[c][1], ok = true;
+        for (var r = 0; r < req.length; r++) if (!got[req[r]]) { ok = false; break; }
+        if (ok) award(COMBOS[c][0]);
+      }
+      var secretN = 0, rar = {};
+      for (var si = 0; si < CORE.length; si++) { var ct = CORE[si]; if (got[ct.id]) { if (ct.secret) secretN++; rar[rarOf(ct)] = 1; } }
+      if (secretN >= 1) award("firstsecret");
+      if (secretN >= 20) award("halfsecret");
+      if (RSET.every(function (x) { return rar[x]; })) award("allrarities");
     }
     Site.on("trophy:earned", metacheck);
     setTimeout(metacheck, 2000);
     var themeFlips = Site.store.get("themeFlips", 0) || 0;
+    var shareCount = Site.store.get("shareCount", 0) || 0;
     doc.addEventListener("click", function (e) {
       var t = e.target; if (!t || !t.closest) return;
-      if (t.closest(".ch-theme")) { award("theme"); themeFlips++; Site.store.set("themeFlips", themeFlips); if (themeFlips >= 5) award("themehop"); if (themeFlips >= 10) award("themehop10"); }
-      else if (t.closest(".ch-share")) award("share");
+      if (t.closest(".ch-theme")) { award("theme"); themeFlips++; Site.store.set("themeFlips", themeFlips); if (themeFlips >= 5) award("themehop"); if (themeFlips >= 10) award("themehop10"); if (themeFlips >= 25) award("themehop25"); }
+      else if (t.closest(".ch-share")) { award("share"); shareCount++; Site.store.set("shareCount", shareCount); if (shareCount >= 3) award("share3"); }
       else if (t.closest(".ch-menu")) award("menu");
       else if (t.closest(".lk2-go,.lk2-shotlink")) award("linkout");
       else if (t.closest(".lk2-vote")) award("voter");
       else if (t.closest("a[href*='discord.gg']")) award("seeyou");
     });
+    /* opened project dropdowns on the résumé — three different opens earns Project Scout */
+    var cardOpens = Site.store.get("cardOpens", 0) || 0;
+    Site.on("resume:card", function () { cardOpens++; Site.store.set("cardOpens", cardOpens); if (cardOpens >= 3) award("projectfan"); });
     var bottomDone = false;
     window.addEventListener("scroll", function () {
       if (bottomDone) return;
       var max = root.scrollHeight - window.innerHeight;
-      if (max > 600 && (window.pageYOffset || root.scrollTop) >= max - 4) { bottomDone = true; award("bottom"); }
+      if (max > 600 && (window.pageYOffset || root.scrollTop) >= max - 4) {
+        bottomDone = true; award("bottom");
+        /* bottom of ten different pages earns Marathon Scroller */
+        try { var bp = Site.store.get("bottomPages", {}) || {}; if (Site.page && !bp[Site.page]) { bp[Site.page] = 1; Site.store.set("bottomPages", bp); } if (Object.keys(bp).length >= 10) award("bottom10"); } catch (e) {}
+      }
     }, { passive: true });
   }, "trophies");
 
