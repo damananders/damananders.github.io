@@ -630,136 +630,137 @@
       x = i * 140 + hash(i) * 60 - fo; px(x, 338, 26, 22, "#245a34"); px(x + 6, 330, 6, 10, "#2f6b3d"); px(x + 16, 334, 5, 6, "#2f6b3d"); px(x - 6, 346, 8, 14, "#2f6b3d");
     }
   }
-  /* the tower: a tall witch's-hat tower, cut away so you see its floors — a foyer with the stations, a dining room, an attic study */
-  var HOX = 170, SPOT = { crate: 300, read: 262, dig: 392, prep: 452, equip: 350, condenser: 138, armoire: 232 };
-  var APEX = 305, WL = 150, WR = 462;                    /* roof apex x, and the tower's left / right outer walls */
+  /* the tower, seen from outside: a tall, bent witch's-hat spire joined to a low watermill shack (an "L"),
+     a wheel turning at its foot. Each lit window or door is a station — the wizard walks over and steps inside. */
+  var HOX = 170, GND = 300;
+  var SPL = 254, SPR = 330, SAX = 292;                   /* spire body left / right, roof apex x */
+  var MML = 20, MMR = 254, MRDG = 196;                   /* mill shack left / right, sagging roof ridge */
+  var WHX = 26, WHY = 256, WHR = 34;                     /* waterwheel centre + radius */
+  var WL = SPL, WR = SPR, APEX = SAX;                    /* kept names for drawWreck: spire walls + apex */
+  var SPOT = { crate: 382, read: 352, dig: 420, prep: 312, equip: 312, armoire: 184, condenser: 102 };
+  var DOOR = { prep: 290, equip: 290, armoire: 150, condenser: 70 };   /* where the wizard steps in */
   function hubHotspots(stage) {                           /* clickable station zones, in the hub's drawing coords */
-    var h = [{ key: "prep", name: "Prep Time", x: 420, y: 232, w: 50, h: 66, lx: 445 },
-             { key: "equip", name: "Equipment", x: 332, y: 232, w: 44, h: 64, lx: 354 }];
-    if (stage >= 1) { h.push({ key: "armoire", name: "Wardrobe", x: 212, y: 244, w: 40, h: 54, lx: 232 });
-      h.push({ key: "condenser", name: "Condenser", x: 70, y: 244, w: 78, h: 54, lx: 109 }); }
+    var h = [{ key: "prep", name: "Prep Time", x: SPL + 8, y: 138, w: 30, h: 42, lx: SPL + 23 },
+             { key: "equip", name: "Equipment", x: SPL + 8, y: 196, w: 30, h: 42, lx: SPL + 23 }];
+    if (stage >= 1) { h.push({ key: "armoire", name: "Wardrobe", x: 132, y: 256, w: 36, h: 44, lx: 150 });
+      h.push({ key: "condenser", name: "Condenser", x: 52, y: 222, w: 36, h: 40, lx: 70 }); }
     return h;
   }
-  function wreckOf() {                                    /* 0 = whole, 1 = clearly wrecked. Mends as you level, then snaps whole on the forest clear */
+  function wreckOf() {                                    /* 0 = whole, 1 = clearly wrecked. Mends as you level, snaps whole on the forest clear */
     if (S.cleared[1]) return 0;
     return clamp(1 - (S.lvl - 1) * 0.06, 0.45, 1);
   }
   function drawHub(t, stage) {
-    var i, x, y, L3 = !!S.cleared[3], wreck = wreckOf();   /* the chandelier is mended once the third level is cleared */
-    /* sky */
-    for (i = 0; i < 10; i++) px(-HOX, i * 31, BW + HOX, 31, ["#20304a", "#283a56", "#2f4360", "#374d6a", "#405873", "#4a627c", "#536b85", "#5c738b", "#657b90", "#6d8294"][i]);
-    for (i = 0; i < 20; i++) { var sx = -HOX + hash(i * 9) * (BW + HOX), sy = hash(i * 5) * 150; px(sx, sy, 2, 2, "rgba(255,247,220,.7)"); }
-    /* far treeline behind the tower */
-    for (x = -HOX - 6; x < BW; x += 8) { var hh = 24 + hash(x * 1.3 + 40) * 22 + Math.sin(x * 0.05) * 6; px(x, 236 - hh, 8, hh + 70, "#223a2c"); }
-    /* ground: dirt yard, with a grassy fringe outside the tower */
-    px(-HOX, 300, BW + HOX, 60, "#4a3b29"); px(-HOX, 300, BW + HOX, 2, "#5d4c36"); px(-HOX, 305, BW + HOX, 1, "#3a2d1f");
-    for (x = -HOX; x < BW; x += 6) if (hash(x + 700) > 0.55 && (x < WL - 8 || x > WR + 4)) px(x, 296 - (hash(x + 1) * 3 | 0), 6, 5, "#315f36");
-    /* ---- the tower shell: stone body and a pointed witch's hat ---- */
-    px(WL, 70, WR - WL, 230, "#39414f");                                            /* stone body */
-    for (i = 0; i < 70; i++) { var bx = WL + 6 + hash(i * 3) * (WR - WL - 16), by = 80 + hash(i * 7) * 210; px(bx, by, 13, 6, "#424b5b"); px(bx, by + 6, 13, 1, "#2c333f"); }
-    px(WL, 70, 8, 230, "#2c3340"); px(WR - 8, 70, 8, 230, "#4a5466");               /* shaded / lit outer edges */
-    /* the roof: a tall pointed hat with shingle rows and a bent, belled tip */
-    var eaveY = 74, eaveL = 116, eaveR = 494;
-    for (y = eaveY; y > 12; y -= 4) { var fr = (eaveY - y) / (eaveY - 12), lx = Math.round(eaveL + (APEX - 8 - eaveL) * fr), rx2 = Math.round(eaveR - (eaveR - (APEX + 8)) * fr); px(lx, y - 4, rx2 - lx, 5, ((eaveY - y) >> 2) % 2 ? "#3a2560" : "#301c50"); }
-    px(eaveL - 6, eaveY, eaveR - eaveL + 12, 7, "#4a2f78"); px(eaveL - 6, eaveY + 5, eaveR - eaveL + 12, 3, "#2a1848");   /* overhanging eave */
-    for (i = 0; i < 8; i++) px(eaveL - 2 + i * (eaveR - eaveL) / 7, eaveY + 7, 4, 5 + (i % 2) * 3, "#2a1848");           /* eave teeth */
-    /* the belled, bent tip */
-    px(APEX - 6, 20, 12, 10, "#301c50"); px(APEX - 3, 10, 10, 10, "#3a2560"); px(APEX + 5, 6, 7, 7, "#4a2f78"); px(APEX + 9, 4, 4, 4, "#f0c23a"); px(APEX + 9, 1, 2, 4, "#3a2560");
-    /* a lit arched window up in the roof */
-    px(APEX - 10, 46, 20, 22, "#1a1226"); px(APEX - 7, 49, 14, 18, Math.sin(t * 2) > -0.6 ? "#ffd874" : "#d9a94a"); px(APEX - 1, 49, 2, 18, "#1a1226"); px(APEX - 7, 49, 14, 2, "#1a1226");
-    /* ---- cut-away interior ---- */
-    var IL = WL + 10, IR = WR - 10;                                                 /* interior left / right */
-    px(IL, 78, IR - IL, 222, "#241f2e");                                            /* back wall, in shadow */
-    for (i = 0; i < 46; i++) { var px2 = IL + 4 + hash(i * 3 + 2) * (IR - IL - 14), py2 = 84 + hash(i * 7 + 1) * 206; px(px2, py2, 12, 5, "#2b2636"); }
-    px(IL, 150, IR - IL, 6, "#4a3826"); px(IL, 150, IR - IL, 2, "#5e4a30");         /* attic / dining floor */
-    px(IL, 226, IR - IL, 6, "#4a3826"); px(IL, 226, IR - IL, 2, "#5e4a30");         /* dining / foyer floor */
-    px(IL, 293, IR - IL, 7, "#4c3d2b"); px(IL, 293, IR - IL, 2, "#6a5636");         /* foyer floorboards */
-    for (x = IL; x < IR; x += 18) px(x, 293, 1, 7, "#3a2d1f");
-    /* --- attic study (top floor): a round window, a bookshelf, a candle --- */
-    px(IL + 14, 96, 24, 24, "#120d1c"); for (i = 0; i < 24; i++) { var aa = i / 24 * TAU; px(IL + 26 + Math.cos(aa) * 11, 108 + Math.sin(aa) * 11, 2, 2, "#2a2038"); } px(IL + 18, 100, 16, 16, "#36507a"); px(IL + 25, 100, 2, 16, "#243a5e"); px(IL + 18, 107, 16, 2, "#243a5e");
-    x = IR - 66; px(x, 104, 58, 40, "#3a2a1a"); px(x, 104, 58, 3, "#52381f"); px(x, 122, 58, 2, "#52381f"); for (i = 0; i < 14; i++) px(x + 3 + i * 4, 107 + (i % 3) * 18, 3, 13, ["#7b2f3e", "#2f5d6b", "#6a5a2a", "#4a3a6a"][i % 4]);
-    px(IL + 46, 132, 4, 12, "#6b4a22"); px(IL + 44, 128, 8, 5, "#f4ecd8"); px(IL + 47, 123, 2, 5, "#ffd874"); if (Math.sin(t * 9) > 0) px(IL + 47, 120, 2, 3, "#ffe9a8");
-    /* --- dining room (middle floor): a long table with chairs and plates, and a chandelier --- */
-    var tL = IL + 36, tR = IR - 36;
-    for (i = 0; i < 2; i++) { var cxz = i ? tR - 10 : tL + 2; px(cxz, 186, 8, 38, "#5c4530"); px(cxz + (i ? -2 : 8), 172, 3, 20, "#6b4a2e"); px(cxz + (i ? -4 : 6), 170, 7, 4, "#7a5a3a"); }   /* chairs */
-    px(tL, 206, tR - tL, 8, "#7a5733"); px(tL, 206, tR - tL, 2, "#956e42"); px(tL, 214, tR - tL, 1, "#4a3420"); px(tL + 6, 214, 5, 10, "#5c4530"); px(tR - 11, 214, 5, 10, "#5c4530");   /* long table */
-    for (i = 0; i < 4; i++) { var dpx = tL + 22 + i * (tR - tL - 44) / 3; px(dpx - 5, 203, 10, 3, "#dfe6ee"); px(dpx - 3, 202, 6, 2, "#b9c2cd"); }                                    /* plates */
-    px(tL + 30, 198, 4, 8, "#f0c23a"); px(tL + 29, 196, 6, 3, "#ffe08a"); px(tR - 40, 199, 3, 7, "#c23a4a"); px(tR - 41, 197, 5, 3, "#ff6676");                                        /* a goblet and a bottle */
-    /* chandelier: hangs from the dining-room ceiling, broken (dark, tilted) until the third level is cleared */
-    var chx = (tL + tR) / 2, chy = 158, tilt = L3 ? 0 : 3;
-    px(chx - 1, 150, 2, chy - 150, "#2a2232"); px(chx - 16, chy + tilt, 34, 3, L3 ? "#e8c15a" : "#6b5a3a"); px(chx - 2, chy + tilt - 2, 4, 6, L3 ? "#e8c15a" : "#6b5a3a");
-    for (i = -1; i <= 1; i++) { var ax = chx + i * 13, ay = chy + tilt + (i === 0 ? 0 : Math.abs(i) * 1) + (L3 ? 0 : (i < 0 ? 4 : 0)); px(ax - 1, ay - 6, 2, 6, L3 ? "#e8c15a" : "#5a4a2a"); if (L3) { px(ax - 1, ay - 10, 3, 4, "#f4ecd8"); px(ax, ay - 13, 1, 3, "#ffd874"); if (Math.sin(t * 8 + i) > 0) px(ax, ay - 15, 1, 2, "#ffe9a8"); } else if (i > 0) { px(ax - 1, ay - 9, 2, 3, "#3a3026"); } }
-    if (!L3) { px(chx + 14, chy + 10, 3, 3, "#2a2232"); px(chx + 15, chy + 13, 2, 8, "#5a4a2a"); }   /* a fallen arm dangling */
-    /* --- foyer (ground floor) --- */
-    px(IL, 232, IR - IL, 30, "#2e2838"); for (x = IL; x < IR; x += 20) px(x, 232, 10, 30, "#332c3e");   /* wainscot panels */
-    px(258, 296, 150, 4, "#7b2f3e"); px(258, 296, 150, 1, "#a8465a"); for (x = 262; x < 406; x += 14) px(x, 297, 7, 2, "#5e1826");   /* a runner rug */
-    /* the left side: an arched doorway out to the caravan, and a dim back hallway with a lit room */
-    px(IL, 236, 22, 64, "#15111d"); px(IL, 236, 22, 4, "#2a2236"); px(IL + 22, 250, 18, 50, "#1b1626");    /* hallway mouth */
-    px(IL + 26, 262, 10, 30, Math.sin(t * 1.5) > -0.3 ? "#caa35a" : "#9a7a40"); px(IL + 28, 266, 6, 22, "#e8c988");   /* lit back room at the end */
-    px(IL + 24, 250, 2, 50, "#0d0a14"); px(IL + 38, 250, 2, 50, "#0d0a14");
-    /* the right side: the entrance arch, open to daylight and the tracks */
-    px(WR - 30, 232, 30, 68, "#121820"); for (i = 0; i < 8; i++) px(WR - 30 + i * 4, 232 - (i < 4 ? i : 7 - i) * 2, 4, 6, "#39414f"); px(WR - 26, 244, 22, 56, "#7b8a63"); px(WR - 24, 250, 18, 50, "#9ab07a");
-    px(WR - 14, 262, 6, 38, "#2a1a0e");   /* a door, ajar */
-    /* ---- the stations, as proper furniture ---- */
-    /* reading nook at SPOT.read: a cushioned stool and a little stack of books */
-    px(SPOT.read - 7, 286, 14, 10, "#5a3f6a"); px(SPOT.read - 7, 284, 14, 3, "#7a5a8a"); px(SPOT.read + 8, 288, 6, 8, "#3a2a4a"); px(SPOT.read + 8, 288, 6, 2, "#7b2f3e"); px(SPOT.read + 8, 291, 6, 2, "#2f5d6b");
-    /* lectern + scroll at 250 */
-    px(250, 276, 5, 24, "#5c4530"); px(246, 296, 14, 4, "#5c4530"); px(243, 272, 18, 4, "#7a5a3a"); px(244, 268, 16, 3, "#efe2b8"); px(248, 265, 8, 4, "#efe2b8");
-    /* a side table with a candle, between the crate and the mirror */
-    px(332, 280, 20, 4, "#6b4a2e"); px(333, 284, 3, 12, "#5c4530"); px(348, 284, 3, 12, "#5c4530"); px(340, 272, 3, 8, "#f4ecd8"); px(340, 269, 2, 4, "#ffd874"); if (Math.sin(t * 7) > 0) px(340, 266, 2, 3, "#ffe9a8");
-    /* the dressing/equipment stand (a mannequin) at SPOT.equip */
-    px(SPOT.equip - 3, 262, 6, 30, "#5c4530"); px(SPOT.equip - 10, 290, 20, 4, "#6b4a2e"); px(SPOT.equip - 9, 258, 18, 10, "#6a5a8a"); px(SPOT.equip - 6, 250, 12, 9, "#caa35a"); px(SPOT.equip - 2, 252, 4, 4, "#2a1a0e");
-    /* the cracked mirror at 404 */
-    px(402, 258, 18, 36, "#8a6a3a"); px(404, 260, 14, 32, "#2b3340"); px(405, 261, 12, 30, "#6d7f96"); px(410, 261, 1, 16, "#2b3340"); px(411, 272, 5, 1, "#2b3340"); px(405, 261, 5, 3, "rgba(255,255,255,.25)");
-    /* the dig patch at 392: loose floorboards and a glint */
-    px(SPOT.dig - 6, 294, 30, 6, "#3a2d1f"); px(SPOT.dig + 2, 290, 14, 5, "#5a4632"); px(SPOT.dig + 10, 292, 5, 3, "#efe2b8"); px(SPOT.dig - 2, 296, 5, 2, "#8a3f22");
-    /* the crate the wizard sits on at SPOT.crate */
-    px(SPOT.crate - 9, 282, 22, 18, "#7a5a3a"); px(SPOT.crate - 9, 282, 22, 3, "#8f6d48"); px(SPOT.crate - 9, 299, 22, 2, "#5c4530"); px(SPOT.crate - 2, 282, 2, 18, "#5c4530"); px(SPOT.crate - 7, 286, 18, 1, "#5c4530");
-    if (stage >= 1) {
-      /* the Wizard Drip Armoire (a tall wardrobe) at SPOT.armoire */
-      px(SPOT.armoire - 20, 246, 40, 52, "#4a3420"); px(SPOT.armoire - 18, 248, 17, 48, "#6b4a2e"); px(SPOT.armoire + 1, 248, 17, 48, "#6b4a2e"); px(SPOT.armoire - 20, 246, 40, 3, "#8a6a44"); px(SPOT.armoire - 2, 250, 2, 44, "#3a2a1a"); px(SPOT.armoire - 5, 270, 2, 4, "#f0c23a"); px(SPOT.armoire + 2, 270, 2, 4, "#f0c23a");
-      /* the Magickal Condenser caravan, rolled up outside the left door */
-      x = SPOT.condenser - 60;
-      px(x, 262, 64, 30, "#7b2f3e"); px(x, 258, 64, 5, "#f0c23a"); px(x + 4, 248, 56, 10, "#5e1826"); px(x + 8, 268, 20, 14, "#ffd76b"); px(x + 10, 270, 16, 10, "#3a2a1a");
-      px(x + 40, 268, 14, 24, "#3a2a1a"); px(x + 6, 290, 12, 12, "#2a2018"); px(x + 9, 293, 6, 6, "#7a5a3a"); px(x + 46, 290, 12, 12, "#2a2018"); px(x + 49, 293, 6, 6, "#7a5a3a");
-      px(x + 62, 266, 2, 8, "#3a2a1a"); px(x + 60, 274, 6, 6, Math.sin(t * 6) > 0 ? "#ffe58a" : "#ffd04a");
+    var i, x, y, L3 = !!S.cleared[3], c1 = stage >= 1, wreck = wreckOf();
+    function stone(l, r, top, bot, base) {               /* a block of stonework with a shaded + a lit edge */
+      px(l, top, r - l, bot - top, base || "#44414f");
+      var n = Math.floor((r - l) * (bot - top) / 150);
+      for (var s = 0; s < n; s++) { var bx = l + 4 + hash(s * 3 + l) * (r - l - 16), by = top + 4 + hash(s * 7 + top) * (bot - top - 10); px(bx, by, 11, 5, "#504c5e"); px(bx, by + 5, 11, 1, "#312e3a"); }
+      px(l, top, 5, bot - top, "#312d39"); px(r - 5, top, 5, bot - top, "#56526a");
     }
-    for (i = 0; i < 9; i++) { x = 436 + i * 20; px(x, 304 + (i % 2) * 5, 5, 2, "#33291c"); px(x + 5, 304 + (i % 2) * 5, 1, 1, "#33291c"); }   /* the tracks */
+    /* ---- dusk sky ---- */
+    var sky = ["#241a34", "#2b2140", "#352a4e", "#40345c", "#4d4068", "#5e4f6e", "#7a5f6e", "#a0705f", "#c08a5f"];
+    for (i = 0; i < sky.length; i++) px(-HOX, i * 20, BW + HOX, 20, sky[i]);
+    for (i = 0; i < 26; i++) { var stx = -HOX + hash(i * 9) * (BW + HOX), sty = hash(i * 5) * 128; px(stx, sty, hash(i * 5) < 0.5 ? 2 : 1, 1, "rgba(255,247,220,.7)"); }
+    /* a low moon, off to the right */
+    px(430, 28, 34, 34, "#efe3bf"); px(434, 25, 27, 27, "#fff6de"); px(448, 40, 7, 7, "#e6dab6"); px(455, 50, 4, 4, "#e6dab6");
+    /* far treeline behind the tower */
+    for (x = -HOX - 4; x < BW; x += 9) { var hh = 20 + hash(x * 1.3 + 40) * 20; px(x, 150 - (hh >> 1), 9, hh + 46, "#1c3326"); }
+    /* ground: dirt yard, with a grassy fringe */
+    px(-HOX, GND, BW + HOX, BH - GND, "#3a2d1f"); px(-HOX, GND, BW + HOX, 3, "#4a3a28"); px(-HOX, GND + 7, BW + HOX, 1, "#2a2016");
+    for (x = -HOX; x < BW; x += 6) if (hash(x + 700) > 0.5) px(x, GND - (hash(x + 1) * 3 | 0), 6, 5, "#2d5433");
+    /* the millrace / stream running under the wheel */
+    px(MML - 40, 290, 130, 12, "#2f4a5e"); px(MML - 40, 290, 130, 2, "#4a6f84");
+    for (i = 0; i < 8; i++) px(MML - 40 + hash(i) * 128, 293 + hash(i * 3) * 5, 8, 1, "#6b9ab0");
+
+    /* ================= the watermill shack (left foot of the L) ================= */
+    stone(MML + 30, MMR, 232, GND, "#403d4b");                            /* stone base */
+    px(MML + 30, 232, MMR - (MML + 30), 6, "#8a6a44");                    /* sill beam */
+    for (x = MML + 36; x < MMR - 4; x += 15) { px(x, 238, 12, GND - 238, "#5c4530"); px(x, 238, 12, 2, "#6b4a2e"); px(x + 12, 238, 2, GND - 238, "#3a2a1a"); }  /* plank gable */
+    for (i = 0; i < 20; i++) { var rx = MML + 26 + i * ((MMR - MML) / 20), sag = Math.round(Math.sin(i * 0.5) * 3) + Math.round(i * 0.5); px(rx, MRDG - 4 + sag, ((MMR - MML) / 20) + 3, 11, i % 2 ? "#6b4a2e" : "#5c4530"); }  /* sagging roof */
+    px(MML + 24, MRDG - 6, MMR - MML + 4, 5, "#8a6a44");                  /* ridge beam */
+    /* chimney with a wisp of smoke */
+    px(MMR - 72, MRDG - 34, 18, 32, "#3a3444"); px(MMR - 72, MRDG - 34, 18, 5, "#4a4458");
+    px(MMR - 67, MRDG - 48, 7, 7, "rgba(210,210,220,.45)"); px(MMR - 63, MRDG - 62, 8, 8, "rgba(210,210,220,.3)");
+    /* the Condenser window (lit once the forest's cleared; a dim boarded hole before) */
+    (function () { var wx = 54, wy = 224, lit = c1;
+      px(wx - 3, wy - 3, 36, 40, "#1a1422"); px(wx, wy, 30, 34, lit ? (Math.sin(t * 3) > -0.4 ? "#ffd36b" : "#e0b457") : "#2a2236");
+      if (lit) { px(wx, wy, 30, 3, "#ffe9a8"); px(wx + 13, wy, 3, 34, "#caa35a"); px(wx + 6, wy + 8, 6, 10, "#3a2a1a"); px(wx + 18, wy + 8, 6, 14, "#3a2a1a"); }
+      else { px(wx + 2, wy + 6, 26, 5, "#5c4530"); px(wx + 2, wy + 18, 26, 5, "#4a3826"); }
+      px(wx - 5, wy - 9, 40, 7, "#34303e"); })();
+    /* the Wardrobe door (a hanging sign lights up once your hat is won back) */
+    (function () { var dx = 132; px(dx, 258, 36, GND - 258, "#2a2238"); px(dx + 4, 266, 28, GND - 266, "#1a1422"); px(dx, 256, 36, 4, "#3a3048"); px(dx + 24, 288, 4, 4, "#e8c15a");
+      px(dx + 8, 250, 20, 8, c1 ? "#7b2f3e" : "#2e2838"); px(dx + 10, 252, 16, 4, c1 ? "#ffd36b" : "#4a4458"); })();
+
+    /* ================= the spire (right arm of the L) ================= */
+    stone(SPL, SPR, 118, GND);                                            /* main body */
+    stone(SPL - 4, SPR - 8, 118, 212, "#423f4d");                         /* a narrower upper section, leaning a touch left */
+    /* the pointed witch-hat roof, tall and bent */
+    var eaveL = SPL - 30, eaveR = SPR + 18, eaveY = 118;
+    for (y = eaveY; y > 26; y -= 4) { var fr = (eaveY - y) / (eaveY - 26), lx = Math.round(eaveL + (SAX - 8 - eaveL) * fr), rx2 = Math.round(eaveR - (eaveR - (SAX + 12)) * fr); px(lx, y - 4, rx2 - lx, 5, ((eaveY - y) >> 2) % 2 ? "#3a2560" : "#2e1c4c"); }
+    px(eaveL - 5, eaveY, eaveR - eaveL + 10, 7, "#4a2f78"); px(eaveL - 5, eaveY + 5, eaveR - eaveL + 10, 3, "#281646");  /* eave */
+    for (i = 0; i < 9; i++) px(eaveL - 1 + i * (eaveR - eaveL) / 8, eaveY + 7, 4, 4 + (i % 2) * 3, "#281646");           /* eave teeth */
+    /* the belled, bent tip + gold finial */
+    px(SAX - 6, 38, 14, 10, "#2e1c4c"); px(SAX - 1, 28, 11, 10, "#3a2560"); px(SAX + 7, 23, 7, 7, "#4a2f78"); px(SAX + 10, 19, 4, 5, "#f0c23a"); px(SAX + 10, 14, 2, 5, "#3a2560");
+    /* a glowing arched window high in the roof — warm and bright once the chandelier's rehung (clear 3) */
+    px(SAX - 9, 62, 18, 22, "#1a1226"); px(SAX - 6, 65, 12, 18, L3 ? "#ffe9a8" : (Math.sin(t * 2) > -0.6 ? "#ffd874" : "#d9a94a")); px(SAX - 1, 65, 2, 18, "#1a1226"); px(SAX - 6, 65, 12, 2, "#1a1226");
+    if (L3) { px(SAX - 12, 60, 24, 3, "rgba(255,233,168,.25)"); }
+    /* the two spire windows — the stations (always lit: the spire is your home) */
+    (function () { var cols = [[SPL + 8, 138, "Prep"], [SPL + 8, 196, "Equip"]];
+      cols.forEach(function (w, k) { var wx = w[0], wy = w[1], warm = Math.sin(t * 2.2 + k * 2) > -0.5;
+        px(wx - 3, wy - 3, 30, 42, "#1a1226"); px(wx, wy, 24, 36, warm ? "#ffd36b" : "#d9a94a");
+        px(wx, wy, 24, 3, "#ffe9a8"); px(wx + 10, wy, 3, 36, "#caa35a"); px(wx + 4, wy + 6, 6, 10, "#3a2a1a"); px(wx + 15, wy + 6, 6, 14, "#3a2a1a");
+        px(wx - 5, wy - 10, 34, 8, "#2e1c4c"); }); })();
+    /* the spire door at the base */
+    px(SAX - 16, 250, 34, GND - 250, "#2a2238"); px(SAX - 16, 248, 34, 4, "#3a3048"); px(SAX - 12, 258, 26, GND - 258, "#1a1422"); px(SAX + 4, 282, 4, 4, "#e8c15a"); px(SAX - 2, 258, 2, GND - 258, "#0d0a14");
+
+    /* ================= the waterwheel (toe of the L) ================= */
+    b.save(); b.translate(WHX, WHY); var spin = t * 0.5;
+    for (i = 0; i < 12; i++) { var pa = i / 12 * TAU + spin; px(Math.round(Math.cos(pa) * WHR) - 3, Math.round(Math.sin(pa) * WHR) - 3, 7, 7, "#4a3420"); }  /* paddles */
+    b.strokeStyle = "#6b4a2e"; b.lineWidth = 4; b.beginPath(); b.arc(0, 0, WHR - 4, 0, TAU); b.stroke();
+    b.strokeStyle = "#8a6a44"; b.lineWidth = 3; b.beginPath(); b.arc(0, 0, WHR - 13, 0, TAU); b.stroke();
+    for (i = 0; i < 6; i++) { var sa = i / 6 * TAU + spin; b.strokeStyle = "#5c4530"; b.lineWidth = 3; b.beginPath(); b.moveTo(0, 0); b.lineTo(Math.cos(sa) * (WHR - 6), Math.sin(sa) * (WHR - 6)); b.stroke(); }
+    px(-6, -6, 12, 12, "#8a6a44"); px(-3, -3, 6, 6, "#4a3420"); b.restore();
+
+    /* ================= the yard, right of the spire: the wizard's loitering spots ================= */
+    px(SPOT.crate - 11, 282, 24, 18, "#7a5a3a"); px(SPOT.crate - 11, 282, 24, 3, "#8f6d48"); px(SPOT.crate - 11, 299, 24, 1, "#5c4530"); px(SPOT.crate - 2, 282, 2, 18, "#5c4530");   /* a crate he sits on */
+    px(SPOT.read - 8, 290, 16, 10, "#4a3524"); px(SPOT.read - 8, 288, 16, 3, "#5c4530"); px(SPOT.read + 4, 284, 6, 8, "#6b4a2e"); px(SPOT.read + 4, 284, 6, 2, "#7b2f3e");            /* a reading stump + book */
+    px(SPOT.dig - 7, 295, 26, 5, "#2f2416"); px(SPOT.dig + 2, 292, 12, 4, "#4a3826"); px(SPOT.dig + 8, 294, 4, 2, "#efe2b8");                                                         /* a dig patch with a glint */
+
     if (wreck > 0) drawWreck(t, wreck);
   }
-  /* storm damage over the tower shell, scaled by wreck (1 = ruined, easing to 0 as the wizard rebuilds) */
+  /* storm damage over the spire, scaled by wreck (1 = ruined, easing to 0 as the wizard rebuilds) */
   function drawWreck(t, w) {
     var i;
-    /* a jagged hole punched through the right roof slope, sky showing through */
+    /* a jagged hole punched through the roof, sky showing through */
     if (w > 0.5) {
-      px(384, 40, 30, 20, "#283a56"); px(380, 46, 8, 12, "#283a56"); px(412, 44, 8, 14, "#2f4360"); px(390, 36, 18, 8, "#2f4360");
-      px(396, 44, 2, 2, "rgba(255,247,220,.7)"); px(406, 52, 1, 1, "rgba(255,247,220,.6)");                 /* stars through the gap */
-      px(382, 38, 4, 4, "#301c50"); px(414, 40, 4, 5, "#3a2560"); px(388, 58, 5, 4, "#301c50"); px(404, 60, 6, 4, "#3a2560"); px(410, 36, 4, 4, "#2a1848");   /* ragged shingle lip */
-      px(398, 60, 3, 7, "#2a1848"); px(398, 66, 4, 2, "#3a2560");                                            /* a shingle hanging off */
+      px(APEX + 16, 88, 24, 16, "#352a4e"); px(APEX + 12, 94, 7, 9, "#352a4e"); px(APEX + 18, 82, 14, 6, "#40345c");
+      px(APEX + 22, 92, 2, 2, "rgba(255,247,220,.7)"); px(APEX + 30, 98, 1, 1, "rgba(255,247,220,.6)");
+      px(APEX + 14, 86, 4, 4, "#2e1c4c"); px(APEX + 36, 90, 4, 5, "#3a2560"); px(APEX + 20, 102, 5, 4, "#2e1c4c");
     }
     /* the belled tip snapped off */
     if (w > 0.7) {
-      px(APEX + 4, 1, 14, 10, "#20304a"); px(APEX - 6, 20, 12, 10, "#20304a");                               /* erase the gold finial + bent tip */
-      px(APEX - 4, 22, 7, 8, "#301c50"); px(APEX - 2, 18, 4, 6, "#3a2560"); px(APEX - 1, 16, 2, 3, "#241633"); /* a snapped stub */
+      px(APEX + 6, 14, 10, 24, "#241a34"); px(APEX - 6, 38, 14, 10, "#241a34");
+      px(APEX - 3, 40, 7, 8, "#2e1c4c"); px(APEX - 1, 36, 4, 6, "#3a2560"); px(APEX, 33, 2, 4, "#241633");
     }
-    /* the roof window boarded over (dark, crossed planks) instead of lit */
+    /* the roof window boarded over (dark, crossed planks) instead of glowing */
     if (w > 0.6) {
-      px(APEX - 10, 46, 20, 22, "#1a1226");
-      px(APEX - 12, 50, 24, 4, "#5c4530"); px(APEX - 12, 58, 24, 4, "#4a3826"); px(APEX - 2, 44, 4, 26, "#5c4530");
-      px(APEX - 12, 50, 24, 1, "#6b4a2e"); px(APEX - 12, 58, 24, 1, "#6b4a2e");
+      px(APEX - 9, 62, 18, 22, "#15101c");
+      px(APEX - 11, 66, 22, 4, "#5c4530"); px(APEX - 11, 74, 22, 4, "#4a3826"); px(APEX - 2, 58, 4, 24, "#5c4530");
+      px(APEX - 11, 66, 22, 1, "#6b4a2e"); px(APEX - 11, 74, 22, 1, "#6b4a2e");
     }
-    /* cracks running down the visible side walls */
-    if (w > 0.3) for (i = 0; i < 2; i++) { var wx = i ? WR - 6 : WL + 2, cy = 96 + i * 46, s; for (s = 0; s < 76; s += 4) { var jx = wx + Math.round(Math.sin(s * 0.8 + i * 2) * 2); px(jx, cy + s, 2, 4, "#1c2029"); px(jx + 2, cy + s + 1, 1, 3, "#11141b"); } }
-    /* knocked-out stones along the lit right edge and the shaded left edge */
-    if (w > 0.4) { px(WR - 8, 118, 8, 11, "#241f2e"); px(WR - 8, 196, 8, 9, "#241f2e"); px(WL, 160, 8, 9, "#15111d"); }
-    /* rubble heaped at the foot of the tower */
+    /* cracks running down the spire walls */
+    if (w > 0.3) for (i = 0; i < 2; i++) { var wx = i ? WR - 6 : WL + 2, cy = 140 + i * 40, s; for (s = 0; s < 70; s += 4) { var jx = wx + Math.round(Math.sin(s * 0.8 + i * 2) * 2); px(jx, cy + s, 2, 4, "#1c1826"); px(jx + 2, cy + s + 1, 1, 3, "#120e18"); } }
+    /* knocked-out stones along the spire edges */
+    if (w > 0.4) { px(WR - 7, 170, 7, 10, "#241f2e"); px(WR - 7, 236, 7, 9, "#241f2e"); px(WL, 200, 7, 9, "#1c1826"); }
+    /* rubble heaped at the spire's foot */
     var rb = Math.round(w * 6);
-    for (i = 0; i < rb; i++) { var bx = i < rb / 2 ? WL - 8 + (i * 9) % 42 : WR - 32 + (i * 11) % 36, by = 296 + (i % 2) * 3, bw = 6 + (i % 3) * 3; px(bx, by, bw, 5, "#39414f"); px(bx, by, bw, 1, "#4a5466"); px(bx + 1, by + 4, bw - 1, 1, "#2c3340"); }
-    /* scaffolding leaning on the left wall while the repairs are underway (gone once ruined, gone once whole) */
+    for (i = 0; i < rb; i++) { var bx = i < rb / 2 ? WL - 6 + (i * 9) % 30 : WR - 24 + (i * 11) % 28, by = 296 + (i % 2) * 3, bw = 6 + (i % 3) * 3; px(bx, by, bw, 5, "#44414f"); px(bx, by, bw, 1, "#56526a"); px(bx + 1, by + 4, bw - 1, 1, "#312e3a"); }
+    /* scaffolding leaning on the spire while repairs are underway (gone once ruined, gone once whole) */
     if (w > 0.25 && w < 0.9) {
-      px(WL - 9, 150, 3, 150, "#6b4a2e"); px(WL + 2, 150, 3, 150, "#5c4530");
-      for (i = 0; i < 4; i++) { var py = 172 + i * 34; px(WL - 9, py, 14, 3, "#7a5a3a"); px(WL - 9, py, 14, 1, "#8f6d48"); }
-      for (var d = 0; d < 150; d += 5) px(WL - 9 + Math.round(d * 0.08), 150 + d, 2, 3, "#5c4530");
+      px(WL - 8, 150, 3, 150, "#6b4a2e"); px(WL + 2, 150, 3, 150, "#5c4530");
+      for (i = 0; i < 4; i++) { var py = 172 + i * 34; px(WL - 8, py, 13, 3, "#7a5a3a"); px(WL - 8, py, 13, 1, "#8f6d48"); }
+      for (var d = 0; d < 150; d += 5) px(WL - 8 + Math.round(d * 0.08), 150 + d, 2, 3, "#5c4530");
     }
   }
   function drawRain(t) { for (var i = 0; i < 70; i++) { var x = (hash(i) * BW + t * 40) % BW, y = (hash(i + 50) * BH + t * (340 + hash(i) * 120)) % BH; px(x, y, 1, 5, "rgba(190,215,240,.5)"); } }
@@ -1338,15 +1339,28 @@
   function hubIdle(g, dt) {
     Hb.t += dt;
     if (UI.scene === "rebind" && UI.bind && UI.bind.kind === "pad" && g.pad) { for (var k in g.pad.hit) if (k !== "start" && k !== "select") { captureBind(k); return; } }
+    if (Hb.enter) {                                        /* stepping through a door into the chosen room */
+      var e = Hb.enter; e.t += dt; Hb.face = e.face; Hb.act = "stand";
+      var edx = e.x - Hb.x;
+      if (Math.abs(edx) > 1) { Hb.x += (edx > 0 ? 1 : -1) * Math.min(Math.abs(edx), 150 * dt); Hb.moving = true; }
+      else { Hb.moving = false; if (e.t >= e.dur) { Hb.enter = null; e.then(); } }
+      return;
+    }
     var dx = Hb.tx - Hb.x;
     if (Math.abs(dx) > 1) { Hb.x += (dx > 0 ? 1 : -1) * Math.min(Math.abs(dx), 170 * dt); Hb.face = dx > 0 ? 1 : -1; Hb.moving = true; return; }
     if (Hb.moving) { Hb.moving = false; Hb.face = 1; if (Hb.then) { var f = Hb.then; Hb.then = null; f(); return; } }
     if (!Hb.busy) { Hb.idleT -= dt; if (Hb.idleT <= 0) { Hb.idleT = rnd(7, 11); Hb.act = pick(["sit", "read", "dig"]); Hb.tx = { sit: SPOT.crate + 4, read: SPOT.read - 16, dig: SPOT.dig - 14 }[Hb.act]; } }
   }
   function goStation(g, key, fn) {
-    Hb.busy = true; Hb.act = "stand"; Hb.tx = SPOT[key]; g.closeMenu(); UI.scene = "hub";
-    if (Site.reducedMotion || Math.abs(Hb.tx - Hb.x) <= 1) { Hb.x = Hb.tx; fn(); return; }
-    Hb.then = fn; g.wake && g.wake();
+    Hb.busy = true; Hb.act = "stand"; Hb.tx = SPOT[key]; Hb.enter = null; g.closeMenu(); UI.scene = "hub";
+    var doorX = DOOR[key];
+    function enterRoom() {
+      if (Site.reducedMotion || doorX == null) { fn(); return; }
+      Hb.enter = { x: doorX, t: 0, dur: 0.6, then: fn, face: doorX < Hb.x ? -1 : 1 };
+      g.wake && g.wake();
+    }
+    if (Site.reducedMotion || Math.abs(Hb.tx - Hb.x) <= 1) { Hb.x = Hb.tx; enterRoom(); return; }
+    Hb.then = enterRoom; g.wake && g.wake();
   }
   /* a persistent HUD over the menus: Wiz level as an XP bar up top, the four currencies top-right, the bag bottom-right.
      Shown on every menu scene except the dressing chamber and the Settings pages. */
@@ -1384,7 +1398,8 @@
     b.save(); b.translate(HOX, 0); drawHub(t, st);
     var pose = Hb.moving ? "run" : (Hb.busy ? (st === 1 ? "hold" : "stand") : Hb.act);
     wizSprite(lookOf(S.comfort), pose, t);
-    b.save(); b.translate(Math.round(Hb.x), 0); if (Hb.face < 0) b.scale(-1, 1); blitWiz(b, 0, 300, 1); b.restore();
+    var fade = Hb.enter ? clamp((Hb.enter.t - (Hb.enter.dur - 0.32)) / 0.32, 0, 1) : 0;   /* dim out as he steps inside */
+    b.save(); if (fade > 0) b.globalAlpha = 1 - fade; b.translate(Math.round(Hb.x), 0); if (Hb.face < 0) b.scale(-1, 1); blitWiz(b, 0, 300, 1); b.restore();
     if (st === 1 && pose !== "hold") { var a = S.wiz, top = 300 - (14 + Math.round(4 * a.height)) - (16 + Math.round(4 * a.height)) - 22 + (pose === "sit" ? 5 + Math.round(4 * a.height) : pose === "dig" ? 8 : 0); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top, 16, 3, "#efe2b8"); px(Hb.x - 8 + (pose === "dig" ? 9 : 2), top + 3, 16, 1, "#c9b98a"); }
     b.restore();
     if (st < 2) drawRain(t);
