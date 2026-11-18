@@ -352,7 +352,7 @@ async function traffic(body) {
           el("h4", { class: "op-h4", text: "Browsers" }), g.browsers.length ? rank(g.browsers, Object.assign([["visitors", ""]], { label: (r) => el("span", { text: r.name }) })) : el("p", { class: "gm-note", text: "No data yet." }))));
   }
   mem.lastChild.remove();
-  if (m.error || !m.data || !m.data.totals) { mem.append(el("p", { class: "gm-note", text: !m.error || /mod_traffic|function|schema cache/i.test(m.error.message) ? "Member traffic switches on after 43_traffic_stats.sql is run." : m.error.message })); return; }
+  if (m.error || !m.data || !m.data.totals) { mem.append(el("p", { class: "gm-note", text: !m.error || /mod_traffic|function|schema cache/i.test(m.error.message) ? "Member traffic switches on after 44_traffic_stats.sql is run." : m.error.message })); return; }
   const t = m.data || {}, daily = t.daily || [], sum = (k) => daily.reduce((n, r) => n + (+r[k] || 0), 0);
   mem.append(tiles([["Active members", t.totals.members, "signed in, last " + t.days + " days"], ["Verified", t.totals.verified, "of those, Verified"], ["Member page views", t.totals.views], ["New sign-ups", sum("signups")]]),
     bars(daily, [["members", "Active members", "op-c1"], ["verified", "Verified", "op-c2"]], "Active members per day"),
