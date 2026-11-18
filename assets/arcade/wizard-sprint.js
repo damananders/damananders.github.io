@@ -17,6 +17,21 @@
   var W = 1280, H = 720, BW = 640, BH = 360, GY = 292, WX = 150, M = 16, BASE = 170, GRAV = 1400, TAU = Math.PI * 2;
   var SKEY = "arcade.wizard-sprint.save";
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  /* live balance tunables — the Maintenance Hatch "Wizard — balance tunables" panel overrides these for every player.
+     Each is a multiplier (1 = the built-in value); tune() reads the live override with a safe fallback. */
+  var TUNE = {};
+  var TUNEDEF = [
+    { k: "speed",    n: "Run speed",           d: "How fast the forest scrolls past.",            lo: 0.5, hi: 2 },
+    { k: "jump",     n: "Jump height",         d: "How high a jump and glide carry.",             lo: 0.5, hi: 2 },
+    { k: "orbRate",  n: "Whisper-orb drops",   d: "How often Whisper Orbs appear in a run.",      lo: 0.25, hi: 4 },
+    { k: "grimRate", n: "Grimoire drops",      d: "How often Grimoires appear in a run.",         lo: 0.25, hi: 4 },
+    { k: "spellCd",  n: "Spell cooldowns",     d: "Time between casts — lower is faster.",        lo: 0.4, hi: 2 },
+    { k: "xpCurve",  n: "XP needed per level", d: "XP each level costs — lower levels faster.",   lo: 0.4, hi: 2.5 },
+    { k: "chalXp",   n: "Challenge XP payout", d: "XP awarded for finishing a run challenge.",    lo: 0.25, hi: 4 },
+    { k: "oblOrbs",  n: "Obliviate orb yield", d: "Whisper Orbs from obliviating an item.",       lo: 0.25, hi: 4 }
+  ];
+  function tune(k) { var v = TUNE && TUNE[k]; return (typeof v === "number" && isFinite(v) && v > 0) ? clamp(v, 0.1, 8) : 1; }
+  function sanitizeTune(o) { var out = {}; if (o && typeof o === "object") TUNEDEF.forEach(function (t) { var v = Number(o[t.k]); if (isFinite(v) && v > 0 && Math.abs(v - 1) > 1e-4) out[t.k] = clamp(v, t.lo, t.hi); }); return out; }
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function ri(a, b) { return Math.floor(rnd(a, b + 1)); }
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
@@ -183,7 +198,7 @@
     t.hp = 10 + t.vit; t.jump = 70 * Math.pow(1.06, S.ranks.jump || 0); t.glide = 260 * Math.pow(0.92, S.ranks.glide || 0);
     return t;
   }
-  function xpNeed(l) { return Math.round(100 * Math.pow(l, 1.4)); }
+  function xpNeed(l) { return Math.max(1, Math.round(100 * Math.pow(l, 1.4) * tune("xpCurve"))); }
   function addXP(n, g) {
     S.xp += Math.round(n);
     while (S.lvl < 100 && S.xp >= xpNeed(S.lvl)) {
@@ -759,7 +774,7 @@
       var c = S.ch[i], d = chDef(c.id); if (d.ev !== ev || c.done) continue;
       c.p += n;
       /* once per run: the three assigned stay put and mark done when met, no mid-run refill; the reward is scaled up to match */
-      if (c.p >= d.need) { c.done = true; R.xp += 200; R.rem += 50; G.toast("Challenge done: " + d.n + "  (+200 XP, +50 Remnants)", "gold"); sfx("ch"); cnt("ch", 1); }
+      if (c.p >= d.need) { c.done = true; var cxp = Math.round(200 * tune("chalXp")); R.xp += cxp; R.rem += 50; G.toast("Challenge done: " + d.n + "  (+" + cxp + " XP, +50 Remnants)", "gold"); sfx("ch"); cnt("ch", 1); }
     }
   }
   function startRun(g, mode) {
@@ -771,7 +786,7 @@
       plats: [], rems: [], picks: [], haz: [], en: [], shots: [], eshots: [], fr: [], fx: [], bub: [], loot: [], lootCards: [], cds: {},
       nx: 420, rem: 0, orbs: 0, grim: 0, kills: 0, hurt: 0, xp: 0, buffT: 0, buffMax: 1, buff: null, ward: 0, thorn: 0, boss: null, bossN: 0, tough: 1, mAcc: 0,
       bossAt: (mode === "story" ? 300 : 390) * BASE, win: 0, over: false, revived: false, fiveT: 0, fiveWin: 0, shake: 0, mud: 0, chat: 5, tap: false, flashCd: 0, flashT: 0,
-      nextOrb: rnd(40, 60) * BASE, nextGrim: rnd(110, 170) * BASE, nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12 };
+      nextOrb: rnd(40, 60) * BASE / tune("orbRate"), nextGrim: rnd(110, 170) * BASE / tune("grimRate"), nextRes: rnd(60, 100) * BASE, alcAt: mode === "story" && !S.cos.alcove1 ? rnd(110, 150) * BASE : 1e12 };
     S.incEq.forEach(function (id) { R.cds[id] = { t: 0.8, ch: 3, r: 0 }; });
     UI.scene = "run"; cnt("runs", 1);
     g.start();
@@ -780,7 +795,7 @@
      (ton) widens. S.speed is the 0..1 slider position; 0.5 is neutral 100%. */
   function pacePct(ton) { var s = S.speed == null ? 0.5 : clamp(S.speed, 0, 1); ton = ton || 0; return Math.round(s <= 0.5 ? 75 + 50 * s : 100 + (15 + ton) * (s - 0.5) * 2); }
   function paceMax(ton) { return 115 + (ton || 0); }
-  function speedNow() { return BASE * (pacePct(R.st.ton) / 100) * (R.buffT > 0 && R.buff === "gust" ? 1.25 : 1) * (R.mud > 0 ? 0.6 : 1); }
+  function speedNow() { return BASE * tune("speed") * (pacePct(R.st.ton) / 100) * (R.buffT > 0 && R.buff === "gust" ? 1.25 : 1) * (R.mud > 0 ? 0.6 : 1); }
 
   /* --- spawning --- */
   function plat(x, h, w) { var p = { x: x, y: GY - h, w: w }; R.plats.push(p); return p; }
@@ -796,8 +811,8 @@
     var x = R.nx, p = prog(), i, L = 300;
     if (R.boss || R.win || R.dist + BW > R.bossAt - 420) { if (Math.random() < 0.5) coins(x + 20, GY - 14, 4, 22); R.nx = x + 280; return; }
     if (x < 900) { coins(x + 40, GY - 14, 6, 22); R.nx = x + 300; return; }
-    if (x > R.nextOrb) { R.nextOrb = x + rnd(50, 75) * BASE; R.picks.push({ k: "orb", x: x + 120, y: GY - 44 }); coins(x + 30, GY - 14, 3, 22); R.nx = x + 260; return; }
-    if (x > R.nextGrim) { R.nextGrim = x + rnd(120, 200) * BASE; plat(x + 40, 36, 70); plat(x + 144, 62, 70); R.picks.push({ k: "grim", x: x + 180, y: GY - 62 - 12 }); coins(x + 52, GY - 50, 3, 22); R.nx = x + 300; return; }
+    if (x > R.nextOrb) { R.nextOrb = x + rnd(50, 75) * BASE / tune("orbRate"); R.picks.push({ k: "orb", x: x + 120, y: GY - 44 }); coins(x + 30, GY - 14, 3, 22); R.nx = x + 260; return; }
+    if (x > R.nextGrim) { R.nextGrim = x + rnd(120, 200) * BASE / tune("grimRate"); plat(x + 40, 36, 70); plat(x + 144, 62, 70); R.picks.push({ k: "grim", x: x + 180, y: GY - 62 - 12 }); coins(x + 52, GY - 50, 3, 22); R.nx = x + 300; return; }
     if (x > R.nextRes) { R.nextRes = x + rnd(80, 120) * BASE; plat(x + 40, 36, 70); plat(x + 144, 62, 80); R.picks.push({ k: "cage", x: x + 186, y: GY - 62 }); R.nx = x + 320; return; }
     if (x > R.alcAt) { R.alcAt = 1e12; plat(x + 40, 36, 70); plat(x + 144, 62, 70); plat(x + 248, 62, 90); R.picks.push({ k: "alcove", x: x + 300, y: GY - 62 }); coins(x + 156, GY - 76, 3, 22); R.nx = x + 420; return; }
     if (Math.random() < 0.0006) { R.picks.push({ k: "satchel", x: x + 140, y: GY - 10 }); R.nx = x + 240; return; }
@@ -862,7 +877,7 @@
     if (Math.random() < (e.gold ? 1 : e.elite ? 0.25 : 0.065)) lootDrop(e.gold ? 2 : 0);
   }
   function dmgOf(id) { return INC[id].dmg * (1 + R.st.pow / 100) * (1 + 0.08 * mlvl(id)); }
-  function cdOf(id) { var c = INC[id].cd; if (id === "ward") c = mlvl(id) >= 6 ? 7 : mlvl(id) >= 3 ? 9 : 12; return c / (1 + R.st.flu / 100); }
+  function cdOf(id) { var c = INC[id].cd; if (id === "ward") c = mlvl(id) >= 6 ? 7 : mlvl(id) >= 3 ? 9 : 12; return c * tune("spellCd") / (1 + R.st.flu / 100); }
   function spellFrac(id) {                                 /* 0..1 charge of a spell, same as the rack wand */
     var c = R.cds[id] || { t: 0, ch: 0 };
     if (id === "snaps") return clamp(c.ch / (mlvl(id) >= 6 ? 4 : 3), 0, 1);
@@ -937,7 +952,7 @@
     if (isHit(g, "slow")) { S.speed = clamp(S.speed - 0.1, 0, 1); g.toast("Pace " + pacePct(R.st.ton) + "%"); }
     if (isHit(g, "fast")) { S.speed = clamp(S.speed + 0.1, 0, 1); g.toast("Pace " + pacePct(R.st.ton) + "%"); }
     /* movement */
-    var jv = Math.sqrt(2 * GRAV * R.st.jump) * (R.mud > 0 ? 0.85 : 1), gust = R.buffT > 0 && R.buff === "gust", maxJ = gust ? ((S.buffs.gust || 0) >= 3 ? 3 : 2) : 1;
+    var jv = Math.sqrt(2 * GRAV * R.st.jump) * Math.sqrt(tune("jump")) * (R.mud > 0 ? 0.85 : 1), gust = R.buffT > 0 && R.buff === "gust", maxJ = gust ? ((S.buffs.gust || 0) >= 3 ? 3 : 2) : 1;
     if (pressed) {
       if (R.ground) { R.vy = -jv; R.ground = false; R.plat = null; R.jumps = 1; sfx("jump"); cnt("jumps", 1); }
       else if (R.jumps < maxJ) { R.vy = -jv * 0.9; R.jumps++; sfx("jump2"); cnt("jumps", 1); fxAdd("ring", wx, R.y, { c: "#d9f0f2", d: 0.25 }); }
@@ -1834,7 +1849,7 @@
   function oblRoll(it) {
     var orbBase = { 2: [1, 2], 3: [2, 4], 4: [4, 7], 5: [8, 12] }[it.r] || [1, 1];
     var scale = 1 + it.il / 100;
-    var orbs = Math.max(1, Math.round(ri(orbBase[0], orbBase[1]) * scale));
+    var orbs = Math.max(1, Math.round(ri(orbBase[0], orbBase[1]) * scale * tune("oblOrbs")));
     var gChance = { 2: 0.08, 3: 0.20, 4: 0.40, 5: 1 }[it.r] || 0, gAmt = it.r >= 5 ? ri(2, 3) : it.r >= 4 ? ri(1, 2) : 1;
     var sChance = { 2: 0, 3: 0.03, 4: 0.10, 5: 0.25 }[it.r] || 0, sAmt = it.r >= 5 ? ri(1, 2) : 1;
     return { orbs: orbs, grim: Math.random() < gChance ? gAmt : 0, syl: Math.random() < sChance ? sAmt : 0 };
@@ -2085,7 +2100,7 @@
     blurb: "Run, cast and loot your way after whoever robbed your tower.",
     sync: [{ k: "save", s: SKEY, t: "newest" }],
     onSync: function (g) { load(); if (g.state === "title" && UI.scene === "hub" && g.menuOpen()) title(g); },
-    init: function (g) { G = g; g.debug = { S: function () { return S; }, R: function () { return R; }, UI: UI, start: function (m) { startRun(g, m || "story"); }, save: save, load: load, calc: calc, makeItem: makeItem, giveInc: giveInc, step: function (n, dt) { for (var i = 0; i < n && R && !R.over; i++) update(g, dt); }, endRun: endRun, wiz: wizSprite, look: lookOf, WC: WC, wreckOf: wreckOf }; },
+    init: function (g) { G = g; registerHatch(); g.debug = { S: function () { return S; }, R: function () { return R; }, UI: UI, start: function (m) { startRun(g, m || "story"); }, save: save, load: load, calc: calc, makeItem: makeItem, giveInc: giveInc, step: function (n, dt) { for (var i = 0; i < n && R && !R.over; i++) update(g, dt); }, endRun: endRun, wiz: wizSprite, look: lookOf, WC: WC, wreckOf: wreckOf }; },
     title: title,
     update: update,
     idle: hubIdle,
@@ -2116,6 +2131,38 @@
       }
     }
   };
+  /* ---------- Maintenance Hatch: live balance tunables (owner-edited on /arcade/, applied for every player) ---------- */
+  function balanceEditor(pane, api) {
+    var cur = {}, saved = api.get() || {};
+    TUNEDEF.forEach(function (t) { var v = Number(saved[t.k]); cur[t.k] = (isFinite(v) && v > 0) ? clamp(v, t.lo, t.hi) : 1; });
+    function pushVal() { var out = {}; TUNEDEF.forEach(function (t) { if (Math.abs(cur[t.k] - 1) > 1e-4) out[t.k] = cur[t.k]; }); api.set(out); }
+    var root = el("div", { class: "wzh" });
+    root.appendChild(el("p", { class: "wzh-note", text: "Each slider multiplies the built-in value — 1.00× is default. Saving changes the game for every player." }));
+    TUNEDEF.forEach(function (t) {
+      var val = el("b", { class: "wzh-val" }), slider = el("input", { class: "wzh-range", type: "range", min: String(t.lo), max: String(t.hi), step: "0.05", value: String(cur[t.k]), "aria-label": t.n });
+      var reset = el("button", { class: "wzh-reset", type: "button", title: "Reset to 1.00×", text: "Reset" });
+      var row = el("div", { class: "wzh-row" },
+        el("div", { class: "wzh-meta" }, el("strong", { text: t.n }), el("span", { class: "wzh-desc", text: t.d })),
+        el("div", { class: "wzh-ctl" }, slider, val, reset));
+      function paint() { val.textContent = cur[t.k].toFixed(2) + "×"; slider.value = String(cur[t.k]); if (row.classList) row.classList.toggle("is-set", Math.abs(cur[t.k] - 1) > 1e-4); }
+      slider.addEventListener("input", function () { cur[t.k] = clamp(Number(slider.value) || 1, t.lo, t.hi); paint(); pushVal(); });
+      reset.addEventListener("click", function () { cur[t.k] = 1; paint(); pushVal(); });
+      root.appendChild(row); paint();
+    });
+    pane.appendChild(root);
+  }
+  var hatchDone = false;
+  function registerHatch() {
+    if (hatchDone || !window.Site || !Site.hatch || typeof Site.hatch.register !== "function") return;
+    hatchDone = true;
+    Site.hatch.register({
+      id: "arcade-wizard-balance", page: "arcade", label: "Wizard — balance tunables",
+      render: function (pane, api) { try { balanceEditor(pane, api); } catch (e) {} },
+      load: function (value) { try { TUNE = sanitizeTune(value); } catch (e) { TUNE = {}; } }
+    });
+  }
+  try { if (window.Site && Site.on) Site.on("hatch:ready", registerHatch); } catch (e) {}
+  registerHatch();
   /* Public beta: the owner-only preview gate was lifted on the owner's go-ahead. The card is badged Beta. */
   A.register(DEF);
 })();

@@ -417,3 +417,19 @@
 .ak-pz--warn{--pz:#e8c15a;--pzi:"\21BB"}
 .ak-pz--stone{--pz:#9aa6b4;--pzi:"\25AC"}
 .ak-pz--exit{--pz:#c08a4e;--pzi:"\2302"}
+
+/* Maintenance Hatch — Wizard balance tunables editor (inside the site hatch panel) */
+.wzh{display:grid;gap:10px}
+.wzh-note{margin:0 0 2px;font-size:.84rem;line-height:1.45;opacity:.8}
+.wzh-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:center;padding:9px 0;border-top:1px solid var(--line-2,rgba(127,127,127,.22))}
+.wzh-row:first-of-type{border-top:0}
+.wzh-meta{display:grid;gap:1px;min-width:0}
+.wzh-meta strong{font-size:.95rem}
+.wzh-desc{font-size:.8rem;opacity:.65;line-height:1.35}
+.wzh-ctl{display:flex;align-items:center;gap:10px}
+.wzh-range{width:150px;max-width:42vw;accent-color:var(--accent,#e8c15a)}
+.wzh-val{min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums;font-size:.95rem;opacity:.7}
+.wzh-row.is-set .wzh-val{opacity:1;color:var(--accent,#e8c15a);font-weight:800}
+.wzh-reset{padding:4px 9px;border-radius:8px;border:1px solid var(--line-2,rgba(127,127,127,.3));background:transparent;color:inherit;font:inherit;font-size:.78rem;cursor:pointer}
+.wzh-reset:hover{border-color:currentColor}
+@media (max-width:560px){.wzh-row{grid-template-columns:1fr}.wzh-range{width:100%;max-width:none;flex:1}}
