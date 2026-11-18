@@ -1,4 +1,4 @@
-/* Hub: a one-time first-visit tour. Spotlights a few landmarks (the search bar, Rate-O-Pedia, the
+/* Hub: a one-time first-visit tour. Spotlights a few landmarks (the search bar, Wiki-Chip Dex, the
  * "More from Anders" cards, the radial menu, the trophy cup) with a little tooltip card and Next / Skip.
  * Shows once per browser — the key is bumped to "hub.tour2" for the ROP-first rework, so a visitor who
  * saw the old tour sees this one once. Add ?sx=tour:show to replay it. Hub only, and it waits for the async header
@@ -17,7 +17,7 @@
 
   var STEPS = [
     { sel: ".hb-search", title: "Search every game", text: "Start right here — type any game to rate it, review it, or just look it up. 336,000+ and counting.", place: "below" },
-    { sel: "a.hb-rate", title: "Rate-O-Pedia", text: "The heart of the Haven. Score games 0-5 on every platform, write reviews, build lists, and chat in the forums.", place: "above" },
+    { sel: "a.hb-rate", title: "Wiki-Chip Dex", text: "The heart of the Haven. Score games 0-5 on every platform, write reviews, build lists, and chat in the forums.", place: "above" },
     { sel: "main.avenues", title: "More from Anders", text: "A private WoW server to join and a PlayStation launcher to download — with the arcade, trophies, and Discord just below.", place: "below" },
     { sel: ".ch-menu", title: "The page wheel", text: "This opens a radial menu of every page — click any spoke to go there.", place: "below" },
     { sel: ".pl-cup", title: "Collect trophies", text: "You earn little trophies just by exploring the site. Keep an eye on this cup. Have fun!", place: "below" }

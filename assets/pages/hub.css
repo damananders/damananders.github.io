@@ -153,7 +153,7 @@
 :root:not([data-motion="reduce"]) .hb-code--no input{animation:hb-shake .3s}
 @keyframes hb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-/* ---- Rate-O-Pedia showcase banner under the avenues (links to /games/) — the site's headline feature ---- */
+/* ---- Wiki-Chip Dex showcase banner under the avenues (links to /games/) — the site's headline feature ---- */
 .hb-rate{--hr:var(--games,#36d39a);--hr2:var(--anyps,#3d8bff);position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:1fr;gap:22px;align-items:center;margin-top:26px;padding:32px 34px 30px;text-decoration:none;color:var(--sx-text);border-radius:26px;
   background:radial-gradient(130% 120% at 0% 0%,color-mix(in srgb,var(--hr) 26%,transparent),transparent 58%),radial-gradient(130% 120% at 100% 100%,color-mix(in srgb,var(--hr2) 24%,transparent),transparent 60%),rgba(13,16,21,.9);
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
@@ -183,7 +183,7 @@
 .hb-rate__foot{display:flex;margin-top:4px}
 .hb-rate__cta{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:999px;font:700 1.05rem var(--sx-display);color:#06140d;background:linear-gradient(135deg,var(--hr),color-mix(in srgb,var(--hr) 55%,var(--hr2)));box-shadow:0 14px 32px -12px var(--hr);transition:transform .2s,box-shadow .2s}
 .hb-rate:hover .hb-rate__cta{transform:translateX(3px);box-shadow:0 18px 40px -12px var(--hr)}
-/* right-side ratings visual (decorative) — uses Rate-O-Pedia's own CPU-chip mood icons (0 Awful .. 5 Must play) */
+/* right-side ratings visual (decorative) — uses Wiki-Chip Dex's own CPU-chip mood icons (0 Awful .. 5 Must play) */
 .hb-rate__aside{display:none;flex-direction:column;gap:14px;align-self:center;--chip-bg:#0d1014}
 .hb-rate__widget{display:grid;gap:11px;padding:16px 18px;border-radius:18px;background:color-mix(in srgb,var(--hr) 9%,rgba(0,0,0,.34));border:1px solid color-mix(in srgb,var(--hr) 34%,var(--sx-line));box-shadow:inset 0 0 30px -20px var(--hr)}
 .hb-rate__wlabel{font:600 .68rem var(--sx-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sx-muted)}
@@ -295,7 +295,7 @@
   .hb-more__head{flex-wrap:wrap}
 }
 
-/* ---- ROP banner in Rate-O-Pedia's palette: light green, accented with black, grey and gold ---- */
+/* ---- ROP banner in Wiki-Chip Dex's palette: light green, accented with black, grey and gold ---- */
 .hb-rate{--hr:#36d39a;--hr2:#7ef0c0;--hr-gold:#e3b54a;--hr-gold2:#f6d488;--hr-grey:#8d9691;
   background:radial-gradient(120% 110% at 0% 0%,rgba(54,211,154,.20),transparent 55%),radial-gradient(90% 90% at 100% 100%,rgba(227,181,74,.10),transparent 60%),linear-gradient(135deg,#050807 0%,#0c110f 55%,#161c19 100%);
   border-color:color-mix(in srgb,var(--hr) 62%,#000)}
@@ -312,7 +312,7 @@
 .hb-rate__widget{--chip-bg:#070a09;background:linear-gradient(160deg,#080b0a,#121815);border-color:rgba(141,150,145,.30);box-shadow:inset 0 0 30px -20px var(--hr),0 0 0 1px rgba(0,0,0,.5)}
 .hb-rate__wlabel{color:var(--hr-gold)}
 .hb-rate__wscale{color:var(--hr-grey)}
-/* each mood in Rate-O-Pedia's own rating colours (same as the chips on /games/) */
+/* each mood in Wiki-Chip Dex's own rating colours (same as the chips on /games/) */
 .hb-rate__chip--0{color:#ff5d5d}.hb-rate__chip--1{color:#ff8a4c}.hb-rate__chip--2{color:#ffb547}
 .hb-rate__chip--3{color:#f0d95c}.hb-rate__chip--4{color:#9be36f}.hb-rate__chip--5{color:#3ee08a;filter:drop-shadow(0 2px 8px rgba(62,224,138,.55))}
 .hb-rate__chip{opacity:.9}.hb-rate__chip--5{opacity:1}

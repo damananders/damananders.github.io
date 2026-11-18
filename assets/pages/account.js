@@ -6,7 +6,7 @@
  * joint account and sign in whichever way they like.
  *
  * The Supabase auth backend (email provider, SMTP, captcha, schema, the member-gate change) lives on the
- * Rate-O-Pedia / Supabase side (SQL 32). This file only calls it, and stays dark behind
+ * Wiki-Chip Dex / Supabase side (SQL 32). This file only calls it, and stays dark behind
  * Site.config.features.accounts (DEFAULT OFF — opt-in, not the usual !== false) until the owner finishes the
  * dashboard steps in DMA_ACCOUNTS_SETUP.md (email provider, confirm email, manual linking, SMTP, Turnstile,
  * redirect allow-list https://damananders.github.io/**). When the flag is off, or the backend can't be
@@ -417,7 +417,7 @@ function paintAccount(sb, a, body) {
   var c2 = acCard("Access across projects");
   c2.appendChild(svcRow({ cls: "craft", title: "AndersCraft", sub: "Sign-ups & realm status", on: true, chip: "Linked" }));
   c2.appendChild(svcRow({ cls: "anyps", title: "AnyPS", sub: "Downloads & licence", on: true, chip: "Linked" }));
-  c2.appendChild(svcRow({ cls: "games", title: "Rate-O-Pedia", sub: "Ratings, reviews & lists", on: true, chip: "Linked" }));
+  c2.appendChild(svcRow({ cls: "games", title: "Wiki-Chip Dex", sub: "Ratings, reviews & lists", on: true, chip: "Linked" }));
   body.appendChild(c2);
 
   /* security */

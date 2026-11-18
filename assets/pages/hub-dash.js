@@ -1,7 +1,7 @@
 /* Hub: "Right now" — a compact live band under the ticker. Three tiles, each shown only when it has data:
  *   • Twitch    "Live now" + uptime, while the channel is actually streaming (else hidden)
  *   • AndersCraft  players online across the realms (from the status endpoint; else hidden)
- *   • Rate-O-Pedia  this week's top-rated game (from the public week_top_rated view; hidden until the
+ *   • Wiki-Chip Dex  this week's top-rated game (from the public week_top_rated view; hidden until the
  *                   round-15 Supabase SQL is run, so nothing breaks before then)
  * Self-contained: injects its own CSS, reads the same Site.live API the hub chips use plus the public
  * Supabase views the games page uses. The whole band stays hidden until at least one tile has content.
@@ -89,7 +89,7 @@
       }, function () {});
     } catch (e) {}
 
-    /* Rate-O-Pedia — this week's top-rated game (round-15 public view; hidden until the SQL is run) */
+    /* Wiki-Chip Dex — this week's top-rated game (round-15 public view; hidden until the SQL is run) */
     try {
       if (window.fetch) fetch(SB_URL + "/rest/v1/week_top_rated?select=id,title,console,average,votes&order=average.desc,votes.desc&limit=1",
         { headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY } })

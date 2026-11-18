@@ -1,7 +1,7 @@
 /* pages/control-rewards.js — the Rewards folder of the owner's control panel (/control/). Prefix rw-.
  *
  * Plugs into control.js through Site.cpExt (no edits to that file's folders). Everything here is a front end for the
- * Rate-O-Pedia rewards SQL (28_rewards_core.sql, later rounds add automatic rules, review and profile edits). Every call sends the panel's session
+ * Wiki-Chip Dex rewards SQL (28_rewards_core.sql, later rounds add automatic rules, review and profile edits). Every call sends the panel's session
  * key and the server checks it again, so nothing here is a lock by itself.
  *
  *   Member     one member's bank: grant / remove / lock on / lock off / unlock / equip; profile cosmetics + name

@@ -1,7 +1,7 @@
 /* account-center.js — the site-wide Account settings center. Opens from the header profile chip on any page.
  *
  * One place for everything about a member's account: Profile, Look & cosmetics, Privacy, Notifications,
- * Friends & messages, and Account/security. Backed by the Rate-O-Pedia social backend (SQL 33 + 28/31/32),
+ * Friends & messages, and Account/security. Backed by the Wiki-Chip Dex social backend (SQL 33 + 28/31/32),
  * contract at /mnt/project-files/site-hub/rateopedia/SOCIAL_SETTINGS_API.md. One editor, one backend:
  * every text / toggle / pick field goes through set_my_settings(p); the heavy pieces (avatar & banner upload,
  * the showcase picker, the badge grid, the full preset galleries, DMs) deep-link to /games/profile/?edit and

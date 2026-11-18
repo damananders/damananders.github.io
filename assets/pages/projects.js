@@ -1,7 +1,7 @@
 /* pages/projects.js — upvotes + comments for the /projects/ ("What I'm working on") page.
  *
  * Verified members can upvote each project (one per project, revocable, no downvotes) and leave comments +
- * one level of replies. Backend = Rate-O-Pedia / Supabase (SQL 34, contract in PROJECT_VOTES_API.md):
+ * one level of replies. Backend = Wiki-Chip Dex / Supabase (SQL 34, contract in PROJECT_VOTES_API.md):
  * project_board(), project_comments_of(key), project_vote(key,on), project_comment(key,body,parent?),
  * project_comment_edit(id,body), project_comment_delete(id).
  *

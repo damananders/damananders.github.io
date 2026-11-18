@@ -859,7 +859,7 @@
     load("sync", 7, "sync");
     /* whole-site Maintenance Hatch — defines Site.hatch everywhere; edit UI is admin-gated inside.
        v2: hatch.js now drains the early-register queue set up at the top of this file. */
-    load("hatch", 2, "hatch");
+    load("hatch", 3, "hatch");
     /* account settings center — opt-in, loaded only when native accounts are switched on */
     if (f.accounts === true) load("account-center", 5, "accounts");
   }, "add-on loader");
