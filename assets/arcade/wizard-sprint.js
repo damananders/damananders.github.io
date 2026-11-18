@@ -1787,16 +1787,60 @@
     var body = cur ? el("div", { class: "wz-worn" }, el("span", { text: "Wearing now" }), el("b", { class: "wz-rt" + cur.r, text: cur.n }), (function () { var bx = el("span", { class: "wz-chips" }); itemChips(cur).forEach(function (c) { bx.appendChild(el("i", { class: "wz-chip " + (c[1] ? "is-" + c[1] : ""), text: c[0] })); }); return bx; })()) : null;
     MN(g, { cls: "is-side is-wide wz-bag", kicker: "Inside the bag", title: slotName(k), sub: cur ? "" : "Nothing worn here yet.", body: body, items: items, focus: focus, back: leave });
   }
-  function bag(g, focus, back) {
-    UI.scene = "bag"; UI.menu = "bag";
+  /* Obliviate: destroy an Impressive-or-better item for Whisper Orbs, with a scaling shot at rarer currency.
+     Payout scales with item level (×(1 + il/100)); the chances come from the proposed-odds table. */
+  function canObliviate(it) { return !it.st && it.r >= 2; }
+  function oblRoll(it) {
+    var orbBase = { 2: [1, 2], 3: [2, 4], 4: [4, 7], 5: [8, 12] }[it.r] || [1, 1];
+    var scale = 1 + it.il / 100;
+    var orbs = Math.max(1, Math.round(ri(orbBase[0], orbBase[1]) * scale));
+    var gChance = { 2: 0.08, 3: 0.20, 4: 0.40, 5: 1 }[it.r] || 0, gAmt = it.r >= 5 ? ri(2, 3) : it.r >= 4 ? ri(1, 2) : 1;
+    var sChance = { 2: 0, 3: 0.03, 4: 0.10, 5: 0.25 }[it.r] || 0, sAmt = it.r >= 5 ? ri(1, 2) : 1;
+    return { orbs: orbs, grim: Math.random() < gChance ? gAmt : 0, syl: Math.random() < sChance ? sAmt : 0 };
+  }
+  function obliviate(g, picks, done) {
+    var n = picks.length;
+    MN(g, { cls: "is-side wz-narrow", kicker: "Obliviate  ·  Impressive+", title: "Obliviate " + n + (n > 1 ? " Items" : " Item"),
+      sub: "Destroy " + (n > 1 ? "them" : "it") + " forever for Whisper Orbs, with a chance at Grimoires and Shattered Syllables. This can't be undone.",
+      items: [
+        { label: "Obliviate " + (n > 1 ? "Them" : "It"), ico: "spark", cls: "is-primary", act: function () {
+            var to = 0, tg = 0, ts = 0;
+            picks.forEach(function (it) { var ix = S.bag.indexOf(it); if (ix < 0) return; S.bag.splice(ix, 1); var r = oblRoll(it); to += r.orbs; tg += r.grim; ts += r.syl; cnt("obliv", 1); });
+            S.orbs += to; S.grim += tg; S.syl += ts; save(); sfx("lootBig");
+            var parts = ["+" + to + " Whisper Orb" + (to > 1 ? "s" : "")];
+            if (tg) parts.push("+" + tg + " Grimoire" + (tg > 1 ? "s" : ""));
+            if (ts) parts.push("+" + ts + " Shattered Syllable" + (ts > 1 ? "s" : ""));
+            g.toast("Obliviated: " + parts.join(", "), "gold"); done();
+          } },
+        { label: "Keep " + (n > 1 ? "Them" : "It"), act: function () { done(); } }
+      ], focus: 1, back: function () { done(); } });
+  }
+  function bag(g, focus, back, sel) {
+    UI.scene = "bag"; UI.menu = "bag"; sel = sel || {};
     function leave() { S.bag.forEach(function (q) { delete q.nw; }); save(); back(); }
-    var list = S.bag.slice().sort(function (x, y) { return (y.nw || 0) - (x.nw || 0); });
-    var items = list.map(function (it, i) { return { label: it.n, ico: slotIco(it.s), chips: itemChips(it, [["Sells ◆ " + sellPrice(it), "rem"]]), isNew: !!it.nw, cls: "wz-r" + it.r,
-      act: function () { MN(g, { kicker: "Sell", title: it.n, sub: "Sell it for " + sellPrice(it) + " Remnants? This can't be undone.", items: [
-        { label: "Sell", ico: "coin", cls: "is-primary", act: function () { S.bag.splice(S.bag.indexOf(it), 1); S.rem += sellPrice(it); save(); sfx("buy"); bag(g, Math.min(i, S.bag.length), back); } },
-        { label: "Keep It", act: function () { bag(g, i, back); } }], focus: 1, back: function () { bag(g, i, back); } }); } }; });
-    items.push({ label: "Back", cls: "is-primary", act: leave });
-    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Rummage sale  ·  " + S.bag.length + " / " + S.bagCap + " carried", title: "The Bag", sub: S.bag.length ? "Select an item to sell it for Remnants. Your wallet is up top. Wear things from the slots." : "Empty. Enemies drop Wizard Drip now and then.", items: items, focus: focus, back: leave });
+    function reopen(f) { bag(g, f, back, sel); }
+    var ids = {}; S.bag.forEach(function (q) { ids[q.id] = 1; });
+    Object.keys(sel).forEach(function (id) { if (!ids[id]) delete sel[id]; });   /* forget anything no longer carried */
+    var list = S.bag.slice().sort(function (x, y) { return (y.nw || 0) - (x.nw || 0) || y.r - x.r || y.il - x.il; });
+    var picked = S.bag.filter(function (q) { return sel[q.id]; }), sellSum = picked.reduce(function (a, it) { return a + sellPrice(it); }, 0);
+    var oblPicked = picked.filter(canObliviate);
+    var items = list.map(function (it) { var i = list.indexOf(it), on = !!sel[it.id], ob = canObliviate(it);
+      return { label: (on ? "✓  " : "") + it.n, ico: slotIco(it.s), isNew: !!it.nw, cls: "wz-r" + it.r + (on ? " is-picked" : ""),
+        chips: itemChips(it, [["◆ " + sellPrice(it), "rem"]].concat(ob ? [["Obliviate", "r" + it.r]] : [])),
+        act: function () { if (sel[it.id]) delete sel[it.id]; else sel[it.id] = 1; sfx("rem"); reopen(i); } }; });
+    /* bottom action row keeps item focus stable (items always start at index 0) */
+    if (picked.length) {
+      items.push({ label: "Sell Selected (" + picked.length + ")", ico: "coin", cls: "is-primary", sub: "Get ◆ " + fmt(sellSum) + " Remnants  ·  can't be undone",
+        act: function () { var nn = picked.length; picked.forEach(function (it) { var ix = S.bag.indexOf(it); if (ix >= 0) S.bag.splice(ix, 1); S.rem += sellPrice(it); }); clearSel(); save(); sfx("buy"); g.toast("Sold " + nn + (nn > 1 ? " items" : " item") + " for ◆ " + fmt(sellSum), "gold"); reopen(0); } });
+      if (oblPicked.length) items.push({ label: "Obliviate Selected (" + oblPicked.length + ")", ico: "spark", cls: "is-gold", sub: "Impressive+ only  ·  destroy for Whisper Orbs & rarer currency",
+        act: function () { obliviate(g, oblPicked, function () { clearSel(); reopen(0); }); } });
+      items.push({ label: "Clear Selection", act: function () { clearSel(); reopen(0); } });
+    }
+    function clearSel() { Object.keys(sel).forEach(function (k) { delete sel[k]; }); }
+    items.push({ label: "Back", cls: picked.length ? "" : "is-primary", act: leave });
+    MN(g, { cls: "is-side is-wide wz-bag", kicker: "Rummage Through The Bag  ·  " + S.bag.length + " / " + S.bagCap + " carried", title: "The Bag",
+      sub: S.bag.length ? "Tap items to select, then Sell or Obliviate them together below. Impressive (blue) and up can be Obliviated for currency. Wear things from the equipment slots." : "Empty. Enemies drop Wizard Drip now and then.",
+      items: items, focus: focus, back: leave });
   }
   function drawBagScene(g, ctx) {                        /* looking down into one enormous bag */
     var t = Hb.t, i, x, y, an;
