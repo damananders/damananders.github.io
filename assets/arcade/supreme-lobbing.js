@@ -836,6 +836,30 @@
      The whole world is drawn through this transform; the HUD and full-screen flashes stay in screen space. */
   var CAM_AIM_Z = 1.72, CAM_FLY_Z = 1.5;
   function camMode() { return sget("camera", "follow"); }
+  /* ---- controls: rebindable keys + throw feel ---- */
+  var KEYMAP = [
+    { act: "aimUp",    name: "Aim higher",    def: "ArrowUp" },
+    { act: "aimDown",  name: "Aim lower",     def: "ArrowDown" },
+    { act: "prevCrew", name: "Previous crew", def: "KeyQ" },
+    { act: "nextCrew", name: "Next crew",     def: "KeyE" },
+    { act: "prevAmmo", name: "Previous ammo", def: "KeyZ" },
+    { act: "nextAmmo", name: "Next ammo",     def: "KeyX" },
+    { act: "throw",    name: "Charge / throw", def: "Space" }
+  ];
+  var capturingKey = null;                                        /* the action currently waiting for a key press, or null */
+  function keyFor(act) { var b = (sget("keys", {}) || {})[act]; if (b) return b; for (var i = 0; i < KEYMAP.length; i++) if (KEYMAP[i].act === act) return KEYMAP[i].def; return ""; }
+  function setKeyBind(act, code) { var b = sget("keys", {}) || {}; b[act] = code; sset("keys", b); }
+  function keyLabel(code) {
+    if (!code) return "—";
+    var m = { ArrowUp: "↑", ArrowDown: "↓", ArrowLeft: "←", ArrowRight: "→", Space: "Space", Enter: "Enter", Tab: "Tab", Escape: "Esc", ShiftLeft: "L-Shift", ShiftRight: "R-Shift", ControlLeft: "L-Ctrl", ControlRight: "R-Ctrl", AltLeft: "L-Alt", AltRight: "R-Alt", Backquote: "`", Minus: "-", Equal: "=", Comma: ",", Period: ".", Slash: "/", Semicolon: ";", Quote: "'", BracketLeft: "[", BracketRight: "]", Backslash: "\\" };
+    if (m[code]) return m[code];
+    if (/^Key[A-Z]$/.test(code)) return code.slice(3);
+    if (/^Digit[0-9]$/.test(code)) return code.slice(5);
+    if (/^Numpad[0-9]$/.test(code)) return "Num" + code.slice(6);
+    return code;
+  }
+  function throwStyle() { return sget("throwStyle", "meter"); }    /* meter: bounces up/down · hold: rises and holds at full */
+  function chargeSpeed() { return ({ slow: 0.5, normal: 0.75, fast: 1.1 })[sget("chargeSpd", "normal")] || 0.75; }
   function worldCenterOf(r) { return { x: r.x0 + r.n * PW / 2, y: deckY(r) - 46 }; }
   function clampCam(c) {
     var vw = W / c.z / 2, vh = H / c.z / 2;
@@ -887,25 +911,27 @@
   }
   function aimInput(g, dt) {
     var p = g.pad, s = B.turnSide, r = side(s), list = throwers(r);
-    var up = g.key("ArrowUp") || g.key("KeyW"), dn = g.key("ArrowDown") || g.key("KeyS");
-    var lf = g.key("ArrowLeft") || g.key("KeyA"), rt = g.key("ArrowRight") || g.key("KeyD");
-    var away = s < 0 ? lf : rt, toward = s < 0 ? rt : lf;               /* arrows: up / "back" raise the arc */
+    /* aim: bound keys (default arrows), plus WASD and the left/right "arc" keys as permanent convenience */
+    var lf = g.key("ArrowLeft") || g.key("KeyA"), rt2 = g.key("ArrowRight") || g.key("KeyD");
+    var away = s < 0 ? lf : rt2, toward = s < 0 ? rt2 : lf;
+    var up = g.key(keyFor("aimUp")) || g.key("KeyW"), dn = g.key(keyFor("aimDown")) || g.key("KeyS");
     if (up || away) B.aim.ang = Math.min(1.45, B.aim.ang + dt * 0.9);
     if (dn || toward) B.aim.ang = Math.max(0.05, B.aim.ang - dt * 0.9);
     if (Math.hypot(p.lx, p.ly) > 0.35) { var ax = p.lx * (s < 0 ? 1 : -1), ay = -p.ly; if (ax > -0.2) B.aim.ang = Math.max(0.05, Math.min(1.45, Math.atan2(Math.max(0, ay), Math.max(0.05, ax)))); }
     /* switch thrower / ammo */
-    if (g.hit("KeyQ") || p.hit.lb) { B.sel = (B.sel - 1 + list.length) % list.length; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); }
-    if (g.hit("KeyE") || p.hit.rb) { B.sel = (B.sel + 1) % list.length; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); }
+    if (g.hit(keyFor("prevCrew")) || p.hit.lb) { B.sel = (B.sel - 1 + list.length) % list.length; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); }
+    if (g.hit(keyFor("nextCrew")) || p.hit.rb) { B.sel = (B.sel + 1) % list.length; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); }
     var am = availAmmo(r, thrower()), ai = Math.max(0, am.map(function (a) { return a.k; }).indexOf(B.ammoSel));
-    if (g.hit("KeyZ") || p.hit.up) { ai = (ai - 1 + am.length) % am.length; B.ammoSel = am[ai].k; Site.sfx("hover"); }
-    if (g.hit("KeyX") || g.hit("Tab") || p.hit.down || p.hit.y) { ai = (ai + 1) % am.length; B.ammoSel = am[ai].k; Site.sfx("hover"); }
+    if (g.hit(keyFor("prevAmmo")) || p.hit.up) { ai = (ai - 1 + am.length) % am.length; B.ammoSel = am[ai].k; Site.sfx("hover"); }
+    if (g.hit(keyFor("nextAmmo")) || g.hit("Tab") || p.hit.down || p.hit.y) { ai = (ai + 1) % am.length; B.ammoSel = am[ai].k; Site.sfx("hover"); }
     for (var n = 1; n <= 9; n++) if (g.hit("Digit" + n) && am[n - 1]) { B.ammoSel = am[n - 1].k; Site.sfx("hover"); }
-    /* charge: Space / RT / A held */
-    var hold = g.key("Space") || p.rt > 0.3 || p.btn.a;
+    /* charge: bound throw key (default Space) / RT / A held */
+    var hold = g.key(keyFor("throw")) || p.rt > 0.3 || p.btn.a;
     if (hold) {
       if (!B.aim.charging) { B.aim.charging = true; B.aim.pow = 0.05; B.aim.chargeDir = 1; }
-      B.aim.pow += B.aim.chargeDir * dt * 0.75;
-      if (B.aim.pow >= 1) { B.aim.pow = 1; B.aim.chargeDir = -1; } if (B.aim.pow <= 0.05) { B.aim.pow = 0.05; B.aim.chargeDir = 1; }
+      B.aim.pow += B.aim.chargeDir * dt * chargeSpeed();
+      if (B.aim.pow >= 1) { B.aim.pow = 1; if (throwStyle() === "meter") B.aim.chargeDir = -1; }    /* "hold" style rests at full instead of bouncing back */
+      if (B.aim.pow <= 0.05) { B.aim.pow = 0.05; B.aim.chargeDir = 1; }
     } else if (B.aim.charging) throwNow(g);
   }
 
@@ -1482,6 +1508,10 @@
     var items = AI_LEVELS.map(function (l) { return { label: "Enemy aim: " + l.name + (aiLevel().key === l.key ? " ✓" : ""), act: function () { sset("ai", l.key); settingsMenu(g); } }; });
     [["auto", "Aim guide: Auto"], ["always", "Aim guide: Always"], ["never", "Aim guide: Never"]].forEach(function (o) { items.push({ label: o[1] + (guideMode() === o[0] ? " ✓" : ""), sub: o[0] === "auto" ? "On for Sloppy and Fair, off for Sharp and Scary" : "", act: function () { sset("guide", o[0]); settingsMenu(g); } }); });
     items.push({ label: "Camera: " + (camMode() === "follow" ? "Follow ✓" : "Wide"), sub: camMode() === "follow" ? "Zooms in on your raft and follows the shot" : "Shows the whole field at once", act: function () { sset("camera", camMode() === "follow" ? "wide" : "follow"); settingsMenu(g); } });
+    items.push({ label: "Throw: " + (throwStyle() === "meter" ? "Power meter" : "Hold & release"), sub: throwStyle() === "meter" ? "Power bounces up and down — release to lock it in" : "Power rises and holds at full — release any time", act: function () { sset("throwStyle", throwStyle() === "meter" ? "hold" : "meter"); settingsMenu(g, items.length - 1); } });
+    var spds = ["slow", "normal", "fast"], cs = sget("chargeSpd", "normal");
+    items.push({ label: "Charge speed: " + cs.charAt(0).toUpperCase() + cs.slice(1), sub: "How fast the throw power fills", act: function () { sset("chargeSpd", spds[(spds.indexOf(cs) + 1) % spds.length]); settingsMenu(g, items.length - 1); } });
+    items.push({ label: "🎮 Controls", sub: "Rebind the keys", act: function () { controlsMenu(g); } });
     items.push({ label: "Game sound: " + (sndOn() ? "On ✓" : "Off"), sub: "Whooshes and impacts", act: function () { sset("sound", !sndOn()); if (sndOn()) sound("metal"); settingsMenu(g); } });
     var vols = [0.3, 0.5, 0.7, 1], vi = vols.indexOf(sndVol());
     items.push({ label: "Volume: " + Math.round(sndVol() * 100) + "%", sub: "Press to change", disabled: !sndOn(), act: function () { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, items.length - 2); } });
@@ -1520,6 +1550,26 @@
     g.menu({ kicker: "Roster", title: "🧑‍🤝‍🧑 Your Crew", sub: "Name your crew — it sticks from battle to battle. Bigger rafts bring more of them aboard.",
       body: body, items: [{ label: "Reset to default names", act: function () { sset("crewNames", {}); crewMenu(g); } }, { label: "Back", act: function () { titleMenu(g); } }],
       cls: "is-wide sl-crew-panel", back: function () { titleMenu(g); } });
+  }
+  function controlsMenu(g, focus) {
+    var items = KEYMAP.map(function (km, i) {
+      var cap = capturingKey === km.act;
+      return { label: km.name + ": " + (cap ? "Press a key…" : keyLabel(keyFor(km.act))), cls: cap ? "is-hot" : "", sub: cap ? "Press any key · Esc to cancel" : "",
+        act: function () {
+          if (capturingKey) return;
+          capturingKey = km.act; controlsMenu(g, i);
+          var handler = function (e) {
+            e.preventDefault(); e.stopImmediatePropagation();
+            window.removeEventListener("keydown", handler, true);
+            if (e.code !== "Escape") setKeyBind(km.act, e.code);
+            capturingKey = null; controlsMenu(g, i); Site.sfx("hover");
+          };
+          window.addEventListener("keydown", handler, true);
+        } };
+    });
+    items.push({ label: "Reset to defaults", act: function () { capturingKey = null; sset("keys", {}); controlsMenu(g); } });
+    items.push({ label: "Back", act: function () { capturingKey = null; settingsMenu(g); } });
+    g.menu({ kicker: "Controls", title: "🎮 Controls", sub: "Rebind your keys. Aiming also works on WASD and the D-pad; number keys 1–9 jump straight to an ammo.", items: items, grid: true, cls: "is-wide", back: function () { capturingKey = null; settingsMenu(g); }, focus: focus || 0 });
   }
   function howMenu(g, back) {
     var ul = el("ul", { class: "ak-howto" },
