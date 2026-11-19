@@ -581,3 +581,39 @@ body.ac-has-xp{padding-bottom:14px}
   .ac-dlg-status{flex-direction:column;align-items:flex-start}
 }
 .ac-roll{align-items:center}
+
+/* ============================================================================
+   UNDER MAINTENANCE (v6): caution tape + flashing beacons while the realms are down.
+   Reduced motion keeps the tape and lights, without the flashing or the crawl.
+   ============================================================================ */
+.ac-maint{position:relative;margin:22px 0 4px;border-radius:6px;overflow:hidden;border:2px solid #000;
+  background:linear-gradient(180deg,#1b1408,#0b0805);box-shadow:0 0 0 1px #6b5a1a,0 18px 40px -18px #000,0 0 40px -10px rgba(255,200,0,.35)}
+.ac-maint[hidden]{display:none}
+.ac-maint-tape{height:30px;overflow:hidden;white-space:nowrap;display:flex;align-items:center;
+  background:repeating-linear-gradient(-45deg,#ffd100 0 18px,#111 18px 36px);border-block:2px solid #000}
+.ac-maint-tape span{display:inline-block;flex:none;padding:2px 0 2px 14px;margin:0;border-inline:0 !important;font:900 .8rem/1.3 var(--display);letter-spacing:.22em;text-transform:uppercase;
+  color:#111;background:#ffd100;border:2px solid #111;white-space:nowrap}
+.ac-maint-tape--b{background:repeating-linear-gradient(45deg,#ffd100 0 18px,#111 18px 36px)}
+.ac-maint-body{display:flex;align-items:center;justify-content:center;gap:14px;padding:16px 18px;text-align:center}
+.ac-maint-text{flex:0 1 auto;min-width:0}
+.ac-maint-h{display:block;font-family:var(--display);font-weight:900;font-size:clamp(1.5rem,4.2vw,2.4rem);line-height:1.05;letter-spacing:.06em;text-transform:uppercase;
+  color:#ffd100;text-shadow:0 2px 0 #000,0 0 18px rgba(255,209,0,.45)}
+.ac-maint-sub{display:block;margin-top:6px;color:var(--text);font-size:1.02rem}
+.ac-maint-more{display:block;margin-top:2px;color:var(--muted);font-size:.95rem}
+.ac-maint-more a{color:var(--wow-gold,#ffd100)}
+.ac-maint-light{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #000;box-shadow:inset 0 -3px 5px rgba(0,0,0,.45)}
+.ac-maint-light--red{background:radial-gradient(circle at 35% 30%,#ffb3b3,#e3001b 55%,#5c0008);box-shadow:inset 0 -3px 5px rgba(0,0,0,.45),0 0 18px 4px rgba(255,20,40,.75)}
+.ac-maint-light--amber{background:radial-gradient(circle at 35% 30%,#fff3a8,#ffc400 55%,#6b4a00);box-shadow:inset 0 -3px 5px rgba(0,0,0,.45),0 0 18px 4px rgba(255,200,0,.75)}
+:root:not([data-motion="reduce"]) .ac-maint-light--red{animation:ac-flash 1s steps(1,end) infinite}
+:root:not([data-motion="reduce"]) .ac-maint-light--amber{animation:ac-flash 1s steps(1,end) .5s infinite}
+@keyframes ac-flash{0%{opacity:1;filter:brightness(1.25)}50%{opacity:.18;filter:brightness(.6);box-shadow:inset 0 -3px 5px rgba(0,0,0,.45)}}
+:root:not([data-motion="reduce"]) .ac-maint-tape span{animation:ac-tape 22s linear infinite}
+:root:not([data-motion="reduce"]) .ac-maint-tape--b span{animation-direction:reverse}
+@keyframes ac-tape{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+:root:not([data-motion="reduce"]) .ac-maint{animation:ac-maint-glow 2s ease-in-out infinite}
+@keyframes ac-maint-glow{0%,100%{box-shadow:0 0 0 1px #6b5a1a,0 18px 40px -18px #000,0 0 30px -10px rgba(255,200,0,.3)}50%{box-shadow:0 0 0 1px #6b5a1a,0 18px 40px -18px #000,0 0 44px -6px rgba(255,30,40,.45)}}
+@media (max-width:600px){
+  .ac-maint-body{gap:8px;padding:14px 10px}
+  .ac-maint-light{width:16px;height:16px}
+  .ac-maint-body>.ac-maint-light:nth-child(2),.ac-maint-body>.ac-maint-light:nth-last-child(2){display:none}
+}

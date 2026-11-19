@@ -94,7 +94,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/anderscraft.css?v=5" />
+<link rel="stylesheet" href="/assets/pages/anderscraft.css?v=6" />
 <!-- /site:head -->
 </head>
 <body>
@@ -124,6 +124,23 @@
       <a class="social twitch" href="https://www.twitch.tv/damananders_ttv" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>Twitch</a>
     </div>
   </nav>
+
+  <!-- Under Maintenance tape: shown by pages/anderscraft.js when the status check fails twice or every realm reports offline -->
+  <section class="ac-maint" id="ac-maint" role="status" aria-live="polite" hidden>
+    <div class="ac-maint-tape" aria-hidden="true"><span>Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; </span><span>Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; </span></div>
+    <div class="ac-maint-body">
+      <span class="ac-maint-light ac-maint-light--red" aria-hidden="true"></span>
+      <span class="ac-maint-light ac-maint-light--amber" aria-hidden="true"></span>
+      <div class="ac-maint-text">
+        <b class="ac-maint-h">Under Maintenance</b>
+        <span class="ac-maint-sub" id="ac-maint-sub">The realms are down right now. The gnomes are on it, which is either very good or very bad news.</span>
+        <span class="ac-maint-more">Check <a class="ac-discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener">Discord</a> for updates. This page checks again on its own.</span>
+      </div>
+      <span class="ac-maint-light ac-maint-light--amber" aria-hidden="true"></span>
+      <span class="ac-maint-light ac-maint-light--red" aria-hidden="true"></span>
+    </div>
+    <div class="ac-maint-tape ac-maint-tape--b" aria-hidden="true"><span>Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; </span><span>Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; Caution &#9670; Do not cross &#9670; </span></div>
+  </section>
 
   <div class="grid">
     <section class="ac-hero">
@@ -527,7 +544,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/anderscraft.js?v=3"></script>
+<script defer src="/assets/pages/anderscraft.js?v=4"></script>
 <!-- /site:scripts -->
 </body>
 </html>
