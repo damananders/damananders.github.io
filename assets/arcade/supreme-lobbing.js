@@ -60,8 +60,14 @@
     { key: "satchel",dep: "arsenal", name: "Ammo Satchel",      max: 3, cost: [100, 220, 340],     desc: function (l) { return (2 + l) + " of each ammo per battle"; } },
     { key: "heavy",  dep: "arsenal", name: "Heavy Rocks",       max: 4, cost: [50, 110, 190, 280], desc: function (l) { return "Rocks hit for " + (30 + l * 6); } },
     { key: "blast",  dep: "arsenal", name: "Bigger Blasts",     max: 2, cost: [120, 240],          desc: function (l) { return "Bomb and fire radius " + (100 + l * 18) + "%"; } },
-    { key: "chain",  dep: "arsenal", name: "Chain Shot",        max: 1, cost: [240],               desc: function (l) { return l ? "Splitters burst into 5 shards" : "Splitters burst into 3 shards"; } },
+    { key: "chain",  dep: "arsenal", name: "Chain Shot",        max: 1, cost: [240],               desc: function (l) { return l ? "Splitters burst into 5 shards" : "Splitters burst into 3 shards"; }, needAmmo: "splitter" },
     { key: "wind2",  dep: "arsenal", name: "Second Wind",       max: 1, cost: [260],               desc: function (l) { return l ? "Each special can be used twice" : "Use every special twice per battle"; } },
+    { key: "skip",   dep: "arsenal", name: "Skipping Stones",   max: 2, cost: [90, 180],           desc: function (l) { return l >= 2 ? "Bouncers skip +1, keep speed, +4 damage per skip" : l ? "Bouncers skip one more time and keep their speed" : "Bouncers skip further and hit harder"; }, needAmmo: "bouncer" },
+    { key: "sharp",  dep: "arsenal", name: "Sharp Shards",      max: 1, cost: [170],               desc: function (l) { return l ? "Splitter shards hit +2 and chip walls" : "Sharpen the splitter shards"; }, needAmmo: "splitter" },
+    { key: "shrapnel",dep: "arsenal", name: "Shrapnel Casing",  max: 1, cost: [180],               desc: function (l) { return l ? "Bombs tear +2 through walls and planks" : "Pack the bomb with shrapnel"; }, needAmmo: "bomb" },
+    { key: "slowburn",dep: "arsenal", name: "Slow Burn",        max: 2, cost: [100, 200],          desc: function (l) { return l >= 2 ? "Fire burns hotter (12/turn) and for 5 turns" : l ? "Fire burns 5 turns instead of 3" : "Make the fire cling and burn longer"; }, needAmmo: "fire" },
+    { key: "guided", dep: "arsenal", name: "Guided Gull",       max: 2, cost: [130, 260],          desc: function (l) { return l >= 2 ? "Dives at the weakest foe, +10, hard to dodge" : l ? "Seagull homes the weakest foe and hits +10" : "Train the gull to pick its target"; }, needAmmo: "gull" },
+    { key: "medic",  dep: "arsenal", name: "Field Medic",       max: 2, cost: [90, 190],           desc: function (l) { return l >= 2 ? "Repair kits heal +50% and rebuild 3 planks" : l ? "Repair kits heal +50%" : "Better field medicine"; }, needAmmo: "repair" },
     { key: "cannon", dep: "cannon",  name: "Deck Cannon",       max: 1, cost: [250],               desc: function (l) { return l ? "Mounted" : "A cannon that fires heavy balls"; } },
     { key: "bore",   dep: "cannon",  name: "Cannon Bore",       max: 3, cost: [140, 260, 380],     desc: function (l) { return "Cannonballs hit for " + (45 + l * 12); }, need: "cannon" },
     { key: "plate",  dep: "cannon",  name: "Cannon Plating",    max: 2, cost: [100, 200],          desc: function (l) { return "Cannon takes " + (4 + l * 2) + " hits"; }, need: "cannon" }
@@ -358,7 +364,7 @@
     var bhp = 3 + upg("armor"), chp = 100 + upg("tough") * 20, size = upg("size"), d = deco();
     var myAmmo = isVs ? AMMO_ORDER.slice(1) : AMMO_ORDER.slice(1).filter(unlocked);
     mine = { name: isVs ? "Player 1" : "Your Raft", human: true, crew: isVs ? 3 : 2 + size, planks: isVs ? 7 : 6 + size, walls: isVs ? 1 : 1 + upg("walls"), tower: isVs ? 0 : upg("tower"),
-      perks: isVs ? {} : { pump: upg("pump"), aid: upg("aid"), vests: upg("vests"), spy: upg("spy"), heavy: upg("heavy"), blast: upg("blast"), wind2: upg("wind2"), bore: upg("bore"), plate: upg("plate"), rbow: upg("rbow"), quarter: upg("quarter"), chain: upg("chain") }, hp: isVs ? 120 : chp, ammo: myAmmo, ammoN: isVs ? 2 : 2 + upg("satchel"),
+      perks: isVs ? {} : { pump: upg("pump"), aid: upg("aid"), vests: upg("vests"), spy: upg("spy"), heavy: upg("heavy"), blast: upg("blast"), wind2: upg("wind2"), bore: upg("bore"), plate: upg("plate"), rbow: upg("rbow"), quarter: upg("quarter"), chain: upg("chain"), skip: upg("skip"), sharp: upg("sharp"), shrapnel: upg("shrapnel"), slowburn: upg("slowburn"), guided: upg("guided"), medic: upg("medic") }, hp: isVs ? 120 : chp, ammo: myAmmo, ammoN: isVs ? 2 : 2 + upg("satchel"),
       bhp: isVs ? 4 : bhp, cannon: !isVs && upg("cannon") > 0, sail: DECOR.sail[d.sail][0], wood: DECOR.wood[d.wood][0], flag: DECOR.flag[d.flag][0] };
     if (kind === "campaign") {
       var bt = BATTLES[idx]; region = REGIONS[bt.r];
@@ -627,26 +633,27 @@
   function explode(g, p, x, y) {
     var a = AMMO[p.k];
     if (p.k === "repair") {
-      var r = side(p.from), healed = 0;
-      r.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(r, m); if (Math.hypot(c.x - x, c.y - y) < a.rad) { m.hp = Math.min(m.max, m.hp + a.heal); healed++; m.burn = 0; } });
-      var fixed = 0; r.deck.forEach(function (b) { if (!b.alive && fixed < 2) { b.alive = true; b.hp = b.max; fixed++; r.crew.forEach(function (m) { if (m.col === b.i) m.swim = false; }); } });
+      var r = side(p.from), healed = 0, medic = (r.perks || {}).medic || 0, heal = Math.round(a.heal * (medic ? 1.5 : 1)), maxFix = medic >= 2 ? 3 : 2;
+      r.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(r, m); if (Math.hypot(c.x - x, c.y - y) < a.rad) { m.hp = Math.min(m.max, m.hp + heal); healed++; m.burn = 0; } });
+      var fixed = 0; r.deck.forEach(function (b) { if (!b.alive && fixed < maxFix) { b.alive = true; b.hp = b.max; fixed++; r.crew.forEach(function (m) { if (m.col === b.i) m.swim = false; }); } });
       r.walls.forEach(function (w) { if (w.alive) w.burn = 0; }); r.deck.forEach(function (b) { b.burn = 0; });
       ring(x, y, a.rad, "#68d391"); sound("chime"); g.toast("Repaired " + fixed + " plank" + (fixed === 1 ? "" : "s") + ", healed " + healed, "good");
       return;
     }
-    var src = side(p.from), mul = src.mul || 1, rad = a.rad * (1 + ((src.perks || {}).blast || 0) * 0.18);
+    var src = side(p.from), mul = src.mul || 1, sperk = src.perks || {}, rad = a.rad * (1 + (sperk.blast || 0) * 0.18);
+    var shrap = (p.k === "bomb" && sperk.shrapnel) ? 2 : 0, burnDur = a.burn ? a.burn + (sperk.slowburn ? 2 : 0) : 0, burnTick = sperk.slowburn >= 2 ? 12 : 8;
     ring(x, y, rad, p.k === "bomb" ? "#ffb26b" : p.k === "fire" ? "#ff7a2f" : "rgba(255,255,255,.7)");
     sound(p.k === "bomb" ? "blast" : p.k === "fire" ? "fire" : "stone");
     [B.mine, B.foe].forEach(function (r) {
       r.crew.forEach(function (m) {
         if (!m.alive) return; var sc = m.scale || 1, c = crewPos(r, m), d = Math.hypot(c.x - x, c.y - 12 * sc - y);
-        if (d < rad + 14 * sc) { dmgCrew(g, r, m, a.crew * mul * (d < 26 * sc ? 1 : 0.55)); if (a.burn && !m.swim) m.burn = a.burn; }   /* a swimmer can't catch fire */
+        if (d < rad + 14 * sc) { dmgCrew(g, r, m, a.crew * mul * (d < 26 * sc ? 1 : 0.55)); if (a.burn && !m.swim) { m.burn = burnDur; m.burnDmg = burnTick; } }   /* a swimmer can't catch fire */
       });
       r.walls.concat(r.deck).forEach(function (b) {
         if (!b.alive) return; var isW = b.col !== undefined, rc = blockRect(r, b, isW), d = Math.hypot(rc.x + rc.w / 2 - x, rc.y + rc.h / 2 - y);
-        if (d < rad * 0.75) { dmgBlock(r, b, a.block, rc); if (a.burn && b.alive) b.burn = a.burn; }
+        if (d < rad * 0.75) { dmgBlock(r, b, a.block + shrap, rc); if (a.burn && b.alive) b.burn = burnDur; }
       });
-      if (r.cannon && r.cannon.alive) { var d2 = Math.hypot(colX(r, r.cannon.col) - x, deckY(r) - 14 - y); if (d2 < rad) { r.cannon.hp -= a.block; if (r.cannon.hp <= 0) { r.cannon.alive = false; g.toast((r.human ? "Your" : "Their") + " cannon is wrecked", r.human ? "bad" : "good"); } } }
+      if (r.cannon && r.cannon.alive) { var d2 = Math.hypot(colX(r, r.cannon.col) - x, deckY(r) - 14 - y); if (d2 < rad) { r.cannon.hp -= a.block + shrap; if (r.cannon.hp <= 0) { r.cannon.alive = false; g.toast((r.human ? "Your" : "Their") + " cannon is wrecked", r.human ? "bad" : "good"); } } }
     });
   }
   function ring(x, y, rad, col) { B.fx.push({ ring: true, x: x, y: y, r: 6, max: rad, life: 0.45, col: col }); for (var i = 0; i < 10; i++) { var an = Math.random() * 6.28, v = 80 + Math.random() * 200; B.fx.push({ x: x, y: y, vx: Math.cos(an) * v, vy: Math.sin(an) * v - 80, life: 0.6, col: col }); } }
@@ -659,9 +666,10 @@
       for (var s = 0; s < n && p.alive; s++) {
         var h = dt / n; p.age += h;
         if (p.homing && p.age > 0.45) {
-          var foe = side(-p.from), best = null, bd = 1e9;
-          foe.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(foe, m), dd = Math.hypot(c.x - p.x, c.y - p.y); if (dd < bd) { bd = dd; best = c; } });
-          if (best) { var want = Math.atan2(best.y - 14 - p.y, best.x - p.x), cur = Math.atan2(p.vy, p.vx), diff = Math.atan2(Math.sin(want - cur), Math.cos(want - cur)), turn = Math.max(-2.6 * h, Math.min(2.6 * h, diff)), sp = Math.max(420, Math.hypot(p.vx, p.vy)); cur += turn; p.vx = Math.cos(cur) * sp; p.vy = Math.sin(cur) * sp; }
+          var guided = (side(p.from).perks || {}).guided || 0, foe = side(-p.from), best = null, bd = 1e9;
+          foe.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(foe, m), score = guided ? m.hp : Math.hypot(c.x - p.x, c.y - p.y); if (score < bd) { bd = score; best = c; } });   /* Guided Gull dives at the weakest foe */
+          var trn = 2.6 + (guided >= 2 ? 0.9 : 0);
+          if (best) { var want = Math.atan2(best.y - 14 - p.y, best.x - p.x), cur = Math.atan2(p.vy, p.vx), diff = Math.atan2(Math.sin(want - cur), Math.cos(want - cur)), turn = Math.max(-trn * h, Math.min(trn * h, diff)), sp = Math.max(420, Math.hypot(p.vx, p.vy)); cur += turn; p.vx = Math.cos(cur) * sp; p.vy = Math.sin(cur) * sp; }
           if (p.age > 5) { p.alive = false; break; }
         }
         if (p.fizzleAt && p.age > p.fizzleAt) { p.alive = false; ring(p.x, p.y, 24, "#e2e8f0"); sound("paper"); g.toast("Lost in paperwork", "good"); break; }
@@ -682,7 +690,7 @@
         if (!hit) continue;
         var key = p.k === "shard" ? "splitter" : p.k, a = AMMO[key];
         if (hit.water && p.k !== "repair") {
-          if (p.k === "bouncer" && p.bounces < a.bounces && !hit.lost) { p.bounces++; p.vy = -Math.abs(p.vy) * 0.55; p.vx *= 0.8; p.y = WY - 2; splash(p.x); sound("splash", { v: 0.5 }); sound("rubber", { v: 0.6 }); continue; }
+          if (p.k === "bouncer" && p.bounces < a.bounces + ((side(p.from).perks || {}).skip ? 1 : 0) && !hit.lost) { var sk = (side(p.from).perks || {}).skip; p.bounces++; p.vy = -Math.abs(p.vy) * (sk ? 0.72 : 0.55); p.vx *= (sk ? 0.9 : 0.8); p.y = WY - 2; splash(p.x); sound("splash", { v: 0.5 }); sound("rubber", { v: 0.6 }); continue; }
           splash(p.x); p.alive = false; if (!hit.lost) sound("splash");
           if (!hit.lost && (p.k === "bomb" || p.k === "fire")) explode(g, { k: key, from: p.from }, p.x, WY);
           break;
@@ -691,14 +699,16 @@
         if (p.k === "repair") { explode(g, p, p.x, p.y); p.alive = false; break; }
         if (key === "bomb" || key === "fire") explode(g, { k: key, from: p.from }, p.x, p.y);     /* the blast does all the damage */
         else {
-          var sr = side(p.from), pk2 = sr.perks || {}, bonus = key === "rock" ? (pk2.heavy || 0) * 6 : key === "ball" ? (pk2.bore || 0) * 12 : 0;
+          var sr = side(p.from), pk2 = sr.perks || {};
+          var bonus = key === "rock" ? (pk2.heavy || 0) * 6 : key === "ball" ? (pk2.bore || 0) * 12 : key === "gull" ? (pk2.guided ? 10 : 0) : key === "splitter" ? (pk2.sharp ? 2 : 0) : key === "bouncer" ? (pk2.skip >= 2 ? (p.bounces || 0) * 4 : 0) : 0;
+          var blk = a.block + (key === "splitter" && pk2.sharp ? 1 : 0);
           impactSound(p, hit);
           if (hit.crew) dmgCrew(g, hit.r, hit.crew, (a.crew + bonus) * (sr.mul || 1), null);
-          else if (hit.block) dmgBlock(hit.r, hit.block, a.block, hit.rect);
-          else if (hit.cannon) { hit.r.cannon.hp -= a.block; if (hit.r.cannon.hp <= 0) hit.r.cannon.alive = false; }
+          else if (hit.block) dmgBlock(hit.r, hit.block, blk, hit.rect);
+          else if (hit.cannon) { hit.r.cannon.hp -= blk; if (hit.r.cannon.hp <= 0) hit.r.cannon.alive = false; }
           ring(p.x, p.y, 16, a.col); if (hit.crew) Site.sfx("success");
         }
-        if (p.k === "bouncer" && p.bounces < a.bounces) { p.bounces++; p.vy = -Math.abs(p.vy) * 0.6; p.vx *= -0.5; p.age = Math.max(p.age, 0.3); continue; }
+        if (p.k === "bouncer" && p.bounces < a.bounces + ((side(p.from).perks || {}).skip ? 1 : 0)) { p.bounces++; p.vy = -Math.abs(p.vy) * ((side(p.from).perks || {}).skip ? 0.78 : 0.6); p.vx *= ((side(p.from).perks || {}).skip ? -0.65 : -0.5); p.age = Math.max(p.age, 0.3); continue; }
         p.alive = false; break;
       }
       p.trail.push({ x: p.x, y: p.y }); if (p.trail.length > 18) p.trail.shift();
@@ -745,7 +755,7 @@
   function endTurn(g) {
     [B.mine, B.foe].forEach(function (r) {                 /* fire burns, swimmers tire */
       var pk = r.perks || {};
-      r.crew.forEach(function (m) { if (!m.alive) return; if (m.swim) { if (m.burn > 0) { m.burn = 0; splash(crewPos(r, m).x); }  /* the water snuffs the fire */ dmgCrew(g, r, m, pk.vests ? 5 : 10, "overboard"); } else if (m.burn > 0) { m.burn--; dmgCrew(g, r, m, 8, "burns"); } });
+      r.crew.forEach(function (m) { if (!m.alive) return; if (m.swim) { if (m.burn > 0) { m.burn = 0; splash(crewPos(r, m).x); }  /* the water snuffs the fire */ dmgCrew(g, r, m, pk.vests ? 5 : 10, "overboard"); } else if (m.burn > 0) { m.burn--; dmgCrew(g, r, m, m.burnDmg || 8, "burns"); } });
       if (r.side === B.turnSide) {              /* the side that just threw: first aid and pumps */
         if (pk.aid) r.crew.forEach(function (m) { if (m.alive && m.hp < m.max) m.hp = Math.min(m.max, m.hp + pk.aid * 4); });
         if (pk.pump && ++r.pumpT >= (pk.pump > 1 ? 2 : 3)) {
@@ -1408,7 +1418,7 @@
     "The Shipwright's Pump & Patch fixes broken planks without you lifting a finger."
   ];
   function raftRating() { var have = 0, all = 0; UPG.forEach(function (u) { have += upg(u.key); all += u.max; }); return { have: have, all: all }; }
-  function affordable() { var c = coins(), n = 0; UPG.forEach(function (u) { var l = upg(u.key); if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need))) n++; }); AMMO_ORDER.slice(1).forEach(function (k) { if (!unlocked(k) && c >= AMMO[k].cost) n++; }); return n; }
+  function affordable() { var c = coins(), n = 0; UPG.forEach(function (u) { var l = upg(u.key); if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need)) && (!u.needAmmo || unlocked(u.needAmmo))) n++; }); AMMO_ORDER.slice(1).forEach(function (k) { if (!unlocked(k) && c >= AMMO[k].cost) n++; }); return n; }
   function statTile(label, value, frac, note) {
     var t = el("div", { class: "ak-stat" }, el("span", { text: label }), el("b", { text: String(value) }));
     if (frac != null) { var bar = el("i", { class: "ak-stat__bar" }); bar.appendChild(el("i", { style: { width: Math.round(Math.max(0, Math.min(1, frac)) * 100) + "%" } })); t.appendChild(bar); }
@@ -1560,7 +1570,7 @@
     var have = 0, all = 0, can = 0;
     if (key === "decor") { ["sail", "wood", "flag"].forEach(function (k) { DECOR[k].forEach(function (d, i) { all++; if (owns(k, i)) have++; else if (c >= d[2]) can++; }); }); }
     else {
-      UPG.forEach(function (u) { if (u.dep !== key) return; var l = upg(u.key); have += l; all += u.max; if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need))) can++; });
+      UPG.forEach(function (u) { if (u.dep !== key) return; var l = upg(u.key); have += l; all += u.max; if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need)) && (!u.needAmmo || unlocked(u.needAmmo))) can++; });
       if (key === "arsenal") AMMO_ORDER.slice(1).forEach(function (k) { all++; if (unlocked(k)) have++; else if (c >= AMMO[k].cost) can++; });
     }
     return { have: have, all: all, can: can };
@@ -1588,9 +1598,9 @@
     if (key !== "decor") {
       UPG.forEach(function (u) {
         if (u.dep !== key) return;
-        var l = upg(u.key), maxed = l >= u.max, cost = maxed ? 0 : u.cost[l], locked = u.need && !upg(u.need), idx = items.length;
+        var l = upg(u.key), maxed = l >= u.max, cost = maxed ? 0 : u.cost[l], locked = (u.need && !upg(u.need)) || (u.needAmmo && !unlocked(u.needAmmo)), idx = items.length;
         items.push({ label: u.name + "  " + pips(l, u.max), cls: maxed ? "is-owned" : (!locked && c >= cost ? "is-hot" : ""),
-          sub: locked ? "Needs the Deck Cannon first" : maxed ? u.desc(l) + " · maxed" : "Now: " + u.desc(l) + " → " + u.desc(l + 1) + " · " + cost + " coins",
+          sub: locked ? (u.needAmmo ? "Unlock the " + AMMO[u.needAmmo].name + " first" : "Needs the Deck Cannon first") : maxed ? u.desc(l) + " · maxed" : "Now: " + u.desc(l) + " → " + u.desc(l + 1) + " · " + cost + " coins",
           disabled: maxed || locked || c < cost, act: function () { addCoins(-cost); setUpg(u.key, l + 1); buyFx(); again(idx); } });
       });
       if (key === "arsenal") AMMO_ORDER.slice(1).forEach(function (k) {
