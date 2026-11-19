@@ -242,13 +242,13 @@
       { skin: "#f3d6c0", hair: "bald", over: "suit", overCol: "#22543d", tie: "#d4af37", shirt: "#f7fafc", pants: "#1a202c", shoes: "#111", item: "moneybag", smile: true },
       { skin: "#d9a982", hair: "short", hairCol: "#111", over: "suit", overCol: "#2f855a", tie: "#f6e05e", shirt: "#f7fafc", pants: "#1a202c", shoes: "#111", item: "phone", glasses: "shades" }
     ],
-    keaton: { skin: "#f6d5bd", hair: "wolf", hairCol: "#a4572f", beard: "stache", beardCol: "#a4572f", shirt: "#141414", mark: "🤘", pants: "#2d3748", shoes: "#111", w: 18, item: "controller" },
-    mark:   { skin: "#f6d5bd", hair: "short", hairCol: "#b8935e", headset: true, shirt: "#6b46c1", mark: "F", pants: "#2a4365", shoes: "#e2e8f0", w: 18, item: "keyboard", pin: "maple" },
+    keaton: { skin: "#f6d5bd", hair: "wolf", hairCol: "#a4572f", beard: "stache", beardCol: "#a4572f", shirt: "#141414", over: "open", overCol: "#3a1a1a", pants: "#2d3748", shoes: "#111", w: 18, item: "controller" },
+    mark:   { skin: "#f6d5bd", hair: "short", hairCol: "#b8935e", goatee: true, beardCol: "#b8935e", headset: true, shirt: "#6b46c1", pants: "#2a4365", shoes: "#e2e8f0", w: 18, item: "keyboard", pin: "maple" },
     dwayne: { skin: "#5b3a29", hair: "bald", hat: { col: "#1a202c", patch: "anime" }, shirt: "#718096", hoodUnder: true, over: "poncho", overCol: "#b7791f", pants: "#2c5282", shoes: "#6b3e1e", w: 28, item: "mic", smile: true },
-    ally:   { skin: "#f3d2bc", hair: "bowl", hairCol: "#c8923f", over: "coat", overCol: "#2c5282", shirt: "#1a202c", pants: "#1a202c", shoes: "#111", w: 21 },
-    goof:   { skin: "#f0c8a8", hair: "curly", hairCol: "#6b4423", beard: "stache70", beardCol: "#5a381c", goatee: true, glasses: "70s", shirt: "#edf2f7", over: "open", overCol: "#c97b2a", pants: "#4a5568", shoes: "#5a3a1a", w: 20, item: "mic", smile: true },
+    ally:   { skin: "#f3d2bc", hair: "long", hairCol: "#bfa268", over: "hoodie", overCol: "#6b7a8c", shirt: "#6b7a8c", pants: "#3a5068", shoes: "#edeef0", w: 20, smile: true },
+    goof:   { skin: "#f0c8a8", hair: "wavy", hairCol: "#6b4423", beard: "stache70", beardCol: "#5a381c", goatee: true, glasses: "70s", shirt: "#edf2f7", over: "open", overCol: "#c97b2a", pants: "#4a5568", shoes: "#5a3a1a", w: 20, item: "mic", smile: true },
     dylan:  { skin: "#f3d2bc", hair: "short", hairCol: "#8b5a2b", eyes: "blue", bloodshot: true, hat: { col: "#d9c39a", patch: "wanted" }, over: "hoodie", overCol: "#9aa5b1", shirt: "#9aa5b1", pants: "#2b6cb0", shoes: "#7b4a1e", item: "cards", orbs: true },
-    anders: { skin: "#f2c6a0", hair: "long", hairCol: "#6b4423", beard: "full", beardCol: "#6b4423", hood: true, over: "hoodie", overCol: "#cdb98c", shirt: "#cdb98c", pants: "#2d3748", shoes: "#1a202c", item: "controller", smile: true }
+    anders: { skin: "#f0cdb0", hair: "wavy", hairCol: "#36241a", beard: "stache", beardCol: "#4a3524", goatee: true, glasses: "round", shirt: "#2f5a46", pants: "#2a2a2a", shoes: "#1a1a1a", w: 22, smile: true, item: "controller" }
   };
   var PRESTIGE = [
     { r: 0, name: "Duh Gubberment", short: "The Gubberment", crew: 4, looks: LK.gov, names: ["Clerk", "Deputy", "Sub-Clerk", "Intern"], planks: 8, walls: 2, tower: 1, hp: 120, ammo: ["bouncer", "splitter"], acc: 1.2,
@@ -1007,6 +1007,13 @@
       fillPath(x, hc, [[4, -36], [-9, -37], [-14, -24], [-13, -8], [L.hood ? -10 : -9, L.hood ? -6 : 4], [-4, L.hood ? -8 : 2], [-5, -18], [-2, -30]]);
       x.fillStyle = shade(hc, 18); x.beginPath(); x.moveTo(-10, -30); x.quadraticCurveTo(-12, -16, -10, -4); x.lineTo(-7, -5); x.quadraticCurveTo(-8, -18, -6, -30); x.closePath(); x.fill();
     }
+    if (L.hair === "wavy") {                          /* long voluminous wavy hair down the back */
+      x.fillStyle = hc; x.beginPath();
+      x.moveTo(7, -37); x.quadraticCurveTo(-12, -41, -16, -27); x.quadraticCurveTo(-20, -12, -16, 2);
+      x.quadraticCurveTo(-14, 9, -17, 12); x.quadraticCurveTo(-8, 9, -7, -2); x.quadraticCurveTo(-10, -18, -4, -31);
+      x.closePath(); x.fill();
+      x.fillStyle = shade(hc, 15); x.beginPath(); x.moveTo(-11, -28); x.quadraticCurveTo(-15, -12, -12, 2); x.lineTo(-8, 0); x.quadraticCurveTo(-11, -16, -8, -28); x.closePath(); x.fill();
+    }
     if (L.hair === "wolf") fillPath(x, hc, [[6, -35], [-12, -36], [-15, -22], [-12, -10], [-9, -14], [-8, -6], [-5, -13], [-3, -9], [-1, -17], [3, -28]]);   /* mullet */
     if (L.hair === "curly") [[-13, -31], [-15, -23], [-14, -14], [-11, -8], [-6, -9], [-9, -37], [-1, -40], [7, -39], [13, -33]].forEach(function (q) { circ(x, hc, q[0], q[1], 6); circ(x, shade(hc, 20), q[0] - 1.4, q[1] - 1.6, 2.2); });
     if (L.orbs) for (var i = 0; i < 3; i++) { var an = t * 2.2 + i * 2.09; if (Math.sin(an) < 0) { circ(x, "rgba(246,173,85,.35)", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 7); circ(x, "#f6ad55", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 4); } }
@@ -1074,6 +1081,7 @@
     else if (L.hair === "wolf") { hairCap(x, hc, -29, -16); fillPath(x, hc, [[4, -37], [13, -31], [10.5, -26], [8.5, -29], [6.5, -25], [5, -29], [3.5, -26]]); }   /* spiky front */
     else if (L.hair === "bowl") { hairCap(x, hc, -28, -23); fillPath(x, hc, [[-3, -30.5], [11, -31], [11.5, -28.2], [-3, -28]]); }                                  /* neat fringe across the brow */
     else if (L.hair === "long") { if (!L.hood) hairCap(x, hc, -29.5, -14); }
+    else if (L.hair === "wavy") { hairCap(x, hc, -28, -16); fillPath(x, hc, [[8, -31], [13.5, -27], [12, -19.5], [8.5, -24]]); x.strokeStyle = shade(hc, 10); x.lineWidth = 2; x.lineCap = "round"; x.beginPath(); x.moveTo(-5, -35.5); x.quadraticCurveTo(6, -37.5, 11.5, -30); x.stroke(); }   /* temple lock + a loose wave over the brow */
     else if (L.hair === "curly") { hairCap(x, shade(hc, -6), -28.5, -22); [[-9, -36], [-2, -39], [5, -38.5], [11, -35], [12.5, -29], [-12.5, -29]].forEach(function (q) { circ(x, hc, q[0], q[1], 4.6); circ(x, shade(hc, 22), q[0] - 1.2, q[1] - 1.2, 1.7); }); }
     else if (L.hair === "bald") { var sh = x.createRadialGradient(-2, -31, 1, 0, -28, 11); sh.addColorStop(0, shade(sk, 16)); sh.addColorStop(1, sk); x.fillStyle = sh; x.beginPath(); x.arc(0, -26, 10.6, Math.PI * 1.05, Math.PI * 1.95); x.fill(); }
     /* face (turned toward the enemy): nose, eye, brow and mouth */
