@@ -64,27 +64,26 @@
   var padSwallow = "";                                 /* a controller press the Konami code has claimed */
 
   /* ====================================================================================================
-   * 1. Cursor ring (item 40)
+   * 1. Cursor reticles (item 40)
+   *    A ring by default; members unlock 30 reticles + five look controls (colour, size, follow, click,
+   *    glow) from Settings › Appearance › "Reticle". /anyps/ and /anderscraft/ keep their own themed sets;
+   *    everywhere else the member's pick wins (the hub still peeks a card's set when the plain ring is on).
+   *    Owner and Discord admins see everything unlocked. Other threads can award signal-based reticles via
+   *    Site.reticle.grant("wand" | "twitch" | ...).
    * ==================================================================================================== */
   Site.ready(function () {
     if (!enabled("cursorRing")) return;
     var HOT = 'a[href],button,summary,input,select,textarea,label[for],[role="button"],[role="tab"],.avenue';
     var ring = null, active = false, shown = false, raf = 0, last = 0, registered = false;
     var x = 0, y = 0, tx = 0, ty = 0, hot = null, layer = null;
+    var dot = null, shapeEl = null, shape = -1, set = null, curRet = null, pickRefresh = null;
 
-    function wanted() { return finePointer.matches && !Site.reducedMotion && Site.pref("cursor") !== false; }
-    var dot = null, shapeEl = null, shape = -1;
-    /* The ring trails the pointer; the dot inside it sits exactly on the pointer, so aiming stays precise
-       now that the normal cursor is hidden while the ring is showing. */
-    function place() {
-      ring.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
-      if (dot) dot.style.transform = "translate3d(" + (tx - x).toFixed(1) + "px," + (ty - y).toFixed(1) + "px,0)";
-    }
-    function show() { if (!shown) { shown = true; ring.classList.add("ix-ring--show"); root.classList.add("ix-nocursor"); } }
-    function hide() { root.classList.remove("ix-nocursor"); if (ring && shown) { shown = false; ring.classList.remove("ix-ring--show", "ix-ring--down"); } }
-    /* Themed cursors. AnyPS page: one of the four face-button shapes, re-rolled at random on every click.
-       AndersCraft page: weapon outlines that cycle sword, arrow, axe on every click. Hub: the plain ring,
-       which turns into the matching set while the pointer is over the AnyPS or AndersCraft card. */
+    /* ---- the 12-colour tint palette (shared with the picker's colour row) ---- */
+    var PALETTE = { rose: "#ff5d73", coral: "#ff784f", amber: "#ffb020", gold: "#ffd34d", lime: "#9bd345", green: "#43c06a",
+      teal: "#2bb6a3", sky: "#39a7ff", blue: "#4f7bff", violet: "#8a7dff", magenta: "#d567e0", slate: "#8aa0b5" };
+    var COLOR_ORDER = ["rose", "coral", "amber", "gold", "lime", "green", "teal", "sky", "blue", "violet", "magenta", "slate"];
+
+    /* ---- rotating themed sets: forced on the AnyPS / AndersCraft pages, peeked over hub cards ---- */
     var FACE = [
       '<path d="M7 7 23 23M23 7 7 23"/>',
       '<circle cx="15" cy="15" r="11"/>',
@@ -97,8 +96,99 @@
       /* axe   */ '<g transform="rotate(28 15 15)"><path d="M14 2.5V27.5"/><path d="M14 6.5C18 6.5 21 5 23 3 27 8 27 15.5 23 20.5 21 18.5 18 17 14 17Z"/><path d="M14 9H9.5V14.5H14"/></g>'
     ];
     FACE.random = true;
-    var PAGE_SET = Site.page === "anyps" ? FACE : Site.page === "anderscraft" ? WEAPONS : null;
-    var set = null;
+    var FORCED = Site.page === "anyps" ? FACE : Site.page === "anderscraft" ? WEAPONS : null;
+
+    /* ---- a Chipper token face: 0 Poobar … 5 Fromie, red→green and frown→beam ---- */
+    function chip(v) {
+      var COL = ["#e4584e", "#e8923a", "#e6c23a", "#9ccf43", "#52ab5c", "#33b6a6"][v] || "#9ccf43";
+      var mouth = ["M10 21Q15 16.5 20 21", "M10 20.3Q15 18.2 20 20.3", "M10 20H20", "M10 19.4Q15 21.6 20 19.4", "M10 18.7Q15 22.4 20 18.7", "M9.4 18Q15 24 20.6 18"][v] || "M10 20H20";
+      return '<circle cx="15" cy="15" r="11" fill="' + COL + '" fill-opacity=".2" stroke="' + COL + '"/>'
+        + '<circle cx="11.4" cy="12.7" r="1.5" fill="' + COL + '" stroke="none"/>'
+        + '<circle cx="18.6" cy="12.7" r="1.5" fill="' + COL + '" stroke="none"/>'
+        + '<path d="' + mouth + '" stroke="' + COL + '" fill="none"/>';
+    }
+    function pellets() { var s = ""; for (var i = 0; i < 8; i++) { var a = i / 8 * 6.2832; s += '<circle cx="' + (15 + Math.cos(a) * 9).toFixed(1) + '" cy="' + (15 + Math.sin(a) * 9).toFixed(1) + '" r="1.7" fill="currentColor" stroke="none"/>'; } return s; }
+    function seasonLook() {
+      var m = new Date().getMonth();
+      if (m === 11 || m <= 1) return '<path d="M15 4V26M6 9 24 21M24 9 6 21"/><path d="M15 4l-2.4 3M15 4l2.4 3M15 26l-2.4-3M15 26l2.4-3"/>';            /* winter: snowflake */
+      if (m <= 4) return '<circle cx="15" cy="9" r="3.1"/><circle cx="21" cy="13" r="3.1"/><circle cx="18.7" cy="20" r="3.1"/><circle cx="11.3" cy="20" r="3.1"/><circle cx="9" cy="13" r="3.1"/><circle cx="15" cy="15" r="2.3" fill="currentColor" stroke="none"/>';   /* spring: blossom */
+      if (m <= 7) return '<circle cx="15" cy="15" r="6"/><path d="M15 2.5V6.5M15 23.5V27.5M2.5 15H6.5M23.5 15H27.5M6.2 6.2 9 9M21 21 23.8 23.8M23.8 6.2 21 9M9 21 6.2 23.8"/>';   /* summer: sun */
+      return '<path d="M8 22C8 13.5 13.8 7.5 22 8.2 22.8 16.4 16.6 22.3 8 22Z"/><path d="M8 22 19.5 10.5M13 20.5 13.5 15M17 17 17.5 12.2"/>';   /* fall: leaf */
+    }
+
+    /* ---- the reticle registry. svg = markup (string | function→string); "ring"/"plain" are special.
+       fx = its own click effect; u(c) decides if it is unlocked against a snapshot; hint = how to get it. ---- */
+    var RET_LIST = [
+      { id: "ring", name: "Classic Ring", fx: "squeeze", hint: "The default — always yours." },
+      { id: "plain", name: "Plain Pointer", svg: "", fx: null, hint: "Just your normal mouse pointer." },
+      { id: "dot", name: "Dot", svg: '<circle cx="15" cy="15" r="2.7" fill="currentColor" stroke="none"/>', fx: "pulse", hint: "A small aim dot." },
+      { id: "cross", name: "Crosshair", svg: '<path d="M15 4V11M15 19V26M4 15H11M19 15H26"/>', fx: "snap", hint: "A four-line crosshair." },
+      { id: "chevron", name: "Chevron", svg: '<path d="M7.5 19 15 10.5 22.5 19"/>', fx: "flick", hint: "An upward arrowhead." },
+      { id: "reddot", name: "Red Dot Sight", svg: '<circle cx="15" cy="15" r="10"/><circle cx="15" cy="15" r="2.5" fill="#ff4d4d" stroke="none"/>', fx: "flare", hint: "Earn 10 trophies.", u: function (c) { return c.n >= 10; } },
+      { id: "scope", name: "Sniper Scope", svg: '<circle cx="15" cy="15" r="11"/><path d="M15 4v6M15 20v6M4 15h6M20 15h6"/><circle cx="15" cy="15" r="1.1" fill="currentColor" stroke="none"/>', fx: "recoil", hint: "Earn 50 trophies.", u: function (c) { return c.n >= 50; } },
+      { id: "shotgun", name: "Shotgun Spread", svg: pellets, fx: "burst", hint: "Earn 100 trophies.", u: function (c) { return c.n >= 100; } },
+      { id: "hit", name: "Hit Marker", svg: '<path d="M8 8 11.6 11.6M22 8 18.4 11.6M8 22 11.6 18.4M22 22 18.4 18.4"/>', fx: "flash", hint: "Visit every public page.", u: function (c) { return c.pagesAll; } },
+      { id: "chip0", name: "Poobar Chip", svg: function () { return chip(0); }, fx: "wobble", hint: "Give a 0 (Poobar) rating on the Dex.", u: function (c) { return c.chip.indexOf(0) >= 0; } },
+      { id: "chip1", name: "Eskritt Chip", svg: function () { return chip(1); }, fx: "wobble", hint: "Give a 1 (Eskritt) rating on the Dex.", u: function (c) { return c.chip.indexOf(1) >= 0; } },
+      { id: "chip2", name: "Meepo Chip", svg: function () { return chip(2); }, fx: "wobble", hint: "Give a 2 (Meepo) rating on the Dex.", u: function (c) { return c.chip.indexOf(2) >= 0; } },
+      { id: "chip3", name: "Gibby Chip", svg: function () { return chip(3); }, fx: "wobble", hint: "Give a 3 (Gibby) rating on the Dex.", u: function (c) { return c.chip.indexOf(3) >= 0; } },
+      { id: "chip4", name: "Perisa Chip", svg: function () { return chip(4); }, fx: "wobble", hint: "Give a 4 (Perisa) rating on the Dex.", u: function (c) { return c.chip.indexOf(4) >= 0; } },
+      { id: "chip5", name: "Fromie Chip", svg: function () { return chip(5); }, fx: "wobble", hint: "Give a 5 (Fromie) rating on the Dex.", u: function (c) { return c.chip.indexOf(5) >= 0; } },
+      { id: "wheel", name: "Chipper Wheel", svg: '<circle cx="15" cy="7.5" r="2.4" fill="#e4584e" stroke="none"/><circle cx="21.5" cy="11.2" r="2.4" fill="#e8923a" stroke="none"/><circle cx="21.5" cy="18.8" r="2.4" fill="#e6c23a" stroke="none"/><circle cx="15" cy="22.5" r="2.4" fill="#9ccf43" stroke="none"/><circle cx="8.5" cy="18.8" r="2.4" fill="#52ab5c" stroke="none"/><circle cx="8.5" cy="11.2" r="2.4" fill="#33b6a6" stroke="none"/>', fx: "spin", hint: "Rate with all six Chippers.", u: function (c) { return [0, 1, 2, 3, 4, 5].every(function (v) { return c.chip.indexOf(v) >= 0; }); } },
+      { id: "quill", name: "Critic's Quill", svg: '<path d="M22 8 11 19l-2.5 4 4-2.5L23 9.5Z"/><path d="M11 19l1.8 1.8"/>', fx: "ink", hint: "Write 10 reviews on the Dex.", u: function (c) { return c.reviews >= 10; } },
+      { id: "lens", name: "Dex Lens", svg: '<circle cx="13" cy="13" r="7"/><path d="M18 18 25 25"/>', fx: "pulse", hint: "Cast 100 votes on the Dex.", u: function (c) { return c.votes >= 100; } },
+      { id: "goldchip", name: "Gold Chip", svg: '<circle cx="15" cy="15" r="10" stroke="#ffcf4d"/><circle cx="15" cy="15" r="2.1" fill="#ffcf4d" stroke="none"/>', fx: "flare", hint: "Become a verified member.", u: function (c) { return c.verified; } },
+      { id: "heart", name: "Heart Ring", svg: '<circle cx="15" cy="15" r="10"/><path d="M15 18.6c-3-2-4.5-3.7-4.5-5.4A2.3 2.3 0 0 1 15 11.9a2.3 2.3 0 0 1 4.5 1.3c0 1.7-1.5 3.4-4.5 5.4Z" fill="#ff6b86" stroke="none"/>', fx: "beat", hint: "Become a Supporter (donate).", u: function (c) { return c.supporter; } },
+      { id: "crown", name: "Crown", svg: '<path d="M7 20.5h16M7.5 20.5 6 9l5 4 4-6 4 6 5-4-1.5 11.5Z" stroke="#ffcf4d"/>', fx: "bounce", hint: "Platinum: earn every core trophy.", u: function (c) { return !!c.tro.all; } },
+      { id: "pixel", name: "Pixel Arrow", svg: '<path d="M9 7v14l3.2-3.2 2.1 4.6 2.4-1.1-2.1-4.5H21Z" fill="currentColor" stroke="none"/>', fx: "flicker", hint: "Play any Arcade game.", u: function (c) { return c.arcade; } },
+      { id: "wand", name: "Wand Tip", svg: '<path d="M8.5 22.5 20 11"/><path d="M22 7.5v3M20.5 9h3"/><path d="M16 5.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1Z" stroke="none" fill="currentColor"/>', fx: "spark", hint: "Finish a Wizard of the Sprint run.", u: function (c) { return !!c.man.wand; } },
+      { id: "dpad", name: "D-Pad", svg: '<path d="M12 7.5h6v4.5h4.5v6H18v4.5h-6V18H7.5v-6H12Z"/>', fx: "press", hint: "Use a controller on the site.", u: function (c) { return c.pad; } },
+      { id: "discord", name: "Discord Bubble", svg: '<path d="M7.5 9h15a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H15l-4.8 3.6V19.5H7.5a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Z"/>', fx: "pulse", hint: "Link your Discord / join the server.", u: function (c) { return !!c.tro["acct-discord"]; } },
+      { id: "twitch", name: "Twitch Pulse", svg: '<circle cx="15" cy="15" r="9" stroke="#9146ff"/><circle cx="15" cy="15" r="2" fill="#9146ff" stroke="none"/>', fx: "pulse", hint: "Catch a stream from the Stream page.", u: function (c) { return c.stream; } },
+      { id: "season", name: "Season Leaf", svg: seasonLook, fx: "drift", hint: "Yours — it follows the season.", u: function () { return true; } },
+      { id: "comet", name: "Comet", svg: '<circle cx="18.5" cy="11.5" r="2.6" fill="currentColor" stroke="none"/><path d="M16.5 13.5 6.5 23.5"/>', fx: "flare", hint: "Visit on 30 different days.", u: function (c) { return c.days >= 30; } },
+      { id: "glitch", name: "Glitch", svg: '<circle cx="15" cy="15" r="9"/>', fx: "glitch", hint: "Find any secret word.", u: function (c) { return c.codes >= 1; } },
+      { id: "owner", name: "Owner's Mark", svg: '<circle cx="15" cy="15" r="10" stroke="#ffcf4d"/><path d="M11 10.5v9M11 10.5h3.5a4.5 4.5 0 0 1 0 9H11" stroke="#ffcf4d"/>', fx: "gold", hint: "The owner's own mark.", u: function (c) { return c.owner; } }
+    ];
+    var RET = {}; RET_LIST.forEach(function (r) { RET[r.id] = r; });
+
+    /* ---- unlock snapshot. Owner + Discord admins see everything; otherwise each reticle's u() decides. ---- */
+    var PUBLIC_PAGES = ["hub", "anderscraft", "anyps", "games", "resume", "links", "changelog", "uses", "stream", "support", "discord", "arcade"];
+    var padSeen = false;
+    try { padSeen = Site.store.get("reticleUnlocks", {}).pad === true; } catch (e) {}
+    function allAccess() { try { return Site.owner === true || !!(Site.admin && Site.admin.get()) || window.ROP_ADMIN === true; } catch (e) { return false; } }
+    function snap() {
+      var tro = {};
+      try { tro = (Site.trophy && Site.trophy.all && Site.trophy.all()) || Site.store.get("trophies", {}) || {}; } catch (e) { tro = Site.store.get("trophies", {}) || {}; }
+      var seen = Site.store.get("seen", {}) || {}, rop = Site.store.get("ropStats", {}) || {}, man = Site.store.get("reticleUnlocks", {}) || {};
+      return {
+        tro: tro, n: Object.keys(tro).length,
+        pagesAll: PUBLIC_PAGES.every(function (p) { return seen[p]; }),
+        days: (Site.store.get("days", []) || []).length,
+        codes: Object.keys(Site.store.get("codes", {}) || {}).length,
+        chip: (rop.chippers || []).map(Number), reviews: +rop.reviews || 0, votes: +rop.votes || 0,
+        verified: !!rop.verified || !!tro["acct-verified"], supporter: !!rop.supporter || !!tro["acct-supporter"],
+        arcade: !!seen.arcade || !!tro.arcade, stream: !!seen.stream || !!man.twitch,
+        pad: !!man.pad || padSeen, owner: Site.owner === true, man: man
+      };
+    }
+    function unlocked(ret, c) { if (allAccess()) return true; if (!ret.u) return true; try { return !!ret.u(c || snap()); } catch (e) { return false; } }
+    function colorUnlocked(v) { return v !== "rainbow" || allAccess() || snap().n >= 25; }
+    function resolvedId() {
+      if (FORCED) return "__forced";
+      var id = Site.pref("reticle") || "ring", ret = RET[id];
+      return (ret && unlocked(ret)) ? id : "ring";
+    }
+
+    /* The ring trails the pointer; the dot inside sits exactly on the pointer, so aiming stays precise. */
+    function place() {
+      ring.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+      if (dot) dot.style.transform = "translate3d(" + (tx - x).toFixed(1) + "px," + (ty - y).toFixed(1) + "px,0)";
+    }
+    function show() { if (!shown) { shown = true; ring.classList.add("ix-ring--show"); root.classList.add("ix-nocursor"); } }
+    function hide() { root.classList.remove("ix-nocursor"); if (ring && shown) { shown = false; ring.classList.remove("ix-ring--show", "ix-ring--down"); } }
+
+    /* A rotating themed set (forced pages / hub peek), re-rolled on each click. */
     function roll() {
       if (!shapeEl || !set) return;
       var n = shape;
@@ -113,6 +203,71 @@
       set = next; shape = -1;
       ring.classList.toggle("ix-ring--shapes", !!set);
       if (set) roll(); else if (shapeEl) shapeEl.textContent = "";
+    }
+    /* A single static reticle shape (the member's pick). */
+    function useStatic(mk) {
+      set = null; shape = -1;
+      ring.classList.add("ix-ring--shapes");
+      shapeEl.textContent = "";
+      if (mk) shapeEl.appendChild(Site.svg(mk, { viewBox: "0 0 30 30", "stroke-width": "2" }));
+    }
+    function usePlainRing() { set = null; shape = -1; ring.classList.remove("ix-ring--shapes"); shapeEl.textContent = ""; }
+
+    function glowCard() { return (Site.pref("reticleGlow") || "card") === "card"; }
+    function sticky() { return (Site.pref("reticleFollow") || "trail") === "stick"; }
+
+    function applyStyle() {
+      if (!ring) return;
+      var sz = Site.pref("reticleSize") || "m";
+      ring.classList.toggle("ix-ring--s", sz === "s");
+      ring.classList.toggle("ix-ring--l", sz === "l");
+      var col = Site.pref("reticleColor") || "accent";
+      var rainbow = col === "rainbow" && colorUnlocked("rainbow");
+      ring.classList.toggle("ix-ring--rainbow", rainbow);
+      if (!rainbow && col !== "accent" && PALETTE[col]) {
+        ring.style.setProperty("--ix-ring-line", PALETTE[col]);
+        ring.style.setProperty("--ix-ring-accent", PALETTE[col]);
+        ring.classList.add("ix-ring--tint");
+      } else {
+        ring.style.removeProperty("--ix-ring-line");
+        ring.style.removeProperty("--ix-ring-accent");
+        ring.classList.remove("ix-ring--tint");
+      }
+    }
+    /* Resolve the active reticle and paint it. Returns false when the pick is the native pointer. */
+    function applyReticle() {
+      if (!ring) return true;
+      if (FORCED) { useSet(FORCED); curRet = null; applyStyle(); return true; }
+      var id = resolvedId();
+      if (id === "plain") { curRet = RET.plain; return false; }
+      curRet = RET[id] || RET.ring;
+      if (id === "ring") usePlainRing(); else useStatic(typeof curRet.svg === "function" ? curRet.svg() : curRet.svg);
+      applyStyle();
+      return true;
+    }
+
+    /* ---- click effects: a brief class on the ring body, plus (for some) a spawned flourish ---- */
+    var FXCLASS = { squeeze: "ix-fx--squeeze", pulse: "ix-fx--pulse", snap: "ix-fx--snap", flick: "ix-fx--flick", flash: "ix-fx--flash",
+      flare: "ix-fx--flare", recoil: "ix-fx--recoil", wobble: "ix-fx--wobble", spin: "ix-fx--spin", beat: "ix-fx--beat",
+      bounce: "ix-fx--bounce", press: "ix-fx--squeeze", flicker: "ix-fx--flicker", gold: "ix-fx--gold", glitch: "ix-fx--glitch" };
+    var SPAWN = { burst: 1, ink: 1, spark: 1, ripple: 1 }, fxTimer = 0;
+    function spawnFx(kind, px, py) {
+      if (!doc.body) return;
+      var fx = Site.el("div", { class: "ix-cfx ix-cfx--" + kind, "aria-hidden": "true" });
+      fx.style.left = px + "px"; fx.style.top = py + "px";
+      if (kind === "burst" || kind === "spark") { var np = kind === "burst" ? 8 : 5; for (var i = 0; i < np; i++) { var s = Site.el("i"); s.style.setProperty("--a", (i / np * 360) + "deg"); fx.appendChild(s); } }
+      doc.body.appendChild(fx);
+      setTimeout(function () { fx.remove(); }, 640);
+    }
+    function playFx(px, py) {
+      if (!ring || Site.reducedMotion) return;
+      var pref = Site.pref("reticleClick") || "own";
+      if (pref === "none") return;
+      var kind = pref === "ripple" ? "ripple" : (curRet && curRet.fx);
+      if (!kind || kind === "drift") return;
+      var body = ring.querySelector(".ix-ring-c"), cls = FXCLASS[kind];
+      if (body && cls) { body.classList.remove(cls); void body.offsetWidth; body.classList.add(cls); clearTimeout(fxTimer); fxTimer = setTimeout(function () { if (body) body.classList.remove(cls); }, 560); }
+      if (SPAWN[kind]) spawnFx(kind, px, py);
     }
 
     /* One loop. It eases the ring towards the pointer and stops as soon as it has caught up. */
@@ -133,12 +288,14 @@
       if (h === hot) return;
       hot = h;
       ring.classList.toggle("ix-ring--hot", !!h);
-      /* over a hub card the ring picks up that card's colour */
-      var c = "";
-      if (h && h.classList.contains("avenue")) { try { c = getComputedStyle(h).getPropertyValue("--accent").trim(); } catch (e) {} }
-      if (c) ring.style.setProperty("--ix-ring-accent", c); else ring.style.removeProperty("--ix-ring-accent");
-      /* ...and, on the hub, that card's shape set */
-      if (Site.page === "hub") {
+      /* over a hub card the ring picks up that card's colour (unless the member fixed a colour or turned glow off) */
+      if (!ring.classList.contains("ix-ring--tint")) {
+        var c = "";
+        if (h && h.classList.contains("avenue") && glowCard()) { try { c = getComputedStyle(h).getPropertyValue("--accent").trim(); } catch (e) {} }
+        if (c) ring.style.setProperty("--ix-ring-accent", c); else ring.style.removeProperty("--ix-ring-accent");
+      }
+      /* ...and, on the hub with the plain ring, that card's shape set (a specific pick wins over the peek) */
+      if (Site.page === "hub" && !FORCED && resolvedId() === "ring") {
         var av = h && h.classList.contains("avenue") ? h : null;
         useSet(av && av.classList.contains("anyps") ? FACE : av && av.classList.contains("craft") ? WEAPONS : null);
       }
@@ -147,8 +304,9 @@
       if (e.pointerType === "touch") { hide(); return; }
       tx = e.clientX; ty = e.clientY;
       if (!shown) { x = tx; y = ty; setHot(closest(e, HOT)); show(); }
+      if (sticky()) { x = tx; y = ty; }
       place();
-      wake();
+      if (!sticky()) wake();
     }
     function onOver(e) {
       if (e.pointerType === "touch") return;
@@ -157,7 +315,7 @@
       if (d !== layer) { layer = d; topLayer(ring); }
     }
     function onDown(e) { if (e.pointerType === "touch") hide(); else if (shown) ring.classList.add("ix-ring--down"); }
-    function onUp(e) { if (ring) ring.classList.remove("ix-ring--down"); if (e && e.type === "pointerup") roll(); }
+    function onUp(e) { if (ring) ring.classList.remove("ix-ring--down"); if (!(e && e.type === "pointerup")) return; if (set) roll(); else playFx(tx, ty); }
     function onVisible() { if (!doc.hidden && (x !== tx || y !== ty)) wake(); }
     function onDialog() { if (ring) { layer = null; topLayer(ring); } }
 
@@ -174,9 +332,10 @@
       dot = Site.el("span", { class: "ix-ring-dot" });
       shapeEl = Site.el("span", { class: "ix-ring-shape" });
       ring = Site.el("div", { class: "ix-ring", "aria-hidden": "true" }, Site.el("span", { class: "ix-ring-c" }, shapeEl), dot);
-      set = null; useSet(PAGE_SET);
+      set = null;
       doc.body.appendChild(ring);
       topLayer(ring);
+      applyReticle();
       wiring.forEach(function (w) { w[0].addEventListener(w[1], w[2], passive); });
     }
     function disable() {
@@ -189,20 +348,140 @@
       ring = null; dot = null; shapeEl = null; set = null;
       root.classList.remove("ix-nocursor");
     }
+    function wanted() { return finePointer.matches && !Site.reducedMotion && Site.pref("cursor") !== false; }
+    function want() { return wanted() && !(!FORCED && resolvedId() === "plain"); }
     function sync() {
       if (finePointer.matches && !registered) {
         registered = true;
-        Site.settings.register({ id: "cursor", label: "Cursor Ring", hint: "Replaces your mouse pointer with a ring.", type: "toggle", pref: "cursor", order: 30 });
+        Site.settings.register({ id: "cursor", label: "Cursor", hint: "Hide your mouse pointer behind a reticle.", type: "toggle", pref: "cursor", order: 30 });
+        Site.settings.register({ id: "reticle", label: "Reticle", hint: "Pick your pointer — unlock more as you explore.", type: "custom", pref: "reticle", order: 31, build: buildPicker, sync: syncPicker });
       }
-      if (wanted()) enable(); else disable();
+      if (want()) enable(); else disable();
     }
+    function refreshPicker() { if (pickRefresh) { try { pickRefresh(); } catch (e) {} } }
+    function syncPicker() { refreshPicker(); }
+    function onPick() { if (!want()) { disable(); refreshPicker(); return; } if (!active) enable(); else applyReticle(); refreshPicker(); }
+    function restyle() { if (active) applyStyle(); refreshPicker(); }
+
+    /* ---- the picker that chrome.js renders inside Settings › Appearance ---- */
+    function swatchFor(ret) {
+      if (ret.id === "plain") return Site.svg('<path d="M9 7 9 23 13 19 16 25 18 24 15 18 20 18Z" fill="currentColor" stroke="none"/>', { viewBox: "0 0 30 30" });
+      if (ret.id === "ring") return Site.svg('<circle cx="15" cy="15" r="9"/><circle cx="15" cy="15" r="1.6" fill="currentColor" stroke="none"/>', { viewBox: "0 0 30 30", "stroke-width": "2" });
+      return Site.svg(typeof ret.svg === "function" ? ret.svg() : ret.svg, { viewBox: "0 0 30 30", "stroke-width": "2" });
+    }
+    function buildPicker() {
+      var wrap = Site.el("div", { class: "ix-pick" });
+      var prevSvg = Site.el("span", { class: "ix-pick__prevring" });
+      var prevName = Site.el("strong", { class: "ix-pick__prevname" });
+      var prevHint = Site.el("span", { class: "ix-pick__prevhint" });
+      var preview = Site.el("div", { class: "ix-pick__preview" }, prevSvg, Site.el("span", { class: "ix-pick__prevtxt" }, prevName, prevHint));
+
+      var grid = Site.el("div", { class: "ix-pick__grid", role: "listbox", "aria-label": "Reticle" });
+      var tiles = {};
+      RET_LIST.forEach(function (ret) {
+        var sw = Site.el("span", { class: "ix-pick__sw" }); sw.appendChild(swatchFor(ret));
+        var tile = Site.el("button", { type: "button", class: "ix-pick__tile", role: "option", "aria-selected": "false", title: ret.name },
+          sw, Site.el("span", { class: "ix-pick__tname", text: ret.name }));
+        tile.addEventListener("click", function () {
+          if (tile.getAttribute("aria-disabled") === "true") { if (Site.sfx) Site.sfx("tap"); return; }
+          Site.setPref("reticle", ret.id); if (Site.sfx) Site.sfx("toggle");
+        });
+        tile.addEventListener("pointerenter", function () { showPrev(ret); });
+        tile.addEventListener("focus", function () { showPrev(ret); });
+        grid.appendChild(tile); tiles[ret.id] = tile;
+      });
+
+      function seg(label, pref, def, opts) {
+        var segw = Site.el("div", { class: "ix-pick__seg", role: "group", "aria-label": label }), btns = [];
+        opts.forEach(function (o) {
+          var b = Site.el("button", { type: "button", class: "ix-pick__segb" + (o.swatch ? " ix-pick__segb--sw" : ""), "aria-pressed": "false", title: o.title || o.label });
+          if (o.swatch) b.style.setProperty("--sw", o.swatch); else b.textContent = o.label;
+          b.addEventListener("click", function () { if (b.getAttribute("aria-disabled") === "true") { if (Site.sfx) Site.sfx("tap"); return; } Site.setPref(pref, o.value); if (Site.sfx) Site.sfx("toggle"); });
+          b._opt = o; segw.appendChild(b); btns.push(b);
+        });
+        var row = Site.el("div", { class: "ix-pick__ctl" }, Site.el("span", { class: "ix-pick__clab", text: label }), segw);
+        row._btns = btns; row._pref = pref; row._def = def; return row;
+      }
+      var colorOpts = [{ value: "accent", label: "Site", title: "Site accent" }]
+        .concat(COLOR_ORDER.map(function (k) { return { value: k, swatch: PALETTE[k], title: k }; }));
+      colorOpts.push({ value: "rainbow", label: "🌈", title: "Rainbow — unlock at 25 trophies" });
+      var rows = [
+        seg("Colour", "reticleColor", "accent", colorOpts),
+        seg("Size", "reticleSize", "m", [{ value: "s", label: "S" }, { value: "m", label: "M" }, { value: "l", label: "L" }]),
+        seg("Follow", "reticleFollow", "trail", [{ value: "trail", label: "Trails" }, { value: "stick", label: "Sticks" }]),
+        seg("Click", "reticleClick", "own", [{ value: "own", label: "Reticle" }, { value: "ripple", label: "Ripple" }, { value: "none", label: "None" }]),
+        seg("Glow", "reticleGlow", "card", [{ value: "card", label: "Card colour" }, { value: "fixed", label: "Fixed" }])
+      ];
+      var ctls = Site.el("div", { class: "ix-pick__ctls" }); rows.forEach(function (r) { ctls.appendChild(r); });
+
+      function showPrev(ret) {
+        prevSvg.textContent = ""; prevSvg.appendChild(swatchFor(ret));
+        prevName.textContent = ret.name;
+        var on = unlocked(ret);
+        prevHint.textContent = on ? ret.hint : ("Locked — " + ret.hint);
+        preview.classList.toggle("is-locked", !on);
+      }
+      function refresh() {
+        var cc = snap(), curId = Site.pref("reticle") || "ring";
+        RET_LIST.forEach(function (ret) {
+          var t = tiles[ret.id]; if (!t) return;
+          var on = unlocked(ret, cc);
+          t.classList.toggle("is-locked", !on);
+          if (on) t.removeAttribute("aria-disabled"); else t.setAttribute("aria-disabled", "true");
+          var sel = ret.id === curId && on;
+          t.setAttribute("aria-selected", String(sel)); t.classList.toggle("is-on", sel);
+        });
+        rows.forEach(function (row) {
+          var v = Site.pref(row._pref) || row._def;
+          row._btns.forEach(function (b) {
+            var o = b._opt, lock = o.value === "rainbow" && !colorUnlocked("rainbow");
+            if (lock) b.setAttribute("aria-disabled", "true"); else b.removeAttribute("aria-disabled");
+            b.setAttribute("aria-pressed", String(o.value === v && !lock));
+            b.classList.toggle("is-on", o.value === v && !lock);
+          });
+        });
+        showPrev(RET[curId] || RET.ring);
+        if (FORCED) prevHint.textContent = "This page keeps its own themed reticle.";
+      }
+      pickRefresh = refresh; refresh();
+      wrap.appendChild(preview); wrap.appendChild(grid); wrap.appendChild(ctls);
+      if (FORCED) wrap.appendChild(Site.el("p", { class: "ix-pick__note", text: "The AnyPS and AndersCraft pages keep their own themed reticles — your pick shows everywhere else." }));
+      return wrap;
+    }
+
+    /* Public: let other threads (arcade, stream) award signal-based reticles. */
+    Site.reticle = {
+      grant: function (key) {
+        if (!key) return;
+        var m = Site.store.get("reticleUnlocks", {}) || {}; if (m[key]) return;
+        m[key] = true; Site.store.set("reticleUnlocks", m); if (key === "pad") padSeen = true; refreshPicker();
+      },
+      has: function (id) { var r = RET[id]; return r ? unlocked(r) : false; },
+      list: function () { return RET_LIST.map(function (r) { return r.id; }); }
+    };
+
+    /* A real controller press unlocks the D-Pad reticle. */
+    try {
+      if (Site.gamepad && Site.gamepad.on) {
+        Site.gamepad.on(function () {
+          if (padSeen) return; padSeen = true;
+          var m = Site.store.get("reticleUnlocks", {}) || {}; m.pad = true; Site.store.set("reticleUnlocks", m); refreshPicker();
+        });
+      }
+    } catch (e) {}
 
     Site.on("pref:cursor", sync);
     Site.on("pref:motion", sync);
+    Site.on("pref:reticle", onPick);
+    Site.on("pref:reticleColor", restyle);
+    Site.on("pref:reticleSize", restyle);
+    Site.on("pref:reticleGlow", restyle);
+    Site.on("trophy:earned", refreshPicker);
+    Site.on("rop:stats", refreshPicker);
     Site.on("dialog:open", onDialog);
     mqListen(finePointer, sync);
     sync();
-  }, "cursor ring");
+  }, "cursor reticles");
 
   /* ====================================================================================================
    * 2. Page transitions (item 41)
@@ -846,7 +1125,7 @@
       var lite = Site.store.get("lite", null), dev = (navigator.connection && navigator.connection.saveData) || (window.matchMedia && matchMedia("(prefers-reduced-data: reduce)").matches);
       if (lite === true || (lite !== false && dev)) doc.documentElement.setAttribute("data-lite", "");
     } catch (e) {}
-    load("play", 20, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
+    load("play", 21, "play", function () { doc.documentElement.classList.remove("pl-preboot"); });
     /* service worker: instant repeat visits and basic offline. features.serviceWorker = false unregisters it. */
     try {
       if ("serviceWorker" in navigator && /^https:$/.test(location.protocol)) {
