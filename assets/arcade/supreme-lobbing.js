@@ -49,7 +49,7 @@
     { key: "size",   dep: "hull",    name: "Bigger Raft",       max: 2, cost: [80, 200],           desc: function (l) { return (2 + l) + " crew · " + (6 + l) + " planks"; } },
     { key: "walls",  dep: "hull",    name: "Bulwarks",          max: 3, cost: [70, 160, 300],      desc: function (l) { return (1 + l) + " wall block" + (l ? "s" : "") + " shielding the bow"; } },
     { key: "rbow",   dep: "hull",    name: "Reinforced Bow",    max: 2, cost: [150, 300],          desc: function (l) { return l ? "Front wall takes +" + (l * 2) + " hits" : "Toughen the front wall blocks"; } },
-    { key: "tower",  dep: "hull",    name: "Crow's Nest",       max: 2, cost: [90, 190],           desc: function (l) { return l ? l + " tower block" + (l > 1 ? "s" : "") + " mid-deck" : "A tower that soaks up high lobs"; } },
+    { key: "tower",  dep: "hull",    name: "Crow's Nest",       max: 3, cost: [90, 190, 320],      desc: function (l) { return l >= 3 ? "A real nest up the mast — one crew keeps watch from it" : l ? l + " tower block" + (l > 1 ? "s" : "") + " mid-deck" : "A tower that soaks up high lobs"; } },
     { key: "pump",   dep: "hull",    name: "Pump & Patch",      max: 2, cost: [120, 240],          desc: function (l) { return l ? "Fixes a broken plank every " + (l > 1 ? 2 : 3) + " turns" : "Fixes broken planks on its own"; } },
     { key: "tough",  dep: "crew",    name: "Crew Toughness",    max: 6, cost: [30, 60, 110, 180, 260, 340], desc: function (l) { return "Crew health " + (100 + l * 20); } },
     { key: "arms",   dep: "crew",    name: "Strong Arms",       max: 4, cost: [40, 90, 160, 250],  desc: function (l) { return "Throw power " + (100 + l * 8) + "%"; } },
@@ -306,17 +306,20 @@
     var front = side < 0 ? n - 1 : 0, mid = Math.floor(n / 2);
     var bowHp = r.bhp + 2 * (r.perks.rbow || 0);                /* Reinforced Bow thickens the front wall */
     for (var k = 0; k < o.walls; k++) r.walls.push({ col: front, row: k, hp: bowHp, max: bowHp, alive: true, burn: 0 });
-    for (k = 0; k < o.tower; k++) r.walls.push({ col: side < 0 ? mid : mid - (n % 2 ? 0 : 1), row: k, hp: r.bhp, max: r.bhp, alive: true, burn: 0, tower: true });
+    var towerBlocks = Math.min(o.tower || 0, 2);                 /* tiers 1-2 stack mid-deck tower blocks; tier 3 is the nest instead */
+    for (k = 0; k < towerBlocks; k++) r.walls.push({ col: side < 0 ? mid : mid - (n % 2 ? 0 : 1), row: k, hp: r.bhp, max: r.bhp, alive: true, burn: 0, tower: true });
+    r.nest = (o.tower || 0) >= 3;                                /* a real crow's nest up the mast with a lookout in it */
     var used = {}; r.walls.forEach(function (w) { used[w.col] = 1; });
     if (o.cannon) { var cc = side < 0 ? n - 2 : 1; if (used[cc]) cc = side < 0 ? n - 3 : 2; r.cannon = { col: cc, hp: 4 + 2 * (r.perks.plate || 0), alive: true, ball: true }; used[cc] = 1; }
     var cols = []; for (i = 0; i < n; i++) if (!used[i]) cols.push(i);
-    if (side > 0) cols.reverse();                  /* crew stand back-to-front, away from the enemy */
+    for (var cs = cols.length - 1; cs > 0; cs--) { var cj = Math.floor(Math.random() * (cs + 1)), ct = cols[cs]; cols[cs] = cols[cj]; cols[cj] = ct; }   /* crew take random stations each fight */
     for (i = 0; i < o.crew; i++) {
       var role = o.roles ? o.roles[i % o.roles.length] : ROLES[i % ROLES.length];
-      var col = cols[Math.min(cols.length - 1, Math.floor(i * cols.length / Math.max(1, o.crew)))];
+      var col = cols.length ? cols[Math.min(cols.length - 1, Math.floor(i * cols.length / Math.max(1, o.crew)))] : i % n;
       r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: (r.perks.wind2 ? 2 : 1) + (r.perks.quarter || 0), burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
         look: o.looks ? o.looks[i % o.looks.length] : (role && role.look) || null, scale: o.scale || 1, armor: o.dmgMul || 1, dance: tr.indexOf("dance") >= 0 });
     }
+    if (r.nest && r.crew.length) r.crew[Math.floor(Math.random() * r.crew.length)].nest = true;   /* one crew mans the nest */
     o.ammo.forEach(function (a) { r.ammo[a] = (r.ammo[a] || 0) + (o.ammoN || 2); });
     r.ammo.rock = Infinity;
     r.turn = 0;
@@ -326,7 +329,9 @@
   function deckY(r) { return WY - 22 + bob(r); }
   function colX(r, c) { return r.x0 + c * PW + PW / 2; }
   function crewPos(r, m) {
-    var s = m.scale || 1, x = colX(r, m.col) + m.dx, y = deckY(r) - 26 * s + (m.swim ? 30 : 0);
+    var s = m.scale || 1;
+    if (m.nest && !m.swim) { var dn = deckY(r), mcn = Math.floor(r.n / 2), mxn = colX(r, mcn) + (r.side < 0 ? -PW / 2 : PW / 2); return { x: mxn, y: dn - 198 }; }  /* the lookout, up in the crow's nest */
+    var x = colX(r, m.col) + m.dx, y = deckY(r) - 26 * s + (m.swim ? 30 : 0);
     if (m.dance) { var dc = r.x0 + r.n * PW / 2, dh = r.n * PW / 2 - 20; x = dc + Math.sin(B.t * 2.0 * MO) * dh + m.dx; }  /* Dwayne dances the whole raft */
     if (m.look === "doc") y -= Math.abs(Math.sin(B.t * 4)) * 10;              /* Taxes hops */
     return { x: x, y: y };
@@ -396,7 +401,7 @@
     var dead = r.deck.filter(function (b) { return !b.alive; }); dead.slice(0, Math.ceil(dead.length / 2)).forEach(function (b) { b.alive = true; b.hp = b.max; });
     r.walls.forEach(function (w) { if (!w.alive && Math.random() < 0.5) { w.alive = true; w.hp = w.max; } });
     var n = 2 + upg("satchel"); AMMO_ORDER.slice(1).filter(unlocked).forEach(function (a) { r.ammo[a] = Math.max(r.ammo[a] || 0, n); });
-    r.crew.forEach(function (m) { m.swim = !r.deck[m.col].alive; });
+    r.crew.forEach(function (m) { m.swim = !m.nest && !r.deck[m.col].alive; });
   }
 
   function side(s) { return s < 0 ? B.mine : B.foe; }
@@ -616,7 +621,7 @@
     if (b.hp <= 0) {
       b.alive = false; sound("splinter");
       for (var i = 0; i < 6; i++) B.debris.push({ x: rect.x + rect.w / 2, y: rect.y + rect.h / 2, vx: (Math.random() - 0.5) * 300, vy: -150 - Math.random() * 250, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 10, w: 10 + Math.random() * 16, col: r.wood, life: 2.2 });
-      if (b.i !== undefined) r.crew.forEach(function (m) { if (m.col === b.i) m.swim = true; });
+      if (b.i !== undefined) r.crew.forEach(function (m) { if (m.col === b.i && !m.nest) m.swim = true; });
     }
   }
   function explode(g, p, x, y) {
@@ -952,6 +957,16 @@
     sailPath(); x.strokeStyle = shade(r.sail, -40); x.lineWidth = 2; x.stroke();
     x.lineCap = "butt";
     x.fillStyle = mg; x.fillRect(mx - 3.5, dy - 172, 7, 172);                    /* mast reads down the center, over the sail */
+    if (r.nest) {                                                                /* crow's nest: basket back + struts; the lookout is drawn into it, front rail added after the crew */
+      var nf = dy - 178, nr = dy - 196, nhw = 20;
+      x.strokeStyle = "#5a3d24"; x.lineWidth = 3; x.lineCap = "round";
+      x.beginPath(); x.moveTo(mx, dy - 166); x.lineTo(mx - nhw + 4, nr + 3); x.moveTo(mx, dy - 166); x.lineTo(mx + nhw - 4, nr + 3); x.stroke(); x.lineCap = "butt";
+      x.fillStyle = mg; x.fillRect(mx - 3, nf, 6, 14);
+      var ng = x.createLinearGradient(0, nr, 0, nf + 8); ng.addColorStop(0, "#8a6238"); ng.addColorStop(1, "#5a3d24");
+      x.fillStyle = ng; x.beginPath(); x.moveTo(mx - nhw, nr); x.lineTo(mx + nhw, nr); x.lineTo(mx + nhw - 5, nf + 4); x.quadraticCurveTo(mx, nf + 11, mx - nhw + 5, nf + 4); x.closePath(); x.fill();
+      x.save(); x.clip(); x.strokeStyle = "rgba(40,22,8,.4)"; x.lineWidth = 1; for (var nw = 0; nw < 3; nw++) { var nwy = nr + 5 + nw * 5; x.beginPath(); x.moveTo(mx - nhw, nwy); x.lineTo(mx + nhw, nwy); x.stroke(); } x.restore();
+      x.strokeStyle = "#9a7446"; x.lineWidth = 4; x.beginPath(); x.ellipse(mx, nr, nhw, 4.5, 0, 0, 6.3); x.stroke();
+    }
     if (r.flag === "maple") canFlag(x, mx, dy - 110, 34);
     else if (r.flag === "lighthouse") {
       var lhx = mx, lhy = dy - 86;
@@ -961,7 +976,7 @@
       circ(x, "#f6e05e", lhx, lhy - 38, 4); x.fillStyle = "#1a202c"; x.fillRect(lhx - 5, lhy - 44, 10, 3);
     }
     else { x.fillStyle = "rgba(255,255,255,.92)"; x.font = "700 26px " + F.display; x.textAlign = "center"; x.fillText(r.flag, mx, dy - 100); }
-    var fw = Math.sin(t * 6) * 4; x.fillStyle = r.sail; x.beginPath(); x.moveTo(mx, dy - 172); x.lineTo(mx - r.side * (30 + fw), dy - 165 + Math.sin(t * 5) * 2); x.lineTo(mx, dy - 158); x.fill();
+    if (!r.nest) { var fw = Math.sin(t * 6) * 4; x.fillStyle = r.sail; x.beginPath(); x.moveTo(mx, dy - 172); x.lineTo(mx - r.side * (30 + fw), dy - 165 + Math.sin(t * 5) * 2); x.lineTo(mx, dy - 158); x.fill(); }
     /* deck planks, then rope lashings over the seams */
     r.deck.forEach(function (b) { if (!b.alive) return; plank(x, blockRect(r, b, false), r.wood, b, r, "deck"); });
     for (i = 0; i < r.n - 1; i++) {
@@ -982,6 +997,13 @@
       circ(x, "#9aa3ad", cx, cy + 4, 2.5);
     }
     r.crew.forEach(function (m) { drawCrew(x, r, m, t); });
+    if (r.nest) {                                                                /* front rail of the crow's nest, over the lookout's legs so they read as standing in it */
+      var ff = dy - 178, fr = dy - 196, fhw = 20;
+      var fg = x.createLinearGradient(0, fr, 0, ff + 8); fg.addColorStop(0, "#7a5634"); fg.addColorStop(1, "#4a3018");
+      x.fillStyle = fg; x.beginPath(); x.moveTo(mx - fhw, fr + 1); x.quadraticCurveTo(mx, fr + 9, mx + fhw, fr + 1); x.lineTo(mx + fhw - 5, ff + 5); x.quadraticCurveTo(mx, ff + 13, mx - fhw + 5, ff + 5); x.closePath(); x.fill();
+      x.save(); x.clip(); x.strokeStyle = "rgba(40,22,8,.5)"; x.lineWidth = 1; for (var fwv = 0; fwv < 3; fwv++) { var fwy = fr + 4 + fwv * 5; x.beginPath(); x.moveTo(mx - fhw, fwy); x.quadraticCurveTo(mx, fwy + 6, mx + fhw, fwy); x.stroke(); } x.restore();
+      x.strokeStyle = "#b08a52"; x.lineWidth = 2.5; x.beginPath(); x.moveTo(mx - fhw, fr + 1); x.quadraticCurveTo(mx, fr + 9, mx + fhw, fr + 1); x.stroke();
+    }
   }
   function shade(hex, n) {
     if (hex.charAt(0) !== "#") return hex;
