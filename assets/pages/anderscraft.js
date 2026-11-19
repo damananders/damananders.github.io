@@ -702,39 +702,106 @@
     Ach.on(paint); paint(); section.hidden = false;
   }, "ac-ach-panel");
 
-  /* ---------- Under Maintenance tape: shown while the realms are down ----------
-     Down = the status check fails twice in a row (PC, tunnel or service off) OR every realm reports offline.
-     It rechecks every 30 s (15 s right after a first failure) and hides itself as soon as a realm answers.
-     Test: ?sx=status:down forces the down state, ?sx=status:demo the demo (online) data. */
+  /* ---------- Down states: the Under Maintenance banner + caution tape under each service that is down ----------
+     Realms: down when status.php says online:false, or status.php can't be reached at all (the PC, tunnel or
+     service is off, so the realms are off too). Sign-ups: down when register.php doesn't answer.
+     The checks here bypass the shared caches and give up after 4.5 s, so a dead tunnel shows within seconds.
+     The last result is remembered for 10 minutes, so a reload shows the tape at once and then confirms it.
+     An unreachable endpoint is retried once after 3 s before it counts, so one network hiccup never flashes it.
+     Test: ?sx=status:down (realms down), ?sx=signup:down (sign-ups down), ?sx=status:demo (demo, online). */
   Site.ready(function () {
-    var box = $("#ac-maint"); if (!box || !enabled("acMaintenance")) return;
-    var cfgUrl = Site.config && Site.config.anderscraft && Site.config.anderscraft.statusUrl;
-    var forced = Site.debug("status");
-    if (!cfgUrl && forced !== "down" && forced !== "demo") return;      /* no status endpoint: never guess "down" */
-    var fails = 0, timer = 0, busy = false, shown = false;
-    function show(on) {
-      if (on === shown) return; shown = on; box.hidden = !on;
-      if (on) Site.sfx("error");
+    if (!enabled("acMaintenance")) return;
+    var banner = $("#ac-maint");
+    var cfgA = (Site.config && Site.config.anderscraft) || {};
+    var statusUrl = cfgA.statusUrl || "";
+    var signupUrl = ""; try { signupUrl = (settings && settings.apiUrl) || cfgA.apiUrl || ""; } catch (e) {}
+    var dStatus = Site.debug("status"), dSignup = Site.debug("signup");
+    var KEY = "ac.downState", TIMEOUT = 4500, EVERY = 30000;
+    var HDR = { "ngrok-skip-browser-warning": "1" };
+
+    /* one strip of tape per service, added along the bottom edge of its section */
+    function tape(host, text) {
+      if (!host) return null;
+      var unit = text + " ◆ Caution ◆ ", half = new Array(9).join(unit);
+      var t = el("div", { class: "ac-svc-tape", role: "status", hidden: true },
+        el("span", { class: "sx-sr", text: text + "." }),
+        el("span", { class: "ac-svc-tape-run", "aria-hidden": "true" }, el("span", { text: half }), el("span", { text: half })));
+      host.appendChild(t); host.classList.add("ac-has-tape");
+      return t;
     }
-    function next(ms) { clearTimeout(timer); timer = 0; if (!document.hidden) timer = setTimeout(check, ms); }
-    function verdict(d) {
-      if (forced === "down") return "down";
-      if (!d || !Array.isArray(d.realms)) return "fail";
-      var known = d.realms.filter(function (r) { return r && typeof r.online === "boolean"; });
-      if (!known.length) return "fail";
-      return known.some(function (r) { return r.online; }) ? "up" : "down";
-    }
-    function check() {
-      if (busy || document.hidden) return; busy = true;
-      Site.live.realms().then(function (d) { return d; }, function () { return null; }).then(function (d) {
-        busy = false;
-        var v = verdict(d);
-        if (v === "up") { fails = 0; show(false); next(30000); }
-        else if (v === "down") { fails = 0; show(true); next(30000); }
-        else { fails++; if (fails >= 2) show(true); next(fails >= 2 ? 30000 : 15000); }
+    var tapes = {
+      signup: tape($("#ac-signup"), "Sign-ups are down"),
+      r1: tape($('.ac-realm[data-ac-realm="1"]'), "Realm offline"),
+      r2: tape($('.ac-realm[data-ac-realm="2"]'), "Realm offline")
+    };
+
+    var state = { r1: null, r2: null, signup: null };   /* true = down, false = up, null = unknown */
+    function paint(fresh) {
+      var realmsDown = state.r1 === true && state.r2 === true;
+      if (banner) { var was = !banner.hidden; banner.hidden = !realmsDown; if (realmsDown && !was && fresh) Site.sfx("error"); }
+      ["r1", "r2", "signup"].forEach(function (k) {
+        var t = tapes[k]; if (!t) return;
+        t.hidden = state[k] !== true;
+        if (t.parentNode) t.parentNode.classList.toggle("ac-is-down", state[k] === true);
       });
     }
-    document.addEventListener("visibilitychange", function () { if (document.hidden) { clearTimeout(timer); timer = 0; } else check(); });
-    check();
+    /* instant: last known result from this browser, if recent */
+    try {
+      var last = Site.store.get(KEY, null);
+      if (last && typeof last === "object" && Date.now() - (last.t || 0) < 600000) {
+        ["r1", "r2", "signup"].forEach(function (k) { if (typeof last[k] === "boolean") state[k] = last[k]; });
+        paint(false);
+      }
+    } catch (e) {}
+    function save() { Site.store.set(KEY, { t: Date.now(), r1: state.r1, r2: state.r2, signup: state.signup }); }
+
+    function get(url) {
+      var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { if (ctl) ctl.abort(); }, TIMEOUT);
+      return fetch(url, { method: "GET", headers: HDR, cache: "no-store", signal: ctl ? ctl.signal : undefined })
+        .then(function (r) { clearTimeout(to); return r; }, function (e) { clearTimeout(to); throw e; });
+    }
+    /* {r1, r2} as booleans (down), or null when the endpoint itself failed */
+    function checkRealms() {
+      if (dStatus === "down") return Promise.resolve({ r1: true, r2: true });
+      if (dStatus === "demo") return Site.live.realms().then(read);
+      if (!statusUrl) return Promise.resolve("skip");
+      return get(statusUrl).then(function (r) { return r.ok ? r.json() : null; }).then(read, function () { return null; });
+      function read(d) {
+        if (!d || d.ok === false || !Array.isArray(d.realms)) return null;
+        var out = {};
+        d.realms.forEach(function (x) { if (x && typeof x.online === "boolean" && (String(x.id) === "1" || String(x.id) === "2")) out["r" + x.id] = !x.online; });
+        return ("r1" in out || "r2" in out) ? out : null;
+      }
+    }
+    /* true (down), false (up), or null when unsure */
+    function checkSignup() {
+      if (dSignup) return Promise.resolve(dSignup !== "up");
+      if (!signupUrl) return Promise.resolve("skip");
+      /* the service answers a plain GET with "405 Use POST"; a dead tunnel errors or returns ngrok's own error page */
+      return get(signupUrl).then(function (r) { return !(r.status === 405 || r.ok); }, function () { return null; });
+    }
+
+    var timer = 0, busy = false, misses = { realms: 0, signup: 0 };
+    function next(ms) { clearTimeout(timer); timer = 0; if (!document.hidden) timer = setTimeout(run, ms); }
+    function run() {
+      if (busy || document.hidden) return; busy = true;
+      Promise.all([checkRealms(), checkSignup()]).then(function (res) {
+        busy = false;
+        var realms = res[0], signup = res[1], retry = false;
+        if (realms !== "skip") {
+          if (realms) { misses.realms = 0; if (typeof realms.r1 === "boolean") state.r1 = realms.r1; if (typeof realms.r2 === "boolean") state.r2 = realms.r2; }
+          else if (++misses.realms >= 2) { state.r1 = true; state.r2 = true; }      /* unreachable twice: the PC is off, so the realms are too */
+          else retry = true;
+        }
+        if (signup !== "skip") {
+          if (signup === null) { if (++misses.signup >= 2) state.signup = true; else retry = true; }
+          else { misses.signup = 0; state.signup = signup; }
+        }
+        paint(true); save();
+        next(retry ? 3000 : EVERY);
+      });
+    }
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { clearTimeout(timer); timer = 0; } else run(); });
+    run();
   }, "ac-maintenance");
 })();
