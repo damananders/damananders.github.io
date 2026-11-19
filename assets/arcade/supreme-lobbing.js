@@ -958,17 +958,31 @@
     x.fillStyle = "#d52b1e"; x.fillRect(cx - w / 2, cy - h / 2, w / 4, h); x.fillRect(cx + w / 4, cy - h / 2, w / 4, h);
     maple(x, cx, cy, w / 40, "#d52b1e");
   }
-  function hairCap(x, col, browY, backY) {        /* hair over the top of the head, down to browY at the front and backY at the back */
-    x.fillStyle = col; x.beginPath(); x.arc(0, -26, 12, Math.PI, 0); x.lineTo(12, browY); x.quadraticCurveTo(2, browY - 7, -8, browY - 2); x.lineTo(-12, backY); x.closePath(); x.fill();
+  function hairCap(x, col, frontY, backY) {        /* a head of hair over the skull: frontY = forehead hairline, backY = nape */
+    x.fillStyle = col; x.beginPath();
+    x.moveTo(6.5, frontY);                           /* forehead hairline (face side) */
+    x.quadraticCurveTo(12.5, frontY - 5.5, 12, -31); /* sweep up the front */
+    x.quadraticCurveTo(8, -40, -3, -39.5);           /* over the crown */
+    x.quadraticCurveTo(-12.5, -38.5, -14, -27.5);    /* down the back of the skull */
+    x.quadraticCurveTo(-15, -21, -11.5, backY);      /* nape, flared out a touch */
+    x.quadraticCurveTo(-7, backY - 2, -5.5, -27);    /* tuck back under toward the skull */
+    x.quadraticCurveTo(-8.5, -33.5, 0.5, -34.5);     /* inner line — hair thickness over the brow */
+    x.quadraticCurveTo(6.5, -34.5, 6.5, frontY);
+    x.closePath(); x.fill();
+    var hl = x.createLinearGradient(0, -41, 0, -29); hl.addColorStop(0, shade(col, 30)); hl.addColorStop(1, col);
+    x.fillStyle = hl; x.beginPath(); x.ellipse(-1.5, -35.5, 7.5, 3.1, -0.3, 0, 6.3); x.fill();
   }
   function drawPerson(x, L, face, arm, t) {
     var w = L.w || 22, hw = w / 2, sk = L.skin || "#f1c9a5", hc = L.hairCol || "#3b2a1e", oc = L.overCol || L.shirt || "#718096";
     x.save(); x.scale(face, 1);
     /* behind the body */
     if (L.hood) { circ(x, shade(oc, -14), -2, -26, 16); }
-    if (L.hair === "long") { x.fillStyle = hc; D.rr(x, -13, -34, 18, L.hood ? 26 : 32, 7); x.fill(); }
-    if (L.hair === "wolf") fillPath(x, hc, [[-12, -34], [-14, -12], [-10, -16], [-8, -9], [-5, -15], [-2, -12], [2, -20], [8, -30]]);
-    if (L.hair === "curly") [[-13, -30], [-15, -22], [-14, -14], [-11, -7], [-7, -10], [-9, -36], [-2, -39], [6, -38], [12, -33]].forEach(function (q) { circ(x, hc, q[0], q[1], 6.5); });
+    if (L.hair === "long") {                         /* hair flowing down the back */
+      fillPath(x, hc, [[4, -36], [-9, -37], [-14, -24], [-13, -8], [L.hood ? -10 : -9, L.hood ? -6 : 4], [-4, L.hood ? -8 : 2], [-5, -18], [-2, -30]]);
+      x.fillStyle = shade(hc, 18); x.beginPath(); x.moveTo(-10, -30); x.quadraticCurveTo(-12, -16, -10, -4); x.lineTo(-7, -5); x.quadraticCurveTo(-8, -18, -6, -30); x.closePath(); x.fill();
+    }
+    if (L.hair === "wolf") fillPath(x, hc, [[6, -35], [-12, -36], [-15, -22], [-12, -10], [-9, -14], [-8, -6], [-5, -13], [-3, -9], [-1, -17], [3, -28]]);   /* mullet */
+    if (L.hair === "curly") [[-13, -31], [-15, -23], [-14, -14], [-11, -8], [-6, -9], [-9, -37], [-1, -40], [7, -39], [13, -33]].forEach(function (q) { circ(x, hc, q[0], q[1], 6); circ(x, shade(hc, 20), q[0] - 1.4, q[1] - 1.6, 2.2); });
     if (L.orbs) for (var i = 0; i < 3; i++) { var an = t * 2.2 + i * 2.09; if (Math.sin(an) < 0) { circ(x, "rgba(246,173,85,.35)", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 7); circ(x, "#f6ad55", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 4); } }
     /* legs and shoes */
     x.fillStyle = L.pants || "#2d3748"; x.fillRect(-hw + 4, 6, 5, 14); x.fillRect(hw - 9, 6, 5, 14);
@@ -1015,22 +1029,27 @@
     x.strokeStyle = sk; x.beginPath(); x.moveTo(13, 0); x.lineTo(20, 0); x.stroke(); x.restore();
     /* head */
     circ(x, sk, 0, -26, 11);
-    if (L.hair === "short") hairCap(x, hc, -29, -24);
-    else if (L.hair === "combover") { hairCap(x, hc, -31, -25); x.strokeStyle = shade(hc, 30); x.lineWidth = 1; x.beginPath(); x.moveTo(-9, -33); x.quadraticCurveTo(0, -38, 10, -33); x.stroke(); }
-    else if (L.hair === "wolf") { hairCap(x, hc, -27, -20); fillPath(x, hc, [[2, -36], [12, -30], [11, -24], [8, -27], [6, -24], [4, -28]]); }
-    else if (L.hair === "bowl") { hairCap(x, hc, -25, -22); x.strokeStyle = shade(hc, -40); x.lineWidth = 1.4; x.beginPath(); x.moveTo(1, -38); x.lineTo(3, -31); x.stroke(); }
-    else if (L.hair === "long") { if (!L.hood) hairCap(x, hc, -28, -16); else fillPath(x, hc, [[-6, -36], [10, -36], [11, -30], [2, -32], [-6, -30]]); }
-    else if (L.hair === "curly") [[-8, -35], [-1, -38], [6, -37], [10, -34]].forEach(function (q) { circ(x, hc, q[0], q[1], 5.5); });
-    else if (L.hair === "bald") { x.strokeStyle = "rgba(255,255,255,.35)"; x.lineWidth = 2; x.beginPath(); x.arc(0, -26, 8, 3.6, 4.4); x.stroke(); }
-    /* face */
-    var ey = -28;
-    if (L.eyes === "blue") { circ(x, L.bloodshot ? "#ffd9d9" : "#fff", 4.5, ey, 2.6); circ(x, "#1e90ff", 5, ey, 1.6); circ(x, "#111", 5.2, ey, 0.7); if (L.bloodshot) { x.strokeStyle = "#e53e3e"; x.lineWidth = 0.6; x.beginPath(); x.moveTo(2, ey - 1); x.lineTo(3.4, ey); x.moveTo(2.2, ey + 1.2); x.lineTo(3.6, ey + 0.4); x.stroke(); } }
-    else circ(x, "#1a202c", 4.5, ey, 1.8);
+    if (L.hair === "short") { hairCap(x, hc, -30, -23.5); circ(x, shade(sk, -10), 10, -22, 1.8); }                 /* + sideburn */
+    else if (L.hair === "combover") { hairCap(x, hc, -33, -24.5); x.strokeStyle = shade(hc, 24); x.lineWidth = 1; x.beginPath(); for (var cs = 0; cs < 4; cs++) { x.moveTo(-8, -35 + cs * 0.8); x.quadraticCurveTo(2, -39 + cs, 11, -33 + cs * 1.4); } x.stroke(); }
+    else if (L.hair === "wolf") { hairCap(x, hc, -29, -16); fillPath(x, hc, [[4, -37], [13, -31], [10.5, -26], [8.5, -29], [6.5, -25], [5, -29], [3.5, -26]]); }   /* spiky front */
+    else if (L.hair === "bowl") { hairCap(x, hc, -28, -23); fillPath(x, hc, [[-3, -30.5], [11, -31], [11.5, -28.2], [-3, -28]]); }                                  /* neat fringe across the brow */
+    else if (L.hair === "long") { if (!L.hood) hairCap(x, hc, -29.5, -14); }
+    else if (L.hair === "curly") { hairCap(x, shade(hc, -6), -28.5, -22); [[-9, -36], [-2, -39], [5, -38.5], [11, -35], [12.5, -29], [-12.5, -29]].forEach(function (q) { circ(x, hc, q[0], q[1], 4.6); circ(x, shade(hc, 22), q[0] - 1.2, q[1] - 1.2, 1.7); }); }
+    else if (L.hair === "bald") { var sh = x.createRadialGradient(-2, -31, 1, 0, -28, 11); sh.addColorStop(0, shade(sk, 16)); sh.addColorStop(1, sk); x.fillStyle = sh; x.beginPath(); x.arc(0, -26, 10.6, Math.PI * 1.05, Math.PI * 1.95); x.fill(); }
+    /* face (turned toward the enemy): nose, eye, brow and mouth */
+    var ey = -28, iris = L.eyes === "blue" ? "#2b7fd4" : L.irisCol || "#3a2a1c";
+    fillPath(x, shade(sk, -13), [[9.6, -26], [12.5, -24.2], [9.9, -22.3]]);                    /* nose */
+    x.strokeStyle = "rgba(90,50,30,.2)"; x.lineWidth = 0.8; x.beginPath(); x.moveTo(9.9, -22.3); x.lineTo(8.3, -22); x.stroke();     /* nostril shadow */
+    circ(x, L.bloodshot ? "#ffe3e3" : "#fff", 5, ey, 2.7);                                    /* eye white */
+    circ(x, iris, 6, ey + 0.2, 1.6); circ(x, "#120d08", 6.3, ey + 0.2, 0.85); circ(x, "#fff", 5.4, ey - 0.7, 0.7);   /* iris, pupil, glint */
+    x.strokeStyle = shade(sk, -34); x.lineWidth = 1.1; x.lineCap = "round"; x.beginPath(); x.moveTo(2.4, ey - 1.6); x.quadraticCurveTo(5.2, ey - 3.2, 8, ey - 1.1); x.stroke();   /* upper lid */
+    if (L.bloodshot) { x.strokeStyle = "#e53e3e"; x.lineWidth = 0.6; x.beginPath(); x.moveTo(3, ey + 0.4); x.lineTo(4.3, ey + 0.2); x.moveTo(3.1, ey + 1.4); x.lineTo(4.6, ey + 0.9); x.stroke(); }
+    if (!L.glasses) { x.strokeStyle = shade(L.browCol || hc, -8); x.lineWidth = 1.9; x.lineCap = "round"; x.beginPath(); x.moveTo(2.6, ey - 4.3); x.quadraticCurveTo(5.4, ey - 5.2, 8.2, ey - 4); x.stroke(); }   /* eyebrow */
     if (L.beard === "full") {
       x.fillStyle = L.beardCol || hc; x.beginPath(); x.moveTo(-9, -27); x.quadraticCurveTo(-8, -10, 3, -10); x.quadraticCurveTo(11, -11, 11.5, -24); x.lineTo(9, -22); x.quadraticCurveTo(4, -20, 0, -22); x.quadraticCurveTo(-4, -22, -6, -27); x.closePath(); x.fill();
     }
-    if (L.smile) { x.fillStyle = L.beard === "full" ? "#7a2e2e" : "#5a1e1e"; x.beginPath(); x.arc(5.5, -20.5, 3.2, 0.1, Math.PI - 0.1); x.fill(); x.fillStyle = "#fff"; x.fillRect(3, -20.5, 5, 1.3); }
-    else if (L.beard !== "full") { x.strokeStyle = "#5a1e1e"; x.lineWidth = 1.2; x.beginPath(); x.moveTo(3.5, -20); x.lineTo(8, -20); x.stroke(); }
+    if (L.smile) { x.strokeStyle = "#7a2e2e"; x.lineWidth = 1.6; x.lineCap = "round"; x.beginPath(); x.moveTo(4.4, -20.6); x.quadraticCurveTo(7.3, -17.4, 10, -20.6); x.stroke(); x.fillStyle = "#fff"; x.beginPath(); x.moveTo(5.2, -20.2); x.quadraticCurveTo(7.3, -18.9, 9.2, -20.1); x.quadraticCurveTo(7.3, -19.7, 5.2, -20.2); x.fill(); }
+    else if (L.beard !== "full") { x.strokeStyle = "#8a4636"; x.lineWidth = 1.4; x.lineCap = "round"; x.beginPath(); x.moveTo(5, -20.1); x.quadraticCurveTo(7.6, -19.6, 9.8, -20.5); x.stroke(); }
     if (L.beard === "stache" || L.stache) { x.fillStyle = L.beardCol || hc; D.rr(x, 1.5, -23.8, 10, 3.6, 1.6); x.fill(); }
     if (L.beard === "stache70") fillPath(x, L.beardCol || hc, [[0, -24.5], [12, -24.5], [12.5, -17], [10, -17], [9.5, -21.5], [2.5, -21.5], [2, -17], [-0.5, -17]]);
     if (L.goatee) { x.fillStyle = L.beardCol || hc; D.rr(x, 4, -16.5, 4, 4, 1.5); x.fill(); }
