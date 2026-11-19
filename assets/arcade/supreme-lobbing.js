@@ -34,10 +34,14 @@
   };
   var AMMO_ORDER = ["rock", "bouncer", "splitter", "bomb", "fire", "gull", "repair"];
   var ROLES = [
-    { key: "cap",  name: "Cap",  hat: "#cd4257", shirt: "#e9e3d6", special: "bomb",     pow: 1.08 },
-    { key: "pip",  name: "Pip",  hat: "#f6ad55", shirt: "#4a90d9", special: "splitter", pow: 1 },
-    { key: "doc",  name: "Doc",  hat: "#68d391", shirt: "#f7fafc", special: "repair",   pow: 0.95 },
-    { key: "gull", name: "Wren", hat: "#b794f4", shirt: "#2d3748", special: "gull",     pow: 1 }
+    { key: "cap",  name: "Cap",  hat: "#cd4257", shirt: "#e9e3d6", special: "bomb",     pow: 1.08,
+      look: { skin: "#d8a271", hair: "short", hairCol: "#6f5e4b", beard: "full", beardCol: "#8a7b68", over: "coat", overCol: "#8c2f28", shirt: "#e9e3d6", pants: "#3a2a1c", shoes: "#2a1a10", w: 23, hat: { type: "tricorn", col: "#2a1d12", badge: true }, earring: true, eyepatch: true } },
+    { key: "pip",  name: "Pip",  hat: "#f6ad55", shirt: "#4a90d9", special: "splitter", pow: 1,
+      look: { skin: "#f0c19a", hair: "short", hairCol: "#3a2816", shirt: "#4a90d9", over: "open", overCol: "#d98b3a", pants: "#2d3748", shoes: "#5a3a1a", w: 18, bandana: "#cd4257", bandanaDot: true, smile: true, earring: true } },
+    { key: "doc",  name: "Doc",  hat: "#68d391", shirt: "#f7fafc", special: "repair",   pow: 0.95,
+      look: { skin: "#e8b48a", hair: "bowl", hairCol: "#4a3826", shirt: "#f7fafc", over: "open", overCol: "#2f855a", pants: "#4a5568", shoes: "#2a1a10", w: 21, glasses: "round", goatee: true } },
+    { key: "gull", name: "Wren", hat: "#b794f4", shirt: "#2d3748", special: "gull",     pow: 1,
+      look: { skin: "#caa07a", hair: "long", hairCol: "#241910", shirt: "#2d3748", over: "open", overCol: "#6b46c1", pants: "#1a202c", shoes: "#3a2a1a", w: 19, bandana: "#6b46c1", earring: "#cbd5e0" } }
   ];
   /* Shipwright: upgrades grouped by department. Each has max levels, a cost per level and a line per level. */
   var UPG = [
@@ -281,7 +285,7 @@
       var role = o.roles ? o.roles[i % o.roles.length] : ROLES[i % ROLES.length];
       var col = cols[Math.min(cols.length - 1, Math.floor(i * cols.length / Math.max(1, o.crew)))];
       r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: r.perks.wind2 ? 2 : 1, burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
-        look: o.looks ? o.looks[i % o.looks.length] : null, scale: o.scale || 1, armor: o.dmgMul || 1, dance: tr.indexOf("dance") >= 0 });
+        look: o.looks ? o.looks[i % o.looks.length] : (role && role.look) || null, scale: o.scale || 1, armor: o.dmgMul || 1, dance: tr.indexOf("dance") >= 0 });
     }
     o.ammo.forEach(function (a) { r.ammo[a] = (r.ammo[a] || 0) + (o.ammoN || 2); });
     r.ammo.rock = Infinity;
@@ -917,7 +921,9 @@
     var c = crewPos(r, m), face = -r.side, s = m.scale || 1;
     if (!m.alive) { x.globalAlpha = 0.5; x.fillStyle = "#cbd5e0"; x.font = "700 " + Math.round(18 * s) + "px " + F.display; x.textAlign = "center"; x.fillText("✕", c.x, c.y + 6); x.globalAlpha = 1; return; }
     var active = B.phase !== "fly" && B.turnSide === r.side && thrower() && thrower().m === m;
-    var arm = m.anim > 0 ? -2.4 + (0.4 - m.anim) * 8 : active ? -(B.aim.ang + 0.6) : -0.5;
+    /* arm rests DOWN at the side when idle (no more raised-arm "salute"); raises only to aim or wind up a throw */
+    var idle = 1.18 + Math.sin((t + (m.col || 0)) * 1.4) * 0.06;
+    var arm = m.anim > 0 ? -2.4 + (0.4 - m.anim) * 8 : active ? -(B.aim.ang + 0.6) : idle;
     if (m.anim < 0) { x.save(); x.translate(Math.sin(t * 60) * 3, 0); }
     if (m.look) {
       x.save(); x.translate(c.x, c.y); x.scale(s, s);
@@ -1030,7 +1036,25 @@
     if (L.goatee) { x.fillStyle = L.beardCol || hc; D.rr(x, 4, -16.5, 4, 4, 1.5); x.fill(); }
     if (L.glasses === "70s") { x.strokeStyle = "#6b4426"; x.lineWidth = 1.6; x.fillStyle = "rgba(246,173,85,.35)"; D.rr(x, -2.5, -32.5, 6.5, 7, 2); x.fill(); x.stroke(); D.rr(x, 4.8, -32.5, 6.5, 7, 2); x.fill(); x.stroke(); }
     else if (L.glasses === "shades") { x.fillStyle = "#111"; D.rr(x, -1, -31, 12.5, 4.6, 2); x.fill(); }
-    if (L.hat) {
+    else if (L.glasses === "round") { x.strokeStyle = "#3a2a1a"; x.lineWidth = 1.3; x.fillStyle = "rgba(220,235,245,.25)"; x.beginPath(); x.arc(4.5, -28, 3.3, 0, 6.3); x.fill(); x.stroke(); x.beginPath(); x.moveTo(1.2, -28); x.lineTo(-1.4, -27.4); x.stroke(); }
+    if (L.earring) { x.strokeStyle = L.earring === true ? "#f6c445" : L.earring; x.lineWidth = 1.5; x.beginPath(); x.arc(9, -19.5, 2.1, 0, 6.3); x.stroke(); }
+    if (L.eyepatch) { x.strokeStyle = "#1a1210"; x.lineWidth = 1.6; x.beginPath(); x.moveTo(-7, -33.5); x.lineTo(11, -27.5); x.stroke(); x.fillStyle = "#14100d"; D.rr(x, 1.5, -31, 6.6, 6.2, 1.8); x.fill(); }
+    if (L.bandana) {
+      x.fillStyle = L.bandana; x.beginPath(); x.arc(0, -28, 12, Math.PI * 1.02, Math.PI * 1.98); x.closePath(); x.fill(); x.fillRect(-12, -30, 24, 4.5);
+      fillPath(x, shade(L.bandana, -20), [[-10, -30], [-16, -33], [-17, -25], [-11, -24]]);   /* knot */
+      fillPath(x, shade(L.bandana, -10), [[-12, -28], [-21, -23], [-19, -18], [-12, -22]]);   /* tail */
+      if (L.bandanaDot) for (var bd = 0; bd < 5; bd++) circ(x, "rgba(255,255,255,.72)", -8 + bd * 4.3, -32 + (bd % 2) * 2.2, 1);
+    }
+    if (L.hat && L.hat.type === "tricorn") {                         /* captain's tricorn: wide upturned brim + peak */
+      var tc = L.hat.col;
+      fillPath(x, shade(tc, -16), [[-15, -32], [15, -32], [19, -28], [13, -25], [-13, -25], [-18, -28]]);   /* brim */
+      fillPath(x, tc, [[-11, -30], [11, -30], [7, -42], [-7, -42]]);                                        /* crown */
+      x.strokeStyle = shade(tc, 24); x.lineWidth = 1.4; x.beginPath(); x.moveTo(-12, -30); x.lineTo(12, -30); x.stroke();
+      if (L.hat.badge) { circ(x, "#d4af37", 0, -35, 2.8); x.fillStyle = "#1a202c"; x.font = "800 4px " + F.display; x.textAlign = "center"; x.fillText("☠", 0, -33.6); }
+    } else if (L.hat && L.hat.type === "beanie") {                    /* snug knit cap */
+      x.fillStyle = L.hat.col; x.beginPath(); x.arc(0, -29, 12, Math.PI * 1.02, Math.PI * 1.98); x.closePath(); x.fill(); x.fillRect(-12, -31, 24, 4);
+      x.fillStyle = shade(L.hat.col, -18); x.fillRect(-12, -31, 24, 3.4);
+    } else if (L.hat) {
       x.fillStyle = L.hat.col; x.beginPath(); x.arc(0, -30, 12, Math.PI, 0); x.closePath(); x.fill(); D.rr(x, 3, -32, 15, 3.8, 1.8); x.fill();
       if (L.hat.patch === "anime") { circ(x, "#fff", -1, -36, 4.6); circ(x, "#2b6cb0", -2.8, -36.4, 1.7); circ(x, "#2b6cb0", 0.8, -36.4, 1.7); circ(x, "#fff", -2.3, -37.1, 0.6); circ(x, "#fff", 1.3, -37.1, 0.6); x.strokeStyle = "#e53e3e"; x.lineWidth = 0.8; x.beginPath(); x.arc(-1, -34.6, 1.3, 0.3, 2.8); x.stroke(); }
       if (L.hat.patch === "wanted") { x.fillStyle = "#efe2b8"; x.fillRect(-5, -40, 9, 10); x.fillStyle = "#3b2a1e"; x.fillRect(-4, -39, 7, 1.4); circ(x, "#a0703f", -0.5, -35, 2.4); x.fillRect(-4, -32, 7, 1); }
@@ -1374,7 +1398,9 @@
       { k: "upg", s: NS + "upg", t: "maxmap" }, { k: "ammo", s: NS + "ammo", t: "ormap" }, { k: "owned", s: NS + "owned", t: "ormap" }
     ],
     onSync: function (g) { paintBest(g); },
-    init: function (g) { paintBest(g); g.debug = { B: function () { return B; }, start: function (k, i) { startBattle(g, k, i); } }; },
+    init: function (g) { paintBest(g); g.debug = { B: function () { return B; }, start: function (k, i) { startBattle(g, k, i); },
+      ROLES: ROLES, LK: LK, PRESTIGE: PRESTIGE,
+      draw: function (ctx, L, face, arm, t) { if (L === "doc") drawDoc(ctx, face, t); else if (L === "reaper") drawReaper(ctx, face, arm, t); else drawPerson(ctx, L, face, arm, t); } }; },
     title: function (g) { titleMenu(g); },
     restart: function (g) { if (B) { var k = B.kind, i = B.kind === "endless" ? 0 : B.idx; if (k === "endless") B = null; startBattle(g, k, i); } },
     update: update,
