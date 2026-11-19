@@ -393,11 +393,11 @@
           if (ag && !bg) return -1;
           if (!ag && bg) return 1;
           if (ag && bg) return bg - ag;   /* both earned → most recent first */
-          return (RARITY_RANK[rarOf(b)] || 0) - (RARITY_RANK[rarOf(a)] || 0) || pos[a.id] - pos[b.id];
+          return (RARITY_RANK[rarOf(a)] || 0) - (RARITY_RANK[rarOf(b)] || 0) || pos[a.id] - pos[b.id];
         });
       } else {
-        /* rarity, rarest first; catalog position breaks ties so the order stays stable */
-        arr.sort(function (a, b) { return (RARITY_RANK[rarOf(b)] || 0) - (RARITY_RANK[rarOf(a)] || 0) || pos[a.id] - pos[b.id]; });
+        /* rarity, lowest first (common → legendary); catalog position breaks ties so the order stays stable */
+        arr.sort(function (a, b) { return (RARITY_RANK[rarOf(a)] || 0) - (RARITY_RANK[rarOf(b)] || 0) || pos[a.id] - pos[b.id]; });
       }
       return arr;
     }
