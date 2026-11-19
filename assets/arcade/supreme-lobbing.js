@@ -45,22 +45,25 @@
   ];
   /* Shipwright: upgrades grouped by department. Each has max levels, a cost per level and a line per level. */
   var UPG = [
-    { key: "armor",  dep: "hull",    name: "Hull Armor",        max: 4, cost: [30, 60, 110, 180],  desc: function (l) { return "Planks take " + (3 + l) + " hits"; } },
+    { key: "armor",  dep: "hull",    name: "Hull Armor",        max: 6, cost: [30, 60, 110, 180, 260, 340], desc: function (l) { return "Planks take " + (3 + l) + " hits"; } },
     { key: "size",   dep: "hull",    name: "Bigger Raft",       max: 2, cost: [80, 200],           desc: function (l) { return (2 + l) + " crew · " + (6 + l) + " planks"; } },
-    { key: "walls",  dep: "hull",    name: "Bulwarks",          max: 2, cost: [70, 160],           desc: function (l) { return (1 + l) + " wall block" + (l ? "s" : "") + " shielding the bow"; } },
+    { key: "walls",  dep: "hull",    name: "Bulwarks",          max: 3, cost: [70, 160, 300],      desc: function (l) { return (1 + l) + " wall block" + (l ? "s" : "") + " shielding the bow"; } },
+    { key: "rbow",   dep: "hull",    name: "Reinforced Bow",    max: 2, cost: [150, 300],          desc: function (l) { return l ? "Front wall takes +" + (l * 2) + " hits" : "Toughen the front wall blocks"; } },
     { key: "tower",  dep: "hull",    name: "Crow's Nest",       max: 2, cost: [90, 190],           desc: function (l) { return l ? l + " tower block" + (l > 1 ? "s" : "") + " mid-deck" : "A tower that soaks up high lobs"; } },
     { key: "pump",   dep: "hull",    name: "Pump & Patch",      max: 2, cost: [120, 240],          desc: function (l) { return l ? "Fixes a broken plank every " + (l > 1 ? 2 : 3) + " turns" : "Fixes broken planks on its own"; } },
-    { key: "tough",  dep: "crew",    name: "Crew Toughness",    max: 4, cost: [30, 60, 110, 180],  desc: function (l) { return "Crew health " + (100 + l * 20); } },
-    { key: "arms",   dep: "crew",    name: "Strong Arms",       max: 3, cost: [40, 90, 160],       desc: function (l) { return "Throw power " + (100 + l * 8) + "%"; } },
+    { key: "tough",  dep: "crew",    name: "Crew Toughness",    max: 6, cost: [30, 60, 110, 180, 260, 340], desc: function (l) { return "Crew health " + (100 + l * 20); } },
+    { key: "arms",   dep: "crew",    name: "Strong Arms",       max: 4, cost: [40, 90, 160, 250],  desc: function (l) { return "Throw power " + (100 + l * 8) + "%"; } },
     { key: "aid",    dep: "crew",    name: "First Aid Kits",    max: 3, cost: [60, 120, 200],      desc: function (l) { return l ? "Crew heal " + l * 4 + " every turn" : "Crew heal a little every turn"; } },
+    { key: "quarter",dep: "crew",    name: "Quartermaster",     max: 2, cost: [130, 260],          desc: function (l) { return l ? "+" + l + " special charge" + (l > 1 ? "s" : "") + " per crew" : "Extra special charges for your crew"; } },
     { key: "vests",  dep: "crew",    name: "Life Vests",        max: 1, cost: [90],                desc: function (l) { return l ? "Overboard costs 5 a turn" : "Halves overboard damage"; } },
     { key: "spy",    dep: "crew",    name: "Spyglass",          max: 2, cost: [70, 150],           desc: function (l) { return l ? "Aim guide " + (100 + l * 45) + "% longer" : "A longer aim guide (when it's on)"; } },
-    { key: "satchel",dep: "arsenal", name: "Ammo Satchel",      max: 2, cost: [100, 220],          desc: function (l) { return (2 + l) + " of each ammo per battle"; } },
-    { key: "heavy",  dep: "arsenal", name: "Heavy Rocks",       max: 3, cost: [50, 110, 190],      desc: function (l) { return "Rocks hit for " + (30 + l * 6); } },
+    { key: "satchel",dep: "arsenal", name: "Ammo Satchel",      max: 3, cost: [100, 220, 340],     desc: function (l) { return (2 + l) + " of each ammo per battle"; } },
+    { key: "heavy",  dep: "arsenal", name: "Heavy Rocks",       max: 4, cost: [50, 110, 190, 280], desc: function (l) { return "Rocks hit for " + (30 + l * 6); } },
     { key: "blast",  dep: "arsenal", name: "Bigger Blasts",     max: 2, cost: [120, 240],          desc: function (l) { return "Bomb and fire radius " + (100 + l * 18) + "%"; } },
+    { key: "chain",  dep: "arsenal", name: "Chain Shot",        max: 1, cost: [240],               desc: function (l) { return l ? "Splitters burst into 5 shards" : "Splitters burst into 3 shards"; } },
     { key: "wind2",  dep: "arsenal", name: "Second Wind",       max: 1, cost: [260],               desc: function (l) { return l ? "Each special can be used twice" : "Use every special twice per battle"; } },
     { key: "cannon", dep: "cannon",  name: "Deck Cannon",       max: 1, cost: [250],               desc: function (l) { return l ? "Mounted" : "A cannon that fires heavy balls"; } },
-    { key: "bore",   dep: "cannon",  name: "Cannon Bore",       max: 2, cost: [140, 260],          desc: function (l) { return "Cannonballs hit for " + (45 + l * 12); }, need: "cannon" },
+    { key: "bore",   dep: "cannon",  name: "Cannon Bore",       max: 3, cost: [140, 260, 380],     desc: function (l) { return "Cannonballs hit for " + (45 + l * 12); }, need: "cannon" },
     { key: "plate",  dep: "cannon",  name: "Cannon Plating",    max: 2, cost: [100, 200],          desc: function (l) { return "Cannon takes " + (4 + l * 2) + " hits"; }, need: "cannon" }
   ];
   var DEPS = [
@@ -301,7 +304,8 @@
     var tr = r.traits; r.nowind = tr.indexOf("nowind") >= 0; r.bend = tr.indexOf("bend") >= 0; r.fizzle = tr.indexOf("redtape") >= 0; if (tr.indexOf("command") >= 0) r.mul = 1.3;
     for (var i = 0; i < n; i++) r.deck.push({ i: i, hp: r.bhp, max: r.bhp, alive: true, burn: 0 });
     var front = side < 0 ? n - 1 : 0, mid = Math.floor(n / 2);
-    for (var k = 0; k < o.walls; k++) r.walls.push({ col: front, row: k, hp: r.bhp, max: r.bhp, alive: true, burn: 0 });
+    var bowHp = r.bhp + 2 * (r.perks.rbow || 0);                /* Reinforced Bow thickens the front wall */
+    for (var k = 0; k < o.walls; k++) r.walls.push({ col: front, row: k, hp: bowHp, max: bowHp, alive: true, burn: 0 });
     for (k = 0; k < o.tower; k++) r.walls.push({ col: side < 0 ? mid : mid - (n % 2 ? 0 : 1), row: k, hp: r.bhp, max: r.bhp, alive: true, burn: 0, tower: true });
     var used = {}; r.walls.forEach(function (w) { used[w.col] = 1; });
     if (o.cannon) { var cc = side < 0 ? n - 2 : 1; if (used[cc]) cc = side < 0 ? n - 3 : 2; r.cannon = { col: cc, hp: 4 + 2 * (r.perks.plate || 0), alive: true, ball: true }; used[cc] = 1; }
@@ -310,7 +314,7 @@
     for (i = 0; i < o.crew; i++) {
       var role = o.roles ? o.roles[i % o.roles.length] : ROLES[i % ROLES.length];
       var col = cols[Math.min(cols.length - 1, Math.floor(i * cols.length / Math.max(1, o.crew)))];
-      r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: r.perks.wind2 ? 2 : 1, burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
+      r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: (r.perks.wind2 ? 2 : 1) + (r.perks.quarter || 0), burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
         look: o.looks ? o.looks[i % o.looks.length] : (role && role.look) || null, scale: o.scale || 1, armor: o.dmgMul || 1, dance: tr.indexOf("dance") >= 0 });
     }
     o.ammo.forEach(function (a) { r.ammo[a] = (r.ammo[a] || 0) + (o.ammoN || 2); });
@@ -349,7 +353,7 @@
     var bhp = 3 + upg("armor"), chp = 100 + upg("tough") * 20, size = upg("size"), d = deco();
     var myAmmo = isVs ? AMMO_ORDER.slice(1) : AMMO_ORDER.slice(1).filter(unlocked);
     mine = { name: isVs ? "Player 1" : "Your Raft", human: true, crew: isVs ? 3 : 2 + size, planks: isVs ? 7 : 6 + size, walls: isVs ? 1 : 1 + upg("walls"), tower: isVs ? 0 : upg("tower"),
-      perks: isVs ? {} : { pump: upg("pump"), aid: upg("aid"), vests: upg("vests"), spy: upg("spy"), heavy: upg("heavy"), blast: upg("blast"), wind2: upg("wind2"), bore: upg("bore"), plate: upg("plate") }, hp: isVs ? 120 : chp, ammo: myAmmo, ammoN: isVs ? 2 : 2 + upg("satchel"),
+      perks: isVs ? {} : { pump: upg("pump"), aid: upg("aid"), vests: upg("vests"), spy: upg("spy"), heavy: upg("heavy"), blast: upg("blast"), wind2: upg("wind2"), bore: upg("bore"), plate: upg("plate"), rbow: upg("rbow"), quarter: upg("quarter"), chain: upg("chain") }, hp: isVs ? 120 : chp, ammo: myAmmo, ammoN: isVs ? 2 : 2 + upg("satchel"),
       bhp: isVs ? 4 : bhp, cannon: !isVs && upg("cannon") > 0, sail: DECOR.sail[d.sail][0], wood: DECOR.wood[d.wood][0], flag: DECOR.flag[d.flag][0] };
     if (kind === "campaign") {
       var bt = BATTLES[idx]; region = REGIONS[bt.r];
@@ -665,7 +669,8 @@
         stepP(p, h, B.wind); p.x += p.vx * h; p.y += p.vy * h;
         if (p.k === "splitter" && vy0 < 0 && p.vy >= 0) {
           p.alive = false;
-          [-0.22, 0, 0.22].forEach(function (da) { var sp = Math.hypot(p.vx, p.vy) * 0.95 + 40, an = Math.atan2(p.vy, p.vx) + da; add.push({ k: "shard", x: p.x, y: p.y, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp, age: 1, from: p.from, bounces: 0, alive: true, trail: [] }); });
+          var spread = ((side(p.from).perks || {}).chain ? [-0.3, -0.15, 0, 0.15, 0.3] : [-0.22, 0, 0.22]);   /* Chain Shot: 5 shards not 3 */
+          spread.forEach(function (da) { var sp = Math.hypot(p.vx, p.vy) * 0.95 + 40, an = Math.atan2(p.vy, p.vx) + da; add.push({ k: "shard", x: p.x, y: p.y, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp, age: 1, from: p.from, bounces: 0, alive: true, trail: [] }); });
           ring(p.x, p.y, 20, "#f6ad55"); break;
         }
         var hit = hitTest(p);
