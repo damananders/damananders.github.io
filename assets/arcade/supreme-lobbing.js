@@ -993,6 +993,14 @@
     x.strokeStyle = (L.over && L.over !== "poncho") ? shade(oc, -10) : shade(L.shirt || sk, -8);
     x.beginPath(); x.moveTo(-hw + 2, -12); x.quadraticCurveTo(-hw - 2.5, -4, -hw - 1.5, 4); x.stroke();
     x.strokeStyle = sk; x.beginPath(); x.moveTo(-hw - 1.5, 4); x.lineTo(-hw - 1, 8.5); x.stroke(); x.restore();
+    /* hips: trouser top with a crotch notch — drawn BEFORE the torso so the shirt sits in front of the waist */
+    var pw2 = 2 * lsp + lw + 2;
+    x.fillStyle = L.pants || "#2d3748";
+    x.beginPath();
+    x.moveTo(-pw2 / 2, -2); x.lineTo(pw2 / 2, -2);                 /* waist (tucked under the shirt that draws next) */
+    x.lineTo(pw2 / 2, 11); x.lineTo(lsp - lw / 2 + 0.5, 12.5);     /* right hip down to right leg inner */
+    x.quadraticCurveTo(0, 8.5, -lsp + lw / 2 - 0.5, 12.5);         /* crotch notch */
+    x.lineTo(-pw2 / 2, 11); x.closePath(); x.fill();
     /* torso */
     if (L.hoodUnder) circ(x, shade(L.shirt, -10), -5, -15, 8);
     x.fillStyle = L.shirt || "#e2e8f0"; D.rr(x, -hw, -16, w, 26, 6); x.fill();
@@ -1019,17 +1027,6 @@
       for (var bb = 0; bb < 3; bb++) { circ(x, "#d4af37", -3, -10 + bb * 6, 1.3); circ(x, "#d4af37", 4, -10 + bb * 6, 1.3); }
       x.fillStyle = "#1a202c"; x.fillRect(-hw, 2, w, 3);
     } else if (L.tie) fillPath(x, L.tie, [[-1, -15], [2, -15], [2.6, -3], [0.5, 0], [-1.6, -3]]);
-    /* hips: waistband + trouser top with a crotch notch between the legs (no centre seam — that read as a rear view) */
-    if (L.over !== "coat" && L.over !== "poncho") {
-      var pw2 = 2 * lsp + lw + 2;
-      x.fillStyle = L.pants || "#2d3748";
-      x.beginPath();
-      x.moveTo(-pw2 / 2, 1); x.lineTo(pw2 / 2, 1);                 /* waist */
-      x.lineTo(pw2 / 2, 11); x.lineTo(lsp - lw / 2 + 0.5, 12.5);   /* right hip down to right leg inner */
-      x.quadraticCurveTo(0, 8.5, -lsp + lw / 2 - 0.5, 12.5);       /* crotch notch */
-      x.lineTo(-pw2 / 2, 11); x.closePath(); x.fill();
-      x.fillStyle = "rgba(255,255,255,.06)"; x.fillRect(-pw2 / 2, 1, pw2, 2.2);   /* subtle waistband */
-    }
     if (L.mark) { x.save(); x.scale(face, 1); x.fillStyle = L.mark === "F" ? "#fff" : "#f7fafc"; x.font = "800 " + (L.mark === "F" ? 13 : 11) + "px " + F.display; x.textAlign = "center"; x.fillText(L.mark, L.mark === "F" ? 0 : 0, -1); x.restore(); }
     if (L.pin === "maple") canFlag(x, -hw + 5, -10, 8);
     /* held item in the off hand */
