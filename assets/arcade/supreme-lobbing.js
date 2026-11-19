@@ -278,9 +278,9 @@
     { r: 4, name: "Keaton, the Kind", short: "Keaton", crew: 1, look: LK.keaton, scale: 1.3, planks: 8, walls: 2, tower: 0, hp: 280, ammo: ["bouncer", "bomb"], acc: 1.35,
       traits: ["kind", "shiftcover"], skin: "pick", flag: "⚡", sail: "#2d3748", blurb: "Patches you up, then shifts cover for a cleaner shot",
       lines: ["Turn it up to eleven!", "Good game so far, buddy.", "Riff incoming!", "One more round, then food."] },
-    { r: 4, name: "Mark, The Busy", short: "Mark", crew: 1, look: LK.mark, scale: 1.3, planks: 8, walls: 2, tower: 1, hp: 250, ammo: ["splitter", "gull"], acc: 1.4,
-      traits: ["multitask", "raid", "flirt"], skin: "key", flag: "maple", sail: "#c53030", blurb: "Juggles every stream at once, then raids you with his chat",
-      lines: ["Three streams up and I've still got time for you.", "On a call, in ranked, and still aiming — watch this.", "Busy's just what winning looks like, eh.", "Chat's filling up. You're gonna feel the raid.", "One sec… okay, chat says I hit you right here."], chatty: 0.5 },
+    { r: 4, name: "MBusy, Streamer of the Year", short: "MBusy", crew: 1, look: LK.mark, scale: 1.3, planks: 8, walls: 2, tower: 1, hp: 250, ammo: ["splitter", "gull"], acc: 1.5,
+      traits: ["aimpro", "raid", "flirt"], skin: "key", flag: "maple", sail: "#c53030", blurb: "Cracked Fortnite aim and a chat that raids you on cue",
+      lines: ["Hundred hours deep and I'll still land that One Piece token, eh.", "Cracked aim, bud — no offense.", "Victory Royale's basically a reflex now.", "Chat's raiding in — everybody say hi!", "Brotnknee, Hunter, Rodrigo — get in here."], chatty: 0.55 },
     { r: 4, name: "Dwayne, Production Master", short: "Dwayne", crew: 1, look: LK.dwayne, scale: 1.45, planks: 9, walls: 2, tower: 0, hp: 340, ammo: ["bomb", "fire"], acc: 1.4,
       traits: ["beat", "dance", "basedrop"], skin: "vinyl", flag: "♫", sail: "#6b46c1", blurb: "Dances the whole raft; base drops blow off your supports",
       lines: ["Drop the beat.", "Feel that bass.", "Hold up, I'm vibing.", "Watch the footwork."] },
@@ -469,12 +469,16 @@
       if (f < 0.66 && !hasT(foe, "flash")) { foe.traits.push("flash"); g.toast("DaManAnders powers up: ring light on!", "bad"); }
       if (f < 0.33 && !hasT(foe, "lightning")) { foe.traits.push("lightning"); foe.bend = true; g.toast("DaManAnders goes all out: bending shots and lightning!", "bad"); }
     }
-    if (hasT(foe, "multitask") && !B.flirt) {    /* Mark juggles every stream at once — he never idles, his chat just keeps filling */
+    if (hasT(foe, "aimpro") && !B.flirt) {       /* MBusy is a cracked Fortnite player — quick reflexes, clean aim, and his chat keeps pouring in */
       B.hype = (B.hype || 0) + 1;
-      if (B.hype < 3) {                          /* telegraph: emotes drift up over his raft as the raid builds */
+      if (n % 3 === 2) {                          /* every third turn he locks in for one precise shot */
+        B.aimBuff = Math.max(B.aimBuff, 1); if (B.ai) B.ai = planAI(foe);
+        msg = msg || pick(["MBusy locks in — cracked Fortnite aim this shot.", "\"Reflexes, bud.\" MBusy dials in a clean one.", "MBusy's quick hands line up a precise shot."]);
+      }
+      if (B.hype < 3) {                           /* telegraph: emotes drift up over his raft as the raid builds */
         var mc = crewPos(foe, foe.crew[0]);
-        for (var hy = 0; hy < 2 + B.hype; hy++) B.fx.push({ txt: pick(["💬", "😂", "🔥", "LUL", "🍁"]), x: mc.x + (Math.random() - 0.5) * 60, y: mc.y - 30 - Math.random() * 20, vy: -26 - Math.random() * 14, life: 1.1 + Math.random() * 0.4, col: "#c9a0ff" });
-        msg = msg || pick(["Mark's chat is filling up (" + B.hype + "/3)…", "\"Busy's just winning, eh.\" The raid's building (" + B.hype + "/3).", "Mark multitasks — chat climbs toward a raid (" + B.hype + "/3)."]);
+        for (var hy = 0; hy < 1 + B.hype; hy++) B.fx.push({ txt: pick(["💬", "😂", "🔥", "LUL", "🍁", "W"]), x: mc.x + (Math.random() - 0.5) * 60, y: mc.y - 30 - Math.random() * 20, vy: -26 - Math.random() * 14, life: 1.1 + Math.random() * 0.4, col: "#c9a0ff" });
+        msg = msg || pick(["MBusy's chat is pouring in (" + B.hype + "/3)…", "The raid's building over MBusy's raft (" + B.hype + "/3).", "MBusy's viewers climb toward a raid (" + B.hype + "/3)."]);
       }
     }
     if (hasT(foe, "redtape") && Math.random() < 0.3) {
@@ -517,14 +521,14 @@
         dmgCrew(g, mine, m, 12 + Math.random() * 8, "MBusy raid"); rc2++;
       });
       say(foe, foe.crew[0], "Raid! Go go go!", 1.8);
-      if (rc2) { sound("error"); msg = "MBusy RAID! Mark sends his whole chat crashing down on your crew."; }
+      if (rc2) { sound("error"); msg = "MBusy RAID! His whole chat comes crashing down on your crew."; }
     }
     if (hasT(foe, "flirt") && !B.flirt && foe.crew[0].alive && foe.crew[0].hp < foe.crew[0].max * 0.55 && Math.random() < 0.6) {
       B.flirt = 2; B.ai = null; B.timer = 1.4; B.hype = 0;
       say(foe, foe.crew[0], "Hang on — Hunter's in chat 💕", 1.9);
-      g.toast("Mark ducks off to flirt with Hunter — your window to punish him.", "good"); return;
+      g.toast("MBusy ducks off to flirt with Hunter — your window to punish him.", "good"); return;
     }
-    if (B.flirt) { B.flirt--; if (B.flirt <= 0) { var mbo = foe.crew[0]; if (mbo.alive) { mbo.hp = Math.min(mbo.max, mbo.hp + 120); var mbc = crewPos(foe, mbo); B.fx.push({ txt: "+120", x: mbc.x, y: mbc.y - 60, vy: -50, life: 1.3, col: "#9ae6b4" }); ring(mbc.x, mbc.y - 20, 60, "rgba(154,230,180,.6)"); } g.toast("Mark's back, grinning (+120). \"Okay — where were we.\"", "bad"); } }
+    if (B.flirt) { B.flirt--; if (B.flirt <= 0) { var mbo = foe.crew[0]; if (mbo.alive) { mbo.hp = Math.min(mbo.max, mbo.hp + 120); var mbc = crewPos(foe, mbo); B.fx.push({ txt: "+120", x: mbc.x, y: mbc.y - 60, vy: -50, life: 1.3, col: "#9ae6b4" }); ring(mbc.x, mbc.y - 20, 60, "rgba(154,230,180,.6)"); } g.toast("MBusy's back, grinning (+120). \"Okay — where were we.\"", "bad"); } }
     if (hasT(foe, "ubu") && Math.random() < 0.3 && exileCrew(g, "U-B-U! Goof's bars leave {name} distracted — skipped a turn.")) return;
     if (hasT(foe, "pig") && n % 4 === 0) {
       var pcx = mine.x0 + mine.n * PW / 2, ph = 0;
