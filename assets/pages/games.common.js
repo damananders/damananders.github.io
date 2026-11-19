@@ -92,30 +92,44 @@ export const me = { user: null, profile: null, member: false, banned: false, rea
 let staffSent = false, trophiesSent = -1;
 // The site's trophies live in this browser; copy the count to the profile so others can see it (best effort).
 /* Rating milestones for the site's Trophy Cabinet: the pages announce your counts as "rop:stats"
- * ({ votes, reviews, lists, following, member }) and the trophy code decides what they earn. Visitors count the
+ * ({ votes, reviews, lists, following, member, verified, supporter, chippers:[0..5 used] }) and the trophy and
+ * reticle code decide what they earn. Visitors count the
  * games this browser has rated. Also left on window.ROP_STATS for code that loads later. */
 let statsSent = false;
 const VRATED = "rop.vrated";
 function visitorRated() { try { return JSON.parse(localStorage.getItem(VRATED) || "[]"); } catch (e) { return []; } }
 function sendStats(st) {
   window.ROP_STATS = st;
+  /* also kept in the site store ("site.ropStats") so other pages (the reticle picker in Settings) can read the
+   * last-known tallies without loading the Dex */
+  try { if (window.Site && Site.store) Site.store.set("ropStats", Object.assign({ at: Date.now() }, st)); } catch (e) {}
   try { if (window.Site && Site.emit) Site.emit("rop:stats", st); } catch (e) {}
 }
 async function emitStats(force) {
   if (statsSent && !force) return; statsSent = true;
-  const st = { votes: visitorRated().length, reviews: 0, lists: 0, following: 0, member: !!me.member };
+  /* chippers = which Chipper faces (0 Poobar .. 5 Fromie) this person has rated with; verified/supporter feed the
+   * site's cursor unlocks (reticles) as well as the trophies */
+  const st = { votes: visitorRated().length, reviews: 0, lists: 0, following: 0, member: !!me.member, verified: !!me.member, supporter: false, chippers: [] };
+  const used = new Set();
   const h = me.profile && me.profile.handle;
   if (me.member && h) {
     try {
-      const [mp, ls, fi] = await Promise.all([
+      const [mp, ls, fi, rs, sp] = await Promise.all([
         sb.from("member_profiles").select("votes,reviews").eq("handle", h).maybeSingle(),
         sb.from("public_lists").select("id", { count: "exact", head: true }).eq("handle", h),
-        sb.rpc("follow_info", { p_handle: h })]);
+        sb.rpc("follow_info", { p_handle: h }),
+        sb.from("ratings").select("stars").eq("user_id", me.user.id).limit(5000),
+        sb.from("member_supporters").select("handle").eq("handle", h).maybeSingle()]);
       if (mp.data) { st.votes = Math.max(st.votes, mp.data.votes || 0); st.reviews = mp.data.reviews || 0; }
       if (!ls.error) st.lists = ls.count || 0;
       if (!fi.error && fi.data && fi.data[0]) st.following = fi.data[0].following || 0;
+      if (!rs.error) (rs.data || []).forEach((r) => used.add(+r.stars));
+      st.supporter = !sp.error && !!sp.data;
     } catch (e) {}
   }
+  const vr = visitorRated().slice(-500);
+  if (vr.length) (await guestRatings(vr)).forEach((v) => used.add(+v));
+  st.chippers = [...used].filter((n) => n >= 0 && n <= 5).sort();
   sendStats(st);
 }
 /* pages call this after a rating, review, list or follow so a milestone lands straight away */

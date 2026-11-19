@@ -2,7 +2,7 @@
  * Without ?p= it lists every platform by family (optionally one family with ?f=). With ?p= it shows that platform's
  * numbers, its own leaderboard (top rated, most voted), its top raters, recent reviews, a random pick and browsing.
  */
-import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores , plainText } from "./games.common.js?v=38";
+import { sb, $, el, onAuth, authPill, subnav, avatar, profileUrl, gameUrl, compareUrl, consoleChip, PLATFORMS, PLATFORM, FAMILIES, FAMILY, platformUrl, ago, chipSvg, CHIP_WORD, RA_PLATFORMS, hasOpenScores , plainText } from "./games.common.js?v=39";
 
 const qs = new URLSearchParams(location.search);
 if (/^(Mac|Linux)$/.test(qs.get("p") || "")) { qs.set("p", "PC"); location.replace("?" + qs); }   // merged into PC (round 23)
