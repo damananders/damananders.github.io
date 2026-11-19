@@ -985,9 +985,9 @@
     if (L.hair === "curly") [[-13, -31], [-15, -23], [-14, -14], [-11, -8], [-6, -9], [-9, -37], [-1, -40], [7, -39], [13, -33]].forEach(function (q) { circ(x, hc, q[0], q[1], 6); circ(x, shade(hc, 20), q[0] - 1.4, q[1] - 1.6, 2.2); });
     if (L.orbs) for (var i = 0; i < 3; i++) { var an = t * 2.2 + i * 2.09; if (Math.sin(an) < 0) { circ(x, "rgba(246,173,85,.35)", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 7); circ(x, "#f6ad55", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 4); } }
     /* legs and shoes — a planted two-leg stance that stays clear of itself at any body width */
-    var lw = 4.6, lsp = Math.max(4.3, hw * 0.44);
-    x.fillStyle = L.pants || "#2d3748"; x.fillRect(-lsp - lw / 2, 6, lw, 14); x.fillRect(lsp - lw / 2, 6, lw, 14);
-    x.fillStyle = L.shoes || "#1a202c"; D.rr(x, -lsp - lw / 2 - 1.5, 18, lw + 5, 5, 2); x.fill(); D.rr(x, lsp - lw / 2 - 1.5, 18, lw + 5, 5, 2); x.fill();
+    var lw = 4.8, lsp = Math.max(4.4, hw * 0.44);
+    x.fillStyle = L.pants || "#2d3748"; x.fillRect(-lsp - lw / 2, 9, lw, 13); x.fillRect(lsp - lw / 2, 9, lw, 13);
+    x.fillStyle = L.shoes || "#1a202c"; D.rr(x, -lsp - lw / 2 - 1.5, 19, lw + 5, 5, 2); x.fill(); D.rr(x, lsp - lw / 2 - 1.5, 19, lw + 5, 5, 2); x.fill();
     /* off (far) arm, resting — bows outside the torso so the character always clearly has two arms */
     x.save(); x.lineCap = "round"; x.lineWidth = 5.5;
     x.strokeStyle = (L.over && L.over !== "poncho") ? shade(oc, -10) : shade(L.shirt || sk, -8);
@@ -1019,6 +1019,13 @@
       for (var bb = 0; bb < 3; bb++) { circ(x, "#d4af37", -3, -10 + bb * 6, 1.3); circ(x, "#d4af37", 4, -10 + bb * 6, 1.3); }
       x.fillStyle = "#1a202c"; x.fillRect(-hw, 2, w, 3);
     } else if (L.tie) fillPath(x, L.tie, [[-1, -15], [2, -15], [2.6, -3], [0.5, 0], [-1.6, -3]]);
+    /* pelvis / hips: a pants mass that tapers from the torso down into the two legs (long garments already cover the hips) */
+    if (L.over !== "coat" && L.over !== "poncho") {
+      var pw2 = 2 * lsp + lw + 2;
+      x.fillStyle = L.pants || "#2d3748"; D.rr(x, -pw2 / 2, 2, pw2, 11, 4); x.fill();
+      x.fillStyle = "rgba(255,255,255,.07)"; D.rr(x, -pw2 / 2, 2, pw2, 2.5, 4); x.fill();                         /* waistband sheen */
+      x.strokeStyle = "rgba(0,0,0,.18)"; x.lineWidth = 1; x.beginPath(); x.moveTo(0, 7.5); x.lineTo(0, 12.5); x.stroke();   /* crotch seam */
+    }
     if (L.mark) { x.save(); x.scale(face, 1); x.fillStyle = L.mark === "F" ? "#fff" : "#f7fafc"; x.font = "800 " + (L.mark === "F" ? 13 : 11) + "px " + F.display; x.textAlign = "center"; x.fillText(L.mark, L.mark === "F" ? 0 : 0, -1); x.restore(); }
     if (L.pin === "maple") canFlag(x, -hw + 5, -10, 8);
     /* held item in the off hand */
