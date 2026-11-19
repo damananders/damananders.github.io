@@ -35,7 +35,7 @@
   var AMMO_ORDER = ["rock", "bouncer", "splitter", "bomb", "fire", "gull", "repair"];
   var ROLES = [
     { key: "cap",  name: "Cap",  hat: "#cd4257", shirt: "#e9e3d6", special: "bomb",     pow: 1.08,
-      look: { skin: "#d8a271", hair: "short", hairCol: "#6f5e4b", beard: "full", beardCol: "#8a7b68", over: "coat", overCol: "#8c2f28", shirt: "#e9e3d6", pants: "#3a2a1c", shoes: "#2a1a10", w: 23, hat: { type: "tricorn", col: "#2a1d12", badge: true }, earring: true, eyepatch: true } },
+      look: { skin: "#d8a271", hair: "short", hairCol: "#6f5e4b", beard: "full", beardCol: "#8a7b68", over: "coat", overCol: "#8c2f28", shirt: "#e9e3d6", pants: "#3a2a1c", shoes: "#2a1a10", w: 23, hat: { type: "tricorn", col: "#2a1d12", badge: true }, earring: true } },
     { key: "pip",  name: "Pip",  hat: "#f6ad55", shirt: "#4a90d9", special: "splitter", pow: 1,
       look: { skin: "#f0c19a", hair: "short", hairCol: "#3a2816", shirt: "#4a90d9", over: "open", overCol: "#d98b3a", pants: "#2d3748", shoes: "#5a3a1a", w: 18, bandana: "#cd4257", bandanaDot: true, smile: true, earring: true } },
     { key: "doc",  name: "Doc",  hat: "#68d391", shirt: "#f7fafc", special: "repair",   pow: 0.95,
@@ -1058,21 +1058,23 @@
     else if (L.glasses === "round") { x.strokeStyle = "#3a2a1a"; x.lineWidth = 1.3; x.fillStyle = "rgba(220,235,245,.25)"; x.beginPath(); x.arc(4.5, -28, 3.3, 0, 6.3); x.fill(); x.stroke(); x.beginPath(); x.moveTo(1.2, -28); x.lineTo(-1.4, -27.4); x.stroke(); }
     if (L.earring) { x.strokeStyle = L.earring === true ? "#f6c445" : L.earring; x.lineWidth = 1.5; x.beginPath(); x.arc(9, -19.5, 2.1, 0, 6.3); x.stroke(); }
     if (L.eyepatch) { x.strokeStyle = "#1a1210"; x.lineWidth = 1.6; x.beginPath(); x.moveTo(-7, -33.5); x.lineTo(11, -27.5); x.stroke(); x.fillStyle = "#14100d"; D.rr(x, 1.5, -31, 6.6, 6.2, 1.8); x.fill(); }
-    if (L.bandana) {
-      x.fillStyle = L.bandana; x.beginPath(); x.arc(0, -28, 12, Math.PI * 1.02, Math.PI * 1.98); x.closePath(); x.fill(); x.fillRect(-12, -30, 24, 4.5);
-      fillPath(x, shade(L.bandana, -20), [[-10, -30], [-16, -33], [-17, -25], [-11, -24]]);   /* knot */
-      fillPath(x, shade(L.bandana, -10), [[-12, -28], [-21, -23], [-19, -18], [-12, -22]]);   /* tail */
-      if (L.bandanaDot) for (var bd = 0; bd < 5; bd++) circ(x, "rgba(255,255,255,.72)", -8 + bd * 4.3, -32 + (bd % 2) * 2.2, 1);
+    if (L.bandana) {                                  /* do-rag over the crown, tied at the back — stays above the brow */
+      var bn = L.bandana;
+      x.fillStyle = bn; x.beginPath(); x.moveTo(-11, -32.5); x.quadraticCurveTo(-13, -40.5, -1, -41); x.quadraticCurveTo(12.5, -40.5, 11.5, -32.5); x.quadraticCurveTo(0, -35, -11, -32.5); x.closePath(); x.fill();
+      fillPath(x, shade(bn, -14), [[-11, -32.5], [11.5, -32.5], [11, -35], [-11, -35]]);         /* tied rim across the forehead */
+      fillPath(x, shade(bn, -24), [[-10, -34], [-16.5, -36], [-17.5, -29.5], [-11, -30]]);       /* knot */
+      fillPath(x, shade(bn, -12), [[-12, -32.5], [-22, -27.5], [-20, -22.5], [-12, -26.5]]);     /* tail */
+      if (L.bandanaDot) for (var bd = 0; bd < 5; bd++) circ(x, "rgba(255,255,255,.72)", -8 + bd * 4.2, -37 + (bd % 2) * 2.1, 1);
     }
-    if (L.hat && L.hat.type === "tricorn") {                         /* captain's tricorn: wide upturned brim + peak */
+    if (L.hat && L.hat.type === "tricorn") {                         /* captain's tricorn: wide upturned brim + peak, sits above the brow */
       var tc = L.hat.col;
-      fillPath(x, shade(tc, -16), [[-15, -32], [15, -32], [19, -28], [13, -25], [-13, -25], [-18, -28]]);   /* brim */
-      fillPath(x, tc, [[-11, -30], [11, -30], [7, -42], [-7, -42]]);                                        /* crown */
-      x.strokeStyle = shade(tc, 24); x.lineWidth = 1.4; x.beginPath(); x.moveTo(-12, -30); x.lineTo(12, -30); x.stroke();
-      if (L.hat.badge) { circ(x, "#d4af37", 0, -35, 2.8); x.fillStyle = "#1a202c"; x.font = "800 4px " + F.display; x.textAlign = "center"; x.fillText("☠", 0, -33.6); }
+      fillPath(x, shade(tc, -16), [[-16, -35], [16, -35], [19, -32], [12, -30.5], [-13, -30.5], [-18, -32]]);   /* brim */
+      fillPath(x, tc, [[-11, -34], [11, -34], [7, -46], [-7, -46]]);                                            /* crown */
+      x.strokeStyle = shade(tc, 24); x.lineWidth = 1.4; x.beginPath(); x.moveTo(-12, -33.5); x.lineTo(12, -33.5); x.stroke();
+      if (L.hat.badge) { circ(x, "#d4af37", 0, -39, 2.8); x.fillStyle = "#1a202c"; x.font = "800 4px " + F.display; x.textAlign = "center"; x.fillText("☠", 0, -37.6); }
     } else if (L.hat && L.hat.type === "beanie") {                    /* snug knit cap */
-      x.fillStyle = L.hat.col; x.beginPath(); x.arc(0, -29, 12, Math.PI * 1.02, Math.PI * 1.98); x.closePath(); x.fill(); x.fillRect(-12, -31, 24, 4);
-      x.fillStyle = shade(L.hat.col, -18); x.fillRect(-12, -31, 24, 3.4);
+      x.fillStyle = L.hat.col; x.beginPath(); x.arc(0, -31, 12, Math.PI * 1.04, Math.PI * 1.96); x.closePath(); x.fill(); x.fillRect(-12, -33.5, 24, 4);
+      x.fillStyle = shade(L.hat.col, -18); x.fillRect(-12, -33.5, 24, 3.4);
     } else if (L.hat) {
       x.fillStyle = L.hat.col; x.beginPath(); x.arc(0, -30, 12, Math.PI, 0); x.closePath(); x.fill(); D.rr(x, 3, -32, 15, 3.8, 1.8); x.fill();
       if (L.hat.patch === "anime") { circ(x, "#fff", -1, -36, 4.6); circ(x, "#2b6cb0", -2.8, -36.4, 1.7); circ(x, "#2b6cb0", 0.8, -36.4, 1.7); circ(x, "#fff", -2.3, -37.1, 0.6); circ(x, "#fff", 1.3, -37.1, 0.6); x.strokeStyle = "#e53e3e"; x.lineWidth = 0.8; x.beginPath(); x.arc(-1, -34.6, 1.3, 0.3, 2.8); x.stroke(); }
