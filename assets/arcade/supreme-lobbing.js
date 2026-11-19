@@ -389,7 +389,7 @@
     var keep = kind === "endless" && idx > 0 && B && B.mine ? B.mine : null;
     B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, windShown: 0, windFlash: 0, cam: null, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
       aim: { ang: 0.75, pow: 0.62, charging: false, chargeDir: 1, drag: null }, sel: 0, ammoSel: "rock", log: [], over: false, ai: null, firstTurn: true,
-      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null };
+      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null, lastImpact: null };
     B.mine = keep || makeRaft(-1, mine);
     if (keep) { refit(B.mine); }
     B.foe = makeRaft(1, foeCfg);
@@ -595,7 +595,7 @@
     B.projs.push(p);
     if (choice.special) { t.m.specials = (t.m.specials || 1) - 1; t.m.special = t.m.specials > 0; } else if (choice.k !== "rock" && choice.k !== "ball") r.ammo[choice.k]--;
     if (t.m) t.m.anim = 0.4;
-    B.phase = "fly"; B.aim.charging = false; B.aim.drag = null; B.settle = 0;
+    B.phase = "fly"; B.aim.charging = false; B.aim.drag = null; B.settle = 0; B.lastImpact = null;
     sound("whoosh", { v: 0.6 + B.aim.pow * 0.6 });
   }
 
@@ -713,6 +713,7 @@
         if (p.k === "bouncer" && p.bounces < a.bounces + ((side(p.from).perks || {}).skip ? 1 : 0)) { p.bounces++; p.vy = -Math.abs(p.vy) * ((side(p.from).perks || {}).skip ? 0.78 : 0.6); p.vx *= ((side(p.from).perks || {}).skip ? -0.65 : -0.5); p.age = Math.max(p.age, 0.3); continue; }
         p.alive = false; break;
       }
+      if (!p.alive) B.lastImpact = { x: Math.max(40, Math.min(W - 40, p.x)), y: Math.max(120, Math.min(WY, p.y)) };   /* where the shot landed, for the camera to hold on */
       p.trail.push({ x: p.x, y: p.y }); if (p.trail.length > 18) p.trail.shift();
     });
     B.projs = B.projs.filter(function (p) { return p.alive; }).concat(add);
@@ -834,7 +835,7 @@
 
   /* ---------------- camera (Raft Wars feel): zoom into the active raft, follow the shot in flight ----------------
      The whole world is drawn through this transform; the HUD and full-screen flashes stay in screen space. */
-  var CAM_AIM_Z = 1.72, CAM_FLY_Z = 1.5;
+  var CAM_AIM_Z = 1.72, CAM_FLY_Z = 1.5, CAM_IMPACT_Z = 1.95, SETTLE_HOLD = 1.8;
   function camMode() { return sget("camera", "follow"); }
   /* ---- controls: rebindable keys + throw feel ---- */
   var KEYMAP = [
@@ -872,11 +873,13 @@
     var tz, tx, ty;
     if (B.phase === "fly" && B.projs.length) {
       var p = B.projs[B.projs.length - 1]; tz = CAM_FLY_Z; tx = p.x; ty = Math.max(20, p.y);
+    } else if (B.phase === "fly" && B.lastImpact) {   /* the shot has landed — hold on the impact so the player can read it */
+      tz = CAM_IMPACT_Z; tx = B.lastImpact.x; ty = B.lastImpact.y - 40;
     } else {
       var c = worldCenterOf(side(B.turnSide)); tz = CAM_AIM_Z; tx = c.x; ty = c.y;
     }
     if (!B.cam) B.cam = { cx: tx, cy: ty, z: tz };
-    var k = Math.min(1, dt * (B.phase === "fly" ? 7 : 3.4));
+    var k = Math.min(1, dt * (B.phase === "fly" && B.projs.length ? 7 : 3.4));
     B.cam.z += (tz - B.cam.z) * k; B.cam.cx += (tx - B.cam.cx) * k; B.cam.cy += (ty - B.cam.cy) * k;
     clampCam(B.cam);
   }
@@ -904,7 +907,7 @@
       if (B.timer <= 0) { if (B.ai) { B.aim.ang = B.ai.ang; B.aim.pow = B.ai.pow; throwNow(g); } else endTurn(g); }
     } else if (B.phase === "fly") {
       stepProjectiles(g, dt);
-      if (!B.projs.length) { B.settle += dt; if (B.settle > 0.7) endTurn(g); }
+      if (!B.projs.length) { B.settle += dt; if (B.settle > (B.lastImpact ? SETTLE_HOLD : 0.7)) endTurn(g); }
     }
     for (var i = B.fx.length - 1; i >= 0; i--) { var f = B.fx[i]; f.life -= dt; if (f.ring) f.r += (f.max - f.r) * Math.min(1, dt * 12); else if (f.txt) f.y += f.vy * dt; else if (!f.bolt) { f.vy += 600 * dt; f.x += f.vx * dt; f.y += f.vy * dt; } if (f.life <= 0) B.fx.splice(i, 1); }
     for (i = B.debris.length - 1; i >= 0; i--) { var d = B.debris[i]; d.life -= dt; d.vy += 700 * dt; d.x += d.vx * dt; d.y += d.vy * dt; d.rot += d.vr * dt; if (d.y > WY) { d.vy *= 0.2; d.vx *= 0.95; d.y = WY; } if (d.life <= 0) B.debris.splice(i, 1); }
@@ -944,6 +947,7 @@
     x.fillStyle = "rgba(255,255,255,.75)";
     for (var i = 0; i < 6; i++) { var cx = ((i * 260 + t * (20 + wind * 60)) % (W + 400) + W + 400) % (W + 400) - 200, cy = 70 + (i * 53) % 160; x.beginPath(); x.ellipse(cx, cy, 70, 22, 0, 0, 6.3); x.ellipse(cx + 40, cy - 12, 46, 20, 0, 0, 6.3); x.ellipse(cx - 40, cy - 6, 40, 16, 0, 0, 6.3); x.fill(); }
     x.fillStyle = "rgba(40,70,60,.45)"; x.beginPath(); x.moveTo(380, WY); x.quadraticCurveTo(520, WY - 70, 660, WY); x.quadraticCurveTo(760, WY - 40, 900, WY); x.fill();
+    x.fillStyle = reg.sea[0]; x.fillRect(0, WY - 1, W, H - WY + 1);   /* solid sea base so the wavy top never leaves a bare seam at the horizon */
     g = x.createLinearGradient(0, WY, 0, H); g.addColorStop(0, reg.sea[0]); g.addColorStop(1, reg.sea[1]); x.fillStyle = g;
     x.beginPath(); x.moveTo(0, H); for (var px = 0; px <= W; px += 20) x.lineTo(px, WY + Math.sin(px / 70 + t * 1.6) * 4 * (B ? B.waves : 1)); x.lineTo(W, H); x.closePath(); x.fill();
     x.strokeStyle = "rgba(255,255,255,.25)"; x.lineWidth = 2;
