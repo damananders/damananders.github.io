@@ -284,8 +284,8 @@
     { r: 4, name: "Dylan, Dab Dominator", short: "Dylan", crew: 1, look: LK.dylan, scale: 1.3, planks: 9, walls: 2, tower: 1, hp: 320, ammo: ["fire", "bomb", "gull"], acc: 1.55,
       traits: ["bend", "eyedrops", "foil"], skin: "wax", flag: "✺", sail: "#b7791f", blurb: "Bends his shots; eye drops lock his aim; foil pulls sting",
       lines: ["Yo, is that a holo?", "Hold up, lemme hit this dab.", "Eyes are fine, man — allergies.", "Pulled a first-edition earlier. Good omen.", "It bends how I want, bro.", "Rare pull incoming."] },
-    { r: 6, name: "DaManAnders", short: "DaManAnders", crew: 1, look: LK.anders, scale: 1.35, planks: 9, walls: 3, tower: 2, hp: 420, ammo: ["bomb", "fire", "gull", "splitter", "bouncer"], acc: 1.6, cannon: true,
-      traits: ["copycat", "phases"], skin: "controller", flag: "lighthouse", sail: "#cd4257", blurb: "Copies your throws and powers up as he loses",
+    { r: 6, name: "DaManAnders", short: "DaManAnders", crew: 1, look: LK.anders, scale: 1.35, planks: 9, walls: 3, tower: 2, hp: 480, ammo: ["bomb", "fire", "gull", "splitter", "bouncer"], acc: 1.6, cannon: true,
+      traits: ["copycat", "phases"], skin: "controller", flag: "lighthouse", sail: "#cd4257", blurb: "Copies your throws; reboots, saves state and goes all out as he loses",
       lines: ["GG. Now let's go again.", "Welcome to the arcade!", "I built this raft. I know its weak spots.", "Thumbs up! 👍", "That throw looked familiar…"] }
   ];
   function pcleared() { return sget("pcleared", []) || []; }
@@ -446,10 +446,27 @@
       return;
     }
     var n = ++B.foeTurns, mine = B.mine;
-    if (hasT(foe, "phases")) {                   /* DaManAnders powers up as he loses */
+    if (hasT(foe, "phases")) {                   /* DaManAnders — the director — escalates as he loses */
       var boss = foe.crew[0], f = boss.alive ? boss.hp / boss.max : 0;
-      if (f < 0.66 && !hasT(foe, "flash")) { foe.traits.push("flash"); g.toast("DaManAnders powers up: ring light on!", "bad"); }
-      if (f < 0.33 && !hasT(foe, "lightning")) { foe.traits.push("lightning"); foe.bend = true; g.toast("DaManAnders goes all out: bending shots and lightning!", "bad"); }
+      if (f < 0.75 && !hasT(foe, "serverrestart")) { foe.traits.push("serverrestart"); foe.bend = true; g.toast("DaManAnders reboots the server — he patches his raft and bends his shots.", "bad"); }
+      if (f < 0.50 && !foe.saveState) { foe.saveState = { hp: boss.hp, armed: true }; g.toast("DaManAnders saves his state. Finish him fast.", "bad"); }
+      if (f < 0.25 && !hasT(foe, "lightning")) { foe.traits.push("lightning"); foe.traits.push("metaldrop"); g.toast("DaManAnders' final stand: lightning and death-metal drops!", "bad"); }
+      if (foe.saveState && foe.saveState.armed && boss.alive && boss.hp < boss.max * 0.15) {
+        boss.hp = foe.saveState.hp; foe.saveState.armed = false; var svc = crewPos(foe, boss);
+        B.fx.push({ txt: "LOAD STATE", x: svc.x, y: svc.y - 72, vy: -36, life: 1.9, col: "#f6c445" }); B.flash = Math.max(B.flash, 0.6); sound("chime");
+        g.toast("DaManAnders loads his save state — back to " + Math.round(foe.saveState.hp) + " HP!", "bad");
+      }
+      if (hasT(foe, "serverrestart")) {
+        var pf = 0; foe.walls.forEach(function (w) { if (!w.alive && pf < 2) { w.alive = true; w.hp = w.max; pf++; } });
+        foe.deck.forEach(function (b) { if (!b.alive && pf < 2) { b.alive = true; b.hp = b.max; foe.crew.forEach(function (m) { if (m.col === b.i) m.swim = false; }); pf++; } });
+        if (pf) msg = msg || "Server restart: DaManAnders patches " + pf + " support" + (pf === 1 ? "" : "s") + ".";
+      }
+      if (hasT(foe, "metaldrop") && n % 2 === 0) {
+        var mk = Math.min(mine.deck.filter(function (b) { return b.alive; }).length, 1 + (Math.random() * 3 | 0)), mbl = 0;
+        for (var mdi = 0; mdi < mk; mdi++) { var mal = mine.deck.filter(function (b) { return b.alive; }); if (!mal.length) break; var mb3 = pick(mal); dmgBlock(mine, mb3, 99, blockRect(mine, mb3, false)); mbl++; }
+        if (mbl) { sound("blast"); B.flash = Math.max(B.flash, 0.4); g.toast("Death-metal drop! " + mbl + " of your supports gone.", "bad"); }
+      }
+      if (B.ai && Math.random() < 0.3) { B.aimBuff = Math.max(B.aimBuff || 0, 1); B.ai = planAI(foe); }   /* Reverse Engineer: reads your raft for a cleaner shot */
     }
     if (hasT(foe, "busy") && Math.random() < 0.35) { B.ai = null; B.timer = 1.4; g.toast("Mark is busy (on a call, eh). Turn skipped.", "good"); return; }
     if (hasT(foe, "redtape") && Math.random() < 0.3) {
