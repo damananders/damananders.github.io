@@ -20,31 +20,9 @@
   var vaultPublic = !!(cfg.vault && cfg.vault.hideOnHub === false);
   function vaultShown() { return vaultPublic || Site.owner; }
 
-  /* ====================================================================================================
-   * Item 39: the Vault card. It is not in the page's HTML at all: it is built here, and only for the owner
-   * (or for everyone when vault.hideOnHub is false). hub.css already keeps the third column free under
-   * <html data-owner>, which is set before first paint, so adding the card moves nothing.
-   * The hero lead gets its owner wording the same way (hub.css paints it early, this makes it real text).
-   * ==================================================================================================== */
-  var LEAD_WITH_VAULT = "A WoW server to join, a launcher to download, and my personal vault. Pick one to learn more.";   /* same text as in hub.css */
-  Site.ready(function () {
-    if (!vaultShown()) return;
-    var main = doc.querySelector(".avenues");
-    if (main && !main.querySelector(".avenue.games")) {
-      main.appendChild(el("a", { class: "avenue games", href: "vault/" },
-        el("div", { class: "art" },
-          el("span", { class: "hb-chips", id: "hb-chips-vault" }),
-          Site.svg('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M12 17v-1.5M15.5 12H17M7 12h1.5M7 20v1M17 20v1"/>')),
-        el("div", { class: "body" },
-          el("div", { class: "eyebrow", text: "Private \u00b7 owner only" }),
-          el("h2", { text: "Personal Vault" }),
-          el("p", { text: "Off-site backups of my own recompiled and preserved builds. Files are private." }),
-          el("span", { class: "cta", text: "Open the vault \u2192" }))));
-      root.classList.add("hb-vault-on");
-    }
-    var lead = byId("hb-lead");
-    if (lead) { lead.textContent = LEAD_WITH_VAULT; lead.classList.add("hb-lead--set"); }
-  }, "hub vault card");
+  /* The Personal Vault card was removed from the hub at the owner's request \u2014 the hub is AnyPS and
+   * AndersCraft only. The vault page still exists at its own address; it simply has no card here.
+   * vaultShown() is kept (above) so the news ticker still keeps any vault-tagged note off the public hub. */
 
   /* ====================================================================================================
    * Items 7 and 24: status chips inside each card's artwork.
