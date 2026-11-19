@@ -390,14 +390,14 @@
     var keep = kind === "endless" && idx > 0 && B && B.mine ? B.mine : null;
     B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, windShown: 0, windFlash: 0, cam: null, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
       aim: { ang: 0.75, pow: 0.62, charging: false, chargeDir: 1, drag: null }, sel: 0, ammoSel: "rock", log: [], over: false, ai: null, firstTurn: true,
-      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null, lastImpact: null };
+      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null, lastImpact: null, intro: null };
     B.mine = keep || makeRaft(-1, mine);
     if (keep) { refit(B.mine); }
     B.foe = makeRaft(1, foeCfg);
     if ((kind === "campaign" && idx < 2) || (kind === "endless" && idx < 2)) B.foe.crew.forEach(function (m) { m.special = false; });   /* early foes have no specials */
     B.windMax = region.wind;
-    newTurn(g, -1);
     g.start(); Site.sfx("open");
+    if (kind === "campaign" || kind === "prestige") startIntro(g); else newTurn(g, -1);
     g.toast(kind === "campaign" ? REGIONS[BATTLES[idx].r].name + ": " + BATTLES[idx].name : kind === "prestige" ? PREGIONS[PRESTIGE[idx].r].name + ": " + PRESTIGE[idx].name : kind === "endless" ? "Wave " + (idx + 1) : "Versus: Player 1 starts", "info");
   }
   function crewNames(n, seed) {
@@ -869,7 +869,60 @@
     c.cy = Math.max(vh, Math.min(H - vh, c.cy));
     return c;
   }
+  /* ---- battle-opening cinematic: wide shot, zoom the enemy + their line, back wide, zoom your crew ---- */
+  var INTRO_STEPS = [0.9, 2.6, 0.7, 1.15];                 /* wide · enemy(+ line) · wide · your crew */
+  var BATTLE_LINES = [
+    "This driftwood's seen off better than you.",
+    "Two of us, one of you. Rough odds.",
+    "Barnacles have more fight than you, kid.",
+    "No one gets past Barnacle's wall.",
+    "The reef takes what it wants.",
+    "We'll season your raft with cannon fire.",
+    "Fast, sharp and hungry. That's me.",
+    "My fire will light up your little raft.",
+    "Rusty, maybe. Still floats. Still fights.",
+    "Clank. Clank. That's the sound of you sinking.",
+    "You'll hear me coming. Won't help you.",
+    "Bow before the Iron Duchess, or sink."
+  ];
+  function startIntro(g) {
+    var name = "", line = "";
+    if (B.kind === "campaign") { name = BATTLES[B.idx].name; line = BATTLE_LINES[B.idx] || ""; }
+    else if (B.kind === "prestige") { var P = PRESTIGE[B.idx]; name = P.short; line = (P.lines && P.lines[0]) || ""; }
+    B.phase = "intro"; B.intro = { step: 0, t: 0, total: 0, name: name, line: line }; B.cam = { cx: W / 2, cy: WY - 70, z: 1 };
+  }
+  function introSkip(g) {
+    if (!B.intro || B.intro.total < 0.4) return false;
+    return g.hit(keyFor("throw")) || g.hit("Space") || g.hit("Enter") || g.hit("Escape") || (g.pad && g.pad.hit && (g.pad.hit.a || g.pad.hit.start));
+  }
+  function finishIntro(g) { B.intro = null; newTurn(g, -1); }
+  function drawIntro(x) {
+    var I = B.intro; if (!I) return;
+    var barH = 56 * Math.min(1, I.total * 4);                      /* letterbox slides in */
+    x.fillStyle = "rgba(4,7,12,.85)"; x.fillRect(0, 0, W, barH); x.fillRect(0, H - barH, W, barH);
+    if (I.total > 0.5) D.text(x, "Space / tap to skip", W - 22, H - barH / 2 + 4, "700 12px " + F.mono, "rgba(255,255,255,.55)", "right", false);
+    if (I.step === 1 && I.line) {
+      var dur = INTRO_STEPS[1] * (MO || 1), cy = H - barH - 118;
+      x.globalAlpha = Math.max(0, Math.min(1, I.t / 0.3, (dur - I.t) / 0.3));   /* fade in and out */
+      D.text(x, "▸ " + (I.name || "").toUpperCase(), W / 2, cy, "800 15px " + F.mono, "#f6c445", "center", false);
+      x.font = "800 25px " + F.display; var lw = (x.measureText ? x.measureText(I.line).width : I.line.length * 14) + 60;
+      x.fillStyle = "rgba(9,13,19,.92)"; D.rr(x, W / 2 - lw / 2, cy + 14, lw, 52, 15); x.fill();
+      x.strokeStyle = "rgba(246,197,69,.55)"; x.lineWidth = 2; D.rr(x, W / 2 - lw / 2, cy + 14, lw, 52, 15); x.stroke();
+      D.text(x, "“" + I.line + "”", W / 2, cy + 48, "800 25px " + F.display, "#fff", "center", false);
+      x.globalAlpha = 1;
+    } else if (I.step === 3) {
+      x.globalAlpha = Math.max(0, Math.min(1, I.t / 0.3));
+      D.text(x, "YOUR CREW", W / 2, H - barH - 54, "800 20px " + F.mono, "#9ae6b4", "center", false); x.globalAlpha = 1;
+    }
+  }
   function updateCamera(dt) {
+    if (B.phase === "intro") {
+      var it = B.intro.step === 1 ? worldCenterOf(B.foe) : B.intro.step === 3 ? worldCenterOf(B.mine) : null;
+      var tz = it ? 1.85 : 1, tx = it ? it.x : W / 2, ty = it ? it.y : WY - 70, kk = Math.min(1, dt * 3.2);
+      if (!B.cam) B.cam = { cx: tx, cy: ty, z: tz };
+      B.cam.z += (tz - B.cam.z) * kk; B.cam.cx += (tx - B.cam.cx) * kk; B.cam.cy += (ty - B.cam.cy) * kk;
+      clampCam(B.cam); return;
+    }
     if (camMode() !== "follow") { B.cam = null; return; }
     var tz, tx, ty;
     if (B.phase === "fly" && B.projs.length) {
@@ -897,6 +950,12 @@
     updateCamera(dt);
     var r = side(B.turnSide), human = r.human;
     [B.mine, B.foe].forEach(function (rr) { rr.crew.forEach(function (m) { if (m.anim > 0) m.anim = Math.max(0, m.anim - dt); else if (m.anim < 0) m.anim = Math.min(0, m.anim + dt); }); });
+    if (B.phase === "intro") {
+      B.intro.t += dt; B.intro.total += dt;
+      if (introSkip(g)) return finishIntro(g);
+      if (B.intro.t >= (INTRO_STEPS[B.intro.step] || 0.5) * (MO || 1)) { B.intro.t = 0; if (++B.intro.step >= INTRO_STEPS.length) return finishIntro(g); }
+      return;
+    }
     if (B.flash > 0) B.flash = Math.max(0, B.flash - dt * 1.4);
     for (var bb = B.bubbles.length - 1; bb >= 0; bb--) { B.bubbles[bb].life -= dt; if (B.bubbles[bb].life <= 0 || !B.bubbles[bb].m.alive) B.bubbles.splice(bb, 1); }
     for (var bi = B.bolts.length - 1; bi >= 0; bi--) { B.bolts[bi].warn -= dt; if (B.bolts[bi].warn <= 0) { strike(g, B.bolts[bi]); B.bolts.splice(bi, 1); } }
@@ -1825,6 +1884,7 @@
     idle: function () {},
     alwaysAnimate: true,
     pointer: function (g, type, px, py) {
+      if (B && B.phase === "intro") { if (type === "down" && B.intro.total > 0.4) finishIntro(g); return; }
       if (g.state !== "play" || !B || B.phase !== "aim" || !side(B.turnSide).human) return;
       var r = side(B.turnSide), z = (B.cam && camMode() === "follow") ? B.cam.z : 1;
       if (type === "down") {
@@ -1874,6 +1934,7 @@
       B.bubbles.forEach(function (b) { drawBubble(x, b); });
       if (cam) x.restore();
       if (B.flash > 0) { x.fillStyle = "rgba(255,255,255," + Math.min(0.85, B.flash) + ")"; x.fillRect(0, 0, W, H); }
+      if (B.phase === "intro") { drawIntro(x); return; }
       hud(g, x);
     }
   });
