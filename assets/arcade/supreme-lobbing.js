@@ -333,7 +333,9 @@
     return { x: r.x0 + b.col * PW + 3, y: dy - (b.row + 1) * BH, w: PW - 6, h: BH - 2 };
   }
   function throwers(r) {
-    var list = r.crew.filter(function (m) { return m.alive && !m.onBreak; }).map(function (m) { return { m: m }; });
+    var ready = r.crew.filter(function (m) { return m.alive && !m.onBreak; });
+    if (!ready.length) { r.crew.forEach(function (m) { if (m.alive) m.onBreak = 0; }); ready = r.crew.filter(function (m) { return m.alive; }); }  /* a break never benches the whole raft */
+    var list = ready.map(function (m) { return { m: m }; });
     if (r.cannon && r.cannon.alive) list.push({ cannon: true });
     return list;
   }
