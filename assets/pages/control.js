@@ -223,7 +223,6 @@
     ["accounts", "Accounts", "Member sign-ups, captcha and feedback", '<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>', "sections"],
     ["users", "Users", "Members, moderation and bans", '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6.1M17.5 19a5.5 5.5 0 0 0-3-4.9"/>', "users"],
     ["features", "Features", "Turn any part of the site on or off", '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><path d="M5 16h4M15 8h4"/>', "sections"],
-    ["wizard", "Wizard Story", "Story beats and dialogue for Wizard of the Sprint", '<path d="M15 3.5l1.1 2.6 2.6 1.1-2.6 1.1L15 10.9l-1.1-2.6L11.3 7.2l2.6-1.1z"/><path d="M12.8 9.2 4 18v2h2l8.8-8.8"/>', "wizard"],
     ["secrets", "Secrets", "Every cheat code, for reference", '<circle cx="9" cy="12" r="4"/><path d="M13 12h8M18 12v3M15 12v2"/>', "cheats"],
     ["advanced", "Advanced", "Raw settings and this browser", '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>', "advanced"],
     ["security", "Sign-in", "Authenticator app and password", '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', "security"]
@@ -309,6 +308,8 @@
     cur = id;
     CATS.forEach(function (c) { railBtns[c[0]].setAttribute("aria-current", c[0] === id ? "page" : "false"); });
     render();
+    /* a quick fade-up as the folder changes (CSS honours reduced motion) */
+    if (content) { content.classList.remove("cp-in"); void content.offsetWidth; content.classList.add("cp-in"); }
   }
   function render() {
     if (!content) return;
@@ -324,55 +325,7 @@
     else if (c[4] === "cheats") drawCheats(content);
     else if (c[4] === "advanced") drawAdvanced(content);
     else if (c[4] === "security") drawSecurity(content);
-    else if (c[4] === "wizard") drawWizard(content);
     else if (c[4] === "ext" && EXT[cur]) { try { EXT[cur].draw(content, API); } catch (err) { console.error("[control]", err); content.appendChild(el("p", { class: "cp-empty", text: "This folder could not open (" + (err && err.message) + ")." })); } }
-  }
-
-  /* ---------- Wizard of the Sprint story editor ----------
-     The editor itself lives in the games thread's arcade modules; this page only hosts it. We lazy-load the two
-     scripts once, then mount the editor into the content column. It reads/writes the config key "wizardStory"
-     (an object of beat id -> array of lines) through our ov object, so changes flow through the normal Save
-     button and ship with the rest of the config. The game reads Site.remote().config.wizardStory. */
-  var wizLoad = null;
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      var have = document.querySelector('script[data-wiz="' + src + '"]');
-      if (have) {
-        if (have.getAttribute("data-ok") === "1") return resolve();
-        have.addEventListener("load", function () { resolve(); });
-        have.addEventListener("error", function () { reject(new Error(src)); });
-        return;
-      }
-      var s = document.createElement("script"); s.src = src; s.setAttribute("data-wiz", src);
-      s.addEventListener("load", function () { s.setAttribute("data-ok", "1"); resolve(); });
-      s.addEventListener("error", function () { reject(new Error(src)); });
-      document.head.appendChild(s);
-    });
-  }
-  function ensureWiz() {
-    if (!wizLoad) {
-      wizLoad = loadScript("/assets/arcade/wizard-story.js?v=2")
-        .then(function () { return loadScript("/assets/arcade/wizard-story-admin.js?v=3"); })
-        .then(function () { if (!window.WizStoryAdmin || typeof window.WizStoryAdmin.mount !== "function") throw new Error("WizStoryAdmin missing"); })
-        .catch(function (e) { wizLoad = null; throw e; });
-    }
-    return wizLoad;
-  }
-  function drawWizard(box) {
-    box.appendChild(el("p", { class: "cp-fine", text: "Loading the story editor…" }));
-    ensureWiz().then(function () {
-      if (cur !== "wizard") return;
-      box.textContent = "";
-      window.WizStoryAdmin.mount(box, {
-        get: function () { return ov.wizardStory || {}; },
-        set: function (v) { if (v && Object.keys(v).length) ov.wizardStory = v; else delete ov.wizardStory; mark("config"); }
-      });
-    }).catch(function (err) {
-      console.error("[control] wizard story editor", err);
-      if (cur !== "wizard") return;
-      box.textContent = "";
-      box.appendChild(el("p", { class: "cp-fine", text: "The story editor could not load. Reload the page with Ctrl+Shift+R and try again." }));
-    });
   }
 
   /* ---------- search across every setting ---------- */
@@ -520,6 +473,16 @@
   /* ---------- folder: overview (the dashboard front page) ---------- */
   function leafCount(o) { var n = 0; (function walk(x) { if (isObj(x)) Object.keys(x).forEach(function (k) { walk(x[k]); }); else if (Array.isArray(x)) n++; else n++; })(o); return n; }
   function featOff() { var f = isObj(ov.features) ? ov.features : {}, n = 0; Object.keys(f).forEach(function (k) { if (f[k] === false) n++; }); return n; }
+  /* member tallies for the overview tile — fetched once, then cached for the session */
+  var memberCounts = null;
+  function loadMemberCounts(numEl, subEl) {
+    rpc(MOD.list, { p_token: token, p_q: "", p_limit: 1, p_offset: 0 }).then(function (r) {
+      if (!r || !r.ok) return;
+      memberCounts = { n_members: r.n_members || 0, n_pending: r.n_pending || 0, n_banned: r.n_banned || 0 };
+      if (numEl) numEl.textContent = String(memberCounts.n_members);
+      if (subEl) subEl.textContent = memberCounts.n_pending ? memberCounts.n_pending + " pending to confirm" : "signed-up accounts";
+    });
+  }
   function drawOverview(p) {
     p.textContent = "";
     if (!lockCats) lockLoad();
@@ -528,21 +491,25 @@
       el("h2", { class: "cp-ov__title", text: "Everything, in your hands" }),
       el("p", { class: "cp-ov__sub", text: "Change any part of the site without touching code. Edits go live for visitors within about five minutes of pressing Save." })));
     var tiles = [
+      ["Members", memberCounts ? String(memberCounts.n_members) : "—", memberCounts && memberCounts.n_pending ? memberCounts.n_pending + " pending to confirm" : "signed-up accounts", "users"],
       ["Settings changed", String(leafCount(ov)), "on top of the file", "advanced"],
       ["Links I Like", String(links.length), "ranked sites", "links"],
       ["Locker shelves", String(lockCats.length), "in the store", "locker"],
       ["Features off", String(featOff()), "turned off site-wide", "features"]
     ];
     var grid = el("div", { class: "cp-tiles" });
+    var memberTile = null, memberSub = null;
     tiles.forEach(function (t) {
+      var n = el("b", { class: "cp-tile__n", text: t[1] });
+      var sub = el("span", { class: "cp-tile__sub", text: t[2] });
       var b = el("button", { type: "button", class: "cp-tile" },
-        el("b", { class: "cp-tile__n", text: t[1] }),
-        el("span", { class: "cp-tile__lab", text: t[0] }),
-        el("span", { class: "cp-tile__sub", text: t[2] }));
+        n, el("span", { class: "cp-tile__lab", text: t[0] }), sub);
       b.addEventListener("click", function () { API.show(t[3]); Site.sfx("toggle"); });
+      if (t[3] === "users") { memberTile = n; memberSub = sub; }
       grid.appendChild(b);
     });
     p.appendChild(grid);
+    if (!memberCounts && memberTile) loadMemberCounts(memberTile, memberSub);
     p.appendChild(el("h3", { class: "cp-h3", text: "Jump to" }));
     var jumps = [["appearance", "Appearance"], ["content", "Content"], ["accounts", "Accounts"], ["locker", "PS Locker"], ["links", "Links I Like"], ["users", "Users"], ["features", "Features"], ["security", "Sign-in"]];
     var qa = el("div", { class: "cp-ov__jumps" });
@@ -668,7 +635,7 @@
   function drawUsers(p) {
     p.textContent = "";
     p.appendChild(el("h2", { class: "cp-pane__h", text: "Users" }));
-    p.appendChild(el("p", { class: "cp-fine", text: "Everyone verified through Discord on Wiki-Chip Dex. Search, then open a member to moderate them. Mutes, kicks and bans are enforced on the server, so they hold even outside this panel." }));
+    p.appendChild(el("p", { class: "cp-fine", text: "Everyone with a Wiki-Chip Dex account — Discord-verified members, confirmed DMA accounts, and pending sign-ups still waiting to confirm their email. Search, then open someone to moderate them. Mutes, kicks and bans are enforced on the server, so they hold even outside this panel." }));
     var si = el("input", { type: "search", class: "cp-search", placeholder: "Search members by name or handle…", value: mQuery, "aria-label": "Search members", autocomplete: "off" });
     var refresh = el("button", { type: "button", class: "cp-mini", text: "Refresh" });
     var status = el("span", { class: "cp-msg", role: "status", "aria-live": "polite" });
@@ -698,8 +665,11 @@
     rpc(MOD.list, { p_token: token, p_q: mQuery, p_limit: 100, p_offset: 0 }).then(function (r) {
       ctx.listWrap.textContent = "";
       if (r && r.ok && Array.isArray(r.members)) {
-        mUsers = r.members; ctx.status.textContent = r.total ? r.members.length + " of " + r.total : "";
-        if (!r.members.length) { ctx.listWrap.appendChild(el("p", { class: "cp-empty", text: mQuery ? "No members match that search." : "No verified members yet." })); return; }
+        mUsers = r.members;
+        var parts = [];
+        if (r.n_members != null) { parts.push(r.n_members + (r.n_members === 1 ? " member" : " members")); if (r.n_pending) parts.push(r.n_pending + " pending"); if (r.n_banned) parts.push(r.n_banned + " banned"); }
+        ctx.status.textContent = parts.length ? parts.join(" · ") : (r.total ? r.members.length + " of " + r.total : "");
+        if (!r.members.length) { ctx.listWrap.appendChild(el("p", { class: "cp-empty", text: mQuery ? "No one matches that search." : "No accounts yet." })); return; }
         r.members.forEach(function (u) { ctx.listWrap.appendChild(memberRow(u, ctx)); });
       } else {
         ctx.status.textContent = "";
@@ -772,10 +742,11 @@
     });
   }
   function memberRow(u, ctx) {
-    var label = u.forced_name || u.name || u.discord_name || u.handle;
+    var label = u.forced_name || u.name || u.discord_name || u.handle || "Player";
     var chips = el("span", { class: "cp-user__chips" });
     if (u.is_owner) chips.appendChild(el("span", { class: "cp-chip cp-chip--owner", text: "Owner" }));
     else if (u.is_staff) chips.appendChild(el("span", { class: "cp-chip cp-chip--staff", text: "Staff" }));
+    if (u.pending && !u.banned) chips.appendChild(el("span", { class: "cp-chip cp-chip--pending", text: "Pending" }));
     if (u.muted) chips.appendChild(el("span", { class: "cp-chip cp-chip--mute", text: "Muted" }));
     if (isKicked(u)) chips.appendChild(el("span", { class: "cp-chip cp-chip--kick", text: "Kicked" }));
     if (u.banned) chips.appendChild(el("span", { class: "cp-chip cp-chip--ban", text: "Banned" }));
@@ -790,7 +761,8 @@
     } else {
       nm = el("strong", { class: "cp-user__name", text: label });
     }
-    var meta = el("span", { class: "cp-user__meta", text: "@" + u.handle + (u.forced_name ? " · name forced" : "") + " · " + ((u.reviews || 0) + " reviews, " + (u.comments || 0) + " comments") });
+    var who = u.handle ? "@" + u.handle : (u.pending ? "no handle yet" : "—");
+    var meta = el("span", { class: "cp-user__meta", text: who + (u.forced_name ? " · name forced" : "") + " · " + ((u.reviews || 0) + " reviews, " + (u.comments || 0) + " comments") });
     var sum = el("summary", { class: "cp-user__sum" }, av, el("span", { class: "cp-user__id" }, nm, meta), chips);
     var d = el("details", { class: "cp-user" + (u.is_owner ? " cp-user--owner" : ""), open: mOpen[u.handle] ? "" : null });
     d.addEventListener("toggle", function () {
@@ -806,11 +778,19 @@
   function memberActions(u, ctx) {
     var box = el("div", { class: "cp-user__body" });
 
+    /* a pending account has signed up but isn't verified yet (unconfirmed email, or no Discord link) */
+    if (u.pending && !u.banned) {
+      box.appendChild(el("p", { class: "cp-note", text: u.has_dma
+        ? "Pending — this is a DMA account that hasn't confirmed its email yet (the confirmation link may be sitting in spam). It becomes a full member the moment they confirm."
+        : "Pending — signed up but not verified yet (no confirmed email and no Discord link). It becomes a member once they verify." }));
+    }
+
+    var acctType = u.discord_member ? (u.has_dma ? "Discord + DMA" : "Discord") : (u.has_dma ? "DMA account" : "Unverified");
     /* the full picture — everything on record for this member, at a glance */
     var dRows = [
-      ["Discord", u.discord_name || "—"], ["Handle", "@" + u.handle],
-      ["Verified", when(u.verified_since) || "—"], ["Last seen", when(u.last_seen) || "—"],
-      ["Standing", u.banned ? "Banned" : (isKicked(u) ? "Kicked" : (u.muted ? "Muted" : (u.is_member ? "Active" : "Not a member")))],
+      ["Account", acctType], ["Discord", u.discord_name || "—"], ["Handle", u.handle ? "@" + u.handle : "— not set"],
+      ["Joined", when(u.verified_since) || "—"], ["Last seen", when(u.last_seen) || "—"],
+      ["Standing", u.banned ? "Banned" : (isKicked(u) ? "Kicked" : (u.muted ? "Muted" : (u.is_member ? "Active member" : "Pending")))],
       ["Role", u.is_staff ? "Staff" : "Member"]
     ];
     var dl = el("div", { class: "cp-detail" });
