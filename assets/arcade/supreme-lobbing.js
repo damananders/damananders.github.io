@@ -33,6 +33,7 @@
     ball:    { name: "Cannonball",   icon: "⬤", col: "#2d3748", crew: 45, block: 2, rad: 46, cost: 0 }
   };
   var AMMO_ORDER = ["rock", "bouncer", "splitter", "bomb", "fire", "gull", "repair"];
+  var AMMO_ROLE = { rock: "Reliable", bouncer: "Reach", splitter: "Spread", bomb: "Demolition", fire: "Burn", gull: "Homing", repair: "Heal", ball: "Cannon" };
   var ROLES = [
     { key: "cap",  name: "Cap",  hat: "#cd4257", shirt: "#e9e3d6", special: "bomb",     pow: 1.08,
       look: { skin: "#d8a271", hair: "short", hairCol: "#6f5e4b", beard: "full", beardCol: "#8a7b68", over: "coat", overCol: "#8c2f28", shirt: "#e9e3d6", pants: "#3a2a1c", shoes: "#2a1a10", w: 23, hat: { type: "tricorn", col: "#2a1d12", badge: true }, earring: true } },
@@ -1374,7 +1375,7 @@
     }
     if (B.aim.drag) { x.strokeStyle = "rgba(255,255,255,.4)"; x.setLineDash([6, 6]); x.beginPath(); x.moveTo(B.aim.drag.x0, B.aim.drag.y0); x.lineTo(B.aim.drag.x, B.aim.drag.y); x.stroke(); x.setLineDash([]); }
   }
-  var SLOT = { y: H - 66, w: 92, h: 52 };
+  var SLOT = { y: H - 82, w: 116, h: 66 };
   function slotRects() {
     var r = side(B.turnSide), am = availAmmo(r, thrower()), tot = am.length * (SLOT.w + 8) - 8, x0 = W / 2 - tot / 2;
     return am.map(function (a, i) { return { a: a, x: x0 + i * (SLOT.w + 8), y: SLOT.y, w: SLOT.w, h: SLOT.h }; });
@@ -1446,13 +1447,21 @@
     var t = thrower();
     D.text(x, (t.cannon ? "Deck Cannon" : t.m.name) + " throws  ·  Q / E switch thrower  ·  1–9 or Z / X pick ammo  ·  hold Space to throw", wx, SLOT.y - 12, "600 14px " + F.display, "#e2e8f0", "center");
     slotRects().forEach(function (s, i) {
-      var A2 = AMMO[s.a.k], on = s.a.k === B.ammoSel;
-      x.fillStyle = on ? "rgba(255,255,255,.22)" : "rgba(4,7,12,.6)"; D.rr(x, s.x, s.y, s.w, s.h, 10); x.fill();
-      x.strokeStyle = on ? (s.a.special ? "#f6c445" : "#fff") : "rgba(255,255,255,.2)"; x.lineWidth = on ? 3 : 1.5; D.rr(x, s.x, s.y, s.w, s.h, 10); x.stroke();
-      D.text(x, A2.icon, s.x + 18, s.y + 32, "800 22px " + F.display, A2.col, "center", false);
-      D.text(x, A2.name.split(" ")[0], s.x + 34, s.y + 22, "700 12px " + F.display, "#fff", "left", false);
-      D.text(x, s.a.special ? "★ special" : s.a.n === Infinity ? "∞" : "×" + s.a.n, s.x + 34, s.y + 40, "700 12px " + F.mono, s.a.special ? "#f6c445" : "#cbd5e0", "left", false);
-      if (i < 9) { x.fillStyle = on ? "#fff" : "rgba(255,255,255,.4)"; D.rr(x, s.x + s.w - 17, s.y + 5, 13, 13, 3); x.fill(); D.text(x, String(i + 1), s.x + s.w - 10, s.y + 15, "800 10px " + F.mono, "#0b0f14", "center", false); }
+      var A2 = AMMO[s.a.k], on = s.a.k === B.ammoSel, sp = s.a.special, accent = sp ? "#f6c445" : A2.col;
+      var lift = on ? 4 : 0, cy0 = s.y - lift;                        /* the selected card lifts slightly */
+      if (on) { x.shadowColor = accent; x.shadowBlur = 18; x.shadowOffsetY = 2; }
+      x.fillStyle = on ? "rgba(17,23,32,.97)" : "rgba(6,10,16,.74)"; D.rr(x, s.x, cy0, s.w, s.h, 13); x.fill();
+      x.shadowBlur = 0; x.shadowOffsetY = 0;
+      x.fillStyle = A2.col; D.rr(x, s.x, cy0 + 9, 4, s.h - 18, 2); x.fill();   /* colour strip for quick ID */
+      x.strokeStyle = on ? accent : "rgba(255,255,255,.13)"; x.lineWidth = on ? 2.5 : 1.3; D.rr(x, s.x, cy0, s.w, s.h, 13); x.stroke();
+      var dx = s.x + 26, dy = cy0 + s.h / 2;
+      x.globalAlpha = on ? 0.32 : 0.2; circ(x, A2.col, dx, dy, 16); x.globalAlpha = 1;
+      D.text(x, A2.icon, dx, dy + 8, "800 23px " + F.display, A2.col, "center", false);
+      D.text(x, A2.name, s.x + 46, cy0 + 24, "800 13px " + F.display, on ? "#fff" : "#dbe3ec", "left", false);
+      D.text(x, (AMMO_ROLE[s.a.k] || "").toUpperCase(), s.x + 46, cy0 + 39, "700 9px " + F.mono, "#8b97a4", "left", false);
+      if (sp) D.text(x, "★ SPECIAL", s.x + 46, cy0 + 56, "800 11px " + F.mono, "#f6c445", "left", false);
+      else D.text(x, s.a.n === Infinity ? "∞ UNLIMITED" : "× " + s.a.n + " LEFT", s.x + 46, cy0 + 56, "700 11px " + F.mono, s.a.n === Infinity ? "#9ae6b4" : s.a.n <= 1 ? "#fbb6a0" : "#cbd5e0", "left", false);
+      if (i < 9) { x.fillStyle = on ? accent : "rgba(255,255,255,.2)"; D.rr(x, s.x + s.w - 21, cy0 + 6, 16, 16, 4); x.fill(); D.text(x, String(i + 1), s.x + s.w - 13, cy0 + 18, "800 11px " + F.mono, on ? "#0b0f14" : "#e2e8f0", "center", false); }
     });
   }
 
