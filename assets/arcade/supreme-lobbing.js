@@ -1388,6 +1388,25 @@
     x.fillStyle = hull > 0.5 ? "#68d391" : hull > 0.34 ? "#f6c445" : "#fc8181"; D.rr(x, bx, by, Math.max(3, bw * hull), 9, 4); x.fill();
     D.text(x, "⚓ " + crewAlive + "/" + r.crew.length + " crew  ·  hull " + Math.round(hull * 100) + "%", edge, by + 23, "600 12px " + F.display, "#cbd5e0", align, false);
   }
+  /* ---- per-member crew health panel in the top corner (player left, enemy right) ---- */
+  function crewBars(x, r, edge, align) {
+    var bw = 150, rowH = 23, y0 = 88, left = align === "left";
+    r.crew.forEach(function (m, i) {
+      var ry = y0 + i * rowH, bx = left ? edge : edge - bw, frac = m.max ? Math.max(0, m.hp) / m.max : 0;
+      var nm = (m.name || "") + (m.special ? "  ★" : "");
+      if (m.swim) nm += "  🌊"; else if (m.burn > 0) nm += "  🔥";
+      D.text(x, nm, edge, ry, "700 12px " + F.display, m.alive ? "#eef3f8" : "rgba(226,232,240,.38)", align, false);
+      var ty = ry + 5;
+      x.fillStyle = "rgba(4,7,12,.5)"; D.rr(x, bx, ty, bw, 7, 3); x.fill();
+      if (m.alive) {
+        var fw = Math.max(3, bw * frac);
+        x.fillStyle = frac > 0.5 ? "#68d391" : frac > 0.3 ? "#f6c445" : "#fc8181";
+        D.rr(x, left ? bx : bx + bw - fw, ty, fw, 7, 3); x.fill();
+      } else {
+        x.strokeStyle = "rgba(252,129,129,.5)"; x.lineWidth = 1.5; x.beginPath(); x.moveTo(bx + 4, ty + 3.5); x.lineTo(bx + bw - 4, ty + 3.5); x.stroke();
+      }
+    });
+  }
   function hud(g, x) {
     var wx = W / 2, w = B.wind, ws = B.windShown, pulse = B.windFlash || 0;
     /* ---- wind: a wide, always-on gauge with numeric strength and an arrow that grows with it, pulsing on change ---- */
@@ -1411,6 +1430,8 @@
     /* ---- raft name plates with hull-integrity bar + living-crew count ---- */
     nameplate(x, B.mine, 24, "left");
     nameplate(x, B.foe, W - 24, "right");
+    crewBars(x, B.mine, 24, "left");
+    crewBars(x, B.foe, W - 24, "right");
     /* ---- turn banner: a bright pill so whose turn it is is unmissable ---- */
     var human = side(B.turnSide).human;
     if (B.phase !== "fly") {
