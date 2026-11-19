@@ -295,7 +295,7 @@
   function prestigeOpen() { return cleared().length >= BATTLES.length; }
 
   /* ---------------- battle state ---------------- */
-  var B = null, MO = Site.reducedMotion ? 0.6 : 1;
+  var B = null, MO = Site.reducedMotion ? 0.6 : 1, SL_pt = 0, SL_preview = false;   /* SL_pt/SL_preview: clock + flag for the Shipwright raft preview, when no battle is running */
 
   function makeRaft(side, o) {
     var n = o.planks, x0 = side < 0 ? Math.max(24, 330 - n * PW) : Math.min(W - 24 - n * PW, W - 330);
@@ -322,7 +322,7 @@
     r.turn = 0;
     return r;
   }
-  function bob(r) { return Math.sin(B.t * 1.3 * MO + r.phase) * 5 * B.waves; }
+  function bob(r) { var tt = B ? B.t : SL_pt, wv = B ? B.waves : 0.7; return Math.sin(tt * 1.3 * MO + r.phase) * 5 * wv; }
   function deckY(r) { return WY - 22 + bob(r); }
   function colX(r, c) { return r.x0 + c * PW + PW / 2; }
   function crewPos(r, m) {
@@ -925,22 +925,42 @@
     var mg = x.createLinearGradient(mx - 4, 0, mx + 4, 0); mg.addColorStop(0, "#5a3d24"); mg.addColorStop(0.5, "#7a5634"); mg.addColorStop(1, "#3e2a18");
     x.fillStyle = mg; x.fillRect(mx - 3.5, dy - 172, 7, 172);
     x.fillStyle = "#c9a96e"; [dy - 150, dy - 64, dy - 12].forEach(function (yy) { x.fillRect(mx - 5, yy, 10, 4); x.fillStyle = "#a88a52"; x.fillRect(mx - 5, yy + 2, 10, 1); x.fillStyle = "#c9a96e"; });
-    var tip = mx - r.side * 70, top = mx + 3 * -r.side;
-    x.save(); x.beginPath(); x.moveTo(top, dy - 160); x.quadraticCurveTo(tip, dy - 110, top, dy - 60); x.closePath();
-    var sg = x.createLinearGradient(top, 0, tip, 0); sg.addColorStop(0, shade(r.sail, -30)); sg.addColorStop(0.6, r.sail); sg.addColorStop(1, shade(r.sail, 22));
-    x.fillStyle = sg; x.fill(); x.clip();
-    x.strokeStyle = "rgba(0,0,0,.18)"; x.lineWidth = 1; for (i = 1; i < 5; i++) { x.beginPath(); x.moveTo(top, dy - 160 + i * 20); x.quadraticCurveTo(tip, dy - 150 + i * 18, top + -r.side * 60, dy - 140 + i * 20); x.stroke(); }
+    /* a square sail hung from a yard, centered on the mast and bellying toward the viewer */
+    var sway = Math.sin(t * 2.2 + r.phase) * 4, halfW = 46;
+    var yardY = dy - 162, headY = dy - 156, footY = dy - 66;
+    var left = mx - halfW, right = mx + halfW;
+    function sailPath() {
+      x.beginPath();
+      x.moveTo(left, headY);                                                     /* head: along the yard */
+      x.quadraticCurveTo(mx, headY - 7, right, headY);
+      x.quadraticCurveTo(right + 7 + sway, (headY + footY) / 2, right, footY);   /* leech bows out */
+      x.quadraticCurveTo(mx, footY + 15, left, footY);                           /* foot sags with the belly */
+      x.quadraticCurveTo(left - 7 + sway, (headY + footY) / 2, left, headY);     /* luff bows out */
+      x.closePath();
+    }
+    x.strokeStyle = "#5a3d24"; x.lineWidth = 4.5; x.lineCap = "round";           /* the yard, centered */
+    x.beginPath(); x.moveTo(left - 8, yardY + 2); x.lineTo(right + 8, yardY + 2); x.stroke();
+    x.strokeStyle = "#8a6238"; x.lineWidth = 1.8; x.stroke();
+    sailPath();                                                                  /* cloth: lit down the belly, shaded at the edges */
+    var sg = x.createLinearGradient(left, 0, right, 0); sg.addColorStop(0, shade(r.sail, -22)); sg.addColorStop(0.5, shade(r.sail, 24)); sg.addColorStop(1, shade(r.sail, -22));
+    x.fillStyle = sg; x.fill();
+    x.save(); x.clip();
+    x.strokeStyle = "rgba(0,0,0,.09)"; x.lineWidth = 1.2;                        /* vertical cloth panels */
+    for (i = 1; i <= 3; i++) { var fx2 = left + (right - left) * i / 4; x.beginPath(); x.moveTo(fx2, headY - 6); x.quadraticCurveTo(fx2 + sway * 0.4, (headY + footY) / 2, fx2, footY + 8); x.stroke(); }
+    x.strokeStyle = "rgba(0,0,0,.11)"; x.lineWidth = 6; x.beginPath(); x.moveTo(left, footY - 15); x.quadraticCurveTo(mx, footY - 3, right, footY - 15); x.stroke();   /* reef band */
     x.restore();
-    x.strokeStyle = shade(r.sail, -45); x.lineWidth = 2; x.beginPath(); x.moveTo(top, dy - 160); x.quadraticCurveTo(tip, dy - 110, top, dy - 60); x.stroke();
-    if (r.flag === "maple") canFlag(x, mx - r.side * 28, dy - 110, 34);
+    sailPath(); x.strokeStyle = shade(r.sail, -40); x.lineWidth = 2; x.stroke();
+    x.lineCap = "butt";
+    x.fillStyle = mg; x.fillRect(mx - 3.5, dy - 172, 7, 172);                    /* mast reads down the center, over the sail */
+    if (r.flag === "maple") canFlag(x, mx, dy - 110, 34);
     else if (r.flag === "lighthouse") {
-      var lhx = mx - r.side * 26, lhy = dy - 86;
+      var lhx = mx, lhy = dy - 86;
       fillPath(x, "#f7fafc", [[lhx - 7, lhy], [lhx + 7, lhy], [lhx + 4, lhy - 34], [lhx - 4, lhy - 34]]);
       x.fillStyle = "#c53030"; x.fillRect(lhx - 6, lhy - 10, 12, 5); x.fillRect(lhx - 5, lhy - 24, 10, 5);
       x.fillStyle = "rgba(255,236,150," + (0.45 + Math.sin(t * 3) * 0.25) + ")"; x.beginPath(); x.moveTo(lhx, lhy - 39); x.lineTo(lhx - r.side * 40, lhy - 50); x.lineTo(lhx - r.side * 40, lhy - 28); x.closePath(); x.fill();
       circ(x, "#f6e05e", lhx, lhy - 38, 4); x.fillStyle = "#1a202c"; x.fillRect(lhx - 5, lhy - 44, 10, 3);
     }
-    else { x.fillStyle = "rgba(255,255,255,.92)"; x.font = "700 26px " + F.display; x.textAlign = "center"; x.fillText(r.flag, mx - r.side * 26, dy - 100); }
+    else { x.fillStyle = "rgba(255,255,255,.92)"; x.font = "700 26px " + F.display; x.textAlign = "center"; x.fillText(r.flag, mx, dy - 100); }
     var fw = Math.sin(t * 6) * 4; x.fillStyle = r.sail; x.beginPath(); x.moveTo(mx, dy - 172); x.lineTo(mx - r.side * (30 + fw), dy - 165 + Math.sin(t * 5) * 2); x.lineTo(mx, dy - 158); x.fill();
     /* deck planks, then rope lashings over the seams */
     r.deck.forEach(function (b) { if (!b.alive) return; plank(x, blockRect(r, b, false), r.wood, b, r, "deck"); });
@@ -953,7 +973,7 @@
     }
     r.walls.forEach(function (w) { if (!w.alive) return; plank(x, blockRect(r, w, true), w.tower ? shade(r.wood, -18) : shade(r.wood, -8), w, r, w.tower ? "tower" : "wall"); });
     if (r.cannon && r.cannon.alive) {
-      var cx = colX(r, r.cannon.col), cy = dy - 14, ang = (B.turnSide === r.side && thrower() && thrower().cannon) ? B.aim.ang : 0.5;
+      var cx = colX(r, r.cannon.col), cy = dy - 14, ang = (B && B.turnSide === r.side && thrower() && thrower().cannon) ? B.aim.ang : 0.5;
       x.save(); x.translate(cx, cy); x.scale(-r.side, 1); x.rotate(-ang);
       var cg = x.createLinearGradient(0, -8, 0, 8); cg.addColorStop(0, "#5a6578"); cg.addColorStop(0.45, "#2d3748"); cg.addColorStop(1, "#151b26");
       x.fillStyle = cg; D.rr(x, -6, -8, 40, 16, 6); x.fill(); x.fillStyle = "#1a202c"; x.fillRect(30, -9, 6, 18); x.fillStyle = "#4a5568"; x.fillRect(10, -8.5, 3, 17);
@@ -1009,7 +1029,7 @@
   function drawCrew(x, r, m, t) {
     var c = crewPos(r, m), face = -r.side, s = m.scale || 1;
     if (!m.alive) { x.globalAlpha = 0.5; x.fillStyle = "#cbd5e0"; x.font = "700 " + Math.round(18 * s) + "px " + F.display; x.textAlign = "center"; x.fillText("✕", c.x, c.y + 6); x.globalAlpha = 1; return; }
-    var active = B.phase !== "fly" && B.turnSide === r.side && thrower() && thrower().m === m;
+    var active = B && B.phase !== "fly" && B.turnSide === r.side && thrower() && thrower().m === m;
     /* arm rests DOWN at the side when idle (no more raised-arm "salute"); raises only to aim or wind up a throw */
     var idle = 1.18 + Math.sin((t + (m.col || 0)) * 1.4) * 0.06;
     var arm = m.anim > 0 ? -2.4 + (0.4 - m.anim) * 8 : active ? -(B.aim.ang + 0.6) : idle;
@@ -1030,6 +1050,7 @@
     }
     if (m.burn > 0) { x.fillStyle = "rgba(255,120,40,.8)"; x.beginPath(); x.arc(c.x - 6 * s, c.y - 6 * s, (5 + Math.random() * 3) * s, 0, 6.3); x.fill(); }
     if (m.anim < 0) x.restore();
+    if (SL_preview) return;                                 /* the Shipwright preview hides the battle HUD (bars, names, arrow) */
     var top = m.look === "reaper" ? 72 : m.look === "doc" ? 52 : 62, bw = 40 * Math.min(1.5, s), p = m.hp / m.max, by0 = c.y - top * s - (r.crew.length > 3 && r.crew.indexOf(m) % 2 ? 22 : 0);
     x.fillStyle = "rgba(0,0,0,.45)"; D.rr(x, c.x - bw / 2, by0, bw, 7, 3); x.fill();
     x.fillStyle = p > 0.5 ? "#68d391" : p > 0.25 ? "#f6c445" : "#fc8181"; D.rr(x, c.x - bw / 2, by0, Math.max(3, bw * p), 7, 3); x.fill();
@@ -1445,25 +1466,103 @@
   }
   /* Shipwright: a front desk with five departments; each department lists its upgrades with level pips */
   function pips(l, max) { var o = ""; for (var i = 0; i < max; i++) o += i < l ? "●" : "○"; return o; }
-  function shop(g, back, focus) {
-    var c = coins(), aff = affordable();
-    var items = DEPS.map(function (dp) {
-      var have = 0, all = 0, can = 0;
-      if (dp.key === "decor") { ["sail", "wood", "flag"].forEach(function (k) { DECOR[k].forEach(function (d, i) { all++; if (owns(k, i)) have++; else if (c >= d[2]) can++; }); }); }
-      else {
-        UPG.forEach(function (u) { if (u.dep !== dp.key) return; var l = upg(u.key); have += l; all += u.max; if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need))) can++; });
-        if (dp.key === "arsenal") AMMO_ORDER.slice(1).forEach(function (k) { all++; if (unlocked(k)) have++; else if (c >= AMMO[k].cost) can++; });
-      }
-      return { label: dp.icon + " " + dp.name, sub: dp.blurb + " · " + have + "/" + all + (can ? " · " + can + " in reach" : ""), cls: can ? "is-hot" : "", act: function () { dept(g, dp.key, back); } };
-    });
-    items.push({ label: "Back", act: back });
-    paintBest(g);
-    var stats = el("div", { class: "ak-stats" }, statTile("Coins", c, null, aff ? aff + " thing" + (aff > 1 ? "s" : "") + " you can buy now" : "Win battles to earn more"), statTile("Raft level", raftRating().have + " / " + raftRating().all, raftRating().have / raftRating().all, "Upgrades bought"), statTile("Ammo", AMMO_ORDER.slice(1).filter(unlocked).length + " / " + (AMMO_ORDER.length - 1), null, "Types unlocked"));
-    g.menu({ kicker: "Shipwright", title: "The Boat Shop", sub: "Upgrades and decor are kept in this browser and sync with a linked account (coins stay per device).", body: stats, items: items, grid: true, cls: "is-wide", back: back, focus: focus || 0 });
+  /* --- the Shipwright: one screen with a live raft preview, department tabs and upgrade cards --- */
+  function ensureShopCss() {
+    if (document.getElementById("sl-shop-css")) return;
+    var s = document.createElement("style"); s.id = "sl-shop-css";
+    s.textContent =
+      ".ak-panel.sl-shop{width:min(68em,100%);text-align:left;display:grid;gap:12px 20px;align-items:start;" +
+      "grid-template-columns:340px minmax(0,1fr);grid-template-areas:'title chips' 'preview tabs' 'preview cards'}" +
+      ".sl-shop .ak-panel__title{grid-area:title;margin:0;font-size:1.7em;align-self:center}" +
+      ".sl-shop .ak-panel__body{display:contents}.sl-shop__body{display:contents}" +
+      ".sl-shop__chips{grid-area:chips;justify-self:end;display:flex;gap:10px;flex-wrap:wrap}" +
+      ".sl-chip{min-width:96px;padding:7px 14px;border-radius:11px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08)}" +
+      ".sl-chip .l{display:block;font:600 10px var(--mono,ui-monospace);letter-spacing:.08em;text-transform:uppercase;color:#8b97a4}" +
+      ".sl-chip .v{display:block;font:800 16px var(--display,system-ui);margin-top:2px}" +
+      ".sl-shop__preview{grid-area:preview;align-self:stretch;position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#0c1b28;min-height:300px}" +
+      ".sl-shop__canvas{display:block;width:100%;height:100%;object-fit:cover}" +
+      ".sl-shop__pvlabel{position:absolute;top:12px;left:14px;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.6)}" +
+      ".sl-shop__pvlabel b{display:block;font:700 13px var(--display,system-ui);color:#eef3f8}" +
+      ".sl-shop__pvlabel span{display:block;font:600 11px var(--mono,ui-monospace);color:rgba(255,255,255,.6)}" +
+      ".sl-shop__tabs{grid-area:tabs;display:flex;gap:8px;flex-wrap:wrap}" +
+      ".sl-tab{flex:1 1 0;min-width:88px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 6px;border-radius:11px;cursor:pointer;" +
+      "background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#cfd6de;font:inherit}" +
+      ".sl-tab:hover{background:rgba(255,255,255,.1)}.sl-tab.is-on{background:var(--ak-accent,#f6ad55);color:#1a1206;border-color:transparent}" +
+      ".sl-tab .ico{font-size:19px;line-height:1}.sl-tab .name{font:800 13px var(--display,system-ui)}.sl-tab .prog{font:600 10px var(--mono,ui-monospace);opacity:.7}" +
+      ".sl-shop .ak-panel__items{grid-area:cards;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}" +
+      ".sl-shop .ak-btn{align-items:flex-start;text-align:left;min-height:3.4em;padding:.6em .8em}" +
+      ".sl-shop .ak-btn.sl-back{grid-column:1/-1;align-items:center;text-align:center}" +
+      "@media (max-width:660px){.ak-panel.sl-shop{grid-template-columns:1fr;grid-template-areas:'title' 'chips' 'preview' 'tabs' 'cards'}" +
+      ".sl-shop__chips{justify-self:start}.sl-shop__preview{min-height:240px}.sl-shop .ak-panel__items{grid-template-columns:1fr 1fr}}";
+    document.head.appendChild(s);
   }
-  function dept(g, key, back, focus) {
-    var c = coins(), dp = DEPS.filter(function (d) { return d.key === key; })[0], items = [], again = function (i) { dept(g, key, back, i); }, toShop = function () { shop(g, back, DEPS.indexOf(dp)); };
+  function previewRaft() {
+    var size = upg("size"), d = deco();
+    return makeRaft(-1, { name: "Your Raft", human: true, crew: 2 + size, planks: 6 + size, walls: 1 + upg("walls"), tower: upg("tower"),
+      perks: { plate: upg("plate"), rbow: upg("rbow") }, hp: 100 + upg("tough") * 20, ammo: [], ammoN: 0,
+      bhp: 3 + upg("armor"), cannon: upg("cannon") > 0, sail: DECOR.sail[d.sail][0], wood: DECOR.wood[d.wood][0], flag: DECOR.flag[d.flag][0] });
+  }
+  function drawShopScene(x, w, h, raft) {
+    var rW = raft.n * PW, rCx = raft.x0 + rW / 2, seaY = Math.round(h * 0.66);
+    /* fit the whole raft -- deck, crew spread and shadow -- with a comfortable margin on every side */
+    var fullW = rW + 150, s = Math.min((w - 2 * Math.max(60, w * 0.12)) / fullW, (h * 0.46) / 150, 2.0), tx = w / 2 - s * rCx, ty = seaY - s * WY;
+    x.clearRect(0, 0, w, h);
+    var sky = x.createLinearGradient(0, 0, 0, seaY); sky.addColorStop(0, "#9fd0ea"); sky.addColorStop(1, "#dceff7");
+    x.fillStyle = sky; x.fillRect(0, 0, w, seaY);
+    x.fillStyle = "rgba(255,255,255,.55)";                           /* drifting clouds */
+    for (var ci = 0; ci < 3; ci++) { var cxp = ((SL_pt * 6 + ci * 260) % (w + 160)) - 80, cyp = 40 + ci * 46; x.beginPath(); x.ellipse(cxp, cyp, 46, 15, 0, 0, 6.3); x.ellipse(cxp + 34, cyp + 6, 32, 12, 0, 0, 6.3); x.ellipse(cxp - 30, cyp + 7, 28, 11, 0, 0, 6.3); x.fill(); }
+    var sea = x.createLinearGradient(0, seaY, 0, h); sea.addColorStop(0, "#3b86a8"); sea.addColorStop(1, "#153f57");
+    x.fillStyle = sea; x.fillRect(0, seaY, w, h - seaY);
+    x.strokeStyle = "rgba(255,255,255,.1)"; x.lineWidth = 2;         /* wave glints */
+    for (var wi = 0; wi < 4; wi++) { var wy = seaY + 20 + wi * 34; x.beginPath(); for (var px = 0; px <= w; px += 16) x.lineTo(px, wy + Math.sin(px / 46 + SL_pt * 1.4 + wi) * 3); x.stroke(); }
+    x.save(); x.translate(tx, ty); x.scale(s, s);
+    SL_preview = true; drawRaft(x, raft, SL_pt); SL_preview = false;
+    x.restore();
+  }
+  function shopPreview() {
+    var wrap = el("div", { class: "sl-shop__preview" });
+    var cv = el("canvas", { class: "sl-shop__canvas", width: 680, height: 560 });
+    wrap.appendChild(el("div", { class: "sl-shop__pvlabel" }, el("b", { text: "Your Raft" }), el("span", { text: "grows as you buy" })));
+    wrap.appendChild(cv);
+    var ctx = cv.getContext("2d"), last = 0, raft = previewRaft();
+    function frame(now) {
+      if (!cv.isConnected) return;                                   /* stop when the shop closes or re-renders */
+      if (last) SL_pt += Math.min(0.05, (now - last) / 1000); last = now;
+      drawShopScene(ctx, cv.width, cv.height, raft);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    return wrap;
+  }
+  function deptProgress(key, c) {
+    var have = 0, all = 0, can = 0;
+    if (key === "decor") { ["sail", "wood", "flag"].forEach(function (k) { DECOR[k].forEach(function (d, i) { all++; if (owns(k, i)) have++; else if (c >= d[2]) can++; }); }); }
+    else {
+      UPG.forEach(function (u) { if (u.dep !== key) return; var l = upg(u.key); have += l; all += u.max; if (l < u.max && c >= u.cost[l] && (!u.need || upg(u.need))) can++; });
+      if (key === "arsenal") AMMO_ORDER.slice(1).forEach(function (k) { all++; if (unlocked(k)) have++; else if (c >= AMMO[k].cost) can++; });
+    }
+    return { have: have, all: all, can: can };
+  }
+  function shop(g, back, focus) { shopScreen(g, back, sget("shopDept", "hull") || "hull", focus); }
+  function shopScreen(g, back, key, focus) {
+    ensureShopCss();
+    key = DEPS.some(function (d) { return d.key === key; }) ? key : "hull";
+    var c = coins(), dp = DEPS.filter(function (d) { return d.key === key; })[0], items = [], again = function (i) { shopScreen(g, back, key, i); };
     function buyFx() { sound("chime"); sound("wood", { v: 0.6 }); }
+    function chip(l, v, col) { return el("div", { class: "sl-chip" }, el("span", { class: "l", text: l }), el("span", { class: "v", style: "color:" + col, text: v })); }
+    var chips = el("div", { class: "sl-shop__chips" },
+      chip("Coins", "" + c, "#f6c445"),
+      chip("Raft rating", raftRating().have + " / " + raftRating().all, "#68d391"),
+      chip("Affordable", affordable() + " now", "#4fd1c5"));
+    var tabs = el("div", { class: "sl-shop__tabs" });
+    DEPS.forEach(function (d) {
+      var pr = deptProgress(d.key, c), on = d.key === key;
+      var b = el("button", { type: "button", class: "sl-tab" + (on ? " is-on" : "") },
+        el("span", { class: "ico", text: d.icon }), el("span", { class: "name", text: d.name.split(" ")[0] }), el("span", { class: "prog", text: pr.have + " / " + pr.all + (pr.can ? " · " + pr.can + "!" : "") }));
+      b.addEventListener("click", function () { if (d.key === key) return; sset("shopDept", d.key); Site.sfx("hover"); shopScreen(g, back, d.key, 0); });
+      tabs.appendChild(b);
+    });
+    var body = el("div", { class: "sl-shop__body" }, chips, shopPreview(), tabs);
     if (key !== "decor") {
       UPG.forEach(function (u) {
         if (u.dep !== key) return;
@@ -1482,14 +1581,14 @@
       ["sail", "wood", "flag"].forEach(function (kind) {
         DECOR[kind].forEach(function (d, i) {
           var own = owns(kind, i), on = dc[kind] === i, idx = items.length, label = (kind === "sail" ? "Sail" : kind === "wood" ? "Wood" : "Flag") + ": " + d[1] + (kind === "flag" ? " " + d[0] : "");
-          items.push({ label: label + (on ? " ✓" : ""), cls: on ? "is-owned" : "", sub: on ? "In use" : own ? "Owned · use it" : d[2] + " coins", disabled: on || (!own && c < d[2]),
+          items.push({ label: label + (on ? " ✓" : ""), cls: on ? "is-owned" : "", sub: on ? "In use" : own ? "Owned · tap to use" : d[2] + " coins", disabled: on || (!own && c < d[2]),
             act: function () { if (!own) { addCoins(-d[2]); var o = sget("owned", {}) || {}; o[kind + i] = true; sset("owned", o); } var dd = deco(); dd[kind] = i; sset("deco", dd); buyFx(); again(idx); } });
         });
       });
     }
-    items.push({ label: "Back to the shop", act: toShop });
+    items.push({ label: "Back", cls: "sl-back", act: back });
     paintBest(g);
-    g.menu({ kicker: "Shipwright · " + c + " coins", title: dp.icon + " " + dp.name, sub: dp.blurb + ".", items: items, grid: true, cls: "is-wide", back: toShop, focus: focus || 0 });
+    g.menu({ title: "🔨 The Boat Shop", body: body, items: items, grid: true, cls: "sl-shop", back: back, focus: focus || 0 });
   }
   function POSTER(x, w, h, t) {
     var g = x.createLinearGradient(0, 0, 0, h * 0.72); g.addColorStop(0, "#f39a5a"); g.addColorStop(1, "#ffd9a8"); x.fillStyle = g; x.fillRect(0, 0, w, h);
