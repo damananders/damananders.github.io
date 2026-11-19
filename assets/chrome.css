@@ -600,8 +600,12 @@ html.ch-radial-open,html.ch-radial-open body{overflow:hidden}
   background:linear-gradient(90deg,color-mix(in srgb,var(--sx-text) 26%,transparent),transparent)}
 .ch-radial[data-order="group"][data-layout="neat"] .ch-rad__ghead{display:flex}
 @media (max-width:720px){.ch-radial[data-order="group"] .ch-rad__ghead{display:flex}}
-/* the order control wraps on narrow screens so four pills never overflow */
-.ch-rad__seg--order{flex-wrap:wrap;justify-content:center;max-width:min(92vw,370px)}
+/* the order control wraps when the four pills can't fit one row (wide display font, larger text size,
+   narrow screens). The base .ch-rad__seg uses border-radius:999px, which on a wrapped multi-row box
+   rounds the top and bottom into semicircles — a "circle" that cuts the corner pills loose. A fixed
+   moderate radius keeps a single row looking like a pill (its height ≈ 2× this radius) while a wrapped
+   box stays a clean rounded rectangle that fully backs every row. */
+.ch-rad__seg--order{flex-wrap:wrap;justify-content:center;align-content:center;row-gap:4px;max-width:min(92vw,370px);border-radius:21px}
 
 /* page settings reached from a Settings button sitting UNDER the radial menu (chrome:menu) */
 .ch-rad__bar{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;
