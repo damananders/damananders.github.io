@@ -23,12 +23,12 @@
 
   /* ---------------- ammo ---------------- */
   var AMMO = {
-    rock:    { name: "Rock",         icon: "●", col: "#9aa3ad", crew: 30, block: 1, rad: 30, cost: 0 },
-    bouncer: { name: "Bouncer",      icon: "◎", col: "#4fd1c5", crew: 22, block: 1, rad: 26, cost: 40, bounces: 3 },
+    rock:    { name: "Rock",         icon: "●", col: "#9aa3ad", crew: 30, block: 2, rad: 30, cost: 0 },
+    bouncer: { name: "Bouncer",      icon: "◎", col: "#4fd1c5", crew: 22, block: 2, rad: 26, cost: 40, bounces: 3 },
     splitter:{ name: "Splitter",     icon: "✣", col: "#f6ad55", crew: 18, block: 1, rad: 24, cost: 60 },
-    bomb:    { name: "Bomb",         icon: "✹", col: "#fc8181", crew: 55, block: 3, rad: 88, cost: 90 },
+    bomb:    { name: "Bomb",         icon: "✹", col: "#fc8181", crew: 55, block: 4, rad: 88, cost: 90 },
     fire:    { name: "Fire Pot",     icon: "♨", col: "#ff7a2f", crew: 15, block: 1, rad: 50, cost: 90, burn: 3 },
-    gull:    { name: "Seagull",      icon: "➶", col: "#e2e8f0", crew: 40, block: 1, rad: 30, cost: 140 },
+    gull:    { name: "Seagull",      icon: "➶", col: "#e2e8f0", crew: 40, block: 2, rad: 30, cost: 140 },
     repair:  { name: "Repair Kit",   icon: "✚", col: "#68d391", crew: 0,  block: 0, rad: 110, cost: 70, heal: 35 },
     ball:    { name: "Cannonball",   icon: "⬤", col: "#2d3748", crew: 45, block: 2, rad: 46, cost: 0 }
   };
@@ -640,7 +640,7 @@
     [B.mine, B.foe].forEach(function (r) {
       r.crew.forEach(function (m) {
         if (!m.alive) return; var sc = m.scale || 1, c = crewPos(r, m), d = Math.hypot(c.x - x, c.y - 12 * sc - y);
-        if (d < rad + 14 * sc) { dmgCrew(g, r, m, a.crew * mul * (d < 26 * sc ? 1 : 0.55)); if (a.burn) m.burn = a.burn; }
+        if (d < rad + 14 * sc) { dmgCrew(g, r, m, a.crew * mul * (d < 26 * sc ? 1 : 0.55)); if (a.burn && !m.swim) m.burn = a.burn; }   /* a swimmer can't catch fire */
       });
       r.walls.concat(r.deck).forEach(function (b) {
         if (!b.alive) return; var isW = b.col !== undefined, rc = blockRect(r, b, isW), d = Math.hypot(rc.x + rc.w / 2 - x, rc.y + rc.h / 2 - y);
@@ -745,7 +745,7 @@
   function endTurn(g) {
     [B.mine, B.foe].forEach(function (r) {                 /* fire burns, swimmers tire */
       var pk = r.perks || {};
-      r.crew.forEach(function (m) { if (!m.alive) return; if (m.burn > 0) { m.burn--; dmgCrew(g, r, m, 8, "burns"); } if (m.swim) dmgCrew(g, r, m, pk.vests ? 5 : 10, "overboard"); });
+      r.crew.forEach(function (m) { if (!m.alive) return; if (m.swim) { if (m.burn > 0) { m.burn = 0; splash(crewPos(r, m).x); }  /* the water snuffs the fire */ dmgCrew(g, r, m, pk.vests ? 5 : 10, "overboard"); } else if (m.burn > 0) { m.burn--; dmgCrew(g, r, m, 8, "burns"); } });
       if (r.side === B.turnSide) {              /* the side that just threw: first aid and pumps */
         if (pk.aid) r.crew.forEach(function (m) { if (m.alive && m.hp < m.max) m.hp = Math.min(m.max, m.hp + pk.aid * 4); });
         if (pk.pump && ++r.pumpT >= (pk.pump > 1 ? 2 : 3)) {
