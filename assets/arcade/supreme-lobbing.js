@@ -1504,7 +1504,8 @@
   }
   function drawShopScene(x, w, h, raft) {
     var rW = raft.n * PW, rCx = raft.x0 + rW / 2, seaY = Math.round(h * 0.66);
-    var s = Math.min((w - 70) / (rW + 60), (h * 0.5) / 150, 2.3), tx = w / 2 - s * rCx, ty = seaY - s * WY;
+    /* fit the whole raft -- deck, crew spread and shadow -- with a comfortable margin on every side */
+    var fullW = rW + 150, s = Math.min((w - 2 * Math.max(60, w * 0.12)) / fullW, (h * 0.46) / 150, 2.0), tx = w / 2 - s * rCx, ty = seaY - s * WY;
     x.clearRect(0, 0, w, h);
     var sky = x.createLinearGradient(0, 0, 0, seaY); sky.addColorStop(0, "#9fd0ea"); sky.addColorStop(1, "#dceff7");
     x.fillStyle = sky; x.fillRect(0, 0, w, seaY);
