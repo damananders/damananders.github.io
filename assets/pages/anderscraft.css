@@ -617,3 +617,9 @@ body.ac-has-xp{padding-bottom:14px}
   .ac-maint-light{width:16px;height:16px}
   .ac-maint-body>.ac-maint-light:nth-child(2),.ac-maint-body>.ac-maint-light:nth-last-child(2){display:none}
 }
+@media (max-width:380px){
+  .ac-maint-h{font-size:1.25rem;letter-spacing:.02em}
+  .ac-maint-body{padding:12px 8px;gap:6px}
+  .ac-maint-light{width:12px;height:12px}
+}
+.ac-maint-text{overflow-wrap:break-word}
