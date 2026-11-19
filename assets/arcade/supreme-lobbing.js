@@ -1538,19 +1538,54 @@
     paintBest(g);
     g.menu({ kicker: "Secret", title: "Prestige Campaign", sub: "Twelve bosses, each with their own tricks. Enemy aim: " + aiLevel().name + ".", items: items, grid: true, cls: "is-wide", back: function () { titleMenu(g); }, focus: Math.min(next, items.length - 1) });
   }
+  var AI_DESC = { sloppy: "Easy — the computer misses a lot", fair: "Balanced — a fair fight", sharp: "Tough — aims well", scary: "Brutal — near-perfect aim" };
+  function ensureSettingsCss() {
+    if (document.getElementById("sl-settings-css")) return;
+    var s = document.createElement("style"); s.id = "sl-settings-css";
+    s.textContent =
+      ".ak-panel.sl-settings{width:min(34em,100%);text-align:left}" +
+      ".ak-panel.sl-settings .ak-btn{text-align:left}" +
+      ".ak-btn.is-danger{border-color:rgba(252,129,129,.5)}" +
+      ".ak-btn.is-danger>b{color:#fc8181}" +
+      ".ak-btn.is-danger:hover,.ak-btn.is-danger.is-sel{background:rgba(252,129,129,.14);border-color:#fc8181;box-shadow:0 0 0 1px #fc8181}";
+    document.head.appendChild(s);
+  }
   function settingsMenu(g, focus) {
-    var items = AI_LEVELS.map(function (l) { return { label: "Enemy aim: " + l.name + (aiLevel().key === l.key ? " ✓" : ""), act: function () { sset("ai", l.key); settingsMenu(g); } }; });
-    [["auto", "Aim guide: Auto"], ["always", "Aim guide: Always"], ["never", "Aim guide: Never"]].forEach(function (o) { items.push({ label: o[1] + (guideMode() === o[0] ? " ✓" : ""), sub: o[0] === "auto" ? "On for Sloppy and Fair, off for Sharp and Scary" : "", act: function () { sset("guide", o[0]); settingsMenu(g); } }); });
-    items.push({ label: "Camera: " + (camMode() === "follow" ? "Follow ✓" : "Wide"), sub: camMode() === "follow" ? "Zooms in on your raft and follows the shot" : "Shows the whole field at once", act: function () { sset("camera", camMode() === "follow" ? "wide" : "follow"); settingsMenu(g); } });
-    items.push({ label: "Throw: " + (throwStyle() === "meter" ? "Power meter" : "Hold & release"), sub: throwStyle() === "meter" ? "Power bounces up and down — release to lock it in" : "Power rises and holds at full — release any time", act: function () { sset("throwStyle", throwStyle() === "meter" ? "hold" : "meter"); settingsMenu(g, items.length - 1); } });
+    ensureSettingsCss();
+    var items = [], fi = 0;
+    function sec(h) { items.push({ head: h }); }                              /* a non-focusable section divider */
+    function opt(spec) { var my = fi++; var a0 = spec.act; spec.act = function () { a0(my); }; items.push(spec); }   /* opt rows keep focus in place when they cycle */
+    sec("Gameplay");
+    var ai = aiLevel(), aiKeys = AI_LEVELS.map(function (l) { return l.key; }), aiIdx = aiKeys.indexOf(ai.key);
+    opt({ label: "Enemy aim — " + ai.name, sub: AI_DESC[ai.key] || "How sharp the computer's throws are", act: function (my) { sset("ai", AI_LEVELS[(aiIdx + 1) % AI_LEVELS.length].key); settingsMenu(g, my); } });
+    var gm = guideMode(), gmOrder = ["auto", "always", "never"], gmLabel = { auto: "Auto", always: "Always on", never: "Off" };
+    opt({ label: "Aim guide — " + gmLabel[gm], sub: gm === "auto" ? "Shown for Sloppy and Fair, hidden for Sharp and Scary" : gm === "always" ? "The dotted arc is always shown" : "No aim guide — throw by feel", act: function (my) { sset("guide", gmOrder[(gmOrder.indexOf(gm) + 1) % gmOrder.length]); settingsMenu(g, my); } });
+    sec("Camera & aim");
+    opt({ label: "Camera — " + (camMode() === "follow" ? "Follow" : "Wide"), sub: camMode() === "follow" ? "Zooms in on the action and follows each shot" : "Shows the whole field at once", act: function (my) { sset("camera", camMode() === "follow" ? "wide" : "follow"); settingsMenu(g, my); } });
+    opt({ label: "Throw — " + (throwStyle() === "meter" ? "Power meter" : "Hold & release"), sub: throwStyle() === "meter" ? "Power bounces up and down — release to lock it in" : "Power rises and holds at full — release any time", act: function (my) { sset("throwStyle", throwStyle() === "meter" ? "hold" : "meter"); settingsMenu(g, my); } });
     var spds = ["slow", "normal", "fast"], cs = sget("chargeSpd", "normal");
-    items.push({ label: "Charge speed: " + cs.charAt(0).toUpperCase() + cs.slice(1), sub: "How fast the throw power fills", act: function () { sset("chargeSpd", spds[(spds.indexOf(cs) + 1) % spds.length]); settingsMenu(g, items.length - 1); } });
-    items.push({ label: "🎮 Controls", sub: "Rebind the keys", act: function () { controlsMenu(g); } });
-    items.push({ label: "Game sound: " + (sndOn() ? "On ✓" : "Off"), sub: "Whooshes and impacts", act: function () { sset("sound", !sndOn()); if (sndOn()) sound("metal"); settingsMenu(g); } });
+    opt({ label: "Charge speed — " + cs.charAt(0).toUpperCase() + cs.slice(1), sub: "How fast the throw power fills", act: function (my) { sset("chargeSpd", spds[(spds.indexOf(cs) + 1) % spds.length]); settingsMenu(g, my); } });
+    sec("Controls");
+    opt({ label: "🎮 Rebind controls", sub: "Change the keyboard keys", act: function () { controlsMenu(g); } });
+    sec("Sound");
+    opt({ label: "Game sound — " + (sndOn() ? "On" : "Off"), sub: "Whooshes and impacts", act: function (my) { sset("sound", !sndOn()); if (sndOn()) sound("metal"); settingsMenu(g, my); } });
     var vols = [0.3, 0.5, 0.7, 1], vi = vols.indexOf(sndVol());
-    items.push({ label: "Volume: " + Math.round(sndVol() * 100) + "%", sub: "Press to change", disabled: !sndOn(), act: function () { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, items.length - 2); } });
+    opt({ label: "Volume — " + Math.round(sndVol() * 100) + "%", sub: sndOn() ? "Press to change" : "Turn sound on first", disabled: !sndOn(), act: function (my) { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, my); } });
+    sec("Data");
+    opt({ label: "♻ Reset progress", sub: "Wipe coins, upgrades, unlocks and clears — settings are kept", cls: "is-danger", act: function () { wipeConfirm(g); } });
     items.push({ label: "Back", act: function () { titleMenu(g); } });
-    g.menu({ title: "Settings", items: items, grid: true, cls: "is-wide", back: function () { titleMenu(g); }, focus: focus || 0 });
+    g.menu({ title: "Settings", items: items, cls: "is-wide sl-settings", back: function () { titleMenu(g); }, focus: focus || 0 });
+  }
+  function wipeSave() {
+    ["coins", "upg", "ammo", "owned", "cleared", "pcleared", "bestWave", "crewNames"].forEach(function (k) { sset(k, null); });
+  }
+  function wipeConfirm(g) {
+    ensureSettingsCss();
+    g.menu({ kicker: "Reset progress", title: "Wipe your save?", sub: "This clears your coins, every upgrade, all unlocked ammo, crew names and every battle you've cleared. Your settings and controls are kept. This can't be undone.",
+      items: [
+        { label: "Yes, wipe everything", cls: "is-danger", act: function () { wipeSave(); g.toast("Progress reset — fresh start.", "info"); titleMenu(g); } },
+        { label: "Cancel", act: function () { settingsMenu(g); } }
+      ], cls: "is-wide", back: function () { settingsMenu(g); } });
   }
   function ensureCrewCss() {
     if (document.getElementById("sl-crew-css")) return;
