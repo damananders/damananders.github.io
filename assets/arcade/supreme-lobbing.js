@@ -279,8 +279,8 @@
       traits: ["kind", "shiftcover"], skin: "pick", flag: "⚡", sail: "#2d3748", blurb: "Patches you up, then shifts cover for a cleaner shot",
       lines: ["Turn it up to eleven!", "Good game so far, buddy.", "Riff incoming!", "One more round, then food."] },
     { r: 4, name: "Mark, The Busy", short: "Mark", crew: 1, look: LK.mark, scale: 1.3, planks: 8, walls: 2, tower: 1, hp: 250, ammo: ["splitter", "gull"], acc: 1.4,
-      traits: ["busy", "raid", "flirt"], skin: "key", flag: "maple", sail: "#c53030", blurb: "Raids you with chat emojis, flirts with Hunter to heal",
-      lines: ["Sorry, one sec, on a call.", "Can we circle back on this?", "Just finishing a ranked match, eh.", "Sorry! Sorry. Okay, throwing."] },
+      traits: ["multitask", "raid", "flirt"], skin: "key", flag: "maple", sail: "#c53030", blurb: "Juggles every stream at once, then raids you with his chat",
+      lines: ["Three streams up and I've still got time for you.", "On a call, in ranked, and still aiming — watch this.", "Busy's just what winning looks like, eh.", "Chat's filling up. You're gonna feel the raid.", "One sec… okay, chat says I hit you right here."], chatty: 0.5 },
     { r: 4, name: "Dwayne, Production Master", short: "Dwayne", crew: 1, look: LK.dwayne, scale: 1.45, planks: 9, walls: 2, tower: 0, hp: 340, ammo: ["bomb", "fire"], acc: 1.4,
       traits: ["beat", "dance", "basedrop"], skin: "vinyl", flag: "♫", sail: "#6b46c1", blurb: "Dances the whole raft; base drops blow off your supports",
       lines: ["Drop the beat.", "Feel that bass.", "Hold up, I'm vibing.", "Watch the footwork."] },
@@ -390,7 +390,7 @@
     var keep = kind === "endless" && idx > 0 && B && B.mine ? B.mine : null;
     B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, windShown: 0, windFlash: 0, cam: null, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
       aim: { ang: 0.75, pow: 0.62, charging: false, chargeDir: 1, drag: null }, sel: 0, ammoSel: "rock", log: [], over: false, ai: null, firstTurn: true,
-      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null, lastImpact: null, intro: null };
+      bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, hype: 0, flirt: 0, lastHuman: null, lastImpact: null, intro: null };
     B.mine = keep || makeRaft(-1, mine);
     if (keep) { refit(B.mine); }
     B.foe = makeRaft(1, foeCfg);
@@ -469,7 +469,14 @@
       if (f < 0.66 && !hasT(foe, "flash")) { foe.traits.push("flash"); g.toast("DaManAnders powers up: ring light on!", "bad"); }
       if (f < 0.33 && !hasT(foe, "lightning")) { foe.traits.push("lightning"); foe.bend = true; g.toast("DaManAnders goes all out: bending shots and lightning!", "bad"); }
     }
-    if (hasT(foe, "busy") && Math.random() < 0.35) { B.ai = null; B.timer = 1.4; g.toast("Mark is busy (on a call, eh). Turn skipped.", "good"); return; }
+    if (hasT(foe, "multitask") && !B.flirt) {    /* Mark juggles every stream at once — he never idles, his chat just keeps filling */
+      B.hype = (B.hype || 0) + 1;
+      if (B.hype < 3) {                          /* telegraph: emotes drift up over his raft as the raid builds */
+        var mc = crewPos(foe, foe.crew[0]);
+        for (var hy = 0; hy < 2 + B.hype; hy++) B.fx.push({ txt: pick(["💬", "😂", "🔥", "LUL", "🍁"]), x: mc.x + (Math.random() - 0.5) * 60, y: mc.y - 30 - Math.random() * 20, vy: -26 - Math.random() * 14, life: 1.1 + Math.random() * 0.4, col: "#c9a0ff" });
+        msg = msg || pick(["Mark's chat is filling up (" + B.hype + "/3)…", "\"Busy's just winning, eh.\" The raid's building (" + B.hype + "/3).", "Mark multitasks — chat climbs toward a raid (" + B.hype + "/3)."]);
+      }
+    }
     if (hasT(foe, "redtape") && Math.random() < 0.3) {
       var ks = AMMO_ORDER.slice(1).filter(function (k) { return mine.ammo[k] > 0; });
       if (ks.length) { var k = pick(ks); mine.ammo[k]--; msg = "Red tape: 1 " + AMMO[k].name + " seized for review"; }
@@ -501,14 +508,23 @@
       if (tgl.length) { B.bolts.push({ x: crewPos(mine, pick(tgl)).x, warn: 1.1 }); B.timer = Math.max(B.timer, 1.6); msg = msg || "Ally calls down lightning!"; }
     }
     if (hasT(foe, "break") && Math.random() < 0.3 && exileCrew(g, "Ally sends {name} on break — skipped a turn.")) return;
-    if (hasT(foe, "raid") && Math.random() < 0.3) {
-      var rc2 = 0; mine.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(mine, m); B.fx.push({ txt: pick(["💬", "😂", "🔥", "LUL"]), x: c.x + (Math.random() - 0.5) * 22, y: c.y - 50, vy: -45, life: 1.1, col: "#9f7aea" }); dmgCrew(g, mine, m, 8 + Math.random() * 6, "chat raid"); rc2++; });
-      if (rc2) { sound("error"); msg = msg || "MBusy Raid! Mark's chat spams your crew."; }
+    if (hasT(foe, "raid") && (B.hype || 0) >= 3 && !B.flirt) {   /* MBusy Raid — the signature, telegraphed over three turns */
+      B.hype = 0; var rc2 = 0, pcx = mine.x0 + mine.n * PW / 2;
+      ring(pcx, deckY(mine) - 20, 96, "rgba(201,160,255,.75)");
+      mine.crew.forEach(function (m) {
+        if (!m.alive) return; var c = crewPos(mine, m);
+        for (var ry = 0; ry < 4; ry++) B.fx.push({ txt: pick(["💬", "😂", "🔥", "LUL", "🍁", "❤️"]), x: c.x + (Math.random() - 0.5) * 34, y: c.y - 44 - Math.random() * 30, vy: -40 - Math.random() * 20, life: 1.2 + Math.random() * 0.5, col: pick(["#c9a0ff", "#f6ad55", "#fc8181"]) });
+        dmgCrew(g, mine, m, 12 + Math.random() * 8, "MBusy raid"); rc2++;
+      });
+      say(foe, foe.crew[0], "Raid! Go go go!", 1.8);
+      if (rc2) { sound("error"); msg = "MBusy RAID! Mark sends his whole chat crashing down on your crew."; }
     }
-    if (hasT(foe, "flirt") && !B.flirt && foe.crew[0].alive && foe.crew[0].hp < foe.crew[0].max * 0.6 && Math.random() < 0.5) {
-      B.flirt = 2; B.ai = null; B.timer = 1.4; g.toast("Mark skips his turn to flirt with Hunter…", "good"); return;
+    if (hasT(foe, "flirt") && !B.flirt && foe.crew[0].alive && foe.crew[0].hp < foe.crew[0].max * 0.55 && Math.random() < 0.6) {
+      B.flirt = 2; B.ai = null; B.timer = 1.4; B.hype = 0;
+      say(foe, foe.crew[0], "Hang on — Hunter's in chat 💕", 1.9);
+      g.toast("Mark ducks off to flirt with Hunter — your window to punish him.", "good"); return;
     }
-    if (B.flirt) { B.flirt--; if (B.flirt <= 0) { var mbo = foe.crew[0]; if (mbo.alive) { mbo.hp = Math.min(mbo.max, mbo.hp + 120); var mbc = crewPos(foe, mbo); B.fx.push({ txt: "+120", x: mbc.x, y: mbc.y - 60, vy: -50, life: 1.3, col: "#9ae6b4" }); } g.toast("Mark's back in it, feeling good (+120).", "bad"); } }
+    if (B.flirt) { B.flirt--; if (B.flirt <= 0) { var mbo = foe.crew[0]; if (mbo.alive) { mbo.hp = Math.min(mbo.max, mbo.hp + 120); var mbc = crewPos(foe, mbo); B.fx.push({ txt: "+120", x: mbc.x, y: mbc.y - 60, vy: -50, life: 1.3, col: "#9ae6b4" }); ring(mbc.x, mbc.y - 20, 60, "rgba(154,230,180,.6)"); } g.toast("Mark's back, grinning (+120). \"Okay — where were we.\"", "bad"); } }
     if (hasT(foe, "ubu") && Math.random() < 0.3 && exileCrew(g, "U-B-U! Goof's bars leave {name} distracted — skipped a turn.")) return;
     if (hasT(foe, "pig") && n % 4 === 0) {
       var pcx = mine.x0 + mine.n * PW / 2, ph = 0;
@@ -1917,7 +1933,7 @@
       { k: "upg", s: NS + "upg", t: "maxmap" }, { k: "ammo", s: NS + "ammo", t: "ormap" }, { k: "owned", s: NS + "owned", t: "ormap" }
     ],
     onSync: function (g) { paintBest(g); },
-    init: function (g) { paintBest(g); ensureMenuCss(); g.debug = { B: function () { return B; }, start: function (k, i) { startBattle(g, k, i); },
+    init: function (g) { paintBest(g); ensureMenuCss(); g.debug = { B: function () { return B; }, start: function (k, i) { startBattle(g, k, i); }, turn: function (s) { newTurn(g, s); },
       ROLES: ROLES, LK: LK, PRESTIGE: PRESTIGE, FOELK: FOELK, BATTLES: BATTLES,
       draw: function (ctx, L, face, arm, t) { if (L === "doc") drawDoc(ctx, face, t); else if (L === "reaper") drawReaper(ctx, face, arm, t); else drawPerson(ctx, L, face, arm, t); } }; },
     title: function (g) { titleMenu(g); },
