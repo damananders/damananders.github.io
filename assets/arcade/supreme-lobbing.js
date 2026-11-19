@@ -195,18 +195,18 @@
               { skin: "#c0a088", hair: "short", hairCol: "#3a3a3a", shirt: "#4a5462", over: "open", overCol: "#3a4452", pants: "#1a2028", shoes: "#000", w: 20, glasses: "shades" }]
   };
   var BATTLES = [
-    { r: 0, name: "Driftwood Dan",      crew: 1, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: [],                    acc: 0.6,  looks: FOELK.driftwood },
-    { r: 0, name: "The Sandbar Twins",  crew: 2, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: ["bouncer"],           acc: 0.7,  looks: FOELK.sandbar },
-    { r: 0, name: "Old Kelp",           crew: 2, planks: 6, walls: 1, tower: 0, hp: 90,  ammo: ["bouncer"],           acc: 0.8,  looks: FOELK.kelp },
-    { r: 0, name: "Captain Barnacle",   crew: 3, planks: 7, walls: 2, tower: 1, hp: 110, ammo: ["bomb"], boss: true,  acc: 0.9,  looks: FOELK.barnacle },
-    { r: 1, name: "Reef Raiders",       crew: 2, planks: 6, walls: 2, tower: 0, hp: 100, ammo: ["bouncer", "splitter"], acc: 0.9,  looks: FOELK.reef },
-    { r: 1, name: "Salt & Pepper",      crew: 3, planks: 6, walls: 1, tower: 0, hp: 100, ammo: ["splitter"],          acc: 0.95, looks: FOELK.saltpepper },
-    { r: 1, name: "Mad Marlin",         crew: 3, planks: 7, walls: 2, tower: 0, hp: 110, ammo: ["splitter", "bomb"],  acc: 1,    looks: FOELK.marlin },
-    { r: 1, name: "Admiral Anemone",    crew: 4, planks: 8, walls: 2, tower: 2, hp: 120, ammo: ["fire", "bomb"], boss: true, acc: 1.05, looks: FOELK.anemone },
-    { r: 2, name: "Rustbucket",         crew: 3, planks: 7, walls: 2, tower: 0, hp: 120, ammo: ["bomb"], armor: 1,    acc: 1.05, looks: FOELK.rust },
-    { r: 2, name: "The Clank Brothers", crew: 4, planks: 7, walls: 2, tower: 1, hp: 120, ammo: ["bomb", "fire"],      acc: 1.1,  looks: FOELK.clank },
-    { r: 2, name: "Foghorn Fiona",      crew: 4, planks: 8, walls: 2, tower: 1, hp: 130, ammo: ["gull", "splitter"],  acc: 1.15, looks: FOELK.foghorn },
-    { r: 2, name: "The Iron Duchess",   crew: 5, planks: 9, walls: 3, tower: 2, hp: 150, ammo: ["bomb", "gull", "fire"], boss: true, cannon: true, armor: 2, acc: 1.2, looks: FOELK.duchess }
+    { r: 0, name: "Driftwood Dan",      crew: 1, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: [],                    acc: 0.65, looks: FOELK.driftwood },
+    { r: 0, name: "The Sandbar Twins",  crew: 2, planks: 5, walls: 1, tower: 0, hp: 95,  ammo: ["bouncer"],           acc: 0.78, looks: FOELK.sandbar },
+    { r: 0, name: "Old Kelp",           crew: 2, planks: 6, walls: 1, tower: 0, hp: 110, ammo: ["bouncer", "splitter"], acc: 0.88, looks: FOELK.kelp },
+    { r: 0, name: "Captain Barnacle",   crew: 3, planks: 7, walls: 2, tower: 1, hp: 130, ammo: ["bomb", "fire"], boss: true, acc: 0.95, looks: FOELK.barnacle },
+    { r: 1, name: "Reef Raiders",       crew: 3, planks: 6, walls: 2, tower: 0, hp: 120, ammo: ["bouncer", "splitter"], acc: 1.0,  looks: FOELK.reef },
+    { r: 1, name: "Salt & Pepper",      crew: 3, planks: 6, walls: 2, tower: 1, hp: 150, ammo: ["splitter", "bomb"],  acc: 1.15, looks: FOELK.saltpepper },
+    { r: 1, name: "Mad Marlin",         crew: 3, planks: 7, walls: 2, tower: 1, hp: 135, ammo: ["splitter", "bomb"],  acc: 1.08, looks: FOELK.marlin },
+    { r: 1, name: "Admiral Anemone",    crew: 4, planks: 8, walls: 3, tower: 2, hp: 170, ammo: ["fire", "bomb"], boss: true, acc: 1.18, looks: FOELK.anemone },
+    { r: 2, name: "Rustbucket",         crew: 3, planks: 7, walls: 2, tower: 1, hp: 150, ammo: ["bomb"], armor: 1,    acc: 1.08, looks: FOELK.rust },
+    { r: 2, name: "The Clank Brothers", crew: 4, planks: 7, walls: 2, tower: 1, hp: 160, ammo: ["bomb", "fire"], armor: 1, acc: 1.12, looks: FOELK.clank },
+    { r: 2, name: "Foghorn Fiona",      crew: 4, planks: 8, walls: 3, tower: 2, hp: 175, ammo: ["gull", "splitter", "bomb"], acc: 1.2, looks: FOELK.foghorn },
+    { r: 2, name: "The Iron Duchess",   crew: 5, planks: 9, walls: 3, tower: 3, hp: 210, ammo: ["bomb", "gull", "fire"], boss: true, cannon: true, armor: 2, acc: 1.3, looks: FOELK.duchess }
   ];
   function cleared() { return sget("cleared", []) || []; }
 
