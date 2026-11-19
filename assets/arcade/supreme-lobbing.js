@@ -984,9 +984,15 @@
     if (L.hair === "wolf") fillPath(x, hc, [[6, -35], [-12, -36], [-15, -22], [-12, -10], [-9, -14], [-8, -6], [-5, -13], [-3, -9], [-1, -17], [3, -28]]);   /* mullet */
     if (L.hair === "curly") [[-13, -31], [-15, -23], [-14, -14], [-11, -8], [-6, -9], [-9, -37], [-1, -40], [7, -39], [13, -33]].forEach(function (q) { circ(x, hc, q[0], q[1], 6); circ(x, shade(hc, 20), q[0] - 1.4, q[1] - 1.6, 2.2); });
     if (L.orbs) for (var i = 0; i < 3; i++) { var an = t * 2.2 + i * 2.09; if (Math.sin(an) < 0) { circ(x, "rgba(246,173,85,.35)", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 7); circ(x, "#f6ad55", Math.cos(an) * 24, -14 + Math.sin(an) * 7, 4); } }
-    /* legs and shoes */
-    x.fillStyle = L.pants || "#2d3748"; x.fillRect(-hw + 4, 6, 5, 14); x.fillRect(hw - 9, 6, 5, 14);
-    x.fillStyle = L.shoes || "#1a202c"; D.rr(x, -hw + 3, 18, 9, 5, 2); x.fill(); D.rr(x, hw - 10, 18, 9, 5, 2); x.fill();
+    /* legs and shoes — a planted two-leg stance that stays clear of itself at any body width */
+    var lw = 4.6, lsp = Math.max(4.3, hw * 0.44);
+    x.fillStyle = L.pants || "#2d3748"; x.fillRect(-lsp - lw / 2, 6, lw, 14); x.fillRect(lsp - lw / 2, 6, lw, 14);
+    x.fillStyle = L.shoes || "#1a202c"; D.rr(x, -lsp - lw / 2 - 1.5, 18, lw + 5, 5, 2); x.fill(); D.rr(x, lsp - lw / 2 - 1.5, 18, lw + 5, 5, 2); x.fill();
+    /* off (far) arm, resting — bows outside the torso so the character always clearly has two arms */
+    x.save(); x.lineCap = "round"; x.lineWidth = 5.5;
+    x.strokeStyle = (L.over && L.over !== "poncho") ? shade(oc, -10) : shade(L.shirt || sk, -8);
+    x.beginPath(); x.moveTo(-hw + 2, -12); x.quadraticCurveTo(-hw - 2.5, -4, -hw - 1.5, 4); x.stroke();
+    x.strokeStyle = sk; x.beginPath(); x.moveTo(-hw - 1.5, 4); x.lineTo(-hw - 1, 8.5); x.stroke(); x.restore();
     /* torso */
     if (L.hoodUnder) circ(x, shade(L.shirt, -10), -5, -15, 8);
     x.fillStyle = L.shirt || "#e2e8f0"; D.rr(x, -hw, -16, w, 26, 6); x.fill();
