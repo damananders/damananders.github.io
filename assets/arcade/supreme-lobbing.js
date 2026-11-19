@@ -474,7 +474,8 @@
     }
     if (hasT(foe, "copycat") && B.lastHuman && B.ai && Math.random() < 0.4) {
       var la = B.lastHuman, can = availAmmo(foe, thrower()).some(function (a) { return a.k === la.ammo; });
-      B.ai = { ang: la.ang, pow: la.pow, ammo: can ? la.ammo : B.ai.ammo }; msg = "DaManAnders copies your last throw!";
+      if (can) B.ai.ammo = la.ammo;             /* copy your ammo, but keep his own solved aim so the copy still lands */
+      msg = "DaManAnders copies your last throw!";
     }
     /* ---- Batch 3 prestige friend abilities ---- */
     if (hasT(foe, "allylight") && n % 3 === 0) {
@@ -498,7 +499,7 @@
       if (ph) g.toast("Pig Disrespect! Greased crew take +10% damage from Goof.", "bad");
     }
     if (hasT(foe, "basedrop") && n % 4 === 2) {
-      var kk = Math.min(mine.deck.filter(function (b) { return b.alive; }).length, 1 + (Math.random() * 5 | 0)), bl = 0;
+      var kk = Math.min(mine.deck.filter(function (b) { return b.alive; }).length, 1 + (Math.random() * 2 | 0)), bl = 0;
       for (var pj = 0; pj < kk; pj++) { var al = mine.deck.filter(function (b) { return b.alive; }); if (!al.length) break; var bb = pick(al); dmgBlock(mine, bb, 99, blockRect(mine, bb, false)); bl++; }
       B.flash = Math.max(B.flash, 0.4); sound("blast"); ring(mine.x0 + mine.n * PW / 2, deckY(mine), 72, "rgba(160,120,255,.6)");
       if (bl) g.toast("Dwayne's base drop! " + bl + " support" + (bl === 1 ? "" : "s") + " blown off your raft.", "bad");
