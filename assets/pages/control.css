@@ -43,39 +43,58 @@
 
 /* folders rail + content */
 .cp-body{display:grid;grid-template-columns:232px minmax(0,1fr);gap:18px;align-items:start}
-.cp-rail{display:flex;flex-direction:column;gap:6px;position:sticky;top:76px}
-.cp-cat{display:flex;align-items:center;gap:11px;text-align:left;font:inherit;color:var(--text);background:transparent;border:1px solid transparent;border-radius:13px;padding:10px 12px;cursor:pointer;width:100%}
-.cp-cat:hover{background:var(--panel-2);border-color:var(--line-2)}
-.cp-cat[aria-current="page"]{background:color-mix(in srgb,var(--accent) 16%,var(--panel-2));border-color:color-mix(in srgb,var(--accent) 45%,var(--line-2))}
-.cp-cat__ic{display:grid;place-items:center;width:34px;height:34px;flex:0 0 auto;border-radius:10px;background:var(--panel);border:1px solid var(--line-2);color:var(--sx-muted)}
-.cp-cat[aria-current="page"] .cp-cat__ic{background:var(--accent);border-color:var(--accent);color:var(--sx-on-accent,#06090c)}
+.cp-rail{display:flex;flex-direction:column;gap:5px;position:sticky;top:76px}
+.cp-cat{position:relative;display:flex;align-items:center;gap:11px;text-align:left;font:inherit;color:var(--text);background:transparent;border:1px solid transparent;border-radius:13px;padding:9px 12px;cursor:pointer;width:100%;transition:background .16s,border-color .16s,transform .16s}
+.cp-cat:hover{background:var(--panel-2);border-color:var(--line-2);transform:translateX(3px)}
+.cp-cat[aria-current="page"]{background:linear-gradient(100deg,color-mix(in srgb,var(--accent) 22%,var(--panel-2)),color-mix(in srgb,var(--accent) 7%,var(--panel-2)));border-color:color-mix(in srgb,var(--accent) 50%,var(--line-2));box-shadow:0 10px 26px -20px var(--accent)}
+.cp-cat[aria-current="page"]::before{content:"";position:absolute;left:-1px;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--accent)}
+.cp-cat__ic{display:grid;place-items:center;width:34px;height:34px;flex:0 0 auto;border-radius:10px;background:color-mix(in srgb,var(--accent) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 26%,var(--line-2));color:color-mix(in srgb,var(--accent) 86%,var(--text));transition:background .16s,color .16s,border-color .16s}
+.cp-cat:hover .cp-cat__ic{border-color:color-mix(in srgb,var(--accent) 42%,var(--line-2))}
+.cp-cat[aria-current="page"] .cp-cat__ic{background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 72%,#000));border-color:var(--accent);color:var(--sx-on-accent,#06090c);box-shadow:0 6px 16px -8px var(--accent)}
 .cp-cat__ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .cp-cat__txt{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1 1 auto}
 .cp-cat__txt strong{font-family:var(--display);font-size:.98rem;letter-spacing:.01em}
 .cp-cat__txt small{font-size:.76rem;color:var(--sx-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cp-cat__n{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;display:none;place-items:center;border-radius:999px;background:var(--accent);color:var(--sx-on-accent,#06090c);font-size:.74rem;font-weight:700}
 .cp-cat__n[data-on="true"]{display:grid}
-.cp-content{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:18px 20px;min-height:260px}
+.cp-content{position:relative;border:1px solid var(--line);border-radius:18px;background:
+  radial-gradient(120% 90% at 100% 0%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 55%),var(--panel);padding:18px 20px;min-height:260px;overflow:hidden}
+.cp-pane__h{position:relative;padding-left:13px}
+.cp-pane__h::before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:4px;border-radius:4px;background:linear-gradient(var(--accent),color-mix(in srgb,var(--accent) 50%,transparent))}
+/* each folder's content fades up when you switch to it — matches the site's reveal feel */
+.cp-content.cp-in{animation:cp-rise .34s cubic-bezier(.2,.7,.2,1) both}
+@keyframes cp-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+[data-motion="reduce"] .cp-content.cp-in{animation:none}
 
 /* section cards — each titled block sits in its own soft card so a folder reads as a tidy stack, not a dump */
-.cp-section{margin:0 0 14px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--panel-2)}
+.cp-section{position:relative;margin:0 0 12px;padding:15px 17px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 4%,var(--panel-2)),var(--panel-2));transition:border-color .16s,box-shadow .16s}
+.cp-section:hover{border-color:color-mix(in srgb,var(--accent) 28%,var(--line));box-shadow:0 16px 36px -30px var(--accent)}
 .cp-section:last-child{margin-bottom:0}
 .cp-section > .cp-h3:first-child{margin-top:0}
-.cp-section > .cp-h3{margin-top:0}
+.cp-section > .cp-h3{margin-top:0;display:flex;align-items:center;gap:8px}
+.cp-section > .cp-h3::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
 
 /* overview dashboard */
-.cp-ov__hero{position:relative;overflow:hidden;margin:0 0 18px;padding:22px 22px;border-radius:18px;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));
-  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--accent) 24%,var(--panel)) 0%,var(--panel) 58%)}
-.cp-ov__eyebrow{font:700 .72rem var(--mono,ui-monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
-.cp-ov__title{margin:6px 0 6px;font-family:var(--display);font-size:1.7rem;line-height:1.1;color:var(--text)}
-.cp-ov__sub{margin:0;max-width:52ch;font-size:.95rem;line-height:1.5;color:var(--sx-muted)}
-.cp-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 6px}
-.cp-tile{display:flex;flex-direction:column;gap:2px;text-align:left;padding:15px 16px;border:1px solid var(--line);border-radius:15px;background:var(--panel-2);cursor:pointer;transition:transform .14s,border-color .14s,box-shadow .14s}
-.cp-tile:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line-2));box-shadow:0 18px 38px -24px var(--accent)}
+.cp-ov__hero{position:relative;overflow:hidden;margin:0 0 16px;padding:26px 24px;border-radius:20px;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));
+  background:radial-gradient(130% 150% at 0% 0%,color-mix(in srgb,var(--accent) 30%,var(--panel)) 0%,var(--panel) 60%)}
+.cp-ov__hero::after{content:"";position:absolute;inset:-40% -10% auto auto;width:340px;height:340px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 34%,transparent),transparent 68%);filter:blur(6px);animation:cp-float 9s ease-in-out infinite}
+@keyframes cp-float{0%,100%{transform:translate(0,0)}50%{transform:translate(-18px,16px)}}
+[data-motion="reduce"] .cp-ov__hero::after{animation:none}
+.cp-ov__eyebrow{position:relative;font:700 .72rem var(--mono,ui-monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.cp-ov__title{position:relative;margin:8px 0 8px;font-family:var(--display);font-size:1.95rem;line-height:1.08;color:var(--text)}
+.cp-ov__sub{position:relative;margin:0;max-width:52ch;font-size:.96rem;line-height:1.5;color:var(--sx-muted)}
+.cp-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 6px}
+.cp-tile{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:2px;text-align:left;padding:16px 16px 15px;border:1px solid var(--line);border-radius:16px;background:var(--panel-2);cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}
+.cp-tile::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--accent),transparent 85%);opacity:.6}
+.cp-tile:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 48%,var(--line-2));box-shadow:0 20px 40px -24px var(--accent)}
 .cp-tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.cp-tile__n{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;color:var(--accent)}
-.cp-tile__lab{margin-top:4px;font-family:var(--display);font-size:.98rem;color:var(--text)}
+.cp-tile__n{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1;
+  background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--text)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.cp-tile__lab{margin-top:5px;font-family:var(--display);font-size:.98rem;color:var(--text)}
 .cp-tile__sub{font-size:.78rem;color:var(--sx-muted)}
+/* the Members tile (first) carries a little more weight as the headline stat */
+.cp-tile:first-child{background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 16%,var(--panel-2)),var(--panel-2));border-color:color-mix(in srgb,var(--accent) 34%,var(--line))}
 .cp-ov__jumps{display:flex;flex-wrap:wrap;gap:8px}
 
 /* PS Locker store editor */
@@ -238,3 +257,21 @@
 .cp-2fa__go .cp-codein{background:var(--panel-2);color:var(--text);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px}
 .cp-ok{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:.95rem}
 .cp-unlink summary{cursor:pointer;font-size:.9rem;color:var(--sx-muted)}
+
+/* ---------- redesign polish ---------- */
+/* pending sign-up badge + its explainer note */
+.cp-chip--pending{color:#5bb8c4;background:color-mix(in srgb,#5bb8c4 16%,transparent);border:1px solid color-mix(in srgb,#5bb8c4 42%,transparent)}
+.cp-note{margin:0;padding:10px 13px;border:1px solid color-mix(in srgb,#5bb8c4 32%,var(--line));border-left:4px solid #5bb8c4;border-radius:12px;background:color-mix(in srgb,#5bb8c4 8%,var(--panel-2));font-size:.88rem;line-height:1.5;color:var(--text)}
+/* switch blocks flow into as many columns as fit, so long feature lists stay short */
+.cp-switches{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.cp-switch{border-radius:10px;transition:background .14s}
+.cp-switch:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+/* mini buttons warm to the accent on hover, like the rest of the site */
+.cp-mini{transition:border-color .14s,color .14s,background .14s}
+.cp-mini:not(:disabled):hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line-2));color:var(--accent)}
+/* the save button gets a soft glow while there are unsaved changes */
+.cp-save:not(:disabled){box-shadow:0 12px 30px -16px var(--accent)}
+/* top bar: a faint accent hairline so it reads as the command strip */
+.cp-top{border-color:color-mix(in srgb,var(--accent) 20%,var(--line))}
+/* overview jump chips pick up the accent on hover */
+.cp-ov__jumps .cp-mini:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
