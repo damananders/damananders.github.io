@@ -338,7 +338,7 @@
       foeCfg = { name: "Player 2", human: true, crew: 3, planks: 7, walls: 1, tower: 0, hp: 120, ammo: AMMO_ORDER.slice(1), ammoN: 2, bhp: 4, sail: "#3b82f6", wood: "#6b4426", flag: "⚓" };
     }
     var keep = kind === "endless" && idx > 0 && B && B.mine ? B.mine : null;
-    B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, windShown: 0, windFlash: 0, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
+    B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, windShown: 0, windFlash: 0, cam: null, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
       aim: { ang: 0.75, pow: 0.62, charging: false, chargeDir: 1, drag: null }, sel: 0, ammoSel: "rock", log: [], over: false, ai: null, firstTurn: true,
       bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null };
     B.mine = keep || makeRaft(-1, mine);
@@ -722,10 +722,41 @@
     g.menu({ kicker: kind === "campaign" ? REGIONS[BATTLES[idx].r].name : kind === "prestige" ? "Prestige · " + PREGIONS[PRESTIGE[idx].r].name : kind === "endless" ? "Endless Survival" : "Versus", title: title, sub: sub, body: kv, items: items, back: function () { g.toTitle(); } });
   }
 
+  /* ---------------- camera (Raft Wars feel): zoom into the active raft, follow the shot in flight ----------------
+     The whole world is drawn through this transform; the HUD and full-screen flashes stay in screen space. */
+  var CAM_AIM_Z = 1.72, CAM_FLY_Z = 1.5;
+  function camMode() { return sget("camera", "follow"); }
+  function worldCenterOf(r) { return { x: r.x0 + r.n * PW / 2, y: deckY(r) - 46 }; }
+  function clampCam(c) {
+    var vw = W / c.z / 2, vh = H / c.z / 2;
+    c.cx = Math.max(vw, Math.min(W - vw, c.cx));
+    c.cy = Math.max(vh, Math.min(H - vh, c.cy));
+    return c;
+  }
+  function updateCamera(dt) {
+    if (camMode() !== "follow") { B.cam = null; return; }
+    var tz, tx, ty;
+    if (B.phase === "fly" && B.projs.length) {
+      var p = B.projs[B.projs.length - 1]; tz = CAM_FLY_Z; tx = p.x; ty = Math.max(20, p.y);
+    } else {
+      var c = worldCenterOf(side(B.turnSide)); tz = CAM_AIM_Z; tx = c.x; ty = c.y;
+    }
+    if (!B.cam) B.cam = { cx: tx, cy: ty, z: tz };
+    var k = Math.min(1, dt * (B.phase === "fly" ? 7 : 3.4));
+    B.cam.z += (tz - B.cam.z) * k; B.cam.cx += (tx - B.cam.cx) * k; B.cam.cy += (ty - B.cam.cy) * k;
+    clampCam(B.cam);
+  }
+  function camPt(px, py) {                 /* screen (logical) point -> world point, given the current camera */
+    var c = B && B.cam && camMode() === "follow" ? B.cam : null;
+    if (!c) return { x: px, y: py };
+    return { x: (px - W / 2) / c.z + c.cx, y: (py - H / 2) / c.z + c.cy };
+  }
+
   function update(g, dt) {
     B.t += dt;
     B.windShown += (B.wind - B.windShown) * Math.min(1, dt * 6);
     if (B.windFlash > 0) B.windFlash = Math.max(0, B.windFlash - dt * 1.6);
+    updateCamera(dt);
     var r = side(B.turnSide), human = r.human;
     [B.mine, B.foe].forEach(function (rr) { rr.crew.forEach(function (m) { if (m.anim > 0) m.anim = Math.max(0, m.anim - dt); else if (m.anim < 0) m.anim = Math.min(0, m.anim + dt); }); });
     if (B.flash > 0) B.flash = Math.max(0, B.flash - dt * 1.4);
@@ -1238,6 +1269,7 @@
   function settingsMenu(g, focus) {
     var items = AI_LEVELS.map(function (l) { return { label: "Enemy aim: " + l.name + (aiLevel().key === l.key ? " ✓" : ""), act: function () { sset("ai", l.key); settingsMenu(g); } }; });
     [["auto", "Aim guide: Auto"], ["always", "Aim guide: Always"], ["never", "Aim guide: Never"]].forEach(function (o) { items.push({ label: o[1] + (guideMode() === o[0] ? " ✓" : ""), sub: o[0] === "auto" ? "On for Sloppy and Fair, off for Sharp and Scary" : "", act: function () { sset("guide", o[0]); settingsMenu(g); } }); });
+    items.push({ label: "Camera: " + (camMode() === "follow" ? "Follow ✓" : "Wide"), sub: camMode() === "follow" ? "Zooms in on your raft and follows the shot" : "Shows the whole field at once", act: function () { sset("camera", camMode() === "follow" ? "wide" : "follow"); settingsMenu(g); } });
     items.push({ label: "Game sound: " + (sndOn() ? "On ✓" : "Off"), sub: "Whooshes and impacts", act: function () { sset("sound", !sndOn()); if (sndOn()) sound("metal"); settingsMenu(g); } });
     var vols = [0.3, 0.5, 0.7, 1], vi = vols.indexOf(sndVol());
     items.push({ label: "Volume: " + Math.round(sndVol() * 100) + "%", sub: "Press to change", disabled: !sndOn(), act: function () { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, items.length - 2); } });
@@ -1350,19 +1382,19 @@
     alwaysAnimate: true,
     pointer: function (g, type, px, py) {
       if (g.state !== "play" || !B || B.phase !== "aim" || !side(B.turnSide).human) return;
-      var r = side(B.turnSide);
+      var r = side(B.turnSide), z = (B.cam && camMode() === "follow") ? B.cam.z : 1;
       if (type === "down") {
-        var slots = slotRects();
+        var slots = slotRects();      /* the hotbar is screen-space: test the raw pointer */
         for (var i = 0; i < slots.length; i++) { var s = slots[i]; if (px >= s.x && px <= s.x + s.w && py >= s.y && py <= s.y + s.h) { B.ammoSel = s.a.k; Site.sfx("hover"); return; } }
-        var list = throwers(r);
-        for (i = 0; i < list.length; i++) { var o = originOf(r, list[i]); if (Math.hypot(px - o.x, py - o.y - 20) < 34 && i !== B.sel) { B.sel = i; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); return; } }
-        B.aim.drag = { x0: px, y0: py, x: px, y: py };
+        var wp = camPt(px, py), list = throwers(r);     /* rafts live in world space */
+        for (i = 0; i < list.length; i++) { var o = originOf(r, list[i]); if (Math.hypot(wp.x - o.x, wp.y - o.y - 20) < 34 && i !== B.sel) { B.sel = i; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); return; } }
+        B.aim.drag = { x0: wp.x, y0: wp.y, x: wp.x, y: wp.y };
       } else if (type === "move" && B.aim.drag) {
-        B.aim.drag.x = px; B.aim.drag.y = py;
-        var dx = (B.aim.drag.x0 - px) * (B.turnSide < 0 ? 1 : -1), dy = B.aim.drag.y0 - py, len = Math.hypot(dx, dy);
+        var wm = camPt(px, py); B.aim.drag.x = wm.x; B.aim.drag.y = wm.y;
+        var dx = (B.aim.drag.x0 - wm.x) * (B.turnSide < 0 ? 1 : -1), dy = B.aim.drag.y0 - wm.y, len = Math.hypot(dx, dy) * z;   /* z keeps the pull feel the same when zoomed */
         if (len > 12) { B.aim.ang = Math.max(0.05, Math.min(1.45, Math.atan2(-dy, Math.max(0.01, dx)))); if (dx <= 0.01) B.aim.ang = 1.45; B.aim.pow = Math.max(0.05, Math.min(1, len / 260)); }
       } else if (type === "up" && B.aim.drag) {
-        var d = B.aim.drag, l2 = Math.hypot(d.x0 - d.x, d.y0 - d.y); B.aim.drag = null;
+        var d = B.aim.drag, l2 = Math.hypot(d.x0 - d.x, d.y0 - d.y) * z; B.aim.drag = null;
         if (l2 > 24) throwNow(g);
       }
     },
@@ -1372,6 +1404,8 @@
         x.save(); x.scale(W / 640, H / 360); POSTER(x, 640, 360, t); x.restore();
         return;
       }
+      var cam = B.cam && camMode() === "follow" ? B.cam : null;
+      if (cam) { x.save(); x.translate(W / 2, H / 2); x.scale(cam.z, cam.z); x.translate(-cam.cx, -cam.cy); }
       drawScene(x, B.region, B.t);
       drawRaft(x, B.mine, B.t); drawRaft(x, B.foe, B.t);
       B.debris.forEach(function (d) { x.save(); x.translate(d.x, d.y); x.rotate(d.rot); x.globalAlpha = Math.min(1, d.life); x.fillStyle = d.col; x.fillRect(-d.w / 2, -4, d.w, 8); x.restore(); });
@@ -1394,6 +1428,7 @@
       });
       x.globalAlpha = 1;
       B.bubbles.forEach(function (b) { drawBubble(x, b); });
+      if (cam) x.restore();
       if (B.flash > 0) { x.fillStyle = "rgba(255,255,255," + Math.min(0.85, B.flash) + ")"; x.fillRect(0, 0, W, H); }
       hud(g, x);
     }
