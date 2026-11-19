@@ -37,10 +37,13 @@
   border:1.5px solid var(--ix-ring-line);background-color:transparent;opacity:.9;
   /* a thin halo in the opposite tone keeps the ring readable on any background, in both themes */
   box-shadow:0 0 0 1px color-mix(in srgb,var(--ix-ring-halo) 60%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--ix-ring-halo) 60%,transparent);
-  transition:transform .22s var(--sx-ease),border-color .18s,background-color .18s,opacity .18s}
-.ix-ring--hot .ix-ring-c{transform:scale(1.55);opacity:1;border-color:var(--ix-ring-accent);background-color:color-mix(in srgb,var(--ix-ring-accent) 14%,transparent)}
-.ix-ring--down .ix-ring-c{transform:scale(.8)}
-.ix-ring--hot.ix-ring--down .ix-ring-c{transform:scale(1.3)}
+  transform:scale(var(--ix-base,1));transition:transform .22s var(--sx-ease),border-color .18s,background-color .18s,opacity .18s}
+.ix-ring--hot .ix-ring-c{transform:scale(calc(var(--ix-base,1)*1.55));opacity:1;border-color:var(--ix-ring-accent);background-color:color-mix(in srgb,var(--ix-ring-accent) 14%,transparent)}
+.ix-ring--down .ix-ring-c{transform:scale(calc(var(--ix-base,1)*.8))}
+.ix-ring--hot.ix-ring--down .ix-ring-c{transform:scale(calc(var(--ix-base,1)*1.3))}
+/* reticle size (Settings › Appearance) */
+.ix-ring--s{--ix-base:.72}
+.ix-ring--l{--ix-base:1.4}
 /* the exact pointer position, and the normal cursor hidden while the ring is on screen (deliberate !important: beats every cursor rule on the site) */
 .ix-ring-dot{position:absolute;left:-2.5px;top:-2.5px;width:5px;height:5px;border-radius:50%;background:var(--ix-ring-line);
   box-shadow:0 0 0 1px color-mix(in srgb,var(--ix-ring-halo) 70%,transparent)}
@@ -52,6 +55,78 @@
 .ix-ring-shape svg{display:block;width:100%;height:100%}
 .ix-ring--hot .ix-ring-shape{color:var(--ix-ring-accent)}
 :root[data-motion="reduce"] .ix-ring{display:none}
+/* rainbow tint: a saturated base hue, cycled */
+.ix-ring--rainbow{--ix-ring-line:#ff5d73;--ix-ring-accent:#ff5d73;animation:ix-rainbow 4s linear infinite}
+@keyframes ix-rainbow{to{filter:hue-rotate(360deg)}}
+
+/* ---- reticle click effects (a brief animation on the ring body) ---- */
+.ix-ring-c.ix-fx--squeeze{animation:ixf-squeeze .4s var(--sx-ease)}
+@keyframes ixf-squeeze{0%,100%{transform:scale(var(--ix-base,1))}45%{transform:scale(calc(var(--ix-base,1)*.6))}}
+.ix-ring-c.ix-fx--pulse{animation:ixf-pulse .45s var(--sx-ease)}
+@keyframes ixf-pulse{0%{transform:scale(var(--ix-base,1))}40%{transform:scale(calc(var(--ix-base,1)*1.5))}100%{transform:scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--snap{animation:ixf-snap .34s var(--sx-ease)}
+@keyframes ixf-snap{0%{transform:scale(calc(var(--ix-base,1)*1.3))}55%{transform:scale(calc(var(--ix-base,1)*.82))}100%{transform:scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--flick{animation:ixf-flick .36s var(--sx-ease)}
+@keyframes ixf-flick{0%,100%{transform:translateY(0) scale(var(--ix-base,1))}40%{transform:translateY(-5px) scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--flash{animation:ixf-flash .34s steps(2)}
+@keyframes ixf-flash{0%,100%{opacity:.9}50%{opacity:.25}}
+.ix-ring-c.ix-fx--flare{animation:ixf-flare .5s ease-out}
+@keyframes ixf-flare{0%,100%{filter:none}30%{filter:drop-shadow(0 0 6px var(--ix-ring-accent))}}
+.ix-ring-c.ix-fx--recoil{animation:ixf-recoil .34s var(--sx-ease)}
+@keyframes ixf-recoil{0%,100%{transform:translateY(0) scale(var(--ix-base,1))}35%{transform:translateY(4px) scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--wobble{animation:ixf-wobble .5s var(--sx-ease)}
+@keyframes ixf-wobble{0%,100%{transform:rotate(0) scale(var(--ix-base,1))}25%{transform:rotate(-12deg) scale(var(--ix-base,1))}75%{transform:rotate(12deg) scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--spin{animation:ixf-spin .55s var(--sx-ease)}
+@keyframes ixf-spin{0%{transform:rotate(0) scale(var(--ix-base,1))}100%{transform:rotate(360deg) scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--beat{animation:ixf-beat .5s var(--sx-ease)}
+@keyframes ixf-beat{0%,100%{transform:scale(var(--ix-base,1))}25%{transform:scale(calc(var(--ix-base,1)*1.3))}50%{transform:scale(calc(var(--ix-base,1)*1.05))}75%{transform:scale(calc(var(--ix-base,1)*1.22))}}
+.ix-ring-c.ix-fx--bounce{animation:ixf-bounce .45s var(--sx-ease)}
+@keyframes ixf-bounce{0%,100%{transform:translateY(0) scale(var(--ix-base,1))}40%{transform:translateY(-6px) scale(var(--ix-base,1))}}
+.ix-ring-c.ix-fx--flicker{animation:ixf-flash .4s steps(2)}
+.ix-ring-c.ix-fx--gold{animation:ixf-gold .55s ease-out}
+@keyframes ixf-gold{0%,100%{filter:none}30%{filter:drop-shadow(0 0 7px #ffcf4d)}}
+.ix-ring-c.ix-fx--glitch{animation:ixf-glitch .4s steps(3)}
+@keyframes ixf-glitch{0%,100%{transform:translate(0) scale(var(--ix-base,1))}33%{transform:translate(-2px,1px) scale(var(--ix-base,1))}66%{transform:translate(2px,-1px) scale(var(--ix-base,1))}}
+
+/* ---- spawned click flourishes (ripple / ink / burst / spark) ---- */
+.ix-cfx{position:fixed;left:0;top:0;width:0;height:0;pointer-events:none;z-index:2147483600;color:var(--ix-ring-accent,var(--accent,var(--sx-accent)))}
+.ix-cfx--ripple{width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2px solid currentColor;animation:ixc-ripple .6s ease-out forwards}
+@keyframes ixc-ripple{from{transform:scale(.4);opacity:.6}to{transform:scale(3.6);opacity:0}}
+.ix-cfx--ink{width:7px;height:9px;margin:-4px 0 0 -3px;border-radius:50% 50% 50% 0;background:currentColor;animation:ixc-ink .55s ease-in forwards}
+@keyframes ixc-ink{from{opacity:.8;transform:rotate(45deg) translateY(0)}to{opacity:0;transform:rotate(45deg) translateY(10px) scale(.6)}}
+.ix-cfx--spark{color:#ffe08a}
+.ix-cfx--burst i,.ix-cfx--spark i{position:absolute;left:0;top:0;width:4px;height:4px;margin:-2px;border-radius:50%;background:currentColor;animation:ixc-shard .5s ease-out forwards}
+@keyframes ixc-shard{from{opacity:.9;transform:rotate(var(--a)) translateX(2px)}to{opacity:0;transform:rotate(var(--a)) translateX(16px)}}
+:root[data-motion="reduce"] .ix-cfx{display:none}
+
+/* ---- the reticle picker inside Settings › Appearance ---- */
+.ix-pick{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.ix-pick__preview{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--sx-border,rgba(128,128,128,.28));border-radius:12px;background:color-mix(in srgb,var(--sx-accent) 7%,transparent)}
+.ix-pick__prevring{display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;color:var(--sx-text)}
+.ix-pick__prevring svg{width:34px;height:34px}
+.ix-pick__prevtxt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ix-pick__prevname{font-weight:600}
+.ix-pick__prevhint{font-size:.82em;opacity:.78}
+.ix-pick__preview.is-locked .ix-pick__prevring{opacity:.4}
+.ix-pick__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.ix-pick__tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;border:1px solid var(--sx-border,rgba(128,128,128,.28));border-radius:10px;background:none;color:var(--sx-text);cursor:pointer;transition:border-color .15s,background-color .15s}
+.ix-pick__tile:hover{border-color:var(--sx-accent)}
+.ix-pick__tile.is-on{border-color:var(--sx-accent);background:color-mix(in srgb,var(--sx-accent) 16%,transparent)}
+.ix-pick__tile.is-locked{opacity:.52;filter:grayscale(.7)}
+.ix-pick__sw{position:relative;display:grid;place-items:center;width:30px;height:30px;color:var(--sx-text)}
+.ix-pick__sw svg{width:28px;height:28px}
+.ix-pick__tile.is-locked .ix-pick__sw::after{content:"🔒";position:absolute;right:-7px;bottom:-7px;font-size:10px;line-height:1}
+.ix-pick__tname{font-size:.66em;line-height:1.15;text-align:center;opacity:.85}
+.ix-pick__ctls{display:flex;flex-direction:column;gap:8px}
+.ix-pick__ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ix-pick__clab{font-size:.85em;opacity:.8}
+.ix-pick__seg{display:flex;flex-wrap:wrap;gap:4px}
+.ix-pick__segb{min-width:30px;padding:4px 8px;border:1px solid var(--sx-border,rgba(128,128,128,.3));border-radius:8px;background:none;color:var(--sx-text);font-size:.8em;cursor:pointer}
+.ix-pick__segb.is-on{border-color:var(--sx-accent);background:color-mix(in srgb,var(--sx-accent) 18%,transparent)}
+.ix-pick__segb--sw{position:relative;width:26px;min-width:26px;height:26px;padding:0}
+.ix-pick__segb--sw::before{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--sw)}
+.ix-pick__segb[aria-disabled="true"]{opacity:.4;cursor:default}
+.ix-pick__note{font-size:.78em;opacity:.7;margin:2px 0 0}
 
 /* ---- Button press (item 46) ---- */
 :root .btn:active,:root .social:active,:root #go:active,

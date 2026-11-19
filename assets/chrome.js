@@ -83,7 +83,7 @@
      isn't listed falls into the last ("More") bucket, so a newly registered row still shows up without a code
      change here. Rows keep their registered order within a section (Site.settings.list() is already sorted). */
   var SETTINGS_GROUPS = [
-    { label: "Appearance", ids: ["theme", "season", "clock24", "textSize", "contrast", "readFont", "lite", "cursor", "glyphs"] },
+    { label: "Appearance", ids: ["theme", "season", "clock24", "textSize", "contrast", "readFont", "lite", "cursor", "reticle", "glyphs"] },
     { label: "Sound & motion", ids: ["motion", "sfx", "soundscape", "volume"] },
     { label: "More", ids: [] }
   ];
@@ -147,6 +147,14 @@
         if (document.activeElement !== input || parseFloat(input.value) !== v) input.value = String(v);
         show(v); syncHint();
       });
+    } else if (row.type === "custom") {
+      /* A row that renders (and keeps in sync) its own control. build() returns the DOM to drop in; the
+         optional sync() runs on every panel refresh. Used by the cursor-reticle picker (assets/interact.js). */
+      var cnode = null;
+      if (typeof row.build === "function") { try { cnode = row.build(); } catch (e) { console.error("[site] custom row", e); } }
+      if (!cnode) return null;
+      node.appendChild(cnode);
+      syncers.push(function () { if (typeof row.sync === "function") { try { row.sync(); } catch (e) {} } syncHint(); });
     } else return null;
     return node;
   }

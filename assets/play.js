@@ -376,7 +376,10 @@
   function openList() {
     var pos = {}; TROPHIES.forEach(function (t, i) { pos[t.id] = i; });
     var list = el("ul", { class: "pl-list" });
-    var state = { sort: "rarity", filter: "all" };   /* sort + filter are toggleable from the popup */
+    var state = { sort: "rarity", filter: "all", reveal: false };   /* sort + filter are toggleable from the popup; reveal is admin-only */
+    /* a signed-in site admin (owner, or a Discord admin confirmed by the Dex pages) can unhide the secret
+       trophies to read every name and description — handy for curating the list. */
+    function isAdmin() { try { return Site.owner === true || !!(Site.admin && Site.admin.get()) || !!got.special; } catch (e) { return false; } }
 
     function sorted() {
       var arr = TROPHIES.slice();
@@ -410,8 +413,8 @@
         if (state.filter === "unlocked" && !have) return;
         if (state.filter === "locked" && have) return;
         shown++;
-        var hidden = t.secret && !have, r = rarOf(t);
-        var ico = have ? CUP : (t.secret ? QMARK : LOCK);
+        var hidden = t.secret && !have && !state.reveal, r = rarOf(t);
+        var ico = have ? CUP : (hidden ? QMARK : LOCK);
         list.appendChild(el("li", { class: "pl-item pl-r-" + r + (have ? " is-got" : " is-locked") + (t.special ? " pl-item--special" : "") },
           el("span", { class: "pl-item__ico" }, svg(ico)),
           el("span", { class: "pl-item__txt" },
@@ -443,6 +446,16 @@
     var controls = el("div", { class: "pl-controls" },
       el("label", { class: "pl-sortwrap" }, el("span", { class: "pl-sortlab", text: "Sort" }), sortSel),
       filterWrap);
+    if (isAdmin()) {
+      var revealBtn = el("button", { type: "button", class: "pl-filter pl-reveal", "aria-pressed": "false", title: "Admin: show the name and description of every secret trophy", text: "Reveal secrets" });
+      revealBtn.addEventListener("click", function () {
+        state.reveal = !state.reveal;
+        revealBtn.setAttribute("aria-pressed", String(state.reveal));
+        revealBtn.textContent = state.reveal ? "Hide secrets" : "Reveal secrets";
+        Site.sfx("tap"); render();
+      });
+      controls.appendChild(revealBtn);
+    }
 
     render();
     var body = el("div", {},
