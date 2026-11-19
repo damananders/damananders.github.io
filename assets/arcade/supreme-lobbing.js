@@ -37,11 +37,11 @@
     { key: "cap",  name: "Cap",  hat: "#cd4257", shirt: "#e9e3d6", special: "bomb",     pow: 1.08,
       look: { skin: "#d8a271", hair: "short", hairCol: "#6f5e4b", beard: "full", beardCol: "#8a7b68", over: "coat", overCol: "#8c2f28", shirt: "#e9e3d6", pants: "#3a2a1c", shoes: "#2a1a10", w: 23, hat: { type: "tricorn", col: "#2a1d12", badge: true }, earring: true } },
     { key: "pip",  name: "Pip",  hat: "#f6ad55", shirt: "#4a90d9", special: "splitter", pow: 1,
-      look: { skin: "#f0c19a", hair: "short", hairCol: "#3a2816", shirt: "#4a90d9", over: "open", overCol: "#d98b3a", pants: "#2d3748", shoes: "#5a3a1a", w: 18, bandana: "#cd4257", bandanaDot: true, smile: true, earring: true } },
+      look: { skin: "#f0c19a", hair: "short", hairCol: "#3a2816", shirt: "#4a90d9", over: "open", overCol: "#d98b3a", pants: "#2d3748", shoes: "#5a3a1a", w: 18, bandana: "#cd4257", bandanaDot: true, smile: true } },
     { key: "doc",  name: "Doc",  hat: "#68d391", shirt: "#f7fafc", special: "repair",   pow: 0.95,
       look: { skin: "#e8b48a", hair: "bowl", hairCol: "#4a3826", shirt: "#f7fafc", over: "open", overCol: "#2f855a", pants: "#4a5568", shoes: "#2a1a10", w: 21, glasses: "round", goatee: true } },
     { key: "gull", name: "Wren", hat: "#b794f4", shirt: "#2d3748", special: "gull",     pow: 1,
-      look: { skin: "#caa07a", hair: "long", hairCol: "#241910", shirt: "#2d3748", over: "open", overCol: "#6b46c1", pants: "#1a202c", shoes: "#3a2a1a", w: 19, bandana: "#6b46c1", earring: "#cbd5e0" } }
+      look: { skin: "#caa07a", hair: "long", hairCol: "#241910", shirt: "#2d3748", over: "open", overCol: "#6b46c1", pants: "#1a202c", shoes: "#3a2a1a", w: 19, bandana: "#6b46c1" } }
   ];
   /* Shipwright: upgrades grouped by department. Each has max levels, a cost per level and a line per level. */
   var UPG = [
@@ -1029,7 +1029,7 @@
     x.strokeStyle = sk; x.beginPath(); x.moveTo(13, 0); x.lineTo(20, 0); x.stroke(); x.restore();
     /* head */
     circ(x, sk, 0, -26, 11);
-    if (L.hair === "short") { hairCap(x, hc, -30, -23.5); circ(x, shade(sk, -10), 10, -22, 1.8); }                 /* + sideburn */
+    if (L.hair === "short") hairCap(x, hc, -30, -23.5);
     else if (L.hair === "combover") { hairCap(x, hc, -33, -24.5); x.strokeStyle = shade(hc, 24); x.lineWidth = 1; x.beginPath(); for (var cs = 0; cs < 4; cs++) { x.moveTo(-8, -35 + cs * 0.8); x.quadraticCurveTo(2, -39 + cs, 11, -33 + cs * 1.4); } x.stroke(); }
     else if (L.hair === "wolf") { hairCap(x, hc, -29, -16); fillPath(x, hc, [[4, -37], [13, -31], [10.5, -26], [8.5, -29], [6.5, -25], [5, -29], [3.5, -26]]); }   /* spiky front */
     else if (L.hair === "bowl") { hairCap(x, hc, -28, -23); fillPath(x, hc, [[-3, -30.5], [11, -31], [11.5, -28.2], [-3, -28]]); }                                  /* neat fringe across the brow */
@@ -1056,7 +1056,7 @@
     if (L.glasses === "70s") { x.strokeStyle = "#6b4426"; x.lineWidth = 1.6; x.fillStyle = "rgba(246,173,85,.35)"; D.rr(x, -2.5, -32.5, 6.5, 7, 2); x.fill(); x.stroke(); D.rr(x, 4.8, -32.5, 6.5, 7, 2); x.fill(); x.stroke(); }
     else if (L.glasses === "shades") { x.fillStyle = "#111"; D.rr(x, -1, -31, 12.5, 4.6, 2); x.fill(); }
     else if (L.glasses === "round") { x.strokeStyle = "#3a2a1a"; x.lineWidth = 1.3; x.fillStyle = "rgba(220,235,245,.25)"; x.beginPath(); x.arc(4.5, -28, 3.3, 0, 6.3); x.fill(); x.stroke(); x.beginPath(); x.moveTo(1.2, -28); x.lineTo(-1.4, -27.4); x.stroke(); }
-    if (L.earring) { x.strokeStyle = L.earring === true ? "#f6c445" : L.earring; x.lineWidth = 1.5; x.beginPath(); x.arc(9, -19.5, 2.1, 0, 6.3); x.stroke(); }
+    if (L.earring) { circ(x, shade(sk, -12), -7, -23, 2); x.strokeStyle = L.earring === true ? "#f6c445" : L.earring; x.lineWidth = 1.5; x.beginPath(); x.arc(-7, -19.6, 2.1, 0, 6.3); x.stroke(); }   /* hoop on the ear (back), not the nose */
     if (L.eyepatch) { x.strokeStyle = "#1a1210"; x.lineWidth = 1.6; x.beginPath(); x.moveTo(-7, -33.5); x.lineTo(11, -27.5); x.stroke(); x.fillStyle = "#14100d"; D.rr(x, 1.5, -31, 6.6, 6.2, 1.8); x.fill(); }
     if (L.bandana) {                                  /* do-rag over the crown, tied at the back — stays above the brow */
       var bn = L.bandana;
