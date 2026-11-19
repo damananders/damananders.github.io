@@ -91,6 +91,8 @@
   function unlocked(a) { return a === "rock" || !!(sget("ammo", {}) || {})[a]; }
   function deco() { return sget("deco", { sail: 0, wood: 0, flag: 0 }) || { sail: 0, wood: 0, flag: 0 }; }
   function owns(kind, i) { return i === 0 || ((sget("owned", {}) || {})[kind + i]); }
+  function crewName(key, fb) { return ((sget("crewNames", {}) || {})[key]) || fb; }
+  function setCrewName(key, v) { var m = sget("crewNames", {}) || {}; v = (v || "").replace(/\s+/g, " ").trim().slice(0, 14); if (v) m[key] = v; else delete m[key]; sset("crewNames", m); }
   var AI_LEVELS = [
     { key: "sloppy", name: "Sloppy", ang: 9, pow: 0.13 },
     { key: "fair",   name: "Fair",   ang: 4.5, pow: 0.065 },
@@ -322,7 +324,7 @@
     for (i = 0; i < o.crew; i++) {
       var role = o.roles ? o.roles[i % o.roles.length] : ROLES[i % ROLES.length];
       var col = cols.length ? cols[Math.min(cols.length - 1, Math.floor(i * cols.length / Math.max(1, o.crew)))] : i % n;
-      r.crew.push({ role: role, name: o.names ? o.names[i] : role.name, col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: (r.perks.wind2 ? 2 : 1) + (r.perks.quarter || 0), burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
+      r.crew.push({ role: role, name: o.names ? o.names[i] : (o.human ? crewName(role.key, role.name) : role.name), col: col, hp: o.hp, max: o.hp, alive: true, special: true, specials: (r.perks.wind2 ? 2 : 1) + (r.perks.quarter || 0), burn: 0, swim: false, anim: 0, dx: (i % 2 ? 8 : -6) * (cols.length < o.crew ? 1 : 0),
         look: o.looks ? o.looks[i % o.looks.length] : (role && role.look) || null, scale: o.scale || 1, armor: o.dmgMul || 1, dance: tr.indexOf("dance") >= 0 });
     }
     if (r.nest && r.crew.length) r.crew[Math.floor(Math.random() * r.crew.length)].nest = true;   /* one crew mans the nest */
@@ -1445,6 +1447,7 @@
     items.push({ label: "🌊 Endless Survival", sub: "Waves until you sink · best " + (sget("bestWave", 0) || 0), act: function () { B = null; startBattle(g, "endless", 0); } });
     items.push({ label: "⚔ Versus", sub: "2 players, one keyboard or pad", act: function () { startBattle(g, "versus", 0); } });
     items.push({ label: "🔨 Shipwright", sub: coins() + " coins" + (aff ? " · " + aff + " in reach" : ""), cls: aff ? "is-hot" : "", act: function () { shop(g, function () { titleMenu(g); }); } });
+    items.push({ label: "🧑‍🤝‍🧑 Your Crew", sub: "Name your crew", act: function () { crewMenu(g); } });
     items.push({ label: "⚙ Settings", sub: "Aim, guide, sound", act: function () { settingsMenu(g); } });
     items.push({ label: "📖 How to Play", sub: "Controls, ammo, tips", act: function () { howMenu(g, function () { titleMenu(g); }); } });
     g.menu({
@@ -1484,6 +1487,39 @@
     items.push({ label: "Volume: " + Math.round(sndVol() * 100) + "%", sub: "Press to change", disabled: !sndOn(), act: function () { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, items.length - 2); } });
     items.push({ label: "Back", act: function () { titleMenu(g); } });
     g.menu({ title: "Settings", items: items, grid: true, cls: "is-wide", back: function () { titleMenu(g); }, focus: focus || 0 });
+  }
+  function ensureCrewCss() {
+    if (document.getElementById("sl-crew-css")) return;
+    var s = document.createElement("style"); s.id = "sl-crew-css";
+    s.textContent =
+      ".ak-panel.sl-crew-panel{width:min(40em,100%);text-align:left}" +
+      ".sl-crew{display:grid;gap:10px;margin:2px 0 4px}" +
+      ".sl-crew__row{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}" +
+      ".sl-crew__face{flex:0 0 auto;width:60px;height:70px;border-radius:10px;background:linear-gradient(#17374d,#0c1b28)}" +
+      ".sl-crew__info{flex:1 1 auto;min-width:0}" +
+      ".sl-crew__spec{font:600 11px var(--mono,ui-monospace);color:#8b97a4;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}" +
+      ".sl-crew__name{width:100%;box-sizing:border-box;padding:8px 11px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);color:#eef3f8;font:700 15px var(--display,system-ui)}" +
+      ".sl-crew__name::placeholder{color:#64707c}.sl-crew__name:focus{outline:none;border-color:var(--ak-accent,#f6ad55)}";
+    document.head.appendChild(s);
+  }
+  function crewPortrait(role) {
+    var cv = el("canvas", { class: "sl-crew__face", width: "120", height: "140" });
+    var x = cv.getContext("2d");
+    x.save(); x.translate(60, 96); x.scale(2.1, 2.1); drawPerson(x, role.look, 1, 1.18, 0); x.restore();
+    return cv;
+  }
+  function crewMenu(g) {
+    ensureCrewCss();
+    var rows = ROLES.map(function (role) {
+      var input = el("input", { type: "text", class: "sl-crew__name", maxlength: "14", value: crewName(role.key, role.name), placeholder: role.name,
+        oninput: function (e) { setCrewName(role.key, e.target.value); } });
+      return el("div", { class: "sl-crew__row" }, crewPortrait(role),
+        el("div", { class: "sl-crew__info" }, el("div", { class: "sl-crew__spec", text: "Throws the " + AMMO[role.special].name }), input));
+    });
+    var body = el.apply(null, ["div", { class: "sl-crew" }].concat(rows));
+    g.menu({ kicker: "Roster", title: "🧑‍🤝‍🧑 Your Crew", sub: "Name your crew — it sticks from battle to battle. Bigger rafts bring more of them aboard.",
+      body: body, items: [{ label: "Reset to default names", act: function () { sset("crewNames", {}); crewMenu(g); } }, { label: "Back", act: function () { titleMenu(g); } }],
+      cls: "is-wide sl-crew-panel", back: function () { titleMenu(g); } });
   }
   function howMenu(g, back) {
     var ul = el("ul", { class: "ak-howto" },
