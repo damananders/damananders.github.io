@@ -925,13 +925,32 @@
     var mg = x.createLinearGradient(mx - 4, 0, mx + 4, 0); mg.addColorStop(0, "#5a3d24"); mg.addColorStop(0.5, "#7a5634"); mg.addColorStop(1, "#3e2a18");
     x.fillStyle = mg; x.fillRect(mx - 3.5, dy - 172, 7, 172);
     x.fillStyle = "#c9a96e"; [dy - 150, dy - 64, dy - 12].forEach(function (yy) { x.fillRect(mx - 5, yy, 10, 4); x.fillStyle = "#a88a52"; x.fillRect(mx - 5, yy + 2, 10, 1); x.fillStyle = "#c9a96e"; });
-    var tip = mx - r.side * 70, top = mx + 3 * -r.side;
-    x.save(); x.beginPath(); x.moveTo(top, dy - 160); x.quadraticCurveTo(tip, dy - 110, top, dy - 60); x.closePath();
-    var sg = x.createLinearGradient(top, 0, tip, 0); sg.addColorStop(0, shade(r.sail, -30)); sg.addColorStop(0.6, r.sail); sg.addColorStop(1, shade(r.sail, 22));
-    x.fillStyle = sg; x.fill(); x.clip();
-    x.strokeStyle = "rgba(0,0,0,.18)"; x.lineWidth = 1; for (i = 1; i < 5; i++) { x.beginPath(); x.moveTo(top, dy - 160 + i * 20); x.quadraticCurveTo(tip, dy - 150 + i * 18, top + -r.side * 60, dy - 140 + i * 20); x.stroke(); }
+    /* a square sail slung from a yard, bellying toward the bow */
+    var dir = -r.side, flap = Math.sin(t * 2.2 + r.phase) * 5;
+    var yardY = dy - 162, headY = dy - 156, footY = dy - 64;
+    var luff = mx + dir * 5, leech = mx + dir * 80, belly = mx + dir * (96 + flap);
+    function sailPath() {
+      x.beginPath();
+      x.moveTo(luff, headY);                                                     /* throat, at the mast */
+      x.quadraticCurveTo((luff + leech) / 2, headY - 9, leech, yardY + 6);       /* head, slung under the yard */
+      x.quadraticCurveTo(belly, (yardY + footY) / 2, leech - dir * 10, footY);   /* leech bellies out, then in */
+      x.quadraticCurveTo((luff + leech) / 2, footY + 15, luff, footY - 10);      /* foot curves back to the mast */
+      x.closePath();
+    }
+    x.strokeStyle = "#5a3d24"; x.lineWidth = 4.5; x.lineCap = "round";           /* the yard */
+    x.beginPath(); x.moveTo(mx - dir * 12, yardY + 3); x.lineTo(leech + dir * 5, yardY - 3); x.stroke();
+    x.strokeStyle = "#8a6238"; x.lineWidth = 1.8; x.stroke();
+    sailPath();
+    var sg = x.createLinearGradient(luff, 0, belly, 0); sg.addColorStop(0, shade(r.sail, 30)); sg.addColorStop(0.45, r.sail); sg.addColorStop(1, shade(r.sail, -26));
+    x.fillStyle = sg; x.fill();
+    x.save(); x.clip();
+    x.strokeStyle = "rgba(0,0,0,.10)"; x.lineWidth = 1.2;                        /* vertical cloth panels */
+    for (i = 1; i <= 3; i++) { var fx2 = luff + (leech - luff) * i / 4; x.beginPath(); x.moveTo(fx2, headY - 6); x.quadraticCurveTo(fx2 + dir * (12 + flap * 0.5), (headY + footY) / 2, fx2, footY + 8); x.stroke(); }
+    x.strokeStyle = "rgba(0,0,0,.12)"; x.lineWidth = 6; x.beginPath(); x.moveTo(luff, footY - 16); x.quadraticCurveTo(belly, footY - 4, leech - dir * 10, footY - 20); x.stroke();   /* reef band */
+    x.strokeStyle = "rgba(255,255,255,.14)"; x.lineWidth = 5; x.beginPath(); x.moveTo(luff + dir * 3, headY + 6); x.quadraticCurveTo(luff + dir * 11, (headY + footY) / 2, luff + dir * 4, footY - 10); x.stroke();   /* luff highlight */
     x.restore();
-    x.strokeStyle = shade(r.sail, -45); x.lineWidth = 2; x.beginPath(); x.moveTo(top, dy - 160); x.quadraticCurveTo(tip, dy - 110, top, dy - 60); x.stroke();
+    sailPath(); x.strokeStyle = shade(r.sail, -42); x.lineWidth = 2; x.stroke();
+    x.lineCap = "butt";
     if (r.flag === "maple") canFlag(x, mx - r.side * 28, dy - 110, 34);
     else if (r.flag === "lighthouse") {
       var lhx = mx - r.side * 26, lhy = dy - 86;
