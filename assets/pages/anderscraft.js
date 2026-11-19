@@ -701,4 +701,40 @@
     }
     Ach.on(paint); paint(); section.hidden = false;
   }, "ac-ach-panel");
+
+  /* ---------- Under Maintenance tape: shown while the realms are down ----------
+     Down = the status check fails twice in a row (PC, tunnel or service off) OR every realm reports offline.
+     It rechecks every 30 s (15 s right after a first failure) and hides itself as soon as a realm answers.
+     Test: ?sx=status:down forces the down state, ?sx=status:demo the demo (online) data. */
+  Site.ready(function () {
+    var box = $("#ac-maint"); if (!box || !enabled("acMaintenance")) return;
+    var cfgUrl = Site.config && Site.config.anderscraft && Site.config.anderscraft.statusUrl;
+    var forced = Site.debug("status");
+    if (!cfgUrl && forced !== "down" && forced !== "demo") return;      /* no status endpoint: never guess "down" */
+    var fails = 0, timer = 0, busy = false, shown = false;
+    function show(on) {
+      if (on === shown) return; shown = on; box.hidden = !on;
+      if (on) Site.sfx("error");
+    }
+    function next(ms) { clearTimeout(timer); timer = 0; if (!document.hidden) timer = setTimeout(check, ms); }
+    function verdict(d) {
+      if (forced === "down") return "down";
+      if (!d || !Array.isArray(d.realms)) return "fail";
+      var known = d.realms.filter(function (r) { return r && typeof r.online === "boolean"; });
+      if (!known.length) return "fail";
+      return known.some(function (r) { return r.online; }) ? "up" : "down";
+    }
+    function check() {
+      if (busy || document.hidden) return; busy = true;
+      Site.live.realms().then(function (d) { return d; }, function () { return null; }).then(function (d) {
+        busy = false;
+        var v = verdict(d);
+        if (v === "up") { fails = 0; show(false); next(30000); }
+        else if (v === "down") { fails = 0; show(true); next(30000); }
+        else { fails++; if (fails >= 2) show(true); next(fails >= 2 ? 30000 : 15000); }
+      });
+    }
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { clearTimeout(timer); timer = 0; } else check(); });
+    check();
+  }, "ac-maintenance");
 })();
