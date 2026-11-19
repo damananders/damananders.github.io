@@ -168,19 +168,45 @@
     { name: "Coral Teeth", sky: ["#f3a46b", "#ffd9a8"], sea: ["#2a7d8f", "#11475a"], wind: 0.7 },
     { name: "Iron Tide",   sky: ["#3b4a63", "#8191a8"], sea: ["#28455c", "#0f2230"], wind: 1 }
   ];
+  /* campaign enemy crews — each foe its own designed look (startBattle passes looks[i % n]) */
+  var FOELK = {
+    driftwood: [{ skin: "#c08a5a", hair: "long", hairCol: "#b6a06a", beard: "full", beardCol: "#9c8552", shirt: "#8a9a7a", over: "open", overCol: "#6b5a3a", pants: "#5a4a32", shoes: "#3a2e1e", w: 20, bandana: "#7c8a56" }],
+    sandbar: [{ skin: "#e8c290", hair: "short", hairCol: "#d2b074", shirt: "#e4d6ac", over: "open", overCol: "#c89a5a", pants: "#8a7248", shoes: "#5a4428", w: 18, bandana: "#d9b36b", bandanaDot: true },
+              { skin: "#e0b884", hair: "short", hairCol: "#c8a868", shirt: "#e4d6ac", over: "open", overCol: "#c89a5a", pants: "#8a7248", shoes: "#5a4428", w: 18, bandana: "#d9b36b", bandanaDot: true, smile: true }],
+    kelp: [{ skin: "#b0a880", hair: "bald", beard: "full", beardCol: "#4a6b3a", over: "coat", overCol: "#3a5240", shirt: "#6b7a5a", pants: "#2a3828", shoes: "#1a2418", w: 22, hat: { type: "beanie", col: "#2f4a38" } },
+           { skin: "#c8a278", hair: "short", hairCol: "#7a8a5a", shirt: "#5a6b4a", over: "open", overCol: "#3a5240", pants: "#2a3828", shoes: "#1a2418", w: 19, goatee: true, beardCol: "#4a6b3a" }],
+    barnacle: [{ skin: "#d8a271", hair: "short", hairCol: "#171717", beard: "full", beardCol: "#171717", over: "coat", overCol: "#263a6b", shirt: "#e9e3d6", pants: "#1a2438", shoes: "#111", w: 23, hat: { type: "tricorn", col: "#141b2e", badge: true } },
+               { skin: "#c89060", hair: "short", hairCol: "#2a2a2a", shirt: "#3a4a7b", over: "open", overCol: "#263a6b", pants: "#1a2438", shoes: "#111", w: 19, bandana: "#263a6b" }],
+    reef: [{ skin: "#b5724a", hair: "short", hairCol: "#171717", shirt: "#c53030", over: "open", overCol: "#7b2d26", pants: "#2a1a18", shoes: "#1a1010", w: 20, bandana: "#e2522e" },
+           { skin: "#9c5a38", hair: "wolf", hairCol: "#2a1a14", shirt: "#e2522e", over: "open", overCol: "#7b2d26", pants: "#2a1a18", shoes: "#1a1010", w: 19, eyepatch: true }],
+    saltpepper: [{ skin: "#f0d8c0", hair: "short", hairCol: "#e8e8e8", beard: "full", beardCol: "#ededed", shirt: "#f7fafc", over: "open", overCol: "#d8d8d8", pants: "#c4c4c4", shoes: "#9a9a9a", w: 21 },
+                 { skin: "#5a4030", hair: "short", hairCol: "#161616", beard: "full", beardCol: "#1a1a1a", shirt: "#2a2a2a", over: "open", overCol: "#101010", pants: "#1a1a1a", shoes: "#000", w: 21 }],
+    marlin: [{ skin: "#8aa0b0", hair: "wolf", hairCol: "#1a3a5a", shirt: "#2b6cb0", over: "open", overCol: "#1a4a7a", pants: "#12304a", shoes: "#0a1a2a", w: 20, bandana: "#2b6cb0" },
+             { skin: "#9ab0c0", hair: "short", hairCol: "#1a3a5a", shirt: "#3a87b5", over: "open", overCol: "#1a4a7a", pants: "#12304a", shoes: "#0a1a2a", w: 19, goatee: true, beardCol: "#1a3a5a" }],
+    anemone: [{ skin: "#e0b090", hair: "combover", hairCol: "#9a8a9a", over: "coat", overCol: "#6b2d5a", shirt: "#f0e0f0", tie: "#d4af37", pants: "#3a1a3a", shoes: "#1a0a1a", w: 23, hat: { type: "tricorn", col: "#4a1a40", badge: true }, stache: true },
+              { skin: "#c89078", hair: "short", hairCol: "#3a2a3a", shirt: "#8a3a7a", over: "open", overCol: "#6b2d5a", pants: "#3a1a3a", shoes: "#1a0a1a", w: 19, bandana: "#9a3a8a" }],
+    rust: [{ skin: "#b58a60", hair: "short", hairCol: "#3a2a1a", shirt: "#8a5a2a", over: "open", overCol: "#5a3a1a", pants: "#4a4a4a", shoes: "#2a2a2a", w: 21, glasses: "shades", bandana: "#a0632a" },
+           { skin: "#9a7248", hair: "bald", shirt: "#6b4a2a", over: "open", overCol: "#8a5a2a", pants: "#4a4a4a", shoes: "#2a2a2a", w: 22, goatee: true, beardCol: "#3a2a1a" }],
+    clank: [{ skin: "#9aa0a6", hair: "short", hairCol: "#2a2a2a", shirt: "#5a6670", over: "open", overCol: "#3a4650", pants: "#2a3640", shoes: "#1a2028", w: 20, glasses: "shades" },
+            { skin: "#a8aeb4", hair: "bald", shirt: "#4a5660", over: "open", overCol: "#3a4650", pants: "#2a3640", shoes: "#1a2028", w: 21, glasses: "shades" }],
+    foghorn: [{ skin: "#e8b48a", hair: "long", hairCol: "#c04a2a", over: "coat", overCol: "#e0b020", shirt: "#f0d060", pants: "#8a6a10", shoes: "#4a3a08", w: 21, hat: { type: "tricorn", col: "#d0a018" } },
+              { skin: "#d2a070", hair: "short", hairCol: "#8a4a2a", shirt: "#e0b020", over: "open", overCol: "#b08010", pants: "#8a6a10", shoes: "#4a3a08", w: 19, bandana: "#e8c030" }],
+    duchess: [{ skin: "#d8b8a0", hair: "long", hairCol: "#2a2a2a", over: "coat", overCol: "#3a4452", shirt: "#1a2028", tie: "#d4af37", pants: "#1a2028", shoes: "#000", w: 22, hat: { type: "tricorn", col: "#2a3240", badge: true } },
+              { skin: "#c0a088", hair: "short", hairCol: "#3a3a3a", shirt: "#4a5462", over: "open", overCol: "#3a4452", pants: "#1a2028", shoes: "#000", w: 20, glasses: "shades" }]
+  };
   var BATTLES = [
-    { r: 0, name: "Driftwood Dan",      crew: 1, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: [],                    acc: 0.6 },
-    { r: 0, name: "The Sandbar Twins",  crew: 2, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: ["bouncer"],           acc: 0.7 },
-    { r: 0, name: "Old Kelp",           crew: 2, planks: 6, walls: 1, tower: 0, hp: 90,  ammo: ["bouncer"],           acc: 0.8 },
-    { r: 0, name: "Captain Barnacle",   crew: 3, planks: 7, walls: 2, tower: 1, hp: 110, ammo: ["bomb"], boss: true,  acc: 0.9 },
-    { r: 1, name: "Reef Raiders",       crew: 2, planks: 6, walls: 2, tower: 0, hp: 100, ammo: ["bouncer", "splitter"], acc: 0.9 },
-    { r: 1, name: "Salt & Pepper",      crew: 3, planks: 6, walls: 1, tower: 0, hp: 100, ammo: ["splitter"],          acc: 0.95 },
-    { r: 1, name: "Mad Marlin",         crew: 3, planks: 7, walls: 2, tower: 0, hp: 110, ammo: ["splitter", "bomb"],  acc: 1 },
-    { r: 1, name: "Admiral Anemone",    crew: 4, planks: 8, walls: 2, tower: 2, hp: 120, ammo: ["fire", "bomb"], boss: true, acc: 1.05 },
-    { r: 2, name: "Rustbucket",         crew: 3, planks: 7, walls: 2, tower: 0, hp: 120, ammo: ["bomb"], armor: 1,    acc: 1.05 },
-    { r: 2, name: "The Clank Brothers", crew: 4, planks: 7, walls: 2, tower: 1, hp: 120, ammo: ["bomb", "fire"],      acc: 1.1 },
-    { r: 2, name: "Foghorn Fiona",      crew: 4, planks: 8, walls: 2, tower: 1, hp: 130, ammo: ["gull", "splitter"],  acc: 1.15 },
-    { r: 2, name: "The Iron Duchess",   crew: 5, planks: 9, walls: 3, tower: 2, hp: 150, ammo: ["bomb", "gull", "fire"], boss: true, cannon: true, armor: 2, acc: 1.2 }
+    { r: 0, name: "Driftwood Dan",      crew: 1, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: [],                    acc: 0.6,  looks: FOELK.driftwood },
+    { r: 0, name: "The Sandbar Twins",  crew: 2, planks: 5, walls: 0, tower: 0, hp: 80,  ammo: ["bouncer"],           acc: 0.7,  looks: FOELK.sandbar },
+    { r: 0, name: "Old Kelp",           crew: 2, planks: 6, walls: 1, tower: 0, hp: 90,  ammo: ["bouncer"],           acc: 0.8,  looks: FOELK.kelp },
+    { r: 0, name: "Captain Barnacle",   crew: 3, planks: 7, walls: 2, tower: 1, hp: 110, ammo: ["bomb"], boss: true,  acc: 0.9,  looks: FOELK.barnacle },
+    { r: 1, name: "Reef Raiders",       crew: 2, planks: 6, walls: 2, tower: 0, hp: 100, ammo: ["bouncer", "splitter"], acc: 0.9,  looks: FOELK.reef },
+    { r: 1, name: "Salt & Pepper",      crew: 3, planks: 6, walls: 1, tower: 0, hp: 100, ammo: ["splitter"],          acc: 0.95, looks: FOELK.saltpepper },
+    { r: 1, name: "Mad Marlin",         crew: 3, planks: 7, walls: 2, tower: 0, hp: 110, ammo: ["splitter", "bomb"],  acc: 1,    looks: FOELK.marlin },
+    { r: 1, name: "Admiral Anemone",    crew: 4, planks: 8, walls: 2, tower: 2, hp: 120, ammo: ["fire", "bomb"], boss: true, acc: 1.05, looks: FOELK.anemone },
+    { r: 2, name: "Rustbucket",         crew: 3, planks: 7, walls: 2, tower: 0, hp: 120, ammo: ["bomb"], armor: 1,    acc: 1.05, looks: FOELK.rust },
+    { r: 2, name: "The Clank Brothers", crew: 4, planks: 7, walls: 2, tower: 1, hp: 120, ammo: ["bomb", "fire"],      acc: 1.1,  looks: FOELK.clank },
+    { r: 2, name: "Foghorn Fiona",      crew: 4, planks: 8, walls: 2, tower: 1, hp: 130, ammo: ["gull", "splitter"],  acc: 1.15, looks: FOELK.foghorn },
+    { r: 2, name: "The Iron Duchess",   crew: 5, planks: 9, walls: 3, tower: 2, hp: 150, ammo: ["bomb", "gull", "fire"], boss: true, cannon: true, armor: 2, acc: 1.2, looks: FOELK.duchess }
   ];
   function cleared() { return sget("cleared", []) || []; }
 
@@ -326,7 +352,7 @@
     if (kind === "campaign") {
       var bt = BATTLES[idx]; region = REGIONS[bt.r];
       foeCfg = { name: bt.name, crew: bt.crew, planks: bt.planks, walls: bt.walls, tower: bt.tower, hp: bt.hp, ammo: bt.ammo, ammoN: bt.boss ? 3 : 2, bhp: 3 + (bt.armor || 0), cannon: bt.cannon, acc: bt.acc,
-        sail: ["#2d3748", "#7b341e", "#1a202c"][bt.r], wood: "#7a5230", flag: bt.boss ? "☠" : "⚑", names: crewNames(bt.crew, idx), roles: ROLES };
+        sail: ["#2d3748", "#7b341e", "#1a202c"][bt.r], wood: "#7a5230", flag: bt.boss ? "☠" : "⚑", names: crewNames(bt.crew, idx), roles: ROLES, looks: bt.looks };
     } else if (kind === "endless") {
       var wv = idx; region = REGIONS[Math.min(2, Math.floor(wv / 4))];
       var pool = ["bouncer", "splitter", "bomb", "fire", "gull"];
@@ -1434,7 +1460,7 @@
     ],
     onSync: function (g) { paintBest(g); },
     init: function (g) { paintBest(g); g.debug = { B: function () { return B; }, start: function (k, i) { startBattle(g, k, i); },
-      ROLES: ROLES, LK: LK, PRESTIGE: PRESTIGE,
+      ROLES: ROLES, LK: LK, PRESTIGE: PRESTIGE, FOELK: FOELK, BATTLES: BATTLES,
       draw: function (ctx, L, face, arm, t) { if (L === "doc") drawDoc(ctx, face, t); else if (L === "reaper") drawReaper(ctx, face, arm, t); else drawPerson(ctx, L, face, arm, t); } }; },
     title: function (g) { titleMenu(g); },
     restart: function (g) { if (B) { var k = B.kind, i = B.kind === "endless" ? 0 : B.idx; if (k === "endless") B = null; startBattle(g, k, i); } },
