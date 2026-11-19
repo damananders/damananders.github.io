@@ -338,7 +338,7 @@
       foeCfg = { name: "Player 2", human: true, crew: 3, planks: 7, walls: 1, tower: 0, hp: 120, ammo: AMMO_ORDER.slice(1), ammoN: 2, bhp: 4, sail: "#3b82f6", wood: "#6b4426", flag: "⚓" };
     }
     var keep = kind === "endless" && idx > 0 && B && B.mine ? B.mine : null;
-    B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
+    B = { kind: kind, idx: idx, region: region, t: 0, waves: 1, wind: 0, windShown: 0, windFlash: 0, cam: null, projs: [], fx: [], debris: [], phase: "aim", turnSide: -1, settle: 0, timer: 0,
       aim: { ang: 0.75, pow: 0.62, charging: false, chargeDir: 1, drag: null }, sel: 0, ammoSel: "rock", log: [], over: false, ai: null, firstTurn: true,
       bolts: [], bubbles: [], reaper: 0, blind: false, haze: false, flash: 0, foeTurns: 0, lastHuman: null };
     B.mine = keep || makeRaft(-1, mine);
@@ -365,7 +365,7 @@
 
   function side(s) { return s < 0 ? B.mine : B.foe; }
   function newTurn(g, s) {
-    B.turnSide = s; B.phase = "aim"; B.wind = Math.round((Math.random() * 2 - 1) * B.windMax * 100) / 100;
+    B.turnSide = s; B.phase = "aim"; B.wind = Math.round((Math.random() * 2 - 1) * B.windMax * 100) / 100; B.windFlash = 1;
     var r = side(s), list = throwers(r);
     if (!list.length) return;
     r.turn = (r.turn || 0) % list.length; B.sel = r.turn; r.turn++;
@@ -722,8 +722,41 @@
     g.menu({ kicker: kind === "campaign" ? REGIONS[BATTLES[idx].r].name : kind === "prestige" ? "Prestige · " + PREGIONS[PRESTIGE[idx].r].name : kind === "endless" ? "Endless Survival" : "Versus", title: title, sub: sub, body: kv, items: items, back: function () { g.toTitle(); } });
   }
 
+  /* ---------------- camera (Raft Wars feel): zoom into the active raft, follow the shot in flight ----------------
+     The whole world is drawn through this transform; the HUD and full-screen flashes stay in screen space. */
+  var CAM_AIM_Z = 1.72, CAM_FLY_Z = 1.5;
+  function camMode() { return sget("camera", "follow"); }
+  function worldCenterOf(r) { return { x: r.x0 + r.n * PW / 2, y: deckY(r) - 46 }; }
+  function clampCam(c) {
+    var vw = W / c.z / 2, vh = H / c.z / 2;
+    c.cx = Math.max(vw, Math.min(W - vw, c.cx));
+    c.cy = Math.max(vh, Math.min(H - vh, c.cy));
+    return c;
+  }
+  function updateCamera(dt) {
+    if (camMode() !== "follow") { B.cam = null; return; }
+    var tz, tx, ty;
+    if (B.phase === "fly" && B.projs.length) {
+      var p = B.projs[B.projs.length - 1]; tz = CAM_FLY_Z; tx = p.x; ty = Math.max(20, p.y);
+    } else {
+      var c = worldCenterOf(side(B.turnSide)); tz = CAM_AIM_Z; tx = c.x; ty = c.y;
+    }
+    if (!B.cam) B.cam = { cx: tx, cy: ty, z: tz };
+    var k = Math.min(1, dt * (B.phase === "fly" ? 7 : 3.4));
+    B.cam.z += (tz - B.cam.z) * k; B.cam.cx += (tx - B.cam.cx) * k; B.cam.cy += (ty - B.cam.cy) * k;
+    clampCam(B.cam);
+  }
+  function camPt(px, py) {                 /* screen (logical) point -> world point, given the current camera */
+    var c = B && B.cam && camMode() === "follow" ? B.cam : null;
+    if (!c) return { x: px, y: py };
+    return { x: (px - W / 2) / c.z + c.cx, y: (py - H / 2) / c.z + c.cy };
+  }
+
   function update(g, dt) {
     B.t += dt;
+    B.windShown += (B.wind - B.windShown) * Math.min(1, dt * 6);
+    if (B.windFlash > 0) B.windFlash = Math.max(0, B.windFlash - dt * 1.6);
+    updateCamera(dt);
     var r = side(B.turnSide), human = r.human;
     [B.mine, B.foe].forEach(function (rr) { rr.crew.forEach(function (m) { if (m.anim > 0) m.anim = Math.max(0, m.anim - dt); else if (m.anim < 0) m.anim = Math.min(0, m.anim + dt); }); });
     if (B.flash > 0) B.flash = Math.max(0, B.flash - dt * 1.4);
@@ -1105,28 +1138,59 @@
     var r = side(B.turnSide), am = availAmmo(r, thrower()), tot = am.length * (SLOT.w + 8) - 8, x0 = W / 2 - tot / 2;
     return am.map(function (a, i) { return { a: a, x: x0 + i * (SLOT.w + 8), y: SLOT.y, w: SLOT.w, h: SLOT.h }; });
   }
+  function nameplate(x, r, edge, align) {
+    var alive = r.deck.filter(function (b) { return b.alive; }).length, hull = r.n ? alive / r.n : 0;
+    var crewAlive = r.crew.filter(function (m) { return m.alive; }).length;
+    D.text(x, r.name, edge, 34, "800 22px " + F.display, "#fff", align);
+    var bw = 158, bx = align === "left" ? edge : edge - bw, by = 42;
+    x.fillStyle = "rgba(4,7,12,.5)"; D.rr(x, bx, by, bw, 9, 4); x.fill();
+    x.fillStyle = hull > 0.5 ? "#68d391" : hull > 0.34 ? "#f6c445" : "#fc8181"; D.rr(x, bx, by, Math.max(3, bw * hull), 9, 4); x.fill();
+    D.text(x, "⚓ " + crewAlive + "/" + r.crew.length + " crew  ·  hull " + Math.round(hull * 100) + "%", edge, by + 23, "600 12px " + F.display, "#cbd5e0", align, false);
+  }
   function hud(g, x) {
-    var w = B.wind, wx = W / 2;
-    x.fillStyle = "rgba(4,7,12,.55)"; D.rr(x, wx - 110, 12, 220, 48, 12); x.fill();
-    D.text(x, "WIND", wx, 30, "700 12px " + F.mono, "#cbd5e0", "center", false);
-    var len = Math.abs(w) * 80; x.strokeStyle = "#fff"; x.lineWidth = 4; x.beginPath(); x.moveTo(wx - len * Math.sign(w), 44); x.lineTo(wx + len * Math.sign(w), 44); x.stroke();
-    if (Math.abs(w) > 0.02) { x.fillStyle = "#fff"; x.beginPath(); x.moveTo(wx + (len + 10) * Math.sign(w), 44); x.lineTo(wx + len * Math.sign(w), 37); x.lineTo(wx + len * Math.sign(w), 51); x.fill(); }
-    else D.text(x, "calm", wx, 50, "600 13px " + F.display, "#fff", "center", false);
-    D.text(x, B.mine.name, 24, 36, "800 22px " + F.display, "#fff");
-    D.text(x, B.foe.name, W - 24, 36, "800 22px " + F.display, "#fff", "right");
-    var turnTxt = B.phase === "fly" ? "" : (side(B.turnSide).human ? (B.kind === "versus" ? (B.turnSide < 0 ? "Player 1" : "Player 2") + ": your throw" : "Your throw") : B.foe.name + " is aiming…");
-    if (turnTxt) D.text(x, turnTxt, wx, 88, "700 18px " + F.display, "#fff", "center");
-    if (B.reaper > 0 && B.phase === "aim" && side(B.turnSide).human) D.text(x, "☠ Death waits " + Math.ceil(B.reaper) + "s", wx, 116, "800 20px " + F.display, B.reaper < 6 ? "#fc8181" : "#fff", "center");
-    else if (B.blind && B.phase === "aim" && side(B.turnSide).human) D.text(x, "Blinded by the ring light: no aim guide", wx, 116, "700 15px " + F.display, "#fbd38d", "center");
-    if (B.phase !== "aim" || !side(B.turnSide).human) return;
-    var t = thrower(); D.text(x, (t.cannon ? "Deck Cannon" : t.m.name) + " throws  ·  Q / E switch  ·  Z / X ammo  ·  hold Space", wx, SLOT.y - 12, "600 14px " + F.display, "#e2e8f0", "center");
-    slotRects().forEach(function (s) {
+    var wx = W / 2, w = B.wind, ws = B.windShown, pulse = B.windFlash || 0;
+    /* ---- wind: a wide, always-on gauge with numeric strength and an arrow that grows with it, pulsing on change ---- */
+    var pw = 300, px0 = wx - pw / 2, py0 = 10, ph = 62;
+    x.fillStyle = "rgba(4,7,12," + (0.55 + pulse * 0.25) + ")"; D.rr(x, px0, py0, pw, ph, 12); x.fill();
+    if (pulse > 0.01) { x.strokeStyle = "rgba(246,197,69," + pulse + ")"; x.lineWidth = 2.5; D.rr(x, px0, py0, pw, ph, 12); x.stroke(); }
+    D.text(x, "WIND", wx, py0 + 17, "800 12px " + F.mono, "#cbd5e0", "center", false);
+    var mag = Math.abs(ws), dir = ws < 0 ? -1 : 1, strength = mag / Math.max(0.2, B.windMax || 1);
+    var word = mag < 0.04 ? "calm" : strength < 0.4 ? "light" : strength < 0.75 ? "breezy" : "strong";
+    var gy = py0 + 36, half = pw / 2 - 30;
+    x.strokeStyle = "rgba(255,255,255,.18)"; x.lineWidth = 2; x.beginPath(); x.moveTo(wx - half, gy); x.lineTo(wx + half, gy); x.stroke();
+    x.strokeStyle = "rgba(255,255,255,.35)"; x.beginPath(); x.moveTo(wx, gy - 6); x.lineTo(wx, gy + 6); x.stroke();
+    if (mag < 0.04) D.text(x, "calm", wx, gy + 17, "700 14px " + F.display, "#fff", "center", false);
+    else {
+      var len = Math.min(half, 12 + strength * (half - 12)), hot = pulse > 0.2;
+      x.strokeStyle = hot ? "#f6c445" : "#fff"; x.lineWidth = 5; x.lineCap = "round";
+      x.beginPath(); x.moveTo(wx, gy); x.lineTo(wx + len * dir, gy); x.stroke(); x.lineCap = "butt";
+      x.fillStyle = hot ? "#f6c445" : "#fff"; x.beginPath(); x.moveTo(wx + (len + 12) * dir, gy); x.lineTo(wx + len * dir, gy - 9); x.lineTo(wx + len * dir, gy + 9); x.fill();
+      D.text(x, Math.abs(w).toFixed(2) + "  " + word + "  ·  pushes " + (dir < 0 ? "◄ left" : "right ►"), wx, gy + 18, "700 13px " + F.display, "#e2e8f0", "center", false);
+    }
+    /* ---- raft name plates with hull-integrity bar + living-crew count ---- */
+    nameplate(x, B.mine, 24, "left");
+    nameplate(x, B.foe, W - 24, "right");
+    /* ---- turn banner: a bright pill so whose turn it is is unmissable ---- */
+    var human = side(B.turnSide).human;
+    if (B.phase !== "fly") {
+      var banner = human ? (B.kind === "versus" ? (B.turnSide < 0 ? "PLAYER 1 — YOUR THROW" : "PLAYER 2 — YOUR THROW") : "YOUR TURN") : B.foe.name.toUpperCase() + " IS AIMING…";
+      x.font = "800 18px " + F.display; var bpw = (x.measureText ? x.measureText(banner).width : banner.length * 10) + 40;
+      x.fillStyle = human ? "rgba(104,211,145,.95)" : "rgba(252,129,129,.95)"; D.rr(x, wx - bpw / 2, 80, bpw, 30, 15); x.fill();
+      D.text(x, banner, wx, 100, "800 18px " + F.display, "#0b0f14", "center", false);
+    }
+    if (B.reaper > 0 && B.phase === "aim" && human) D.text(x, "☠ Death waits " + Math.ceil(B.reaper) + "s", wx, 130, "800 20px " + F.display, B.reaper < 6 ? "#fc8181" : "#fff", "center");
+    else if (B.blind && B.phase === "aim" && human) D.text(x, "Blinded by the ring light: no aim guide", wx, 130, "700 15px " + F.display, "#fbd38d", "center");
+    if (B.phase !== "aim" || !human) return;
+    var t = thrower();
+    D.text(x, (t.cannon ? "Deck Cannon" : t.m.name) + " throws  ·  Q / E switch thrower  ·  1–9 or Z / X pick ammo  ·  hold Space to throw", wx, SLOT.y - 12, "600 14px " + F.display, "#e2e8f0", "center");
+    slotRects().forEach(function (s, i) {
       var A2 = AMMO[s.a.k], on = s.a.k === B.ammoSel;
       x.fillStyle = on ? "rgba(255,255,255,.22)" : "rgba(4,7,12,.6)"; D.rr(x, s.x, s.y, s.w, s.h, 10); x.fill();
       x.strokeStyle = on ? (s.a.special ? "#f6c445" : "#fff") : "rgba(255,255,255,.2)"; x.lineWidth = on ? 3 : 1.5; D.rr(x, s.x, s.y, s.w, s.h, 10); x.stroke();
       D.text(x, A2.icon, s.x + 18, s.y + 32, "800 22px " + F.display, A2.col, "center", false);
       D.text(x, A2.name.split(" ")[0], s.x + 34, s.y + 22, "700 12px " + F.display, "#fff", "left", false);
       D.text(x, s.a.special ? "★ special" : s.a.n === Infinity ? "∞" : "×" + s.a.n, s.x + 34, s.y + 40, "700 12px " + F.mono, s.a.special ? "#f6c445" : "#cbd5e0", "left", false);
+      if (i < 9) { x.fillStyle = on ? "#fff" : "rgba(255,255,255,.4)"; D.rr(x, s.x + s.w - 17, s.y + 5, 13, 13, 3); x.fill(); D.text(x, String(i + 1), s.x + s.w - 10, s.y + 15, "800 10px " + F.mono, "#0b0f14", "center", false); }
     });
   }
 
@@ -1205,6 +1269,7 @@
   function settingsMenu(g, focus) {
     var items = AI_LEVELS.map(function (l) { return { label: "Enemy aim: " + l.name + (aiLevel().key === l.key ? " ✓" : ""), act: function () { sset("ai", l.key); settingsMenu(g); } }; });
     [["auto", "Aim guide: Auto"], ["always", "Aim guide: Always"], ["never", "Aim guide: Never"]].forEach(function (o) { items.push({ label: o[1] + (guideMode() === o[0] ? " ✓" : ""), sub: o[0] === "auto" ? "On for Sloppy and Fair, off for Sharp and Scary" : "", act: function () { sset("guide", o[0]); settingsMenu(g); } }); });
+    items.push({ label: "Camera: " + (camMode() === "follow" ? "Follow ✓" : "Wide"), sub: camMode() === "follow" ? "Zooms in on your raft and follows the shot" : "Shows the whole field at once", act: function () { sset("camera", camMode() === "follow" ? "wide" : "follow"); settingsMenu(g); } });
     items.push({ label: "Game sound: " + (sndOn() ? "On ✓" : "Off"), sub: "Whooshes and impacts", act: function () { sset("sound", !sndOn()); if (sndOn()) sound("metal"); settingsMenu(g); } });
     var vols = [0.3, 0.5, 0.7, 1], vi = vols.indexOf(sndVol());
     items.push({ label: "Volume: " + Math.round(sndVol() * 100) + "%", sub: "Press to change", disabled: !sndOn(), act: function () { sset("vol", vols[(vi + 1) % vols.length]); sound("stone"); settingsMenu(g, items.length - 2); } });
@@ -1317,19 +1382,19 @@
     alwaysAnimate: true,
     pointer: function (g, type, px, py) {
       if (g.state !== "play" || !B || B.phase !== "aim" || !side(B.turnSide).human) return;
-      var r = side(B.turnSide);
+      var r = side(B.turnSide), z = (B.cam && camMode() === "follow") ? B.cam.z : 1;
       if (type === "down") {
-        var slots = slotRects();
+        var slots = slotRects();      /* the hotbar is screen-space: test the raw pointer */
         for (var i = 0; i < slots.length; i++) { var s = slots[i]; if (px >= s.x && px <= s.x + s.w && py >= s.y && py <= s.y + s.h) { B.ammoSel = s.a.k; Site.sfx("hover"); return; } }
-        var list = throwers(r);
-        for (i = 0; i < list.length; i++) { var o = originOf(r, list[i]); if (Math.hypot(px - o.x, py - o.y - 20) < 34 && i !== B.sel) { B.sel = i; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); return; } }
-        B.aim.drag = { x0: px, y0: py, x: px, y: py };
+        var wp = camPt(px, py), list = throwers(r);     /* rafts live in world space */
+        for (i = 0; i < list.length; i++) { var o = originOf(r, list[i]); if (Math.hypot(wp.x - o.x, wp.y - o.y - 20) < 34 && i !== B.sel) { B.sel = i; B.ammoSel = availAmmo(r, thrower())[0].k; Site.sfx("hover"); return; } }
+        B.aim.drag = { x0: wp.x, y0: wp.y, x: wp.x, y: wp.y };
       } else if (type === "move" && B.aim.drag) {
-        B.aim.drag.x = px; B.aim.drag.y = py;
-        var dx = (B.aim.drag.x0 - px) * (B.turnSide < 0 ? 1 : -1), dy = B.aim.drag.y0 - py, len = Math.hypot(dx, dy);
+        var wm = camPt(px, py); B.aim.drag.x = wm.x; B.aim.drag.y = wm.y;
+        var dx = (B.aim.drag.x0 - wm.x) * (B.turnSide < 0 ? 1 : -1), dy = B.aim.drag.y0 - wm.y, len = Math.hypot(dx, dy) * z;   /* z keeps the pull feel the same when zoomed */
         if (len > 12) { B.aim.ang = Math.max(0.05, Math.min(1.45, Math.atan2(-dy, Math.max(0.01, dx)))); if (dx <= 0.01) B.aim.ang = 1.45; B.aim.pow = Math.max(0.05, Math.min(1, len / 260)); }
       } else if (type === "up" && B.aim.drag) {
-        var d = B.aim.drag, l2 = Math.hypot(d.x0 - d.x, d.y0 - d.y); B.aim.drag = null;
+        var d = B.aim.drag, l2 = Math.hypot(d.x0 - d.x, d.y0 - d.y) * z; B.aim.drag = null;
         if (l2 > 24) throwNow(g);
       }
     },
@@ -1339,6 +1404,8 @@
         x.save(); x.scale(W / 640, H / 360); POSTER(x, 640, 360, t); x.restore();
         return;
       }
+      var cam = B.cam && camMode() === "follow" ? B.cam : null;
+      if (cam) { x.save(); x.translate(W / 2, H / 2); x.scale(cam.z, cam.z); x.translate(-cam.cx, -cam.cy); }
       drawScene(x, B.region, B.t);
       drawRaft(x, B.mine, B.t); drawRaft(x, B.foe, B.t);
       B.debris.forEach(function (d) { x.save(); x.translate(d.x, d.y); x.rotate(d.rot); x.globalAlpha = Math.min(1, d.life); x.fillStyle = d.col; x.fillRect(-d.w / 2, -4, d.w, 8); x.restore(); });
@@ -1361,6 +1428,7 @@
       });
       x.globalAlpha = 1;
       B.bubbles.forEach(function (b) { drawBubble(x, b); });
+      if (cam) x.restore();
       if (B.flash > 0) { x.fillStyle = "rgba(255,255,255," + Math.min(0.85, B.flash) + ")"; x.fillRect(0, 0, W, H); }
       hud(g, x);
     }
