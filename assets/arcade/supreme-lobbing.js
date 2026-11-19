@@ -264,26 +264,26 @@
       traits: ["reaper"], skin: "skull", flag: "☠", sail: "#111", wood: "#3a2a24", blurb: "Calls lightning, and only waits 20 seconds a throw",
       lines: ["Tick tock.", "Everyone's turn comes.", "No rush. Actually, rush.", "I have all the time. You don't."] },
     { r: 4, name: "Keaton, the Kind", short: "Keaton", crew: 1, look: LK.keaton, scale: 1.3, planks: 8, walls: 2, tower: 0, hp: 280, ammo: ["bouncer", "bomb"], acc: 1.35,
-      traits: ["kind"], skin: "pick", flag: "⚡", sail: "#2d3748", blurb: "Kind enough to patch you up now and then",
-      lines: ["Turn it up to eleven! 🤘", "Good game so far, buddy.", "Riff incoming!", "One more round, then food."] },
+      traits: ["kind", "shiftcover"], skin: "pick", flag: "⚡", sail: "#2d3748", blurb: "Patches you up, then shifts cover for a cleaner shot",
+      lines: ["Turn it up to eleven!", "Good game so far, buddy.", "Riff incoming!", "One more round, then food."] },
     { r: 4, name: "Mark, The Busy", short: "Mark", crew: 1, look: LK.mark, scale: 1.3, planks: 8, walls: 2, tower: 1, hp: 250, ammo: ["splitter", "gull"], acc: 1.4,
-      traits: ["busy"], skin: "key", flag: "maple", sail: "#c53030", blurb: "Sometimes too busy to take his turn",
+      traits: ["busy", "raid", "flirt"], skin: "key", flag: "maple", sail: "#c53030", blurb: "Raids you with chat emojis, flirts with Hunter to heal",
       lines: ["Sorry, one sec, on a call.", "Can we circle back on this?", "Just finishing a ranked match, eh.", "Sorry! Sorry. Okay, throwing."] },
     { r: 4, name: "Dwayne, Production Master", short: "Dwayne", crew: 1, look: LK.dwayne, scale: 1.45, planks: 9, walls: 2, tower: 0, hp: 340, ammo: ["bomb", "fire"], acc: 1.4,
-      traits: ["beat", "dance"], skin: "vinyl", flag: "♫", sail: "#6b46c1", blurb: "Dances out of the way, beats leave a haze",
+      traits: ["beat", "dance", "basedrop"], skin: "vinyl", flag: "♫", sail: "#6b46c1", blurb: "Dances the whole raft; base drops blow off your supports",
       lines: ["Drop the beat.", "Feel that bass.", "Hold up, I'm vibing.", "Watch the footwork."] },
     { r: 5, name: "Big Cannabis", short: "Big Cannabis", crew: 4, looks: LK.bigc, names: ["Founder", "CEO", "Investor", "VP of Synergy"], planks: 9, walls: 3, tower: 2, hp: 135, ammo: ["bomb", "splitter", "gull"], acc: 1.45, cannon: true,
       traits: ["buyout"], skin: "money", flag: "$", sail: "#22543d", blurb: "Buys back its raft every turn",
       lines: ["Synergy!", "Let's disrupt your raft.", "Quarterly profits, baby.", "We're pivoting to your destruction.", "Think of the shareholders.", "Circle back, leverage, monetize."] },
     { r: 4, name: "Ally, Aires Allmother", short: "Ally", crew: 1, look: LK.ally, scale: 1.25, dmgMul: 0.7, planks: 9, walls: 3, tower: 1, hp: 320, ammo: ["bomb", "gull", "fire"], acc: 1.5,
-      traits: ["command"], skin: "star", flag: "✦", sail: "#2c5282", blurb: "Her crew hits harder and keeps healing",
+      traits: ["command", "allylight", "break"], skin: "star", flag: "✦", sail: "#2c5282", blurb: "Calls down lightning and sends your crew on break",
       lines: ["Go on your break.", "Slaaayy.", "Go on your break!", "Slaaayy!", "Hold the line.", "On my mark.", "I expect better. I know you've got it.", "Good. Again."], chatty: 0.6 },
     { r: 4, name: "Goof, Son of Raba", short: "Goof", crew: 1, look: LK.goof, scale: 1.4, planks: 8, walls: 2, tower: 1, hp: 300, ammo: ["bouncer", "splitter", "bomb"], acc: 1.5,
-      traits: ["nowind"], skin: "record", flag: "☮", sail: "#c97b2a", blurb: "His throws ignore the wind",
+      traits: ["nowind", "ubu", "pig"], skin: "record", flag: "☮", sail: "#c97b2a", blurb: "Ignores wind; his bars distract, his grease pigs debuff",
       lines: ["No cops on this sea, man.", "The wind's just a suggestion.", "Peace, love and lobbing.", "It's all connected, man."] },
     { r: 4, name: "Dylan, Dab Dominator", short: "Dylan", crew: 1, look: LK.dylan, scale: 1.3, planks: 9, walls: 2, tower: 1, hp: 320, ammo: ["fire", "bomb", "gull"], acc: 1.55,
-      traits: ["bend"], skin: "wax", flag: "✺", sail: "#b7791f", blurb: "Bends his shots toward your crew",
-      lines: ["Concentrate, man.", "It bends to my will.", "Rare pull!", "Hold on, quick dab."] },
+      traits: ["bend", "eyedrops", "foil"], skin: "wax", flag: "✺", sail: "#b7791f", blurb: "Bends his shots; eye drops lock his aim; foil pulls sting",
+      lines: ["Yo, is that a holo?", "Hold up, lemme hit this dab.", "Eyes are fine, man — allergies.", "Pulled a first-edition earlier. Good omen.", "It bends how I want, bro.", "Rare pull incoming."] },
     { r: 6, name: "DaManAnders", short: "DaManAnders", crew: 1, look: LK.anders, scale: 1.35, planks: 9, walls: 3, tower: 2, hp: 420, ammo: ["bomb", "fire", "gull", "splitter", "bouncer"], acc: 1.6, cannon: true,
       traits: ["copycat", "phases"], skin: "controller", flag: "lighthouse", sail: "#cd4257", blurb: "Copies your throws and powers up as he loses",
       lines: ["GG. Now let's go again.", "Welcome to the arcade!", "I built this raft. I know its weak spots.", "Thumbs up! 👍", "That throw looked familiar…"] }
@@ -323,7 +323,7 @@
   function colX(r, c) { return r.x0 + c * PW + PW / 2; }
   function crewPos(r, m) {
     var s = m.scale || 1, x = colX(r, m.col) + m.dx, y = deckY(r) - 26 * s + (m.swim ? 30 : 0);
-    if (m.dance) x += Math.sin(B.t * 2.4) * 14;                              /* Dwayne never stands still */
+    if (m.dance) { var dc = r.x0 + r.n * PW / 2, dh = r.n * PW / 2 - 20; x = dc + Math.sin(B.t * 2.0 * MO) * dh + m.dx; }  /* Dwayne dances the whole raft */
     if (m.look === "doc") y -= Math.abs(Math.sin(B.t * 4)) * 10;              /* Taxes hops */
     return { x: x, y: y };
   }
@@ -333,7 +333,7 @@
     return { x: r.x0 + b.col * PW + 3, y: dy - (b.row + 1) * BH, w: PW - 6, h: BH - 2 };
   }
   function throwers(r) {
-    var list = r.crew.filter(function (m) { return m.alive; }).map(function (m) { return { m: m }; });
+    var list = r.crew.filter(function (m) { return m.alive && !m.onBreak; }).map(function (m) { return { m: m }; });
     if (r.cannon && r.cannon.alive) list.push({ cannon: true });
     return list;
   }
@@ -419,9 +419,26 @@
     });
   }
   var BUZZ = ["Synergy", "Disruption", "Leverage", "Growth hacking", "Vertical integration", "Monetization", "Shareholder value", "Paradigm shift"];
+  function statusTick() {                         /* expire break / grease / aim buffs at the player's turn */
+    B.mine.crew.forEach(function (m) {
+      if (m.onBreak) m.onBreak = Math.max(0, m.onBreak - 1);
+      if (m.grease) { m.grease = Math.max(0, m.grease - 1); if (!m.grease) m.armor = m.armor0 || m.armor; }
+    });
+    if (B.aimBuff) B.aimBuff = Math.max(0, B.aimBuff - 1);
+  }
+  function exileCrew(g, label) {                   /* send one player crew member off for a turn */
+    var mine = B.mine, pool = mine.crew.filter(function (m) { return m.alive && !m.onBreak; });
+    if (pool.length < 2) return false;             /* always leave the player a thrower */
+    var m = pick(pool); m.onBreak = 2;
+    var c = crewPos(mine, m); ring(c.x, c.y - 10, 28, "rgba(255,255,255,.85)");
+    B.fx.push({ txt: "💤", x: c.x, y: c.y - 50, vy: -40, life: 1.3, col: "#cbd5e0" });
+    g.toast(label.replace("{name}", m.name), "bad");
+    return true;
+  }
   function traitTurn(g, s) {
     var foe = B.foe, P = PRESTIGE[B.idx], msg = null;
     if (s < 0) {                                 /* the player's turn begins */
+      statusTick();
       if (hasT(foe, "hop")) hop(foe);
       if (hasT(foe, "reaper")) B.reaper = 20;
       return;
@@ -438,10 +455,10 @@
       if (ks.length) { var k = pick(ks); mine.ammo[k]--; msg = "Red tape: 1 " + AMMO[k].name + " seized for review"; }
     }
     if (hasT(foe, "flash") && Math.random() < 0.5) { B.blind = true; B.flash = 0.9; msg = msg || "Ring-light flash! No aim guide on your next throw"; }
-    if (hasT(foe, "beat")) { B.haze = true; msg = msg || pick(["Dwayne drops a beat. The air gets hazy.", "Dwayne lights up. Hazy over there.", "Bass drop! You can barely see his raft."]); }
+    if (hasT(foe, "beat")) { B.haze = true; if (Math.random() < 0.4) msg = msg || pick(["Dwayne drops a beat — you can barely see his raft.", "Dwayne lights up. His position's a blur.", "Bass in the air. Hard to tell where he is."]); }
     if (hasT(foe, "kind") && n % 3 === 0) {
-      mine.crew.forEach(function (m) { if (m.alive) m.hp = Math.min(m.max, m.hp + 20); });
-      msg = "Keaton, the Kind patches up your crew (+20). Good game, buddy.";
+      var hurtK = mine.crew.filter(function (m) { return m.alive && m.hp < m.max; }).sort(function (a, c) { return a.hp - c.hp; })[0];
+      if (hurtK) { hurtK.hp = Math.min(hurtK.max, hurtK.hp + 25); var hkc = crewPos(mine, hurtK); B.fx.push({ txt: "+25", x: hkc.x, y: hkc.y - 60, vy: -50, life: 1.1, col: "#9ae6b4" }); say(foe, foe.crew[0], "Good game, buddy.", 1.8); msg = "Keaton patches up " + hurtK.name + " (+25)."; }
     }
     if (hasT(foe, "buyout")) {
       var dead = foe.deck.filter(function (b) { return !b.alive; });
@@ -456,6 +473,44 @@
     if (hasT(foe, "copycat") && B.lastHuman && B.ai && Math.random() < 0.4) {
       var la = B.lastHuman, can = availAmmo(foe, thrower()).some(function (a) { return a.k === la.ammo; });
       B.ai = { ang: la.ang, pow: la.pow, ammo: can ? la.ammo : B.ai.ammo }; msg = "DaManAnders copies your last throw!";
+    }
+    /* ---- Batch 3 prestige friend abilities ---- */
+    if (hasT(foe, "allylight") && n % 3 === 0) {
+      var tgl = mine.crew.filter(function (m) { return m.alive; });
+      if (tgl.length) { B.bolts.push({ x: crewPos(mine, pick(tgl)).x, warn: 1.1 }); B.timer = Math.max(B.timer, 1.6); msg = msg || "Ally calls down lightning!"; }
+    }
+    if (hasT(foe, "break") && Math.random() < 0.3 && exileCrew(g, "Ally sends {name} on break — skipped a turn.")) return;
+    if (hasT(foe, "raid") && Math.random() < 0.3) {
+      var rc2 = 0; mine.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(mine, m); B.fx.push({ txt: pick(["💬", "😂", "🔥", "LUL"]), x: c.x + (Math.random() - 0.5) * 22, y: c.y - 50, vy: -45, life: 1.1, col: "#9f7aea" }); dmgCrew(g, mine, m, 8 + Math.random() * 6, "chat raid"); rc2++; });
+      if (rc2) { sound("error"); msg = msg || "MBusy Raid! Mark's chat spams your crew."; }
+    }
+    if (hasT(foe, "flirt") && !B.flirt && foe.crew[0].alive && foe.crew[0].hp < foe.crew[0].max * 0.6 && Math.random() < 0.5) {
+      B.flirt = 2; B.ai = null; B.timer = 1.4; g.toast("Mark skips his turn to flirt with Hunter…", "good"); return;
+    }
+    if (B.flirt) { B.flirt--; if (B.flirt <= 0) { var mbo = foe.crew[0]; if (mbo.alive) { mbo.hp = Math.min(mbo.max, mbo.hp + 120); var mbc = crewPos(foe, mbo); B.fx.push({ txt: "+120", x: mbc.x, y: mbc.y - 60, vy: -50, life: 1.3, col: "#9ae6b4" }); } g.toast("Mark's back in it, feeling good (+120).", "bad"); } }
+    if (hasT(foe, "ubu") && Math.random() < 0.3 && exileCrew(g, "U-B-U! Goof's bars leave {name} distracted — skipped a turn.")) return;
+    if (hasT(foe, "pig") && n % 4 === 0) {
+      var pcx = mine.x0 + mine.n * PW / 2, ph = 0;
+      mine.crew.forEach(function (m) { if (!m.alive) return; var c = crewPos(mine, m); if (Math.abs(c.x - pcx) < 110) { dmgCrew(g, mine, m, 16, "pig"); if (!m.grease) m.armor0 = m.armor; m.grease = 2; m.armor = (m.armor0 || 1) * 1.1; ph++; } });
+      ring(pcx, deckY(mine) - 20, 82, "rgba(220,120,90,.7)"); B.fx.push({ txt: "🐷", x: pcx, y: deckY(mine) - 80, vy: -28, life: 1.4, col: "#f6ad55" }); sound("blast");
+      if (ph) g.toast("Pig Disrespect! Greased crew take +10% damage from Goof.", "bad");
+    }
+    if (hasT(foe, "basedrop") && n % 4 === 2) {
+      var kk = Math.min(mine.deck.filter(function (b) { return b.alive; }).length, 1 + (Math.random() * 5 | 0)), bl = 0;
+      for (var pj = 0; pj < kk; pj++) { var al = mine.deck.filter(function (b) { return b.alive; }); if (!al.length) break; var bb = pick(al); dmgBlock(mine, bb, 99, blockRect(mine, bb, false)); bl++; }
+      B.flash = Math.max(B.flash, 0.4); sound("blast"); ring(mine.x0 + mine.n * PW / 2, deckY(mine), 72, "rgba(160,120,255,.6)");
+      if (bl) g.toast("Dwayne's base drop! " + bl + " support" + (bl === 1 ? "" : "s") + " blown off your raft.", "bad");
+    }
+    if (hasT(foe, "shiftcover") && n % 4 === 0) {
+      var usedS = {}; foe.walls.forEach(function (w) { usedS[w.col] = 1; }); if (foe.cannon) usedS[foe.cannon.col] = 1;
+      var freeS = foe.deck.filter(function (b) { return b.alive && !usedS[b.i]; }).map(function (b) { return b.i; });
+      if (freeS.length) foe.crew[0].col = pick(freeS);
+      B.aimBuff = 2; if (B.ai) B.ai = planAI(foe); msg = msg || "Keaton shifts cover — cleaner angle on you for 2 turns.";
+    }
+    if (hasT(foe, "eyedrops") && n % 4 === 1) { B.aimBuff = 2; if (B.ai) B.ai = planAI(foe); msg = msg || "Dylan hits the eye drops — locked in for 2 turns."; }
+    if (hasT(foe, "foil") && n % 5 === 0) {
+      var fa = 0; mine.crew.forEach(function (m) { if (!m.alive) return; dmgCrew(g, mine, m, 15 + (Math.random() * 36 | 0), "foil pull"); fa++; });
+      if (fa) { sound("zap"); g.toast("Rare Foil Pull! Independent rolls hit your whole crew.", "bad"); }
     }
     if (msg) g.toast(msg, "info");
   }
@@ -666,7 +721,7 @@
       var dd = simulate(r.side, a, speedOf(r, t, pw), o, target, pick.k === "gull" || r.nowind ? 0 : B.wind);
       if (dd < bestD) { bestD = dd; bestA = a; bestP = pw; }
     }
-    var L = aiLevel(), k = 1 / Math.max(0.4, r.acc || 1), gauss = function () { return (Math.random() + Math.random() + Math.random() - 1.5) / 0.75; };
+    var L = aiLevel(), accEff = (r.acc || 1) * (B.aimBuff > 0 ? 2.2 : 1), k = 1 / Math.max(0.4, accEff), gauss = function () { return (Math.random() + Math.random() + Math.random() - 1.5) / 0.75; };
     if (B.kind === "versus") k = 1;
     return { ang: Math.max(0.1, Math.min(1.45, bestA + gauss() * L.ang * k * Math.PI / 180)), pow: Math.max(0.03, Math.min(1, bestP * (1 + gauss() * L.pow * k))), ammo: pick.k };
   }
