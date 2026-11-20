@@ -1,6 +1,6 @@
 {
   "_help": "The 'Now' card on the hub. If 'slides' has entries, the card is a rotating banner (one slide per project, pips to switch, auto-cycles). Otherwise 'building'/'playing' show as before; a blank title hides an entry. url is optional. art: anyps | wizard | none.",
-  "updated": "2026-11-19",
+  "updated": "2026-11-20",
   "building": {
     "title": "AnyPS native cores",
     "note": "Rebuilding the PS1 and PS2 from scratch inside AnyPS. The PS1 now runs in 4K and widescreen; the PS2's own graphics renderer is coming together.",
@@ -31,9 +31,9 @@
       "accent": "#e0952f"
     },
     {
-      "kind": "In the workshop",
-      "title": "AndersCraft realms",
-      "note": "The realms are down for a short spell while I rebuild the control panel — per-character tools and all — and tune how dungeons scale to your group.",
+      "kind": "In the realms",
+      "title": "The Great Andersian Update",
+      "note": "AndersCraft's biggest patch is live: its own Andersian Mark currency, a crimson transmog set, roaming rares and a daily bounty board, hardcore 'Chosen' titles, and prestige levels past 125. And the editor behind it all is now a free download for other server owners.",
       "url": "/anderscraft/",
       "cta": "See AndersCraft",
       "art": "none",
