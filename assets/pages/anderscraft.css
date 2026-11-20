@@ -635,3 +635,62 @@ body.ac-has-xp{padding-bottom:14px}
 :root:not([data-motion="reduce"]) .ac-svc-tape-run>span{animation:ac-tape 26s linear infinite}
 .ac-realm.ac-is-down .ac-realm-crest{filter:grayscale(.85) brightness(.7) drop-shadow(0 4px 8px #000)}
 @media (max-width:600px){ .ac-realm>.ac-svc-tape{margin:0 -16px} }
+
+/* ============================================================================
+   THE GREAT ANDERSIAN UPDATE (v8): patch-notes chapters, the Chosen road, Echo orb, commands, new loot.
+   ============================================================================ */
+.ac-patch{position:relative;padding:20px 24px 22px;border-radius:6px;border:2px solid var(--wow-brass);background-image:var(--wow-frame);
+  box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,209,0,.08),inset 0 0 40px rgba(0,0,0,.65),0 24px 50px -24px #000}
+.ac-patch-tabs{margin-bottom:16px}
+.ac-pp[hidden]{display:none}
+.ac-pp-intro{margin:0 0 14px;color:var(--text);max-width:70ch}
+.ac-pp-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ac-pp-list li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) auto;gap:4px 16px;align-items:baseline;padding:11px 14px;border-radius:4px;
+  background:linear-gradient(180deg,rgba(26,20,15,.85),rgba(10,8,6,.88));border:1px solid #3d2f16}
+.ac-pp-list b{font-family:var(--display);font-weight:700;color:var(--wow-gold);text-shadow:0 1px 0 #000}
+.ac-pp-list span{color:#d8cdb4;line-height:1.45}
+.ac-live-tag{font-style:normal;font-family:var(--display);font-weight:700;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+  color:#7dff6a;border:1px solid rgba(30,255,0,.4);background:rgba(0,0,0,.4);white-space:nowrap}
+.ac-live-tag.ac-soon{color:#ffd36b;border-color:rgba(255,209,0,.45)}
+.ac-pp-sub{margin:20px 0 10px;font-family:var(--display);font-weight:700;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wow-gold-2)}
+@media (max-width:700px){
+  .ac-patch{padding:16px 14px 18px}
+  .ac-pp-list li{grid-template-columns:1fr auto}
+  .ac-pp-list span{grid-column:1 / -1}
+  .ac-pp-list .ac-live-tag{grid-row:1;grid-column:2;justify-self:end}
+}
+/* the Chosen road: three milestones on a path */
+.ac-chosen-road{list-style:none;margin:0 0 14px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;counter-reset:none}
+.ac-chosen-road li{position:relative;display:grid;justify-items:center;text-align:center;gap:4px;padding:16px 12px 14px;border-radius:4px;
+  background:linear-gradient(180deg,rgba(40,8,12,.85),rgba(12,6,7,.9));border:1px solid rgba(205,66,87,.45)}
+.ac-chosen-road li+li::before{content:"";position:absolute;left:-11px;top:38px;width:12px;height:2px;background:var(--wow-maroon)}
+.ac-road-lvl{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;font-family:var(--display);font-weight:900;font-size:1rem;color:#1a1104;
+  background:radial-gradient(circle at 35% 30%,#ffe9a8,#e3b04b 60%,#8a5f12);box-shadow:0 0 0 2px #000,0 0 16px rgba(255,209,0,.35)}
+.ac-chosen-road b{font-family:var(--display);font-weight:900;color:#ffd9d0;font-size:1.05rem}
+.ac-chosen-road span:last-child{color:var(--muted);font-size:.95rem;line-height:1.35}
+@media (max-width:600px){ .ac-chosen-road{grid-template-columns:1fr} .ac-chosen-road li+li::before{display:none} }
+/* Titan Echo orb + slider */
+.ac-echo{--echo:.1;display:flex;align-items:center;gap:18px;margin:0 0 14px;padding:14px 16px;border-radius:4px;border:1px solid #3d2f16;
+  background:linear-gradient(180deg,rgba(9,12,32,.9),rgba(4,6,18,.92))}
+.ac-echo-orb{flex:none;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:1.6rem;color:#fff;
+  text-shadow:0 2px 0 #000,0 0 12px #9ad8ff;background:radial-gradient(circle at 40% 35%,#cfefff,#3a7fd0 45%,#101a40 75%);
+  box-shadow:0 0 0 2px #000,0 0 calc(10px + 40px * var(--echo)) calc(2px + 10px * var(--echo)) rgba(110,190,255,calc(.35 + .5 * var(--echo)))}
+:root:not([data-motion="reduce"]) .ac-echo-orb{animation:ac-echo-pulse 3s ease-in-out infinite}
+@keyframes ac-echo-pulse{50%{filter:brightness(1.18)}}
+.ac-echo-body{flex:1 1 auto;min-width:0}
+#ac-patch .ac-echo-l{margin:0 0 6px;color:var(--wow-gold-2)}
+#ac-echo-range{width:100%;accent-color:#5aa7ff;margin:0;padding:0;border:0;background:none;box-shadow:none}
+.ac-echo-out{margin:6px 0 0;color:#cfe6ff}
+/* commands */
+.ac-cmds{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ac-cmds li{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:8px 12px;border-radius:4px;border:1px solid #3d2f16;background:rgba(0,0,0,.35)}
+.ac-cmds li>code{color:var(--wow-gold);min-width:6.5em}
+.ac-cmds li>span{flex:1 1 14em;color:#d8cdb4}
+.ac-cmds .ac-cmd-copy{margin:0;width:auto;min-height:34px;padding:0 14px}
+/* new loot */
+.ac-loot-h{margin:30px 0 2px;text-align:center;font-family:var(--display);font-weight:900;font-size:1.3rem;letter-spacing:.06em;color:var(--wow-gold);text-shadow:0 2px 0 #000}
+.ac-loot-lede{text-align:center;margin:0 auto 14px}
+@media (max-width:700px){
+  .ac-patch-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px;margin-inline:-4px;padding-inline:4px}
+  .ac-patch-tabs .ac-tab{flex:none}
+}

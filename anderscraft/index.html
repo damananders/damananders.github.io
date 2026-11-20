@@ -94,7 +94,7 @@
 <link rel="stylesheet" href="/assets/chrome.css" />
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
-<link rel="stylesheet" href="/assets/pages/anderscraft.css?v=7" />
+<link rel="stylesheet" href="/assets/pages/anderscraft.css?v=8" />
 <!-- /site:head -->
 </head>
 <body>
@@ -152,12 +152,13 @@
       <p class="ac-summary" id="ac-summary" role="status" aria-live="polite" hidden></p>
       <ul class="ac-facts">
         <li><b>Two realms</b> &mdash; a main realm with player bots, and Andersian Hardcore with one life</li>
-        <li><b>Level 125</b> &mdash; the journey keeps going after 80</li>
+        <li><b>Level 125</b> &mdash; and past it, Titan Echoes that keep counting</li>
         <li><b>Every race, every class</b> &mdash; Goblins and Worgen included</li>
         <li><b>Works solo</b> &mdash; bots on the main realm can fill out your group</li>
       </ul>
       <div class="ac-links" role="group" aria-label="On this page">
         <a href="#ac-realms">Realms</a>
+        <a href="#ac-update">The Update</a>
         <a href="#ac-custom">What's custom</a>
         <a href="#ac-play">How to play</a>
         <a href="#ac-rules">Rules</a>
@@ -311,6 +312,8 @@
             <li>Transmog, account-wide mounts and a bigger bank</li>
             <li>Mythic+ dungeons and cross-faction battlegrounds</li>
             <li>An auction house a bot keeps stocked</li>
+            <li>Andersian Marks, the Exchange, roaming rares, a daily Bounty Board and hidden caches</li>
+            <li>Titan Echoes: prestige levels past 125</li>
           </ul>
         </div>
       </div>
@@ -360,6 +363,8 @@
             <li>A single life that has to mean something</li>
             <li>No bots: you walk alone as one of Azeroth's Chosen</li>
             <li>Every death is final, so every level is earned</li>
+            <li>Take the Chosen oath with <code>.chosen</code>: titles, tabards and an eternal aura at 60, 80 and 125</li>
+            <li>The Fallen memorial in Stormwind and Orgrimmar remembers every death</li>
             <li>The same custom world: any race as any class, Goblins and Worgen included</li>
             <li>Any gear once you buy the proficiency, transmog and a bigger bank</li>
           </ul>
@@ -373,6 +378,111 @@
     </div>
   </dialog>
 
+  <section class="ac-sec" id="ac-update" aria-labelledby="ac-update-h" data-reveal>
+    <div class="ac-head">
+      <div class="eyebrow">Patch notes &middot; November 2026</div>
+      <h2 class="ac-h" id="ac-update-h">The Great Andersian Update</h2>
+      <p class="ac-lede">A new currency, new faces in the capitals, things roaming the wilds, rewards for the brave, and a road past level 125. Pick a chapter.</p>
+    </div>
+    <div class="ac-patch" id="ac-patch">
+      <div class="ac-tabs ac-patch-tabs" role="tablist" aria-label="Update chapters">
+        <button type="button" class="ac-tab" role="tab" id="ac-pt-economy" aria-controls="ac-pp-economy" aria-selected="true">Marks &amp; the Exchange</button>
+        <button type="button" class="ac-tab" role="tab" id="ac-pt-npcs" aria-controls="ac-pp-npcs" aria-selected="false" tabindex="-1">New faces</button>
+        <button type="button" class="ac-tab" role="tab" id="ac-pt-events" aria-controls="ac-pp-events" aria-selected="false" tabindex="-1">World events</button>
+        <button type="button" class="ac-tab" role="tab" id="ac-pt-chosen" aria-controls="ac-pp-chosen" aria-selected="false" tabindex="-1">Azeroth's Chosen</button>
+        <button type="button" class="ac-tab" role="tab" id="ac-pt-echoes" aria-controls="ac-pp-echoes" aria-selected="false" tabindex="-1">Titan Echoes</button>
+        <button type="button" class="ac-tab" role="tab" id="ac-pt-qol" aria-controls="ac-pp-qol" aria-selected="false" tabindex="-1">Quality of life</button>
+      </div>
+
+      <div class="ac-panel ac-pp" role="tabpanel" id="ac-pp-economy" aria-labelledby="ac-pt-economy">
+        <p class="ac-pp-intro">AndersCraft has its own coin now. Earn it by playing, spend it on things gold can't buy.</p>
+        <ul class="ac-pp-list">
+          <li><b>Andersian Mark</b><span>The new server currency. You earn it at level milestones, from roaming rares, from the Bounty Board and from hidden caches.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>The Andersian Exchange</b><span>Marrek, Keeper of the Exchange, trades your Marks for the Regalia of the Andersian (30 Marks a piece) and Heartflame (50 Marks). Find him at the Stormwind and Orgrimmar banks.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Regalia of the Andersian</b><span>The server's signature transmog set: eight pieces of crimson, epic quality.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Heartflame, the Maker's Relic</b><span>A relic any class can equip, with Stamina and critical strike.</span><i class="ac-live-tag">Live</i></li>
+        </ul>
+      </div>
+
+      <div class="ac-panel ac-pp" role="tabpanel" id="ac-pp-npcs" aria-labelledby="ac-pt-npcs" hidden>
+        <p class="ac-pp-intro">Four new residents at the Stormwind and Orgrimmar banks.</p>
+        <ul class="ac-pp-list">
+          <li><b>Vaultkeeper Thessaly</b><span>A banker with extra storage, for when the regular vault is full of things you will definitely need one day.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Mirra, the Shapewright</b><span>A barber for hair, face and skin.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Marrek, Keeper of the Exchange</b><span>Trades Andersian Marks for the Regalia and Heartflame.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>The Fallen</b><span>A memorial that names every fallen Chosen of the hardcore realm, newest first: their name, their level, and what killed them.</span><i class="ac-live-tag">Live</i></li>
+        </ul>
+      </div>
+
+      <div class="ac-panel ac-pp" role="tabpanel" id="ac-pp-events" aria-labelledby="ac-pt-events" hidden>
+        <p class="ac-pp-intro">Things to hunt, hand in and dig up, all paying out in Marks.</p>
+        <ul class="ac-pp-list">
+          <li><b>Roaming rares</b><span>Old Scorchmaw, the Tallgrass Phantom and Gnashclaw the Patient wander Kalimdor. They scale to the zone, and each drops 3 to 6 Marks.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>The Bounty Board</b><span>A new bounty every day: bring the day's item for Marks. In Stormwind and Orgrimmar.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Hidden Andersian Caches</b><span>Chests tucked away in the open world. Each holds 5 to 10 Marks, with a chance at a Regalia piece or Heartflame.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>The Fallen memorial</b><span>Every hardcore death is remembered, whether it was a dragon or a very determined boar.</span><i class="ac-live-tag">Live</i></li>
+        </ul>
+      </div>
+
+      <div class="ac-panel ac-pp" role="tabpanel" id="ac-pp-chosen" aria-labelledby="ac-pt-chosen" hidden>
+        <p class="ac-pp-intro">On Andersian Hardcore, type <code>.chosen</code> to take the oath. Survive, and the world takes notice.</p>
+        <ol class="ac-chosen-road">
+          <li><span class="ac-road-lvl">60</span><b>the Resolute</b><span>Title and the Sigil of the Lone Path tabard</span></li>
+          <li><span class="ac-road-lvl">80</span><b>the Unyielding</b><span>Title and the Crest of the Unyielding tabard</span></li>
+          <li><span class="ac-road-lvl">125</span><b>the Eternal</b><span>Title, the Aegis of the Alone tabard, and an eternal aura that glows around you</span></li>
+        </ol>
+        <ul class="ac-pp-list">
+          <li><b>The Voice</b><span>A narrator whispers to you at levels 10, 50, 80 and 125, on every realm.</span><i class="ac-live-tag">Live</i></li>
+        </ul>
+      </div>
+
+      <div class="ac-panel ac-pp" role="tabpanel" id="ac-pp-echoes" aria-labelledby="ac-pt-echoes" hidden>
+        <p class="ac-pp-intro">Level 125 is the summit, not the end. Past it, your experience keeps flowing into <b>Titan Echoes</b>: prestige levels that keep counting up for as long as you keep playing.</p>
+        <div class="ac-echo" id="ac-echo">
+          <div class="ac-echo-orb" aria-hidden="true"><span id="ac-echo-n">0</span></div>
+          <div class="ac-echo-body">
+            <label class="ac-echo-l" for="ac-echo-range">Try it: how many Echoes?</label>
+            <input type="range" id="ac-echo-range" min="0" max="50" value="5" />
+            <p class="ac-echo-out" id="ac-echo-out" aria-live="polite">5 Echoes</p>
+          </div>
+        </div>
+        <ul class="ac-pp-list">
+          <li><b>Earning Echoes</b><span>Experience past level 125 fills Echo levels.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Titan's Echo aura</b><span>+4 to all stats for every Echo you hold.</span><i class="ac-live-tag ac-soon">Coming soon</i></li>
+        </ul>
+      </div>
+
+      <div class="ac-panel ac-pp" role="tabpanel" id="ac-pp-qol" aria-labelledby="ac-pt-qol" hidden>
+        <p class="ac-pp-intro">The small things that make the long road kinder.</p>
+        <ul class="ac-pp-list">
+          <li><b>A world that keeps up</b><span>Monsters in the open world scale up to the lowest-level real player in the zone, so old zones stay worth fighting in.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Bigger bags</b><span>Every new character starts with Der's Fanny Pack (28 slots). The Local Zip Mylar (36 slots) is sold at the capital bag vendors.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Lore books</b><span>Six readable books, starting with A Word from the Maker, which every new character carries.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>PvP ranks, renamed</b><span>Fourteen ranks from Recruit to The Andersian, earned by honorable kills.</span><i class="ac-live-tag">Live</i></li>
+          <li><b>Mix-and-match transmog</b><span>Armor and weapons can transmog across types.</span><i class="ac-live-tag">Live</i></li>
+        </ul>
+        <h3 class="ac-pp-sub">Handy commands</h3>
+        <ul class="ac-cmds">
+          <li><code>/ac</code><span>The illustrated in-game guide</span><button type="button" class="ac-btn ac-cmd-copy" data-copy="/ac" data-copy-msg="Copied /ac">Copy</button></li>
+          <li><code>.chat on</code><span>Join world chat (<code>.chat off</code> to leave)</span><button type="button" class="ac-btn ac-cmd-copy" data-copy=".chat on" data-copy-msg="Copied .chat on">Copy</button></li>
+          <li><code>.ac top</code><span>Leaderboards (also <code>firsts</code>, <code>deaths</code>, <code>daily</code>, <code>features</code>)</span><button type="button" class="ac-btn ac-cmd-copy" data-copy=".ac top" data-copy-msg="Copied .ac top">Copy</button></li>
+          <li><code>.chosen</code><span>Take the Chosen oath (Andersian Hardcore)</span><button type="button" class="ac-btn ac-cmd-copy" data-copy=".chosen" data-copy-msg="Copied .chosen">Copy</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="ac-loot-h">New loot</h3>
+    <p class="ac-lede ac-loot-lede">Hover or tap to inspect.</p>
+    <ul class="ac-tiles ac-loot">
+      <li class="ac-tile" data-ac-q="epic" data-ac-flavor="Eight pieces of crimson. Zero pieces of subtlety."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l3-5h8l3 5-3 2v9H8v-9z"/><path d="M12 4v16"/></svg><div><b>Regalia of the Andersian</b><span>Eight-piece crimson transmog set. 30 Marks a piece at the Exchange.</span></div></li>
+      <li class="ac-tile" data-ac-q="epic" data-ac-flavor="Fits every class. Fits every pocket. Still warm."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8z"/></svg><div><b>Heartflame, the Maker's Relic</b><span>A relic for any class: Stamina and critical strike. 50 Marks.</span></div></li>
+      <li class="ac-tile" data-ac-q="rare" data-ac-flavor="Marrek counts every one. Twice."><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7l1.5 3.2 3.5.4-2.6 2.3.8 3.4L12 14.6 8.8 16.3l.8-3.4L7 10.6l3.5-.4z"/></svg><div><b>Andersian Mark</b><span>The server's own currency. Stacks to 9,999.</span></div></li>
+      <li class="ac-tile" data-ac-q="epic" data-ac-flavor="Worn by those who reached 125 on one life. Ask them how. They will tell you. For hours."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v12l-5 6-5-6z"/><path d="M12 7v7M9.5 10h5"/></svg><div><b>Aegis of the Alone</b><span>Tabard for Chosen who reach level 125 on Andersian Hardcore.</span></div></li>
+      <li class="ac-tile" data-ac-q="uncommon" data-ac-flavor="28 slots of pure confidence."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c3-2 15-2 18 0v4c-3 2-15 2-18 0z"/><path d="M9 12v5M15 12v5"/></svg><div><b>Der's Fanny Pack</b><span>28-slot bag every new character starts with.</span></div></li>
+      <li class="ac-tile" data-ac-q="rare" data-ac-flavor="36 slots. Smells faintly of the auction house."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12l1 14H5z"/><path d="M6 9h12M9 6V4h6v2"/></svg><div><b>Local Zip Mylar</b><span>36-slot bag, the biggest the client allows. Sold at the capital bag vendors.</span></div></li>
+    </ul>
+  </section>
+
   <section class="ac-sec" id="ac-custom" aria-labelledby="ac-custom-h" data-reveal>
     <div class="ac-head">
       <div class="eyebrow">Built on AzerothCore</div>
@@ -380,7 +490,7 @@
       <p class="ac-lede">It is Wrath of the Lich King 3.3.5a underneath, with these changes on top. Hover or tap one to inspect it, like loot.</p>
     </div>
     <ul class="ac-tiles">
-      <li class="ac-tile" data-ac-q="legendary" data-ac-flavor="Forty-five more levels. Your keyboard has been warned."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11l6-6 6 6M6 18l6-6 6 6"/></svg><div><b>Level 125</b><span>The level cap is raised to 125, so the journey keeps going after 80.</span></div></li>
+      <li class="ac-tile" data-ac-q="legendary" data-ac-flavor="Forty-five more levels. Your keyboard has been warned."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11l6-6 6 6M6 18l6-6 6 6"/></svg><div><b>Level 125</b><span>The level cap is raised to 125, and past it your experience turns into Titan Echoes.</span></div></li>
       <li class="ac-tile" data-ac-q="epic" data-ac-flavor="Yes, a Tauren Rogue. No, nobody will hear you coming. You are a cow."><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9" r="4"/><circle cx="16" cy="9" r="4"/><path d="M4 20c.6-2.4 2.2-4 4-4s3.4 1.6 4 4c.6-2.4 2.2-4 4-4s3.4 1.6 4 4"/></svg><div><b>Any race, any class</b><span>Every race can be every class, Goblins and Worgen included.</span></div></li>
       <li class="ac-tile" data-ac-q="epic" data-ac-flavor="Two two-handers at once. Physics was consulted and declined to comment."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l11 11M20 4L9 15M13 17l4-4M7 13l4 4M5 19l3-3M19 19l-3-3"/></svg><div><b>Any gear</b><span>Buy the proficiency and use the weapon. Dual-wield two-handers, relics for everyone.</span></div></li>
       <li class="ac-tile" data-ac-q="epic" data-ac-flavor="The gryphon master is furious about this."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4C12 4 7 8.5 7 16M20 4c0 7-4.5 12-12 12M4 20l5.5-5.5M13 11H8.5M16.5 7.5H11"/></svg><div><b>Fly anywhere</b><span>Old-world flying, and from level 85 you can fly anywhere.</span></div></li>
@@ -455,11 +565,11 @@
     </div>
     <div class="ac-faq">
       <details class="ac-q"><summary>Rates and levelling</summary>
-        <div class="ac-a"><ul><li>Rates are around 2x on the main realm.</li><li>The level cap is 125, with combat tuned for the levels past 80.</li><li>Old-world flying is on, and from level 85 you can fly anywhere.</li></ul></div></details>
+        <div class="ac-a"><ul><li>Rates are around 2x on the main realm.</li><li>The level cap is 125, with combat tuned for the levels past 80. Past 125, experience earns Titan Echoes.</li><li>Open-world monsters scale up to the lowest-level real player in the zone.</li><li>Old-world flying is on, and from level 85 you can fly anywhere.</li></ul></div></details>
       <details class="ac-q"><summary>The two realms</summary>
         <div class="ac-a"><ul><li><b>Main realm:</b> player bots keep the world busy and can fill out your group, and dungeons scale to your group size.</li><li><b>Andersian Hardcore:</b> one life and no bots.</li></ul></div></details>
       <details class="ac-q"><summary>Custom content</summary>
-        <div class="ac-a"><ul><li>Every race can be every class, Goblins and Worgen included.</li><li>Any gear once you buy the proficiency, with transmog to keep the look you like.</li><li>Account-wide mounts, a bigger bank, cross-faction battlegrounds and Mythic+ dungeons.</li><li>An auction house kept stocked by a bot.</li></ul></div></details>
+        <div class="ac-a"><ul><li>Every race can be every class, Goblins and Worgen included.</li><li>Any gear once you buy the proficiency, with transmog to keep the look you like.</li><li>Account-wide mounts, a bigger bank, cross-faction battlegrounds and Mythic+ dungeons.</li><li>An auction house kept stocked by a bot.</li><li>Andersian Marks to earn and spend at the Exchange, plus roaming rares, a daily Bounty Board and hidden caches.</li></ul></div></details>
       <details class="ac-q"><summary>House rules</summary>
         <div class="ac-a"><ul><li>Be decent to the other players. It is a small server and everyone knows everyone.</li><li>No cheats, hacks or third-party tools that play for you.</li><li>Found a bug that gives an unfair edge? Report it in Discord instead of farming it.</li><li>On Andersian Hardcore, one life means one life.</li><li>Nothing here is for sale. This is a fan-run, non-commercial server.</li></ul></div></details>
     </div>
@@ -479,12 +589,18 @@
         <div class="ac-a"><p>Yes. On the main realm bots can fill out your group, and dungeons scale to your group size, so it works solo.</p></div></details>
       <details class="ac-q"><summary>What does hardcore mean here?</summary>
         <div class="ac-a"><p>Andersian Hardcore is the second realm. You get one life, and there are no bots: you walk alone as one of Azeroth's Chosen.</p></div></details>
+      <details class="ac-q"><summary>What are Andersian Marks?</summary>
+        <div class="ac-a"><p>The server's own currency. You earn Marks at level milestones, from the roaming rares on Kalimdor, from the daily Bounty Board and from hidden caches. Spend them with Marrek at the Stormwind or Orgrimmar bank on the Regalia of the Andersian transmog set or Heartflame, a relic any class can use.</p></div></details>
+      <details class="ac-q"><summary>What is Azeroth's Chosen?</summary>
+        <div class="ac-a"><p>An oath you can take on Andersian Hardcore by typing <code>.chosen</code>. Chosen earn a title and tabard at levels 60, 80 and 125 (the Resolute, the Unyielding, the Eternal), and an eternal aura at 125. If you fall, the Fallen memorial remembers you.</p></div></details>
+      <details class="ac-q"><summary>What happens after level 125?</summary>
+        <div class="ac-a"><p>Your experience keeps going into Titan Echoes, prestige levels with no cap. Earning them is live now. The aura that gives +4 to all stats per Echo is coming soon.</p></div></details>
       <details class="ac-q"><summary>The sign-up says it is offline. What now?</summary>
         <div class="ac-a"><p>The sign-up service runs on the server PC, so sign-ups only work while it is on. Try again later, or check <a class="ac-discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener">Discord</a>.</p></div></details>
       <details class="ac-q"><summary>I forgot my password.</summary>
         <div class="ac-a"><p>There is no password reset on this site. Ask in <a class="ac-discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener">Discord</a>.</p></div></details>
       <details class="ac-q"><summary>What makes this different from a stock server?</summary>
-        <div class="ac-a"><p>It is WotLK 3.3.5a (build 12340) on an AzerothCore-based server, with a lot changed: a level cap of 125, any race as any class including Goblins and Worgen, any gear once you buy the proficiency, old-world flying, transmog, account-wide mounts, dungeons that scale to your group, cross-faction battlegrounds, a bigger bank, Mythic+ dungeons and an auction house kept stocked by a bot.</p></div></details>
+        <div class="ac-a"><p>It is WotLK 3.3.5a (build 12340) on an AzerothCore-based server, with a lot changed: a level cap of 125, any race as any class including Goblins and Worgen, any gear once you buy the proficiency, old-world flying, transmog, account-wide mounts, dungeons that scale to your group, cross-faction battlegrounds, a bigger bank, Mythic+ dungeons, an auction house kept stocked by a bot, its own currency (Andersian Marks) with world events to earn it, and Titan Echoes past level 125.</p></div></details>
     </div>
   </section>
 
@@ -544,7 +660,7 @@
 <script defer src="/assets/audio.js"></script>
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/pages/anderscraft.js?v=5"></script>
+<script defer src="/assets/pages/anderscraft.js?v=6"></script>
 <!-- /site:scripts -->
 </body>
 </html>
