@@ -694,3 +694,30 @@ body.ac-has-xp{padding-bottom:14px}
   .ac-patch-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px;margin-inline:-4px;padding-inline:4px}
   .ac-patch-tabs .ac-tab{flex:none}
 }
+
+/* ---- AndersCraft Studio: a quiet side offering under the FAQ, never louder than the server ---- */
+.ac-studio{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px 24px;align-items:center;padding:22px 24px}
+.ac-studio-crest{width:64px;height:72px;flex:none;opacity:.9}
+.ac-studio-crest svg{width:100%;height:100%}
+.ac-studio-crest .ac-cr-shield{fill:#1c1611;stroke:var(--wow-brass);stroke-width:2}
+.ac-studio-crest .ac-cr-inner{fill:none;stroke:rgba(227,176,75,.35);stroke-width:1}
+.ac-studio-crest .ac-cr-mark{fill:none;stroke:var(--wow-gold-2);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ac-studio-k{margin:0;font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.03em;color:var(--wow-gold-2)}
+.ac-studio-d{margin:6px 0 0;color:#d8cdb4;max-width:62ch;line-height:1.5}
+.ac-studio-tags{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.ac-studio-tags li{font-size:.84rem;padding:3px 9px;border-radius:3px;border:1px solid #3d2f16;background:rgba(0,0,0,.35);color:#cbbd9c}
+.ac-studio-meta{margin:10px 0 0;font-size:.86rem;color:var(--muted)}
+.ac-studio-cta{display:grid;justify-items:center;gap:8px;text-align:center;max-width:240px}
+.ac-studio-dl{white-space:nowrap}
+.ac-studio-note{font-size:.8rem;color:var(--muted);line-height:1.35}
+.ac-studio-src{font-size:.86rem;color:var(--wow-gold-2)}
+.ac-studio-src:hover{color:var(--wow-gold)}
+@media (max-width:860px){
+  .ac-studio{grid-template-columns:auto minmax(0,1fr)}
+  .ac-studio-cta{grid-column:1 / -1;justify-items:start;text-align:left;max-width:none}
+}
+@media (max-width:600px){
+  .ac-studio{grid-template-columns:1fr;padding:18px 16px}
+  .ac-studio-crest{width:48px;height:54px}
+  .ac-studio-dl{width:100%}
+}

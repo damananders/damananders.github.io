@@ -349,3 +349,6 @@
   .hb-ns__body{padding:16px 18px 20px}
 }
 .hb-ns__arr{margin-left:.45em;transition:translate .15s}.hb-ns__cta:hover .hb-ns__arr{translate:3px 0}
+
+/* AndersCraft Studio quick-access tile: AndersCraft orange, same size as its neighbours */
+.hb-tile--studio{--tile-c:var(--craft,#ff7a1f)}
