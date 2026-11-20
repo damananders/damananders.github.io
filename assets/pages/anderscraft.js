@@ -394,6 +394,7 @@
       { id: "alts", name: "Altoholic", desc: "Roll ten heroes.", pts: 5 },
       { id: "ding", name: "Ding!", desc: "Reach level 125 on the XP bar.", pts: 10 },
       { id: "signup", name: "Welcome to Azeroth", desc: "Create your AndersCraft account.", pts: 25 },
+      { id: "patch", name: "Patch Notes Scholar", desc: "Read every chapter of the Great Andersian Update.", pts: 10 },
       { id: "murloc", name: "Mrgllglglgl!", desc: "Find the murloc hiding in the title.", pts: 5, hidden: true }
     ];
     var listeners = [], queue = [], showing = false;
@@ -804,4 +805,42 @@
     document.addEventListener("visibilitychange", function () { if (document.hidden) { clearTimeout(timer); timer = 0; } else run(); });
     run();
   }, "ac-maintenance");
+
+  /* ---------- The Great Andersian Update: chapter tabs + the Titan Echo slider ---------- */
+  Site.ready(function () {
+    var box = $("#ac-patch"); if (!box) return;
+    var tabs = $all('[role="tab"]', box), panels = tabs.map(function (t) { return document.getElementById(t.getAttribute("aria-controls")); });
+    var KEY = "ac.patchRead", read = Site.store.get(KEY, {}); if (!read || typeof read !== "object") read = {};
+    function select(i, focus, quiet) {
+      tabs.forEach(function (t, k) {
+        var on = k === i;
+        t.setAttribute("aria-selected", on ? "true" : "false"); t.setAttribute("tabindex", on ? "0" : "-1");
+        if (panels[k]) panels[k].hidden = !on;
+      });
+      if (focus) tabs[i].focus();
+      if (!quiet) Site.sfx("tap");
+      read[tabs[i].id] = true; Site.store.set(KEY, read);
+      if (tabs.every(function (t) { return read[t.id]; })) Ach.award("patch");
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { select(i, false); });
+      t.addEventListener("keydown", function (e) {
+        var n = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : null;
+        if (n == null) return; e.preventDefault(); select((n + tabs.length) % tabs.length, true);
+      });
+    });
+    select(0, false, true);
+
+    var range = $("#ac-echo-range"), out = $("#ac-echo-out"), orb = $("#ac-echo-n"), echo = $("#ac-echo");
+    if (range && out && orb) {
+      var paint = function () {
+        var n = parseInt(range.value, 10) || 0;
+        orb.textContent = String(n);
+        out.textContent = n === 0 ? "No Echoes yet. Reach level 125 first." :
+          n + (n === 1 ? " Echo" : " Echoes") + " = +" + (n * 4) + " to every stat, once the Titan's Echo aura arrives.";
+        if (echo) echo.style.setProperty("--echo", String(Math.min(1, n / 50)));
+      };
+      range.addEventListener("input", paint); paint();
+    }
+  }, "ac-update");
 })();
