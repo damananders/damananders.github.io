@@ -1,4 +1,4 @@
-# Rebuilds the "Review Score" arcade case pool (assets/data/rop-cases.json): covered games from the Rate-O-Pedia
+# Rebuilds the "Review Score" arcade case pool (assets/data/rop-cases.json): covered games from the Wiki-Chip Dex
 # info cards, ranked by Wikidata popularity. Runs when the builder changes, monthly, or by hand.
 name: Arcade case pool
 on:

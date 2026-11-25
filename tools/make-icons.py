@@ -1,5 +1,5 @@
 """tools/make-icons.py: draws every site icon (favicons, app icons, logo.svg) as Anders' face inside a ring split in
-thirds: Rate-O-Pedia green (top), AnyPS blue (right), AndersCraft orange (left).
+thirds: Wiki-Chip Dex green (top), AnyPS blue (right), AndersCraft orange (left).
 Run from the repo root:  python3 tools/make-icons.py   (needs Pillow). The face comes from assets/icons/face.png."""
 import base64, io, math, os
 from PIL import Image, ImageDraw

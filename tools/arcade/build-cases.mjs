@@ -1,6 +1,6 @@
 // tools/arcade/build-cases.mjs — builds assets/data/rop-cases.json, the case pool for the "Review Score" arcade game.
 //
-// Only games that have real box art in the Rate-O-Pedia info cards (assets/data/gameinfo, field "a") are used.
+// Only games that have real box art in the Wiki-Chip Dex info cards (assets/data/gameinfo, field "a") are used.
 // Popularity = Wikidata sitelink count (how many Wikipedias have an article on the game), looked up in batches
 // from query.wikidata.org. If that service can't be reached, a local fallback rank is used instead (has a
 // Wikipedia article, length of its description, number of platforms), and the file says so in "rank".
@@ -9,7 +9,7 @@
 //   rnd: a random spread of every other covered game, ~20%
 //
 // Each entry is [id, title, art] where art is the info card's "a" value (resolved to a URL by the game).
-// Scores are not stored: the game reads live averages from Rate-O-Pedia's public game_scores view at round start.
+// Scores are not stored: the game reads live averages from Wiki-Chip Dex's public game_scores view at round start.
 //
 // Run: node tools/arcade/build-cases.mjs [--offline]       (also run by .github/workflows/arcade-cases.yml)
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
