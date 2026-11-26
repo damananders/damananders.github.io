@@ -19,7 +19,7 @@ const CARDS = [
   { file: "discord", kicker: "Friends of DaManAnders", title: "Come hang out", sub: "Go-live alerts, new-review feeds and a place to talk about the projects. The Discord for everything Anders.", accent: "#5865f2" },
   { file: "arcade", kicker: "Arcade", title: "Play something", sub: "Little browser games tucked into the site — row the boat home, stamp review scores, and more to come.", accent: "#cd4257" },
   { file: "andersmod", kicker: "Live modding tool · Windows", title: "AndersMod Studio", sub: "Find values, make cheats and build mod tables for single-player PC games. Games with anti-cheat are never touched.", accent: "#f2a93b", bg: "assets/andersmod/studio.jpg" },
-  { file: "ramses", kicker: "Personal AI agent · Windows", title: "Ramses", sub: "Your own AI assistant that runs on your PC: chats, files, code, pictures and boards, offline by default.", accent: "#3DDC84", bg: "assets/ramses/chat.jpg" },
+  { file: "ramses", kicker: "Personal AI agent · Windows", title: "Ramses", sub: "Your own AI assistant that runs on your PC: chats, files, code, pictures and boards, offline by default.", accent: "#d4af37", bg: "assets/ramses/chat.jpg" },
   { file: "trophies", kicker: "Trophy cabinet", title: "Collect them all", sub: "Hidden trophies across the whole site — secret words, cheat codes and milestones. See how many you can find.", accent: "#f0b065" }
 ];
 const b64 = f => fs.readFileSync(path.join(root, f)).toString("base64");

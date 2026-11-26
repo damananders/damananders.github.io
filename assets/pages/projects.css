@@ -69,7 +69,7 @@
  * ===================================================================================================== */
 body.lb-page{background:#0d080b;
   background-image:
-    radial-gradient(700px 420px at 12% 4%,rgba(61,220,132,.16),transparent 62%),
+    radial-gradient(700px 420px at 12% 4%,rgba(212,175,55,.16),transparent 62%),
     radial-gradient(640px 420px at 58% -6%,rgba(255,122,31,.13),transparent 62%),
     radial-gradient(640px 460px at 100% 10%,rgba(61,139,255,.15),transparent 62%),
     radial-gradient(1200px 600px at 50% 115%,rgba(205,66,87,.22),transparent 62%)}
@@ -77,7 +77,7 @@ body.lb-page{background:#0d080b;
 .lb-kicker{margin:0;font:600 .74rem/1 var(--sx-mono,var(--mono));letter-spacing:.2em;text-transform:uppercase;color:var(--sx-accent,#cd4257);
   padding:8px 14px;border-radius:999px;background:color-mix(in srgb,var(--sx-accent,#cd4257) 14%,transparent)}
 .lb-h1{margin:4px 0 0;font:800 clamp(2.2rem,6vw,3.9rem)/1.02 var(--sx-display,var(--display));letter-spacing:-.03em}
-.lb-h1 span{background:linear-gradient(90deg,#3DDC84,#ff9a4d 50%,#5aa2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lb-h1 span{background:linear-gradient(90deg,#e8c766,#ff9a4d 50%,#5aa2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lb-lead{margin:6px 0 0;max-width:56ch;color:var(--sx-muted,var(--muted));font-size:1.08rem;line-height:1.55}
 
 /* featured trio: Ramses spans the full width, AndersCraft + AnyPS share the row under it */
@@ -89,7 +89,7 @@ body.lb-page{background:#0d080b;
 .lb-big:hover,.lb-big:focus-visible{transform:translateY(-4px);outline:none;
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 0 0 2px color-mix(in srgb,var(--c) 70%,transparent),0 40px 80px -32px var(--c)}
 .lb-big:focus-visible{outline:2px solid var(--c);outline-offset:4px}
-.lb-big--ramses{--c:#3DDC84}.lb-big--craft{--c:var(--craft,#ff7a1f)}.lb-big--anyps{--c:var(--anyps,#3d8bff)}
+.lb-big--ramses{--c:#d4af37}.lb-big--craft{--c:var(--craft,#ff7a1f)}.lb-big--anyps{--c:var(--anyps,#3d8bff)}
 .lb-big__art{position:relative;height:190px;overflow:hidden;background:#111 center/cover no-repeat}
 .lb-big__art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,color-mix(in srgb,var(--c) 7%,rgba(16,13,17,.98)))}
 .lb-big__art img,.lb-big__art video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--sx-ease,ease)}

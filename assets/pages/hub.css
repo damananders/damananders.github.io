@@ -353,7 +353,7 @@
 /* AndersCraft Studio quick-access tile: AndersCraft orange, same size as its neighbours */
 .hb-tile--studio{--tile-c:var(--craft,#ff7a1f)}
 .hb-tile--andersmod{--tile-c:#f2a93b}
-.hb-tile--ramses{--tile-c:#3DDC84}
+.hb-tile--ramses{--tile-c:#d4af37}
 
 /* ---- The Project Library button: one big way into everything else (replaces the old avenue cards + tiles).
  * Frosted glass, no hard edge: a soft accent glow, a little fan of project icons in their own colours, and an arrow
@@ -361,7 +361,7 @@
 .hb-lib{margin-top:40px}
 .hb-lib__btn{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:26px;
   padding:30px 34px;border-radius:28px;text-decoration:none;color:var(--sx-text);text-shadow:none;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--sx-accent) 22%,rgba(16,12,16,.78)),rgba(14,12,18,.72) 55%,color-mix(in srgb,#3DDC84 10%,rgba(14,12,18,.78)));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--sx-accent) 22%,rgba(16,12,16,.78)),rgba(14,12,18,.72) 55%,color-mix(in srgb,#d4af37 8%,rgba(14,12,18,.78)));
   -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
   box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 30px 70px -34px color-mix(in srgb,var(--sx-accent) 85%,transparent),0 12px 30px -20px rgba(0,0,0,.8);
   transition:transform .22s var(--sx-ease,ease),box-shadow .22s}
@@ -376,7 +376,7 @@
   background:color-mix(in srgb,var(--c) 18%,rgba(12,10,14,.92));box-shadow:0 0 0 3px rgba(12,10,14,.85),0 10px 24px -12px var(--c);
   transition:transform .25s var(--sx-ease,ease)}
 .hb-lib__dot svg{width:26px;height:26px}
-.hb-lib__dot--ramses{--c:#3DDC84;z-index:5}.hb-lib__dot--craft{--c:var(--craft,#ff7a1f);z-index:4}.hb-lib__dot--anyps{--c:var(--anyps,#3d8bff);z-index:3}
+.hb-lib__dot--ramses{--c:#d4af37;z-index:5}.hb-lib__dot--craft{--c:var(--craft,#ff7a1f);z-index:4}.hb-lib__dot--anyps{--c:var(--anyps,#3d8bff);z-index:3}
 .hb-lib__dot--mod{--c:#f2a93b;z-index:2}.hb-lib__dot--arcade{--c:#b07dff;z-index:1}
 .hb-lib__btn:hover .hb-lib__dot{transform:translateY(-4px) rotate(-4deg)}
 .hb-lib__btn:hover .hb-lib__dot:nth-child(2){transform:translateY(-6px) rotate(3deg)}
