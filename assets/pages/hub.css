@@ -352,3 +352,4 @@
 
 /* AndersCraft Studio quick-access tile: AndersCraft orange, same size as its neighbours */
 .hb-tile--studio{--tile-c:var(--craft,#ff7a1f)}
+.hb-tile--andersmod{--tile-c:#f2a93b}

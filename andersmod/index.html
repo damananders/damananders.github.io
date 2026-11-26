@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AndersMod Studio — Live modding for single-player games</title>
+<meta name="description" content="AndersMod Studio is a free Windows tool for modding single-player PC games while they run: find values, make cheats, build tables, and let the Mod Director plan it for you. Games with anti-cheat are locked out." />
+<meta name="theme-color" content="#1a0b0e" />
+<meta property="og:title" content="AndersMod Studio — Live modding for single-player games" />
+<meta property="og:description" content="Find values, make cheats and build mod tables for single-player PC games. Games with anti-cheat are never touched." />
+<meta property="og:url" content="https://damananders.github.io/andersmod/" />
+<meta property="og:image" content="https://damananders.github.io/assets/og/andersmod.jpg?v=1" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.ico?v=5" sizes="any" />
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/icons/fav-andersmod.png?v=1" />
+<link rel="preload" href="/assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/fonts/fonts.css" />
+<link rel="stylesheet" href="../assets/hub.css" />
+<link rel="stylesheet" href="../assets/socials.css" />
+<style>
+/* Magic glass: dark maroon glass, amber and rose light, no hard borders */
+body.amod{--accent:#f2a93b;--amod:#f2a93b;--rose:#f0588c;
+  background:
+    radial-gradient(900px 620px at 85% -10%, rgba(242,169,59,.32), transparent 60%),
+    radial-gradient(760px 640px at -10% 85%, rgba(240,88,140,.26), transparent 60%),
+    #1a0b0e;}
+.amod .glass{background:rgba(32,13,19,.72);border:1px solid rgba(255,255,255,.08);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 24px 60px -30px rgba(242,169,59,.45)}
+.amod h1{background:linear-gradient(90deg,#ffd27a,#ffb347 45%,#f58aa8);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 34px rgba(255,154,92,.35)}
+.amod .eyebrow{color:var(--amod)}
+.amod .feat li{border-left-color:var(--amod);background:rgba(32,13,19,.72)}
+.amod .btn{background:linear-gradient(90deg,#ffcf6e,#f2a93b 55%,#e8892c);color:#2a1206;box-shadow:0 10px 30px -12px rgba(242,169,59,.8)}
+.amod .btn[aria-disabled="true"]{filter:grayscale(.5) brightness(.8);pointer-events:none}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.shots figure{margin:0}
+.shots img{width:100%;height:auto;border-radius:14px;display:block;box-shadow:0 18px 40px -24px rgba(242,169,59,.6)}
+.shots figcaption{color:var(--muted);font-size:.85rem;margin-top:6px}
+.hero-shot{width:100%;height:auto;border-radius:16px;display:block;box-shadow:0 30px 70px -30px rgba(242,169,59,.7)}
+.sec{margin-top:40px}
+.sec h2{font-family:var(--display);margin:0 0 14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{padding:16px}
+.card h3{margin:0 0 4px;font-size:1rem;font-family:var(--display);color:#ffe7b0}
+.card p,.card li{color:var(--muted);font-size:.92rem;margin:4px 0}
+.faq details{padding:0 14px;margin:8px 0}
+.faq summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--text);list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"\203A ";color:var(--amod);font-weight:700}
+.faq details[open] summary::before{content:"\2039 "}
+.faq details > *:not(summary){color:var(--muted);font-size:.93rem;margin:0 0 12px}
+.hash{font-family:var(--mono);font-size:.72rem;color:var(--muted);word-break:break-all}
+.safe{border-left:3px solid var(--rose)}
+.changes summary{cursor:pointer;font-weight:600;color:var(--text)}
+.changes ul{color:var(--muted);font-size:.92rem}
+</style>
+<script src="../assets/config.js"></script>
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","andersmod");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<style>@view-transition{navigation:auto}</style>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png?v=5" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/interact.css" />
+<!-- /site:head -->
+</head>
+<body class="amod">
+<div class="wrap">
+  <nav>
+    <a class="brand" href="../">&larr; DMA <span>/ AndersMod Studio</span></a>
+    <div class="socials">
+      <a class="social kofi" href="/support/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h12A1.5 1.5 0 0 1 18 6.5V8h.75A3.75 3.75 0 0 1 22.5 11.75v.5A3.75 3.75 0 0 1 18.75 16h-1.02A6.5 6.5 0 0 1 11.5 20h-2A6.5 6.5 0 0 1 3 13.5zM18 10v3.98c.25.01.5.02.75.02A1.75 1.75 0 0 0 20.5 12.25v-.5A1.75 1.75 0 0 0 18.75 10z"/><path fill="#fff" d="M10.5 15.6l-2.9-2.75a1.85 1.85 0 0 1 0-2.65 1.9 1.9 0 0 1 2.65 0l.25.25.25-.25a1.9 1.9 0 0 1 2.65 0 1.85 1.85 0 0 1 0 2.65z"/></svg>Donate</a>
+      <a class="social discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" aria-hidden="true" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>Discord</a>
+    </div>
+  </nav>
+
+  <div class="split">
+    <section>
+      <div class="eyebrow">Modding tool &middot; Windows 10/11 &middot; 64-bit</div>
+      <h1>AndersMod Studio</h1>
+      <p class="lead">Mod single-player PC games while they run. Find a value, make it a cheat, and keep it working after the game restarts. Or tell the Mod Director what you want and let it plan the whole thing for you.</p>
+      <img class="hero-shot" src="../assets/andersmod/studio.jpg" width="1280" height="820" alt="AndersMod Studio's Mod Director: pick a game, tap what you want, and get a plan" />
+      <ul class="feat" style="margin-top:18px">
+        <li><b>Mod Director</b> &mdash; pick a game, say what you want (god mode, infinite ammo, max money...), and get the easiest way to do each one, with a step-by-step guide.</li>
+        <li><b>Find any value</b> &mdash; exact numbers, &ldquo;went up / went down&rdquo;, unknown values, all types at once, big-endian, your own custom types, and a blind hunt for things with no number on screen.</li>
+        <li><b>Cheats in plain words</b> &mdash; Freeze, Never decrease, Set to, Always max, and one-click god mode that switches off just the code that hurts you.</li>
+        <li><b>Built to last</b> &mdash; stable pointers that survive a restart, and saved mods that come back the next time you open the game.</li>
+        <li><b>Unity games by name</b> &mdash; reads the game's own field names, so &ldquo;health&rdquo; or &ldquo;gold&rdquo; is a search, not a scan.</li>
+        <li><b>Play tab and overlay</b> &mdash; your cheats as cards with switches, sliders and hotkeys, plus a click-through in-game overlay.</li>
+        <li><b>Cheat tables</b> &mdash; opens and saves the common .CT format, runs table scripts in a safe sandbox, and exports a standalone trainer.</li>
+        <li><b>Power tools</b> &mdash; memory viewer, structure dissect, pointer scanner, what-writes / what-accesses, a step debugger and a script assembler.</li>
+      </ul>
+    </section>
+
+    <aside class="panel glass">
+      <h2>Download</h2>
+      <p class="lead" style="font-size:1rem">Free. Unzip anywhere and run <code>LiveModStudio.exe</code>. No installer, nothing else to install.</p>
+      <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
+      <div id="dlmeta" class="meta"></div>
+      <p id="dlhash" class="hash" hidden></p>
+
+      <h3 style="margin-top:24px">Getting started</h3>
+      <ol class="steps">
+        <li>Download and unzip.</li>
+        <li>Run <code>LiveModStudio.exe</code>. Windows may say it&rsquo;s from an unknown publisher: choose <b>More info</b> &rarr; <b>Run anyway</b>.</li>
+        <li>Open <b>Library</b>, find your game, and press <b>Approve for live</b>.</li>
+        <li>Start the game yourself, then open <b>Director</b> or <b>Scanner</b>.</li>
+      </ol>
+      <p style="margin-top:6px"><a href="#quickstart">Read the quick start &darr;</a></p>
+
+      <div class="note safe"><b>Single-player and offline only.</b> Games that use anti-cheat (EasyAntiCheat, BattlEye, Vanguard and others) are detected and locked: the studio never opens them. Games with protected code get value cheats only. Please respect each game&rsquo;s terms.</div>
+
+      <details class="changes" style="margin-top:18px">
+        <summary>What&rsquo;s new in 0.7.2</summary>
+        <ul>
+          <li>Mod Director: plans a mod table for any game from plain wishes, with Guide me and Save plan.</li>
+          <li>Big endian is a normal option everywhere, and custom value types work in every scan, the table, freeze and cheat maker.</li>
+          <li>New chromeless window and a startup splash.</li>
+          <li>Two full audits: dozens of fixes for crashes, data loss and wrong results; the anti-cheat lock re-checks while a game is open.</li>
+        </ul>
+      </details>
+    </aside>
+  </div>
+
+  <section class="sec" aria-label="Screenshots">
+    <h2>A closer look</h2>
+    <div class="shots">
+      <figure><img src="../assets/andersmod/director.jpg" loading="lazy" alt="The Mod Director's plan for god mode, money and XP" /><figcaption>The Mod Director picks the easiest way to do each cheat for this game.</figcaption></figure>
+      <figure><img src="../assets/andersmod/play.jpg" loading="lazy" alt="The Play tab: cheats as cards with switches and hotkeys" /><figcaption>Play: your cheats as cards, by category, with hotkeys.</figcaption></figure>
+      <figure><img src="../assets/andersmod/scanner.jpg" loading="lazy" alt="The Scanner finding a value" /><figcaption>Scanner: every compare and value type, or a blind hunt.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="sec" id="quickstart" aria-label="Quick start">
+    <h2>Quick start</h2>
+    <div class="cards">
+      <div class="card glass"><h3>1. Pick your game</h3><p>Library lists your Steam and Epic games with their engine. A red lock means anti-cheat: it stays off limits. Press <b>Approve for live</b> on the game you want to mod.</p></div>
+      <div class="card glass"><h3>2. Say what you want</h3><p>In <b>Director</b>, tap the wishes (or type your own) and press <b>Make my plan</b>. <b>Guide me</b> walks you through each one; <b>Save plan</b> writes a draft table.</p></div>
+      <div class="card glass"><h3>3. Or find it yourself</h3><p>In <b>Scanner</b>, type the number you see, change it in the game, scan again. Can&rsquo;t see it? Use <b>I can&rsquo;t see it</b> and say whether it went up or down.</p></div>
+      <div class="card glass"><h3>4. Make it a cheat</h3><p>Right-click a value &rarr; <b>Make cheat</b>. For god mode, press <b>Make god mode</b> and take a hit: the studio finds the code that lowers your health and switches only that off.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-label="System requirements">
+    <h2>System requirements</h2>
+    <div class="cards">
+      <div class="card glass"><h3>Windows</h3><p>Windows 10 or 11, 64-bit. Nothing else to install: .NET is built in.</p></div>
+      <div class="card glass"><h3>Games</h3><p>64-bit single-player PC games. Value cheats work on 32-bit games too; the debugger and scripts are 64-bit only for now.</p></div>
+      <div class="card glass"><h3>Space</h3><p>About 65 MB. Your settings and saved mods stay in your user profile, never next to the exe.</p></div>
+    </div>
+  </section>
+
+  <section class="sec faq" aria-label="FAQ">
+    <h2>Questions</h2>
+    <details class="glass"><summary>Will it get me banned?</summary><p>It&rsquo;s made for single-player and offline games. Anything with anti-cheat is locked out, and games that play online show a &ldquo;single-player / offline only&rdquo; warning. Don&rsquo;t use it in online or competitive play.</p></details>
+    <details class="glass"><summary>Windows or my antivirus warns about it</summary><p>The exe isn&rsquo;t code-signed, so SmartScreen shows &ldquo;unknown publisher&rdquo; (More info &rarr; Run anyway). Some antivirus tools flag any program that reads other programs&rsquo; memory; that&rsquo;s what a modding tool does. Check the download against the SHA-256 shown next to the button.</p></details>
+    <details class="glass"><summary>Does it inject anything into my game?</summary><p>No. It reads and writes memory from outside, the same way a debugger does. Code cheats change a few bytes in the game&rsquo;s memory and put them back exactly when you switch them off or close the studio.</p></details>
+    <details class="glass"><summary>Can I use my existing cheat tables?</summary><p>Yes, the common .CT format opens and saves, including groups, pointers, hotkeys, dropdowns and scripts. Table scripts run in a sandbox with no file or system access, and with a time limit.</p></details>
+    <details class="glass"><summary>Why does a game say &ldquo;values only&rdquo;?</summary><p>Its code is protected (for example by anti-tamper). You can still change numbers like health or money, but the studio won&rsquo;t touch its code.</p></details>
+    <details class="glass"><summary>Where are my settings and saved mods?</summary><p>In <code>%APPDATA%\LiveModStudio</code>. Delete that folder to start fresh; the studio itself is just the unzipped folder.</p></details>
+  </section>
+
+  <footer>
+    <p>AndersMod Studio is an independent tool. It is not affiliated with or endorsed by any game publisher, store or other modding tool. All game names belong to their owners.</p>
+  </footer>
+</div>
+<script>
+  const m = (window.SITE || {}).andersmod || {};
+  const fmtDate = d => { if (!d) return ""; const t = new Date(d + "T00:00:00"); return isNaN(t) ? d : t.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); };
+  if (m.downloadUrl) {
+    const dl = document.getElementById("dl");
+    dl.href = m.downloadUrl; dl.removeAttribute("aria-disabled");
+    dl.textContent = "Download AndersMod Studio" + (m.version ? " " + m.version : "");
+    dl.insertAdjacentHTML("afterbegin", '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin-right:.55em"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>');
+    dl.setAttribute("aria-label", dl.textContent + " for Windows");
+  }
+  document.getElementById("dlmeta").textContent = [m.version ? "Version " + m.version : "", m.date ? "Posted " + fmtDate(m.date) : "", m.sizeLabel, m.downloadUrl ? m.host || "" : ""].filter(Boolean).join(" · ");
+  if (m.sha256) { const h = document.getElementById("dlhash"); h.textContent = "SHA-256 " + m.sha256; h.hidden = false; }
+</script>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/interact.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<!-- /site:scripts -->
+</body>
+</html>

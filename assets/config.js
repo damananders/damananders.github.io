@@ -29,6 +29,17 @@ window.SITE = {
     ],
   },
 
+  // AndersMod Studio (andersmod/): leave downloadUrl "" to show "Coming soon".
+  // Upload the zip (Google Drive "Anyone with the link", or another host), paste its link here.
+  andersmod: {
+    version: "0.7.2",
+    date: "2026-11-26",
+    downloadUrl: "",
+    host: "",              // e.g. "Hosted on Google Drive" (shown next to the button)
+    sizeLabel: "58 MB",
+    sha256: "24b203a41c685f34a923f14e357cabd688806eb0e56e75ae163dd99550d34a94",   // of AndersModStudio-0.7.2-public.zip
+  },
+
   // Personal Vault: the owner's own backups. Keep each Drive file's sharing
   // set to "Restricted" so only the owner's Google account can open it.
   // icon: "star" | "crystal" | "skull" | "disc" (see ICONS in vault/index.html)
