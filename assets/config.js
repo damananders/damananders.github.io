@@ -34,8 +34,10 @@ window.SITE = {
   andersmod: {
     version: "0.7.2",
     date: "2026-11-26",
-    downloadUrl: "",
-    host: "",              // e.g. "Hosted on Google Drive" (shown next to the button)
+    // GitHub Release asset. It only works once the v0.7.2 release exists with this exact file attached.
+    downloadUrl: "https://github.com/damananders/AndersLiveModStudio/releases/download/v0.7.2/AndersModStudio-0.7.2-public.zip",
+    releasesUrl: "https://github.com/damananders/AndersLiveModStudio/releases",
+    host: "Hosted on GitHub", // shown next to the button
     sizeLabel: "58 MB",
     sha256: "24b203a41c685f34a923f14e357cabd688806eb0e56e75ae163dd99550d34a94",   // of AndersModStudio-0.7.2-public.zip
   },

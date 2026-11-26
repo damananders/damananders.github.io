@@ -99,6 +99,7 @@ body.amod{--accent:#f2a93b;--amod:#f2a93b;--rose:#f0588c;
       <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
       <div id="dlmeta" class="meta"></div>
       <p id="dlhash" class="hash" hidden></p>
+      <p id="dlall" hidden style="margin:.4rem 0 0"><a id="dlalllink" href="#" target="_blank" rel="noopener">All Downloads &amp; Release Notes</a></p>
 
       <h3 style="margin-top:24px">Getting Started</h3>
       <ol class="steps">
@@ -176,6 +177,7 @@ body.amod{--accent:#f2a93b;--amod:#f2a93b;--rose:#f0588c;
     dl.setAttribute("aria-label", dl.textContent + " for Windows");
   }
   document.getElementById("dlmeta").textContent = [m.version ? "Version " + m.version : "", m.date ? "Posted " + fmtDate(m.date) : "", m.sizeLabel, m.downloadUrl ? m.host || "" : ""].filter(Boolean).join(" · ");
+  if (m.releasesUrl) { document.getElementById("dlalllink").href = m.releasesUrl; document.getElementById("dlall").hidden = false; }
   if (m.sha256) { const h = document.getElementById("dlhash"); h.textContent = "SHA-256 " + m.sha256; h.hidden = false; }
 </script>
 <!-- site:scripts (shared site upgrades, see assets/README.md) -->
