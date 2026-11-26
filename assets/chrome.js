@@ -555,6 +555,7 @@
   var PAGES = [
     ["hub", "/", "Home", "Back to the hub", "about"], ["anyps", "/anyps/", "AnyPS", "The PlayStation launcher", "projects"], ["anderscraft", "/anderscraft/", "AndersCraft", "Private WoW server", "projects"],
     ["andersmod", "/andersmod/", "AndersMod Studio", "Live modding, single-player", "projects"],
+    ["ramses", "/ramses/", "Ramses", "Your own AI assistant", "projects"],
     ["games", "/games/", "Wiki-Chip Dex", "Rate & review games", "games"], ["forum", "/games/forum/", "Forums", "Talk games & projects", "games"],
     ["links", "/links/", "Links I Like", "Sites I actually use", "about"], ["stream", "/stream/", "Stream", "Watch me live", "community"],
     ["discord", "/discord/", "Discord", "Join the community", "community"], ["arcade", "/arcade/", "Arcade", "Little browser games", "games"],

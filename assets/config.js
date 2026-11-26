@@ -42,6 +42,18 @@ window.SITE = {
     sha256: "24b203a41c685f34a923f14e357cabd688806eb0e56e75ae163dd99550d34a94",   // of AndersModStudio-0.7.2-public.zip
   },
 
+  // Ramses (ramses/): leave downloadUrl "" to show "Coming soon".
+  ramses: {
+    version: "1.0.0",
+    date: "2026-11-26",
+    // GitHub Release asset. It only works once the v1.0.0 release exists with this exact file attached.
+    downloadUrl: "https://github.com/damananders/Ramses/releases/download/v1.0.0/Ramses-1.0.0-win-x64.zip",
+    releasesUrl: "https://github.com/damananders/Ramses/releases",
+    host: "Hosted on GitHub",
+    sizeLabel: "98 MB",
+    sha256: "74007b3cc53fdc03c184f5dfa9b388c7cdbc80604784a26427bee4803a036cd8",   // of Ramses-1.0.0-win-x64.zip
+  },
+
   // Personal Vault: the owner's own backups. Keep each Drive file's sharing
   // set to "Restricted" so only the owner's Google account can open it.
   // icon: "star" | "crystal" | "skull" | "disc" (see ICONS in vault/index.html)
