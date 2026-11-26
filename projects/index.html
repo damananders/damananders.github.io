@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>What I'm Working On — Anders</title>
-<meta name="description" content="Short, plain-English updates on the projects I'm working on right now: AnyPS going native, Wizard of the Sprint, this site, AndersCraft and more." />
+<title>The Project Library — Anders</title>
+<meta name="description" content="Everything Anders builds in one place: Ramses, AndersCraft, AnyPS, AndersMod Studio, the Arcade and more, plus plain-English updates on what's on the workbench." />
 
 <meta name="theme-color" content="#07090b" />
-<meta property="og:title" content="What I'm Working On — Anders" />
-<meta property="og:description" content="Short, plain-English updates on the projects I'm working on right now: AnyPS going native, Wizard of the Sprint, this site, AndersCraft and more." />
-<meta property="og:image" content="https://damananders.github.io/assets/og/projects.jpg" />
+<meta property="og:title" content="The Project Library — Anders" />
+<meta property="og:description" content="Everything Anders builds in one place: Ramses, AndersCraft, AnyPS, AndersMod Studio, the Arcade and more, plus plain-English updates on what's on the workbench." />
+<meta property="og:image" content="https://damananders.github.io/assets/og/projects.jpg?v=2" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -29,25 +29,91 @@
 <link rel="stylesheet" href="/assets/interact.css" />
 <link rel="stylesheet" href="/assets/social-live.css" />
 <link rel="stylesheet" href="/assets/pages/pages.css?v=1" />
-<link rel="stylesheet" href="/assets/pages/projects.css?v=1" />
+<link rel="stylesheet" href="/assets/pages/projects.css?v=3" />
 <!-- /site:head -->
 </head>
-<body class="photo" style="--bg:url('/assets/anyps-bg.webp')">
+<body class="lb-page">
 <div class="wrap">
   <nav>
-    <a class="brand" href="/">&larr; DMA <span>/ projects</span></a>
+    <a class="brand" href="/">&larr; DMA <span>/ project library</span></a>
     <div class="socials">
       <a class="social kofi" href="/support/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h12A1.5 1.5 0 0 1 18 6.5V8h.75A3.75 3.75 0 0 1 22.5 11.75v.5A3.75 3.75 0 0 1 18.75 16h-1.02A6.5 6.5 0 0 1 11.5 20h-2A6.5 6.5 0 0 1 3 13.5zM18 10v3.98c.25.01.5.02.75.02A1.75 1.75 0 0 0 20.5 12.25v-.5A1.75 1.75 0 0 0 18.75 10z"/><path fill="#fff" d="M10.5 15.6l-2.9-2.75a1.85 1.85 0 0 1 0-2.65 1.9 1.9 0 0 1 2.65 0l.25.25.25-.25a1.9 1.9 0 0 1 2.65 0 1.85 1.85 0 0 1 0 2.65z"/></svg>Donate</a>
       <a class="social discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" aria-hidden="true" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>Discord</a>
       <a class="social twitch" href="https://www.twitch.tv/damananders_ttv" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>Twitch</a>
     </div>
   </nav>
-  <header class="hero">
-    <p class="eyebrow" data-reveal>Projects</p>
-    <h1 data-reveal data-reveal-delay="60">What I'm working on</h1>
-    <p class="lead" data-reveal data-reveal-delay="120">A quick look at everything on my workbench right now, from the big long-term builds to the stuff that's on pause. Updated November 15, 2026.</p>
+  <main class="lb-main" id="main">
+  <header class="lb-hero">
+    <p class="lb-kicker" data-reveal>The Project Library</p>
+    <h1 class="lb-h1" data-reveal data-reveal-delay="60">Everything I build, <span>in one place</span></h1>
+    <p class="lb-lead" data-reveal data-reveal-delay="120">Apps to download, a server to join, games to play and a community to hang out in. Start with the big three, then dig into the rest.</p>
   </header>
-  <main class="pj-list">
+
+  <section class="lb-shelf" aria-label="Featured projects">
+    <a class="lb-big lb-big--ramses lb-big--wide" href="/ramses/" data-reveal>
+      <span class="lb-big__art"><img src="/assets/ramses/chat.jpg" width="1280" height="820" alt="" loading="eager" /><span class="lb-chips"><span class="sx-chip is-on"><i class="sx-dot" aria-hidden="true"></i>Free download</span><span class="sx-chip">New</span></span></span>
+      <span class="lb-big__body">
+        <span class="lb-big__eyebrow">Personal AI agent &middot; Windows</span>
+        <span class="lb-big__h">Ramses</span>
+        <span class="lb-big__p">Your own AI assistant, running on your own PC. It chats, reads and changes files, runs code, searches the web and makes pictures, works offline with models on your graphics card, and you decide how much it may do on its own.</span>
+        <span class="lb-big__list"><span>Private by default</span><span>Picks its own models</span><span>You set the rules</span></span>
+        <span class="lb-big__cta">Meet Ramses &amp; download <span aria-hidden="true">&rarr;</span></span>
+      </span>
+    </a>
+
+    <a class="lb-big lb-big--craft" href="/anderscraft/" data-reveal>
+      <span class="lb-big__art lb-big__art--craft"><span class="lb-chips" id="lb-chips-craft"></span></span>
+      <span class="lb-big__body">
+        <span class="lb-big__eyebrow">Private server &middot; WotLK 3.3.5a</span>
+        <span class="lb-big__h">AndersCraft</span>
+        <span class="lb-big__p">A Wrath-era Azeroth built around freedom. Make an account in a minute and jump in.</span>
+        <span class="lb-big__list"><span>Any race, any class, any gear</span><span>Level 125 arc and a hardcore realm</span><span>Old-world flying at 85</span></span>
+        <span class="lb-big__cta">Learn more &amp; sign up <span aria-hidden="true">&rarr;</span></span>
+      </span>
+    </a>
+
+    <a class="lb-big lb-big--anyps" href="/anyps/" data-reveal>
+      <span class="lb-big__art"><video class="lb-vid" id="lb-vid" muted loop playsinline disablepictureinpicture preload="none" width="1280" height="720" poster="/assets/anyps-preview-v2.1.jpg" data-src="/assets/anyps-preview-v2.1.mp4" aria-hidden="true" tabindex="-1"></video><span class="lb-chips" id="lb-chips-anyps"></span></span>
+      <span class="lb-big__body">
+        <span class="lb-big__eyebrow">Launcher &middot; Windows</span>
+        <span class="lb-big__h">AnyPS</span>
+        <span class="lb-big__p">One controller-first launcher for six generations of PlayStation emulators, now with PS Vita. Bring your own games.</span>
+        <span class="lb-big__list"><span>PS1 to PS4 and Vita in one place</span><span>Save vault, cheats and smart lists</span><span>Ships with no games or BIOS</span></span>
+        <span class="lb-big__cta">Learn more &amp; download <span aria-hidden="true">&rarr;</span></span>
+      </span>
+    </a>
+  </section>
+
+  <section class="lb-more" aria-labelledby="lb-more-h">
+    <h2 class="lb-sec-h" id="lb-more-h">More to explore</h2>
+    <div class="lb-smalls">
+      <a class="lb-small" href="/andersmod/" style="--c:#f2a93b" data-reveal>
+        <span class="lb-small__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 14.5 9.5M12.5 7.5l4 4M17 3.5v3M15.5 5h3M20 8.5v2M19 9.5h2M9 3.5v2M8 4.5h2"/></svg></span>
+        <strong>AndersMod Studio</strong><span>Live modding for single-player PC games. Find a value, make it a cheat.</span>
+      </a>
+      <a class="lb-small" href="/anderscraft/#ac-studio" style="--c:var(--craft,#ff7a1f)" data-reveal>
+        <span class="lb-small__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10M8 10l4 4 4-4M5 19h14"/></svg></span>
+        <strong>AndersCraft Studio</strong><span>A free all-in-one editor for AzerothCore server owners.</span>
+      </a>
+      <a class="lb-small" href="/arcade/" style="--c:#ffbe3d" data-reveal>
+        <span class="lb-small__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="3"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".6" fill="currentColor"/><circle cx="18" cy="15" r=".6" fill="currentColor"/></svg></span>
+        <strong>Arcade</strong><span>Little browser games, right here on the site.</span>
+      </a>
+      <a class="lb-small" href="/trophies/" style="--c:var(--games,#36d39a)" data-reveal>
+        <span class="lb-small__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.2a2.6 2.6 0 0 0 2.9 3.6M16 5.5h2.8a2.6 2.6 0 0 1-2.9 3.6M12 13v3.5M8.5 20h7"/></svg></span>
+        <strong>Trophies</strong><span>Collect them just by exploring the site.</span>
+      </a>
+      <a class="lb-small" href="/discord/" style="--c:#5865f2" data-reveal>
+        <span class="lb-small__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 5.3A17 17 0 0 0 15.7 4l-.2.4a12.7 12.7 0 0 1 3.7 1.9 16.6 16.6 0 0 0-14.4 0A12.7 12.7 0 0 1 8.5 4.4L8.3 4A17 17 0 0 0 4 5.3C1.3 9.3.6 13.2.9 17a17 17 0 0 0 5.2 2.6l.4-.6a11 11 0 0 1-1.7-.8l.4-.3a12 12 0 0 0 10.3 0l.4.3a11 11 0 0 1-1.7.8l.4.6A17 17 0 0 0 23 17c.4-4.5-.6-8.4-3-11.7ZM8.4 14.7c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Zm7.2 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Z"/></svg></span>
+        <strong>Discord</strong><span>Friends of DaManAnders: go-live pings and project chat.</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="lb-bench" aria-labelledby="lb-bench-h">
+    <h2 class="lb-sec-h" id="lb-bench-h">On the workbench</h2>
+    <p class="lb-bench__lead">Plain-English updates on what I'm working on right now, from the big long-term builds to the stuff that's on pause. Updated November 15, 2026.</p>
+    <div class="pj-list">
 <article class="panel pj-card pj-card--lead" data-reveal style="--pj:#3d8bff" data-project="anyps">
   <div class="pj-head"><span class="pj-pill">Main project</span><h2>AnyPS: going native</h2></div>
   <p>AnyPS started as one launcher for six generations of PlayStation emulators. Now I'm taking it further: rebuilding each console from scratch, from public hardware documentation, so games run straight inside AnyPS with no separate emulator behind it.</p>
@@ -113,6 +179,8 @@
   <p>The Friends of DaManAnders Discord and the Twitch channel are where I share progress, go live while I build and talk games.</p>
   <p class="pj-foot"><a href="/discord/">Join the Discord &rarr;</a> &nbsp; <a href="/stream/">Watch the stream &rarr;</a></p>
 </article>
+    </div>
+  </section>
   </main>
   <footer>
     <p>Fan projects, made for fun and learning. Non-commercial.</p>
@@ -128,6 +196,7 @@
 <script defer src="/assets/social-live.js"></script>
 <script defer src="/assets/analytics.js"></script>
 <script type="module" src="/assets/pages/projects.js?v=2"></script>
+<script defer src="/assets/pages/library.js?v=1"></script>
 <!-- /site:scripts -->
 </body>
 </html>

@@ -353,4 +353,47 @@
 /* AndersCraft Studio quick-access tile: AndersCraft orange, same size as its neighbours */
 .hb-tile--studio{--tile-c:var(--craft,#ff7a1f)}
 .hb-tile--andersmod{--tile-c:#f2a93b}
-.hb-tile--ramses{--tile-c:#3DDC84}
+.hb-tile--ramses{--tile-c:#d4af37}
+
+/* ---- The Project Library button: one big way into everything else (replaces the old avenue cards + tiles).
+ * Frosted glass, no hard edge: a soft accent glow, a little fan of project icons in their own colours, and an arrow
+ * that slides on hover. Links to /projects/. ---- */
+.hb-lib{margin-top:40px}
+.hb-lib__btn{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:26px;
+  padding:30px 34px;border-radius:28px;text-decoration:none;color:var(--sx-text);text-shadow:none;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--sx-accent) 22%,rgba(16,12,16,.78)),rgba(14,12,18,.72) 55%,color-mix(in srgb,#d4af37 8%,rgba(14,12,18,.78)));
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
+  box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 30px 70px -34px color-mix(in srgb,var(--sx-accent) 85%,transparent),0 12px 30px -20px rgba(0,0,0,.8);
+  transition:transform .22s var(--sx-ease,ease),box-shadow .22s}
+.hb-lib__btn:hover,.hb-lib__btn:focus-visible{transform:translateY(-3px);outline:none;
+  box-shadow:0 1px 0 rgba(255,255,255,.1) inset,0 0 0 2px color-mix(in srgb,var(--sx-accent) 55%,transparent),0 40px 80px -30px var(--sx-accent),0 12px 30px -20px rgba(0,0,0,.8)}
+.hb-lib__btn:focus-visible{outline:2px solid var(--sx-accent);outline-offset:4px}
+.hb-lib__glow{position:absolute;z-index:-1;width:420px;height:420px;right:-120px;top:-210px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--sx-accent) 60%,transparent),transparent 65%);opacity:.55;transition:opacity .3s,transform .6s}
+.hb-lib__btn:hover .hb-lib__glow{opacity:.85;transform:translateX(-40px)}
+.hb-lib__stack{display:flex;padding-left:14px}
+.hb-lib__dot{width:56px;height:56px;margin-left:-10px;display:grid;place-items:center;border-radius:18px;color:var(--c);
+  background:color-mix(in srgb,var(--c) 18%,rgba(12,10,14,.92));box-shadow:0 0 0 3px rgba(12,10,14,.85),0 10px 24px -12px var(--c);
+  transition:transform .25s var(--sx-ease,ease)}
+.hb-lib__dot svg{width:26px;height:26px}
+.hb-lib__dot--ramses{--c:#d4af37;z-index:5}.hb-lib__dot--craft{--c:var(--craft,#ff7a1f);z-index:4}.hb-lib__dot--anyps{--c:var(--anyps,#3d8bff);z-index:3}
+.hb-lib__dot--mod{--c:#f2a93b;z-index:2}.hb-lib__dot--arcade{--c:#b07dff;z-index:1}
+.hb-lib__btn:hover .hb-lib__dot{transform:translateY(-4px) rotate(-4deg)}
+.hb-lib__btn:hover .hb-lib__dot:nth-child(2){transform:translateY(-6px) rotate(3deg)}
+.hb-lib__btn:hover .hb-lib__dot:nth-child(4){transform:translateY(-6px) rotate(5deg)}
+.hb-lib__txt{display:grid;gap:6px;min-width:0}
+.hb-lib__eyebrow{font:600 .7rem/1 var(--sx-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--sx-accent)}
+.hb-lib__title{font:800 clamp(1.5rem,3.4vw,2.3rem)/1.05 var(--sx-display);letter-spacing:-.02em;color:#f6f2f3}
+.hb-lib__sub{color:var(--sx-muted);font-size:.98rem;line-height:1.45;max-width:58ch}
+.hb-lib__go{width:58px;height:58px;display:grid;place-items:center;border-radius:50%;color:var(--sx-on-accent,#fff);background:var(--sx-accent);
+  box-shadow:0 14px 30px -12px var(--sx-accent);transition:transform .22s var(--sx-ease,ease)}
+.hb-lib__go svg{width:26px;height:26px}
+.hb-lib__btn:hover .hb-lib__go{transform:translateX(5px)}
+:root[data-motion="reduce"] .hb-lib__btn,:root[data-motion="reduce"] .hb-lib__dot,:root[data-motion="reduce"] .hb-lib__go,:root[data-motion="reduce"] .hb-lib__glow{transition:none}
+:root[data-theme="light"] .hb-lib__title{color:#1b1418}
+@media (max-width:720px){
+  .hb-lib__btn{grid-template-columns:1fr auto;gap:18px;padding:24px 22px}
+  .hb-lib__stack{grid-column:1/-1}
+  .hb-lib__dot{width:46px;height:46px;border-radius:15px}
+  .hb-lib__go{width:48px;height:48px}
+}

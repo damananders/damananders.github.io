@@ -1,4 +1,5 @@
-/* pages/projects.css — /projects/ ("What I'm working on"). Prefix pj-. */
+/* pages/projects.css — /projects/, the Project Library. Library shelf = prefix lb-; the "On the workbench"
+ * status cards (with optional upvotes + comments) = prefix pj-. */
 .pj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;align-items:start}
 .pj-card{margin:0;border-top:3px solid var(--pj,var(--sx-accent));display:grid;gap:12px}
 .pj-card--lead{grid-column:1/-1}
@@ -61,3 +62,85 @@
 .pj-composer__row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .pj-composer__msg{font-size:.82rem;color:var(--sx-muted)}
 :root[data-page="projects"]{--accent:var(--pj,var(--sx-accent,#cd4257))}
+
+/* =====================================================================================================
+ * The Project Library (lb-). Its own look: a dusk "gallery wall" — warm maroon floor light, three coloured
+ * spotlights for the featured trio, big frosted cards with no hard edges, and a flowing row of small cards.
+ * ===================================================================================================== */
+body.lb-page{background:#0d080b;
+  background-image:
+    radial-gradient(700px 420px at 12% 4%,rgba(212,175,55,.16),transparent 62%),
+    radial-gradient(640px 420px at 58% -6%,rgba(255,122,31,.13),transparent 62%),
+    radial-gradient(640px 460px at 100% 10%,rgba(61,139,255,.15),transparent 62%),
+    radial-gradient(1200px 600px at 50% 115%,rgba(205,66,87,.22),transparent 62%)}
+.lb-hero{padding:54px 0 30px;text-align:center;display:grid;justify-items:center;gap:10px}
+.lb-kicker{margin:0;font:600 .74rem/1 var(--sx-mono,var(--mono));letter-spacing:.2em;text-transform:uppercase;color:var(--sx-accent,#cd4257);
+  padding:8px 14px;border-radius:999px;background:color-mix(in srgb,var(--sx-accent,#cd4257) 14%,transparent)}
+.lb-h1{margin:4px 0 0;font:800 clamp(2.2rem,6vw,3.9rem)/1.02 var(--sx-display,var(--display));letter-spacing:-.03em}
+.lb-h1 span{background:linear-gradient(90deg,#e8c766,#ff9a4d 50%,#5aa2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lb-lead{margin:6px 0 0;max-width:56ch;color:var(--sx-muted,var(--muted));font-size:1.08rem;line-height:1.55}
+
+/* featured trio: Ramses spans the full width, AndersCraft + AnyPS share the row under it */
+.lb-shelf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.lb-big{--c:var(--sx-accent);position:relative;isolation:isolate;display:flex;flex-direction:column;overflow:hidden;border-radius:26px;text-decoration:none;color:var(--sx-text,var(--text));
+  background:color-mix(in srgb,var(--c) 7%,rgba(16,13,17,.84));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 0 0 1px color-mix(in srgb,var(--c) 22%,transparent),0 28px 60px -34px color-mix(in srgb,var(--c) 90%,transparent);
+  transition:transform .22s var(--sx-ease,ease),box-shadow .22s}
+.lb-big:hover,.lb-big:focus-visible{transform:translateY(-4px);outline:none;
+  box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 0 0 2px color-mix(in srgb,var(--c) 70%,transparent),0 40px 80px -32px var(--c)}
+.lb-big:focus-visible{outline:2px solid var(--c);outline-offset:4px}
+.lb-big--ramses{--c:#d4af37}.lb-big--craft{--c:var(--craft,#ff7a1f)}.lb-big--anyps{--c:var(--anyps,#3d8bff)}
+.lb-big__art{position:relative;height:190px;overflow:hidden;background:#111 center/cover no-repeat}
+.lb-big__art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,color-mix(in srgb,var(--c) 7%,rgba(16,13,17,.98)))}
+.lb-big__art img,.lb-big__art video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--sx-ease,ease)}
+.lb-big:hover .lb-big__art img,.lb-big:hover .lb-big__art video{transform:scale(1.04)}
+.lb-big__art--craft{background-image:linear-gradient(180deg,rgba(7,9,11,.1),rgba(7,9,11,.3)),url("/assets/background.webp");background-position:center 30%}
+.lb-chips{position:absolute;z-index:1;top:14px;left:16px;display:flex;flex-wrap:wrap;gap:6px}
+.lb-chips .sx-chip{background:rgba(8,8,10,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.lb-big__body{display:flex;flex-direction:column;gap:9px;padding:6px 26px 26px;flex:1}
+.lb-big__eyebrow{font:600 .72rem/1 var(--sx-mono,var(--mono));letter-spacing:.14em;text-transform:uppercase;color:var(--c)}
+.lb-big__h{font:800 1.9rem/1.05 var(--sx-display,var(--display));letter-spacing:-.02em}
+.lb-big__p{color:var(--sx-muted,var(--muted));line-height:1.55}
+.lb-big__list{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.lb-big__list span{font-size:.84rem;padding:5px 11px;border-radius:999px;color:var(--sx-text,var(--text));background:color-mix(in srgb,var(--c) 13%,rgba(255,255,255,.03))}
+.lb-big__cta{margin-top:auto;padding-top:12px;align-self:flex-start;font:700 .95rem var(--sx-display,var(--display));color:var(--c)}
+.lb-big__cta span{display:inline-block;transition:transform .2s}
+.lb-big:hover .lb-big__cta span{transform:translateX(4px)}
+/* the wide Ramses card puts its picture beside the words */
+.lb-big--wide{grid-column:1/-1;flex-direction:row;min-height:300px}
+.lb-big--wide .lb-big__art{order:2;flex:0 0 52%;height:auto}
+.lb-big--wide .lb-big__art::after{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 7%,rgba(16,13,17,.98)) 0%,transparent 38%)}
+.lb-big--wide .lb-big__art img{object-position:left top}
+.lb-big--wide .lb-big__body{padding:32px 10px 30px 32px;justify-content:center}
+.lb-big--wide .lb-big__h{font-size:clamp(2.2rem,4.4vw,3rem)}
+
+.lb-sec-h{margin:52px 0 16px;font:700 1.35rem var(--sx-display,var(--display));letter-spacing:-.01em}
+.lb-smalls{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px}
+.lb-small{--c:var(--sx-accent);display:grid;align-content:start;gap:6px;padding:18px 18px 20px;border-radius:20px;text-decoration:none;color:var(--sx-text,var(--text));
+  background:linear-gradient(160deg,color-mix(in srgb,var(--c) 14%,rgba(18,14,18,.82)),rgba(16,13,17,.8) 70%);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 16%,transparent),0 18px 36px -28px color-mix(in srgb,var(--c) 90%,transparent);
+  transition:transform .18s var(--sx-ease,ease),box-shadow .18s}
+.lb-small:hover,.lb-small:focus-visible{transform:translateY(-3px);outline:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 65%,transparent),0 26px 46px -26px var(--c)}
+.lb-small:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+.lb-small__ico{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;margin-bottom:6px;color:var(--c);background:color-mix(in srgb,var(--c) 18%,transparent)}
+.lb-small__ico svg{width:23px;height:23px}
+.lb-small strong{font:700 1.02rem var(--sx-display,var(--display))}
+.lb-small > span:last-child{font-size:.88rem;line-height:1.45;color:var(--sx-muted,var(--muted))}
+
+.lb-bench{margin-top:8px}
+.lb-bench__lead{margin:-6px 0 18px;color:var(--sx-muted,var(--muted));max-width:64ch}
+.lb-bench .pj-card{background:rgba(16,13,17,.74);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+
+:root[data-motion="reduce"] .lb-big,:root[data-motion="reduce"] .lb-small,:root[data-motion="reduce"] .lb-big__art img,:root[data-motion="reduce"] .lb-big__art video{transition:none}
+:root[data-theme="light"] body.lb-page{background-color:#f6eef0}
+:root[data-theme="light"] .lb-big,:root[data-theme="light"] .lb-small,:root[data-theme="light"] .lb-bench .pj-card{background:rgba(255,255,255,.82)}
+:root[data-theme="light"] .lb-big__art::after{background:linear-gradient(180deg,transparent 35%,rgba(255,255,255,.96))}
+:root[data-theme="light"] .lb-big--wide .lb-big__art::after{background:linear-gradient(90deg,rgba(255,255,255,.96),transparent 38%)}
+@media (max-width:820px){
+  .lb-shelf{grid-template-columns:1fr}
+  .lb-big--wide{flex-direction:column;min-height:0}
+  .lb-big--wide .lb-big__art{order:0;flex:none;height:200px}
+  .lb-big--wide .lb-big__art::after{background:linear-gradient(180deg,transparent 35%,color-mix(in srgb,var(--c) 7%,rgba(16,13,17,.98)))}
+  .lb-big--wide .lb-big__body{padding:6px 22px 24px}
+  .lb-big__body{padding:6px 22px 24px}
+}

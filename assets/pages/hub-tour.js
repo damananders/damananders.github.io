@@ -1,6 +1,6 @@
 /* Hub: a one-time first-visit tour. Spotlights a few landmarks (the search bar, Wiki-Chip Dex, the
- * "More from Anders" cards, the radial menu, the trophy cup) with a little tooltip card and Next / Skip.
- * Shows once per browser — the key is bumped to "hub.tour2" for the ROP-first rework, so a visitor who
+ * Project Library button, the radial menu, the trophy cup) with a little tooltip card and Next / Skip.
+ * Shows once per browser — the key is bumped to "hub.tour3" for the Project Library rework, so a visitor who
  * saw the old tour sees this one once. Add ?sx=tour:show to replay it. Hub only, and it waits for the async header
  * buttons to mount, skipping any step whose target isn't there. Self-contained: injects its own CSS. Prefix ht-.
  */
@@ -12,13 +12,13 @@
   if (!feat("tour")) return;
 
   var force = false; try { force = !!(Site.debug && Site.debug("tour")); } catch (e) {}
-  var done = false; try { done = localStorage.getItem("hub.tour2") === "1"; } catch (e) {}
+  var done = false; try { done = localStorage.getItem("hub.tour3") === "1"; } catch (e) {}
   if (done && !force) return;
 
   var STEPS = [
     { sel: ".hb-search", title: "Search every game", text: "Start right here — type any game to rate it, review it, or just look it up. 336,000+ and counting.", place: "below" },
     { sel: "a.hb-rate", title: "Wiki-Chip Dex", text: "The heart of the Haven. Score games 0-5 on every platform, write reviews, build lists, and chat in the forums.", place: "above" },
-    { sel: "main.avenues", title: "More from Anders", text: "A private WoW server to join and a PlayStation launcher to download — with the arcade, trophies, and Discord just below.", place: "below" },
+    { sel: "a.hb-lib__btn", title: "The Project Library", text: "Everything else I build lives here: Ramses, AndersCraft, AnyPS, AndersMod Studio, the Arcade and more.", place: "above" },
     { sel: ".ch-menu", title: "The page wheel", text: "This opens a radial menu of every page — click any spoke to go there.", place: "below" },
     { sel: ".pl-cup", title: "Collect trophies", text: "You earn little trophies just by exploring the site. Keep an eye on this cup. Have fun!", place: "below" }
   ];
@@ -57,7 +57,7 @@
     "@media print{.ht-ov{display:none}}";
 
   function finish() {
-    try { localStorage.setItem("hub.tour2", "1"); } catch (e) {}
+    try { localStorage.setItem("hub.tour3", "1"); } catch (e) {}
     if (ov) { ov.remove(); ov = null; }
     window.removeEventListener("resize", place); window.removeEventListener("scroll", place);
     doc.removeEventListener("keydown", onKey, true);
@@ -101,7 +101,7 @@
 
   function startTour() {
     steps = STEPS.filter(function (s) { return doc.querySelector(s.sel); });
-    if (steps.length < 2) { try { localStorage.setItem("hub.tour2", "1"); } catch (e) {} return; }   /* nothing worth touring */
+    if (steps.length < 2) { try { localStorage.setItem("hub.tour3", "1"); } catch (e) {} return; }   /* nothing worth touring */
     var st = doc.createElement("style"); st.textContent = CSS; doc.head.appendChild(st);
     hole = el("div", { class: "ht-hole" });
     kEl = el("span", { class: "ht-card__k" }); hEl = el("h2", { class: "ht-card__h" }); tEl = el("p", { class: "ht-card__t" });

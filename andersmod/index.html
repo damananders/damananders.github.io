@@ -20,39 +20,110 @@
 <link rel="stylesheet" href="../assets/hub.css" />
 <link rel="stylesheet" href="../assets/socials.css" />
 <style>
-/* Magic glass: dark maroon glass, amber and rose light, no hard borders */
-body.amod{--accent:#f2a93b;--amod:#f2a93b;--rose:#f0588c;
-  background:
-    radial-gradient(900px 620px at 85% -10%, rgba(242,169,59,.32), transparent 60%),
-    radial-gradient(760px 640px at -10% 85%, rgba(240,88,140,.26), transparent 60%),
-    #1a0b0e;}
-.amod .glass{background:rgba(32,13,19,.72);border:1px solid rgba(255,255,255,.08);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 24px 60px -30px rgba(242,169,59,.45)}
-.amod h1{background:linear-gradient(90deg,#ffd27a,#ffb347 45%,#f58aa8);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 34px rgba(255,154,92,.35)}
-.amod .eyebrow{color:var(--amod)}
-.amod .feat li{border-left-color:var(--amod);background:rgba(32,13,19,.72)}
-.amod .btn{background:linear-gradient(90deg,#ffcf6e,#f2a93b 55%,#e8892c);color:#2a1206;box-shadow:0 10px 30px -12px rgba(242,169,59,.8)}
+/* AndersMod Studio's own look: a "scanner console". Graphite glass, amber phosphor plus a cool teal for the
+ * safety lock, faint scan lines and a hex-address motif. Centered hero + download dock, a bento feature grid,
+ * a filmstrip, a step timeline and a two-column FAQ, so it shares no layout with Ramses, AnyPS or Support. Prefix am-. */
+body.amod{--accent:#f5b544;--am:#f5b544;--am-2:#ffd88a;--am-cool:#3fd9c5;--am-glass:rgba(20,18,16,.74);
+  background:#0b0b0c;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px),
+    radial-gradient(900px 520px at 50% -12%,rgba(245,181,68,.22),transparent 62%),
+    radial-gradient(700px 520px at 100% 60%,rgba(63,217,197,.10),transparent 62%),
+    radial-gradient(700px 520px at 0% 90%,rgba(245,181,68,.08),transparent 62%)}
+.amod .am-glass{background:var(--am-glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-radius:22px;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -36px rgba(245,181,68,.55)}
+.am-hex{font:500 .74rem/1 var(--mono);letter-spacing:.12em;color:color-mix(in srgb,var(--am) 75%,#fff);display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+.am-hex b{font-weight:500;padding:6px 10px;border-radius:8px;background:rgba(245,181,68,.10)}
+.am-hex i{font-style:normal;color:var(--muted)}
+.am-hero{text-align:center;display:grid;justify-items:center;gap:14px;padding:46px 0 10px}
+.amod h1.am-h1{margin:0;font:800 clamp(2.6rem,7.4vw,4.8rem)/.98 var(--display);letter-spacing:-.035em;color:var(--am);
+  text-shadow:0 0 28px rgba(245,181,68,.45),0 0 2px rgba(255,216,138,.8)}
+.am-h1 .am-cur{display:inline-block;width:.09em;height:.82em;margin-left:.06em;vertical-align:-.04em;background:var(--am);border-radius:2px;animation:am-blink 1.1s steps(1) infinite}
+@keyframes am-blink{50%{opacity:0}}
+:root[data-motion="reduce"] .am-cur{animation:none}
+.am-lead{margin:0;max-width:60ch;color:#cfcac2;font-size:1.12rem;line-height:1.6}
+/* download dock */
+.am-dock{margin:26px auto 0;max-width:880px;padding:18px 20px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:center;text-align:left}
+.amod .am-dock .btn{grid-row:span 2;background:var(--am);color:#1d1404;border-radius:999px;padding:15px 24px;font-weight:700;
+  box-shadow:0 0 0 4px rgba(245,181,68,.14),0 14px 34px -12px rgba(245,181,68,.85)}
+.amod .am-dock .btn:hover{filter:brightness(1.08)}
 .amod .btn[aria-disabled="true"]{filter:grayscale(.5) brightness(.8);pointer-events:none}
-.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
-.shots figure{margin:0}
-.shots img{width:100%;height:auto;border-radius:14px;display:block;box-shadow:0 18px 40px -24px rgba(242,169,59,.6)}
-.shots figcaption{color:var(--muted);font-size:.85rem;margin-top:6px}
-.hero-shot{width:100%;height:auto;border-radius:16px;display:block;box-shadow:0 30px 70px -30px rgba(242,169,59,.7)}
-.sec{margin-top:40px}
-.sec h2{font-family:var(--display);margin:0 0 14px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-.card{padding:16px}
-.card h3{margin:0 0 4px;font-size:1rem;font-family:var(--display);color:#ffe7b0}
-.card p,.card li{color:var(--muted);font-size:.92rem;margin:4px 0}
-.faq details{padding:0 14px;margin:8px 0}
-.faq summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--text);list-style:none}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::before{content:"\203A ";color:var(--amod);font-weight:700}
-.faq details[open] summary::before{content:"\2039 "}
-.faq details > *:not(summary){color:var(--muted);font-size:.93rem;margin:0 0 12px}
-.hash{font-family:var(--mono);font-size:.72rem;color:var(--muted);word-break:break-all}
-.safe{border-left:3px solid var(--rose)}
-.changes summary{cursor:pointer;font-weight:600;color:var(--text)}
-.changes ul{color:var(--muted);font-size:.92rem}
+.am-dock__line{margin:0;color:#d8d3cb;font-size:.95rem}
+.am-dock .meta{margin:0;font:500 .8rem var(--mono);color:var(--muted)}
+.am-dock__more{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:8px;padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.06);font-size:.88rem}
+.am-dock__more a{color:var(--am-2)}
+.hash{font-family:var(--mono);font-size:.72rem;color:var(--muted);word-break:break-all;margin:0}
+.am-shot{margin:34px auto 0;max-width:1000px;position:relative;border-radius:20px;padding:10px;
+  background:linear-gradient(160deg,rgba(245,181,68,.25),rgba(20,18,16,.6) 40%,rgba(63,217,197,.18));
+  box-shadow:0 40px 90px -40px rgba(245,181,68,.7)}
+.am-shot img{display:block;width:100%;height:auto;border-radius:12px}
+/* safety lock banner */
+.am-lock{margin:30px auto 0;max-width:880px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:16px 20px;border-radius:18px;
+  background:linear-gradient(90deg,rgba(63,217,197,.16),rgba(63,217,197,.04));color:#cfe9e5;font-size:.95rem}
+.am-lock svg{width:34px;height:34px;color:var(--am-cool)}
+.am-lock b{color:#effffc}
+/* sections */
+.am-sec{margin-top:64px}
+.am-sec__h{display:flex;align-items:baseline;gap:12px;margin:0 0 18px;font:700 1.5rem var(--display);letter-spacing:-.01em}
+.am-sec__h small{font:500 .72rem var(--mono);letter-spacing:.12em;color:var(--am)}
+/* bento features */
+.am-bento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(150px,auto);gap:14px}
+.am-tile{padding:20px;display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:.93rem;line-height:1.5;transition:transform .2s}
+.am-tile:hover{transform:translateY(-3px)}
+.am-tile h3{margin:0;color:var(--text);font:700 1.05rem var(--display)}
+.am-tile__ico{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--am);background:rgba(245,181,68,.12)}
+.am-tile__ico svg{width:21px;height:21px}
+.am-tile--hero{grid-column:span 2;grid-row:span 2;background:linear-gradient(160deg,rgba(245,181,68,.18),var(--am-glass) 55%)}
+.am-tile--hero h3{font-size:1.5rem}
+.am-tile--hero p{color:#d8d3cb;font-size:1rem;margin:0}
+.am-tile--hero img{margin-top:auto;width:100%;border-radius:12px;display:block}
+.am-tile--wide{grid-column:span 2}
+.am-tile p{margin:0}
+/* filmstrip */
+.am-strip{display:grid;grid-auto-flow:column;grid-auto-columns:min(78%,560px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;scrollbar-width:thin}
+.am-strip figure{margin:0;scroll-snap-align:start}
+.am-strip img{width:100%;height:auto;display:block;border-radius:16px;box-shadow:0 24px 50px -30px rgba(245,181,68,.65)}
+.am-strip figcaption{margin-top:8px;color:var(--muted);font-size:.88rem}
+/* step timeline */
+.am-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;position:relative;counter-reset:am}
+.am-steps::before{content:"";position:absolute;left:24px;right:24px;top:23px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--am),var(--am-cool))}
+.am-steps li{position:relative;counter-increment:am;display:grid;gap:8px;color:var(--muted);font-size:.92rem;line-height:1.5}
+.am-steps li::before{content:counter(am,decimal-leading-zero);width:48px;height:48px;display:grid;place-items:center;border-radius:50%;
+  font:700 .95rem var(--mono);color:#1d1404;background:var(--am);box-shadow:0 0 0 6px #0b0b0c,0 0 24px rgba(245,181,68,.6)}
+.am-steps li:last-child::before{background:var(--am-cool)}
+.am-steps h3{margin:6px 0 0;color:var(--text);font:700 1.02rem var(--display)}
+.am-steps p{margin:0}
+/* requirement stats */
+.am-reqs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.am-req{padding:20px 22px;display:grid;gap:4px}
+.am-req strong{font:800 2rem/1 var(--display);color:var(--am-2);letter-spacing:-.02em}
+.am-req span{font:600 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--am)}
+.am-req p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
+/* faq: two columns */
+.am-faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.am-faq details{padding:0 18px;border-radius:16px}
+.am-faq summary{cursor:pointer;padding:15px 0;font-weight:600;color:var(--text);list-style:none;display:flex;gap:10px;align-items:center}
+.am-faq summary::-webkit-details-marker{display:none}
+.am-faq summary::before{content:"+";flex:none;width:24px;height:24px;display:grid;place-items:center;border-radius:8px;font:700 1rem var(--mono);color:var(--am);background:rgba(245,181,68,.12)}
+.am-faq details[open] summary::before{content:"\2212"}
+.am-faq details > *:not(summary){color:var(--muted);font-size:.93rem;margin:0 0 14px}
+.am-changes{margin-top:14px;padding:4px 18px;border-radius:16px}
+.am-changes summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--text)}
+.am-changes ul{color:var(--muted);font-size:.92rem}
+:root[data-theme="light"] body.amod{background-color:#f4f1ea}
+:root[data-theme="light"] .amod{--am-glass:rgba(255,255,255,.82)}
+:root[data-theme="light"] .am-lead,:root[data-theme="light"] .am-dock__line,:root[data-theme="light"] .am-tile--hero p{color:#3a3530}
+:root[data-theme="light"] .am-lock{color:#21413d}:root[data-theme="light"] .am-lock b{color:#0e2a27}
+@media (max-width:900px){
+  .am-bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .am-steps{grid-template-columns:1fr 1fr}.am-steps::before{display:none}
+}
+@media (max-width:620px){
+  .am-dock{grid-template-columns:1fr}.amod .am-dock .btn{grid-row:auto}
+  .am-bento,.am-faq,.am-reqs,.am-steps{grid-template-columns:1fr}
+  .am-tile--hero,.am-tile--wide{grid-column:auto;grid-row:auto}
+}
 </style>
 <script src="../assets/config.js"></script>
 <!-- site:head (shared site upgrades, see assets/README.md) -->
@@ -75,91 +146,91 @@ body.amod{--accent:#f2a93b;--amod:#f2a93b;--rose:#f0588c;
     </div>
   </nav>
 
-  <div class="split">
-    <section>
-      <div class="eyebrow">Modding tool &middot; Windows 10/11 &middot; 64-bit</div>
-      <h1>AndersMod Studio</h1>
-      <p class="lead">Mod single-player PC games while they run. Find a value, make it a cheat, and keep it working after the game restarts. Or tell the Mod Director what you want and let it plan the whole thing for you.</p>
-      <img class="hero-shot" src="../assets/andersmod/studio.jpg" width="1280" height="820" alt="AndersMod Studio's Mod Director: pick a game, tap what you want, and get a plan" />
-      <ul class="feat" style="margin-top:18px">
-        <li><b>Mod Director</b> &mdash; pick a game, say what you want (god mode, infinite ammo, max money...), and get the easiest way to do each one, with a step-by-step guide.</li>
-        <li><b>Find any value</b> &mdash; exact numbers, &ldquo;went up / went down&rdquo;, unknown values, all types at once, big-endian, your own custom types, and a blind hunt for things with no number on screen.</li>
-        <li><b>Cheats in plain words</b> &mdash; Freeze, Never decrease, Set to, Always max, and one-click god mode that switches off just the code that hurts you.</li>
-        <li><b>Built to last</b> &mdash; stable pointers that survive a restart, and saved mods that come back the next time you open the game.</li>
-        <li><b>Unity games by name</b> &mdash; reads the game's own field names, so &ldquo;health&rdquo; or &ldquo;gold&rdquo; is a search, not a scan.</li>
-        <li><b>Play tab and overlay</b> &mdash; your cheats as cards with switches, sliders and hotkeys, plus a click-through in-game overlay.</li>
-        <li><b>Cheat tables</b> &mdash; opens and saves the common .CT format, runs table scripts in a safe sandbox, and exports a standalone trainer.</li>
-        <li><b>Power tools</b> &mdash; memory viewer, structure dissect, pointer scanner, what-writes / what-accesses, a step debugger and a script assembler.</li>
-      </ul>
-    </section>
+  <header class="am-hero">
+    <div class="am-hex"><b>0x00 &middot; Modding tool</b><b>Windows 10/11</b><b>64-bit</b><i>single-player only</i></div>
+    <h1 class="am-h1">AndersMod Studio<span class="am-cur" aria-hidden="true"></span></h1>
+    <p class="am-lead">Mod single-player PC games while they run. Find a value, make it a cheat, and keep it working after the game restarts. Or tell the Mod Director what you want and let it plan the whole thing for you.</p>
+  </header>
 
-    <aside class="panel glass">
-      <h2>Download</h2>
-      <p class="lead" style="font-size:1rem">Free. Unzip anywhere and run <code>LiveModStudio.exe</code>. No installer, nothing else to install.</p>
-      <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
-      <div id="dlmeta" class="meta"></div>
+  <section class="am-dock am-glass" aria-label="Download">
+    <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
+    <p class="am-dock__line">Free. Unzip anywhere and run <code>LiveModStudio.exe</code>. No installer, nothing else to install.</p>
+    <div id="dlmeta" class="meta"></div>
+    <div class="am-dock__more">
       <p id="dlhash" class="hash" hidden></p>
-      <p id="dlall" hidden style="margin:.4rem 0 0"><a id="dlalllink" href="#" target="_blank" rel="noopener">All Downloads &amp; Release Notes</a></p>
+      <span id="dlall" hidden><a id="dlalllink" href="#" target="_blank" rel="noopener">All Downloads &amp; Release Notes</a></span>
+      <a href="#quickstart">Read the Quick Start &darr;</a>
+    </div>
+  </section>
 
-      <h3 style="margin-top:24px">Getting Started</h3>
-      <ol class="steps">
-        <li>Download and unzip.</li>
-        <li>Run <code>LiveModStudio.exe</code>. Windows may say it&rsquo;s from an unknown publisher: choose <b>More info</b> &rarr; <b>Run anyway</b>.</li>
-        <li>Open <b>Library</b>, find your game, and press <b>Approve for live</b>.</li>
-        <li>Start the game yourself, then open <b>Director</b> or <b>Scanner</b>.</li>
-      </ol>
-      <p style="margin-top:6px"><a href="#quickstart">Read the Quick Start &darr;</a></p>
+  <figure class="am-shot"><img src="../assets/andersmod/studio.jpg" width="1280" height="820" alt="AndersMod Studio's Mod Director: pick a game, tap what you want, and get a plan" /></figure>
 
-      <div class="note safe"><b>Single-player and offline only.</b> Games that use anti-cheat (EasyAntiCheat, BattlEye, Vanguard and others) are detected and locked: the studio never opens them. Games with protected code get value cheats only. Please respect each game&rsquo;s terms.</div>
-
-      <details class="changes" style="margin-top:18px">
-        <summary>What&rsquo;s New in 0.7.2</summary>
-        <ul>
-          <li>Mod Director: plans a mod table for any game from plain wishes, with Guide me and Save plan.</li>
-          <li>Big endian is a normal option everywhere, and custom value types work in every scan, the table, freeze and cheat maker.</li>
-          <li>New chromeless window and a startup splash.</li>
-          <li>Two full audits: dozens of fixes for crashes, data loss and wrong results; the anti-cheat lock re-checks while a game is open.</li>
-        </ul>
-      </details>
-    </aside>
+  <div class="am-lock" role="note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/></svg>
+    <p style="margin:0"><b>Single-player and offline only.</b> Games that use anti-cheat (EasyAntiCheat, BattlEye, Vanguard and others) are detected and locked: the studio never opens them. Games with protected code get value cheats only. Please respect each game&rsquo;s terms.</p>
   </div>
 
-  <section class="sec" aria-label="Screenshots">
-    <h2>A Closer Look</h2>
-    <div class="shots">
-      <figure><img src="../assets/andersmod/director.jpg" loading="lazy" alt="The Mod Director's plan for god mode, money and XP" /><figcaption>The Mod Director picks the easiest way to do each cheat for this game.</figcaption></figure>
+  <section class="am-sec" aria-labelledby="am-feat-h">
+    <h2 class="am-sec__h" id="am-feat-h">What It Does <small>// features</small></h2>
+    <div class="am-bento">
+      <div class="am-tile am-tile--hero am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 14.5 9.5M12.5 7.5l4 4M17 3.5v3M15.5 5h3M20 8.5v2M19 9.5h2M9 3.5v2M8 4.5h2"/></svg></span><h3>Mod Director</h3><p>Pick a game, say what you want (god mode, infinite ammo, max money...), and get the easiest way to do each one, with a step-by-step guide.</p><img src="../assets/andersmod/director.jpg" loading="lazy" alt="The Mod Director's plan for god mode, money and XP" /></div>
+      <div class="am-tile am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><h3>Find Any Value</h3><p>Exact numbers, &ldquo;went up / went down&rdquo;, unknown values, all types at once, big-endian, your own custom types, and a blind hunt for things with no number on screen.</p></div>
+      <div class="am-tile am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg></span><h3>Cheats in Plain Words</h3><p>Freeze, Never decrease, Set to, Always max, and one-click god mode that switches off just the code that hurts you.</p></div>
+      <div class="am-tile am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15 15 9M10 6.5l1.5-1.5a4.2 4.2 0 0 1 6 6L16 12.5M14 17.5 12.5 19a4.2 4.2 0 0 1-6-6L8 11.5"/></svg></span><h3>Built to Last</h3><p>Stable pointers that survive a restart, and saved mods that come back the next time you open the game.</p></div>
+      <div class="am-tile am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9Z"/><path d="M12 12 20 7.5M12 12v9M12 12 4 7.5"/></svg></span><h3>Unity Games by Name</h3><p>Reads the game&rsquo;s own field names, so &ldquo;health&rdquo; or &ldquo;gold&rdquo; is a search, not a scan.</p></div>
+      <div class="am-tile am-tile--wide am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="6"/><circle cx="15" cy="12" r="3.2"/></svg></span><h3>Play Tab and Overlay</h3><p>Your cheats as cards with switches, sliders and hotkeys, plus a click-through in-game overlay.</p></div>
+      <div class="am-tile am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 10h16M10 10v10"/></svg></span><h3>Cheat Tables</h3><p>Opens and saves the common .CT format, runs table scripts in a safe sandbox, and exports a standalone trainer.</p></div>
+      <div class="am-tile am-glass"><span class="am-tile__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0-5.3 5.3L4 17v3h3l5.2-5.2a4 4 0 0 0 5.3-5.3l-2.4 2.4-2.4-.6-.6-2.4Z"/></svg></span><h3>Power Tools</h3><p>Memory viewer, structure dissect, pointer scanner, what-writes / what-accesses, a step debugger and a script assembler.</p></div>
+    </div>
+  </section>
+
+  <section class="am-sec" aria-labelledby="am-look-h">
+    <h2 class="am-sec__h" id="am-look-h">A Closer Look <small>// scroll sideways</small></h2>
+    <div class="am-strip" tabindex="0" aria-label="Screenshots">
       <figure><img src="../assets/andersmod/play.jpg" loading="lazy" alt="The Play tab: cheats as cards with switches and hotkeys" /><figcaption>Play: your cheats as cards, by category, with hotkeys.</figcaption></figure>
       <figure><img src="../assets/andersmod/scanner.jpg" loading="lazy" alt="The Scanner finding a value" /><figcaption>Scanner: every compare and value type, or a blind hunt.</figcaption></figure>
     </div>
   </section>
 
-  <section class="sec" id="quickstart" aria-label="Quick Start">
-    <h2>Quick Start</h2>
-    <div class="cards">
-      <div class="card glass"><h3>1. Pick Your Game</h3><p>Library lists your Steam and Epic games with their engine. A red lock means anti-cheat: it stays off limits. Press <b>Approve for live</b> on the game you want to mod.</p></div>
-      <div class="card glass"><h3>2. Say What You Want</h3><p>In <b>Director</b>, tap the wishes (or type your own) and press <b>Make my plan</b>. <b>Guide me</b> walks you through each one; <b>Save plan</b> writes a draft table.</p></div>
-      <div class="card glass"><h3>3. Or Find It Yourself</h3><p>In <b>Scanner</b>, type the number you see, change it in the game, scan again. Can&rsquo;t see it? Use <b>I can&rsquo;t see it</b> and say whether it went up or down.</p></div>
-      <div class="card glass"><h3>4. Make It a Cheat</h3><p>Right-click a value &rarr; <b>Make cheat</b>. For god mode, press <b>Make god mode</b> and take a hit: the studio finds the code that lowers your health and switches only that off.</p></div>
-    </div>
+  <section class="am-sec" id="quickstart" aria-labelledby="am-qs-h">
+    <h2 class="am-sec__h" id="am-qs-h">Quick Start <small>// four steps</small></h2>
+    <p class="am-lead" style="text-align:left;margin:-6px 0 22px;font-size:1rem">Download and unzip, then run <code>LiveModStudio.exe</code>. Windows may say it&rsquo;s from an unknown publisher: choose <b>More info</b> &rarr; <b>Run anyway</b>. Start the game yourself, then:</p>
+    <ol class="am-steps">
+      <li><h3>Pick Your Game</h3><p>Library lists your Steam and Epic games with their engine. A red lock means anti-cheat: it stays off limits. Press <b>Approve for live</b> on the game you want to mod.</p></li>
+      <li><h3>Say What You Want</h3><p>In <b>Director</b>, tap the wishes (or type your own) and press <b>Make my plan</b>. <b>Guide me</b> walks you through each one; <b>Save plan</b> writes a draft table.</p></li>
+      <li><h3>Or Find It Yourself</h3><p>In <b>Scanner</b>, type the number you see, change it in the game, scan again. Can&rsquo;t see it? Use <b>I can&rsquo;t see it</b> and say whether it went up or down.</p></li>
+      <li><h3>Make It a Cheat</h3><p>Right-click a value &rarr; <b>Make cheat</b>. For god mode, press <b>Make god mode</b> and take a hit: the studio finds the code that lowers your health and switches only that off.</p></li>
+    </ol>
   </section>
 
-  <section class="sec" aria-label="System Requirements">
-    <h2>System Requirements</h2>
-    <div class="cards">
-      <div class="card glass"><h3>Windows</h3><p>Windows 10 or 11, 64-bit. Nothing else to install: .NET is built in.</p></div>
-      <div class="card glass"><h3>Games</h3><p>64-bit single-player PC games. Value cheats work on 32-bit games too; the debugger and scripts are 64-bit only for now.</p></div>
-      <div class="card glass"><h3>Space</h3><p>About 65 MB. Your settings and saved mods stay in your user profile, never next to the exe.</p></div>
+  <section class="am-sec" aria-labelledby="am-req-h">
+    <h2 class="am-sec__h" id="am-req-h">System Requirements <small>// minimum</small></h2>
+    <div class="am-reqs">
+      <div class="am-req am-glass"><span>Windows</span><strong>10 / 11</strong><p>64-bit. Nothing else to install: .NET is built in.</p></div>
+      <div class="am-req am-glass"><span>Games</span><strong>64-bit</strong><p>Single-player PC games. Value cheats work on 32-bit games too; the debugger and scripts are 64-bit only for now.</p></div>
+      <div class="am-req am-glass"><span>Space</span><strong>~65 MB</strong><p>Your settings and saved mods stay in your user profile, never next to the exe.</p></div>
     </div>
+    <details class="am-changes am-glass">
+      <summary>What&rsquo;s New in 0.7.2</summary>
+      <ul>
+        <li>Mod Director: plans a mod table for any game from plain wishes, with Guide me and Save plan.</li>
+        <li>Big endian is a normal option everywhere, and custom value types work in every scan, the table, freeze and cheat maker.</li>
+        <li>New chromeless window and a startup splash.</li>
+        <li>Two full audits: dozens of fixes for crashes, data loss and wrong results; the anti-cheat lock re-checks while a game is open.</li>
+      </ul>
+    </details>
   </section>
 
-  <section class="sec faq" aria-label="FAQ">
-    <h2>Questions</h2>
-    <details class="glass"><summary>Will it get me banned?</summary><p>It&rsquo;s made for single-player and offline games. Anything with anti-cheat is locked out, and games that play online show a &ldquo;single-player / offline only&rdquo; warning. Don&rsquo;t use it in online or competitive play.</p></details>
-    <details class="glass"><summary>Windows or my antivirus warns about it</summary><p>The exe isn&rsquo;t code-signed, so SmartScreen shows &ldquo;unknown publisher&rdquo; (More info &rarr; Run anyway). Some antivirus tools flag any program that reads other programs&rsquo; memory; that&rsquo;s what a modding tool does. Check the download against the SHA-256 shown next to the button.</p></details>
-    <details class="glass"><summary>Does it inject anything into my game?</summary><p>No. It reads and writes memory from outside, the same way a debugger does. Code cheats change a few bytes in the game&rsquo;s memory and put them back exactly when you switch them off or close the studio.</p></details>
-    <details class="glass"><summary>Can I use my existing cheat tables?</summary><p>Yes, the common .CT format opens and saves, including groups, pointers, hotkeys, dropdowns and scripts. Table scripts run in a sandbox with no file or system access, and with a time limit.</p></details>
-    <details class="glass"><summary>Why does a game say &ldquo;values only&rdquo;?</summary><p>Its code is protected (for example by anti-tamper). You can still change numbers like health or money, but the studio won&rsquo;t touch its code.</p></details>
-    <details class="glass"><summary>Where are my settings and saved mods?</summary><p>In <code>%APPDATA%\LiveModStudio</code>. Delete that folder to start fresh; the studio itself is just the unzipped folder.</p></details>
+  <section class="am-sec" aria-labelledby="am-faq-h">
+    <h2 class="am-sec__h" id="am-faq-h">Questions <small>// faq</small></h2>
+    <div class="am-faq">
+      <details class="am-glass"><summary>Will it get me banned?</summary><p>It&rsquo;s made for single-player and offline games. Anything with anti-cheat is locked out, and games that play online show a &ldquo;single-player / offline only&rdquo; warning. Don&rsquo;t use it in online or competitive play.</p></details>
+      <details class="am-glass"><summary>Windows or my antivirus warns about it</summary><p>The exe isn&rsquo;t code-signed, so SmartScreen shows &ldquo;unknown publisher&rdquo; (More info &rarr; Run anyway). Some antivirus tools flag any program that reads other programs&rsquo; memory; that&rsquo;s what a modding tool does. Check the download against the SHA-256 shown next to the button.</p></details>
+      <details class="am-glass"><summary>Does it inject anything into my game?</summary><p>No. It reads and writes memory from outside, the same way a debugger does. Code cheats change a few bytes in the game&rsquo;s memory and put them back exactly when you switch them off or close the studio.</p></details>
+      <details class="am-glass"><summary>Can I use my existing cheat tables?</summary><p>Yes, the common .CT format opens and saves, including groups, pointers, hotkeys, dropdowns and scripts. Table scripts run in a sandbox with no file or system access, and with a time limit.</p></details>
+      <details class="am-glass"><summary>Why does a game say &ldquo;values only&rdquo;?</summary><p>Its code is protected (for example by anti-tamper). You can still change numbers like health or money, but the studio won&rsquo;t touch its code.</p></details>
+      <details class="am-glass"><summary>Where are my settings and saved mods?</summary><p>In <code>%APPDATA%\LiveModStudio</code>. Delete that folder to start fresh; the studio itself is just the unzipped folder.</p></details>
+    </div>
   </section>
 
   <footer>

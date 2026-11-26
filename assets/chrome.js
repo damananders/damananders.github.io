@@ -559,7 +559,7 @@
     ["games", "/games/", "Wiki-Chip Dex", "Rate & review games", "games"], ["forum", "/games/forum/", "Forums", "Talk games & projects", "games"],
     ["links", "/links/", "Links I Like", "Sites I actually use", "about"], ["stream", "/stream/", "Stream", "Watch me live", "community"],
     ["discord", "/discord/", "Discord", "Join the community", "community"], ["arcade", "/arcade/", "Arcade", "Little browser games", "games"],
-    ["projects", "/projects/", "Projects", "What I'm working on", "about"], ["uses", "/uses/", "Uses", "My gear & setup", "about"], ["changelog", "/changelog/", "What's New", "Latest updates", "about"],
+    ["projects", "/projects/", "Project Library", "Everything I build", "projects"], ["uses", "/uses/", "Uses", "My gear & setup", "about"], ["changelog", "/changelog/", "What's New", "Latest updates", "about"],
     ["support", "/support/", "Support", "Keep the projects online", "you"], ["account", "/account/", "Account", "Your DMA Account", "you"],
     ["explore", "/explore/", "Explore", "A tour of everything here", "about"]
   ];
