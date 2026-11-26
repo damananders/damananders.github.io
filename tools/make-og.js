@@ -18,6 +18,7 @@ const CARDS = [
   { file: "anyps", kicker: "PlayStation launcher · Windows", title: "AnyPS", sub: "One controller-first launcher for six generations of PlayStation emulators, now with PS Vita. Bring your own games.", accent: "#3d8bff" },
   { file: "discord", kicker: "Friends of DaManAnders", title: "Come hang out", sub: "Go-live alerts, new-review feeds and a place to talk about the projects. The Discord for everything Anders.", accent: "#5865f2" },
   { file: "arcade", kicker: "Arcade", title: "Play something", sub: "Little browser games tucked into the site — row the boat home, stamp review scores, and more to come.", accent: "#cd4257" },
+  { file: "andersmod", kicker: "Live modding tool · Windows", title: "AndersMod Studio", sub: "Find values, make cheats and build mod tables for single-player PC games. Games with anti-cheat are never touched.", accent: "#f2a93b", bg: "assets/andersmod/studio.jpg" },
   { file: "trophies", kicker: "Trophy cabinet", title: "Collect them all", sub: "Hidden trophies across the whole site — secret words, cheat codes and milestones. See how many you can find.", accent: "#f0b065" }
 ];
 const b64 = f => fs.readFileSync(path.join(root, f)).toString("base64");
