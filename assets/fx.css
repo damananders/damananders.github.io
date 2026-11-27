@@ -138,6 +138,6 @@ dialog.sx-modal::backdrop{background:rgba(3,5,8,.72);backdrop-filter:blur(4px)}
   @page{margin:16mm}
 }
 
-/* Classic skin (assets/seasons.js sets data-skin): the original gold accent on the pages that use the site default. */
-:root[data-skin="classic"]:not([data-page="anderscraft"]):not([data-page="anyps"]):not([data-page="vault"]){--sx-accent:#ffc46b;--sx-on-accent:#06090c}
-:root[data-theme="light"][data-skin="classic"]:not([data-page="anderscraft"]):not([data-page="anyps"]):not([data-page="vault"]){--sx-accent:#8a4f00;--sx-on-accent:#fff}
+/* Classic skin (assets/seasons.js sets data-skin) keeps the site's maroon accent like every other skin.
+   It used to switch the accent to gold, which turned the hub search button, the Latest banner and every
+   accent-coloured control gold; the director wants maroon/rose everywhere outside the Wiki-Chip Dex. */
