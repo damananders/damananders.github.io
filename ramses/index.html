@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ramses — Your own AI assistant that runs on your PC</title>
-<meta name="description" content="Ramses is a free, self-hosted AI assistant for Windows. It chats, works with your files, runs code, makes pictures and keeps your boards, on your own PC and offline by default. It picks the local models that suit your hardware." />
+<title>Ramses — Take back control of AI</title>
+<meta name="description" content="Ramses is a free, open-source AI assistant that runs on your own Windows PC. It chats, works with your files, runs code and makes pictures, keeps your data with you, and does only as much on its own as you allow." />
 <meta name="theme-color" content="#0a0a0b" />
-<meta property="og:title" content="Ramses — Your own AI assistant that runs on your PC" />
-<meta property="og:description" content="Chats, files, code, pictures and boards, on your own PC and offline by default. Free and open source (MIT)." />
+<meta property="og:title" content="Ramses — Take back control of AI" />
+<meta property="og:description" content="An AI assistant that runs on your own PC, keeps your data with you and works at the pace you set. Free and open source (MIT)." />
 <meta property="og:url" content="https://damananders.github.io/ramses/" />
-<meta property="og:image" content="https://damananders.github.io/assets/og/ramses.jpg?v=2" />
+<meta property="og:image" content="https://damananders.github.io/assets/og/ramses.jpg?v=3" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -20,109 +20,119 @@
 <link rel="stylesheet" href="../assets/hub.css" />
 <link rel="stylesheet" href="../assets/socials.css" />
 <style>
-/* Ramses' own look: "a conversation". Black glass with grey and white, lit in gold; a big gold avatar,
- * features told as a chat thread, a 2x2 screenshot mosaic, keycap quick start and borderless spec rows.
- * Shares no layout with AnyPS, AndersMod Studio or Support. Prefix rm-. */
-body.rms{--accent:#d4af37;--rms:#d4af37;--sun:#a9abb2;--ember:#d4af37;--rm-glass:rgba(18,18,20,.76);
-  background:#09090a;
-  background-image:
-    radial-gradient(800px 560px at 18% -8%,rgba(212,175,55,.24),transparent 60%),
-    radial-gradient(640px 520px at 100% 30%,rgba(190,192,198,.10),transparent 60%),
-    radial-gradient(800px 600px at 40% 110%,rgba(212,175,55,.12),transparent 60%)}
-.rms .rm-glass{background:var(--rm-glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-radius:24px;
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -36px rgba(212,175,55,.55)}
-/* hero: avatar + words */
-.rm-hero{display:grid;grid-template-columns:auto 1fr;gap:38px;align-items:center;padding:44px 0 8px}
-.rm-face{width:190px;height:190px;border-radius:52px;display:grid;place-items:center;color:#141210;
-  background:linear-gradient(150deg,#f3d98b,#d4af37 55%,#a8842a);box-shadow:0 0 0 10px rgba(212,175,55,.12),0 30px 70px -20px rgba(212,175,55,.75);animation:rm-glow 6s ease-in-out infinite}
-.rm-face svg{width:58%;height:58%}
-@keyframes rm-glow{50%{box-shadow:0 0 0 14px rgba(212,175,55,.08),0 30px 80px -16px rgba(212,175,55,.9)}}
-:root[data-motion="reduce"] .rm-face{animation:none}
-.rm-tags{display:flex;flex-wrap:wrap;gap:8px}
-.rm-tags span{font:500 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border-radius:999px;color:#f3d98b;background:rgba(212,175,55,.12)}
-.rm-tags span:last-child{color:#e6e6ea;background:rgba(190,192,198,.12)}
-.rms h1.rm-h1{margin:14px 0 10px;font:800 clamp(3rem,8vw,5.4rem)/.95 var(--display);letter-spacing:-.04em;color:#ffffff}
-.rm-h1 em{font-style:normal;color:var(--rms)}
-.rm-lead{margin:0;max-width:62ch;color:#d6d6d9;font-size:1.1rem;line-height:1.6}
-.rm-get{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin-top:22px}
-.rms .rm-get .btn{border-radius:18px;padding:15px 24px;background:var(--rms);color:#141210;font-weight:700;box-shadow:0 14px 34px -12px rgba(212,175,55,.85)}
-.rms .rm-get .btn:hover{filter:brightness(1.08)}
+/* Ramses: "Take back control of AI". An editorial, monochrome page: near-black, white type, quiet greys and
+ * one restrained gold accent. Typography leads; no boxes, no borders, generous space. Layout: statement hero,
+ * full-bleed product shot, three principles, alternating feature rows, a freedom scale, a "stays on your PC"
+ * ledger, install steps, specs, FAQ and a closing band. Unique to this page. Prefix rx-. */
+body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2:#121214;--ink-3:#1a1a1d;--tx:#f4f4f5;--tx-2:#b9b9bf;--tx-3:#85858c;
+  background:var(--ink);color:var(--tx);
+  background-image:radial-gradient(1100px 520px at 50% -18%,rgba(255,255,255,.07),transparent 65%),radial-gradient(800px 500px at 85% 8%,rgba(201,165,74,.07),transparent 60%)}
+.rms .wrap{max-width:1160px}
+.rx-eyebrow{display:inline-flex;align-items:center;gap:10px;font:500 .74rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3)}
+.rx-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold)}
+/* hero */
+.rx-hero{padding:84px 0 40px;display:grid;gap:22px;max-width:1060px}
+.rms h1.rx-h1{margin:0;font:600 clamp(2.6rem,6.6vw,5rem)/1 var(--display);letter-spacing:-.045em;color:var(--tx)}
+.rx-h1 span{color:var(--tx-3)}
+.rx-intro{margin:0;max-width:62ch;font-size:1.2rem;line-height:1.65;color:var(--tx-2)}
+.rx-intro strong{color:var(--tx);font-weight:600}
+.rx-cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:10px}
+.rms .rx-cta .btn{border-radius:999px;padding:15px 26px;background:var(--tx);color:var(--ink);font-weight:600;letter-spacing:.005em;
+  box-shadow:0 18px 40px -22px rgba(255,255,255,.55);transition:transform .2s,box-shadow .2s,background .2s}
+.rms .rx-cta .btn:hover{background:#fff;transform:translateY(-2px);box-shadow:0 24px 50px -22px rgba(201,165,74,.65)}
 .rms .btn[aria-disabled="true"]{filter:grayscale(.5) brightness(.8);pointer-events:none}
-.rm-get .meta{margin:0;font-size:.85rem}
-.rm-fine{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;color:var(--muted)}
-.rm-fine a{color:#f3d98b}
-.hash{font-family:var(--mono);font-size:.72rem;color:var(--muted);word-break:break-all;margin:0;flex-basis:100%}
-.rm-window{margin:40px 0 0;border-radius:22px;overflow:hidden;box-shadow:0 0 0 1px rgba(212,175,55,.18),0 50px 100px -40px rgba(212,175,55,.6)}
-.rm-window img{display:block;width:100%;height:auto}
-/* install path: four short steps + the safety note */
-.rm-install{margin-top:28px;display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
-.rm-steps{padding:22px 24px}
-.rm-install ol{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:12px;counter-reset:rm}
-.rm-install li{counter-increment:rm;position:relative;padding-left:42px;min-height:30px;color:#d6d6d9;font-size:.95rem;line-height:1.55}
-.rm-install li::before{content:counter(rm);position:absolute;left:0;top:-2px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;font:700 .85rem var(--mono);color:#141210;background:var(--rms)}
-.rm-install li a{color:#f3d98b}
-.rm-install h2{margin:0 0 2px;font:700 1.1rem var(--display);grid-column:1/-1}
-.rm-safe{padding:22px 24px;background:linear-gradient(160deg,rgba(190,192,198,.16),var(--rm-glass) 60%);color:#dcdce0;font-size:.95rem;line-height:1.55}
-.rm-safe b{color:var(--sun)}
-.rm-safe details{margin-top:14px}
-.rm-safe summary{cursor:pointer;font-weight:600;color:#ffffff}
-.rm-safe ul{color:#bdbdc2;font-size:.9rem;padding-left:18px}
-/* sections */
-.rm-sec{margin-top:66px}
-.rm-sec__h{margin:0 0 20px;font:800 clamp(1.6rem,3.4vw,2.2rem)/1.1 var(--display);letter-spacing:-.02em}
-.rm-sec__h span{color:var(--rms)}
-/* features as a chat */
-.rm-chat{display:grid;gap:14px;max-width:880px;margin:0 auto}
-.rm-q,.rm-a{max-width:78%;padding:14px 18px;border-radius:22px;line-height:1.55;font-size:.97rem}
-.rm-q{justify-self:end;border-bottom-right-radius:6px;background:rgba(255,255,255,.07);color:#ececee}
-.rm-a{justify-self:start;display:grid;grid-template-columns:34px 1fr;gap:12px;border-bottom-left-radius:6px;background:var(--rm-glass);color:#c4c4c8;
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 18px 40px -30px rgba(212,175,55,.7)}
-.rm-a::before{content:"";width:34px;height:34px;border-radius:11px;background:var(--rms) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23141210' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M9 10v1M15 10v1M8.5 14.5q3.5 3 7 0'/%3E%3C/svg%3E") center/70% no-repeat}
-.rm-a b{color:#ffffff}
-.rm-a p{margin:0}
-/* screenshot mosaic */
-.rm-mosaic{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto;gap:16px}
-.rm-mosaic figure{margin:0;position:relative;border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -30px rgba(212,175,55,.6)}
-.rm-mosaic figure:first-child{grid-row:span 2}
-.rm-mosaic img{display:block;width:100%;height:100%;object-fit:cover}
-.rm-mosaic figcaption{position:absolute;left:10px;right:10px;bottom:10px;padding:8px 12px;border-radius:12px;font-size:.84rem;color:#f0f0f2;
-  background:rgba(8,8,9,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.rm-mosaic-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;grid-column:2}
-/* quick start keycaps */
-.rm-keys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.rm-key{padding:22px 24px;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:start}
-.rm-key kbd{grid-row:span 2;min-width:54px;height:54px;padding:0 12px;display:grid;place-items:center;border-radius:14px;font:700 1.2rem var(--mono);color:#ffffff;
-  background:linear-gradient(180deg,#2c2c30,#18181b);box-shadow:0 4px 0 #050506,0 0 0 1px rgba(212,175,55,.3),0 14px 24px -14px rgba(212,175,55,.8)}
-.rm-key h3{margin:0;font:700 1.08rem var(--display);color:#ffffff}
-.rm-key p{margin:0;color:var(--muted);font-size:.93rem}
-/* spec rows */
-.rm-spec{padding:8px 24px}
-.rm-spec div{display:grid;grid-template-columns:180px 1fr;gap:16px;padding:16px 0}
-.rm-spec div + div{box-shadow:0 -1px 0 rgba(255,255,255,.05)}
-.rm-spec dt{font:700 1rem var(--display);color:var(--rms)}
-.rm-spec dd{margin:0;color:#c4c4c8;font-size:.95rem}
-.rm-spec a{color:#f3d98b}
+.rx-ghost{font:500 .98rem var(--display);color:var(--tx);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.rx-ghost span{transition:transform .2s}.rx-ghost:hover span{transform:translateX(4px)}
+.rx-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font:400 .82rem var(--mono);color:var(--tx-3)}
+.rx-meta a{color:var(--tx-2)}
+.hash{font:400 .7rem var(--mono);color:var(--tx-3);word-break:break-all;margin:0;flex-basis:100%}
+/* product shot */
+.rx-shot{margin:34px 0 0;position:relative}
+.rx-shot::before{content:"";position:absolute;inset:8% 6% -6%;z-index:-1;background:radial-gradient(closest-side,rgba(201,165,74,.22),transparent);filter:blur(40px)}
+.rx-shot img{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 60px 120px -50px rgba(0,0,0,.95)}
+.rx-shot figcaption{margin-top:14px;text-align:center;font-size:.86rem;color:var(--tx-3)}
+/* section scaffolding */
+.rx-sec{margin-top:120px}
+.rx-sec__head{display:grid;gap:14px;max-width:720px;margin-bottom:44px}
+.rms .rx-sec__head h2{margin:0;font:600 clamp(1.9rem,4vw,2.8rem)/1.08 var(--display);letter-spacing:-.03em;color:var(--tx)}
+.rx-sec__head p{margin:0;color:var(--tx-2);font-size:1.05rem;line-height:1.65}
+/* principles */
+.rx-principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px}
+.rx-principle{display:grid;gap:12px;align-content:start}
+.rx-principle b{font:500 .78rem var(--mono);color:var(--gold);letter-spacing:.14em}
+.rms .rx-principle h3{margin:0;font:600 1.4rem/1.2 var(--display);letter-spacing:-.015em;color:var(--tx)}
+.rx-principle p{margin:0;color:var(--tx-2);line-height:1.65}
+/* feature rows */
+.rx-rows{display:grid;gap:96px}
+.rx-row{display:grid;grid-template-columns:1fr 1.15fr;gap:64px;align-items:center}
+.rx-row:nth-child(even) .rx-row__media{order:-1}
+.rx-row__text{display:grid;gap:14px}
+.rms .rx-row__text h3{margin:0;font:600 clamp(1.5rem,2.8vw,2rem)/1.15 var(--display);letter-spacing:-.025em;color:var(--tx)}
+.rx-row__text p{margin:0;color:var(--tx-2);line-height:1.7}
+.rx-row__text ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.rx-row__text li{position:relative;padding-left:22px;color:var(--tx-2);line-height:1.55}
+.rx-row__text li::before{content:"";position:absolute;left:0;top:.68em;width:10px;height:1px;background:var(--gold)}
+.rx-row__media img{display:block;width:100%;height:auto;border-radius:14px;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 40px 80px -46px rgba(0,0,0,.95)}
+/* freedom scale */
+.rx-scale{padding:44px 44px 40px;border-radius:24px;background:linear-gradient(180deg,var(--ink-2),rgba(18,18,20,.4))}
+.rx-scale__track{position:relative;display:grid;grid-template-columns:repeat(5,1fr);margin:8px 0 20px}
+.rx-scale__track::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,var(--tx-3),var(--gold))}
+.rx-scale__track i{position:relative;justify-self:center;width:18px;height:18px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px var(--tx-3)}
+.rx-scale__track i:nth-child(3){box-shadow:0 0 0 2px var(--tx-2)}
+.rx-scale__track i:last-child{background:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 20px rgba(201,165,74,.6)}
+.rx-scale__ends{display:flex;justify-content:space-between;gap:20px;font:500 .9rem var(--display);color:var(--tx)}
+.rx-scale__ends span:last-child{text-align:right}
+.rx-scale__notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:36px}
+.rx-scale__notes h4{margin:0 0 6px;font:600 1rem var(--display);color:var(--tx)}
+.rx-scale__notes p{margin:0;color:var(--tx-2);font-size:.95rem;line-height:1.6}
+/* ledger: what stays on your PC */
+.rx-ledger{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 64px}
+.rx-ledger div{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:20px 0;box-shadow:0 -1px 0 rgba(255,255,255,.06)}
+.rx-ledger dt{font:600 .95rem var(--display);color:var(--tx)}
+.rx-ledger dd{margin:0;color:var(--tx-2);font-size:.95rem;line-height:1.6}
+/* steps */
+.rx-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:36px;counter-reset:rx}
+.rx-steps li{counter-increment:rx;display:grid;gap:10px;align-content:start;color:var(--tx-2);line-height:1.6;font-size:.96rem}
+.rx-steps li::before{content:counter(rx,decimal-leading-zero);font:500 2.4rem/1 var(--display);color:var(--tx-3);letter-spacing:-.03em}
+.rx-steps strong{color:var(--tx);font:600 1.05rem var(--display)}
+.rx-steps a{color:var(--tx)}
+/* specs */
+.rx-specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px}
+.rx-specs h3{margin:0 0 8px;font:500 .76rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.rx-specs p{margin:0;color:var(--tx-2);line-height:1.65}
+.rx-specs a{color:var(--tx)}
 /* faq */
-.rm-faq{display:grid;gap:10px;max-width:880px}
-.rm-faq details{padding:0 22px;border-radius:18px}
-.rm-faq summary{cursor:pointer;padding:16px 0;font-weight:600;color:#ffffff;list-style:none;display:flex;gap:12px;align-items:center}
-.rm-faq summary::-webkit-details-marker{display:none}
-.rm-faq summary::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--sun);box-shadow:0 0 12px var(--sun);transition:background .2s,box-shadow .2s}
-.rm-faq details[open] summary::before{background:var(--rms);box-shadow:0 0 12px var(--rms)}
-.rm-faq details > *:not(summary){color:var(--muted);font-size:.94rem;margin:0 0 16px 22px}
-:root[data-theme="light"] body.rms{background-color:#f2f2f3}
-:root[data-theme="light"] .rms{--rm-glass:rgba(255,255,255,.84)}
-:root[data-theme="light"] .rms h1.rm-h1,:root[data-theme="light"] .rm-a b,:root[data-theme="light"] .rm-key h3,:root[data-theme="light"] .rm-faq summary{color:#111113}
-:root[data-theme="light"] .rm-lead,:root[data-theme="light"] .rm-install li,:root[data-theme="light"] .rm-a,:root[data-theme="light"] .rm-spec dd,:root[data-theme="light"] .rm-q{color:#3a3a40}
-:root[data-theme="light"] .rm-safe{color:#3a3a40}
-@media (max-width:820px){
-  .rm-hero{grid-template-columns:1fr;gap:22px}
-  .rm-face{width:120px;height:120px;border-radius:34px}
-  .rm-install{grid-template-columns:1fr}
-  .rm-mosaic{grid-template-columns:1fr}.rm-mosaic figure:first-child{grid-row:auto}.rm-mosaic-2{grid-column:auto}
-  .rm-keys{grid-template-columns:1fr}
-  .rm-q,.rm-a{max-width:94%}
-  .rm-spec div{grid-template-columns:1fr;gap:4px}
+.rx-faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 64px}
+.rx-faq details{box-shadow:0 -1px 0 rgba(255,255,255,.06)}
+.rx-faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;padding:20px 0;font:500 1.02rem var(--display);color:var(--tx)}
+.rx-faq summary::-webkit-details-marker{display:none}
+.rx-faq summary::after{content:"+";font:300 1.4rem/1 var(--display);color:var(--tx-3);transition:transform .2s}
+.rx-faq details[open] summary::after{transform:rotate(45deg);color:var(--gold)}
+.rx-faq details p{margin:0 0 22px;color:var(--tx-2);line-height:1.65;font-size:.96rem}
+/* closing band */
+.rx-close{margin-top:120px;padding:64px 48px;border-radius:28px;text-align:center;display:grid;justify-items:center;gap:16px;
+  background:radial-gradient(600px 260px at 50% 0%,rgba(201,165,74,.16),transparent 70%),var(--ink-2)}
+.rms .rx-close h2{margin:0;font:600 clamp(1.9rem,4.4vw,3rem)/1.05 var(--display);letter-spacing:-.035em;color:var(--tx)}
+.rx-close p{margin:0;max-width:56ch;color:var(--tx-2);line-height:1.65}
+.rms footer{margin-top:72px}
+/* light theme */
+:root[data-theme="light"] body.rms{--ink:#f7f7f6;--ink-2:#ececea;--ink-3:#e2e2df;--tx:#121214;--tx-2:#45454b;--tx-3:#7a7a80;--gold:#9a7a26;
+  background-image:none;background-color:var(--ink)}
+:root[data-theme="light"] .rms .rx-cta .btn{background:#121214;color:#fff}
+:root[data-theme="light"] .rx-ledger div,:root[data-theme="light"] .rx-faq details{box-shadow:0 -1px 0 rgba(0,0,0,.08)}
+@media (max-width:900px){
+  .rx-principles,.rx-specs{grid-template-columns:1fr;gap:32px}
+  .rx-row{grid-template-columns:1fr;gap:28px}.rx-row:nth-child(even) .rx-row__media{order:0}
+  .rx-scale{padding:28px 22px}.rx-scale__notes{grid-template-columns:1fr;gap:20px}
+  .rx-ledger,.rx-faq{grid-template-columns:1fr}
+  .rx-steps{grid-template-columns:1fr 1fr;gap:28px}
+  .rx-sec{margin-top:88px}.rx-rows{gap:64px}
+  .rx-close{padding:44px 22px}
+}
+@media (max-width:560px){
+  .rx-hero{padding-top:52px}
+  .rx-steps{grid-template-columns:1fr}
+  .rx-ledger div{grid-template-columns:1fr;gap:4px}
 }
 </style>
 <script src="../assets/config.js"></script>
@@ -137,7 +147,7 @@ body.rms{--accent:#d4af37;--rms:#d4af37;--sun:#a9abb2;--ember:#d4af37;--rm-glass
 <!-- /site:head -->
 </head>
 <body class="rms">
-<div class="wrap">
+<div class="wrap" id="top">
   <nav>
     <a class="brand" href="../">&larr; DMA <span>/ Ramses</span></a>
     <div class="socials">
@@ -146,107 +156,153 @@ body.rms{--accent:#d4af37;--rms:#d4af37;--sun:#a9abb2;--ember:#d4af37;--rm-glass
     </div>
   </nav>
 
-  <header class="rm-hero">
-    <div class="rm-face" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 9.5v1.5M15 9.5v1.5M8 14.5q4 3.6 8 0"/></svg></div>
-    <div>
-      <div class="rm-tags"><span>Personal AI agent</span><span>Windows 10/11 &middot; 64-bit</span><span>Free and open source</span></div>
-      <h1 class="rm-h1">Ramses<em>.</em></h1>
-      <p class="rm-lead">Your own AI assistant, running on your own PC. It chats, reads and changes files, runs code, searches the web, makes pictures and keeps your idea boards. It works offline with models that run on your graphics card, and you decide how much it may do on its own.</p>
-      <div class="rm-get">
-        <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
-        <div id="dlmeta" class="meta"></div>
-      </div>
-      <div class="rm-fine">
-        <span>Free. Unzip, then double-click <code>Install Ramses.cmd</code>. Installs for your Windows account only, no administrator rights needed.</span>
-        <span id="dlall" hidden><a id="dlalllink" href="#" target="_blank" rel="noopener">All Downloads &amp; Release Notes</a></span>
-        <a href="#quickstart">Read the Quick Start &darr;</a>
-        <p id="dlhash" class="hash" hidden></p>
-      </div>
+  <header class="rx-hero">
+    <span class="rx-eyebrow">Ramses &middot; Personal AI assistant</span>
+    <h1 class="rx-h1">Take back control of AI.<br /><span>Your assistant, on your PC.</span></h1>
+    <p class="rx-intro">Ramses is an AI assistant that lives on your own computer. It chats, works with your files, writes and runs code, searches the web and makes pictures, like the assistants you already know. The difference is <strong>who is in charge</strong>: it runs on your hardware, keeps your data with you, and does only as much on its own as you allow.</p>
+    <div class="rx-cta">
+      <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
+      <a class="rx-ghost" href="#how">See how it works <span aria-hidden="true">&rarr;</span></a>
+    </div>
+    <div class="rx-meta">
+      <div id="dlmeta"></div>
+      <span>Free and open source (MIT) &middot; Windows 10/11, 64-bit</span>
+      <span id="dlall" hidden><a id="dlalllink" href="#" target="_blank" rel="noopener">All downloads &amp; release notes</a></span>
+      <p id="dlhash" class="hash" hidden></p>
     </div>
   </header>
 
-  <figure class="rm-window"><img src="../assets/ramses/chat.jpg" width="1400" height="880" alt="Ramses answering a question in a project chat, with projects and threads on the left" /></figure>
+  <figure class="rx-shot">
+    <img src="../assets/ramses/chat.jpg" width="1400" height="880" alt="Ramses answering a question in a project chat, with projects and threads on the left" />
+    <figcaption>A project chat in Ramses, running on a local model.</figcaption>
+  </figure>
 
-  <section class="rm-install" aria-label="Getting Started">
-    <div class="rm-glass rm-steps"><h2>Getting Started</h2><ol>
-        <li>For local models, install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> (free). Without it, Ramses works with an online key.</li>
-        <li>Download, unzip, and run <code>Install Ramses.cmd</code>. Windows may say it&rsquo;s from an unknown publisher: choose <b>More info</b> &rarr; <b>Run anyway</b>.</li>
-        <li>Open <b>Ramses</b> from the desktop. The setup explains each choice and offers to download the models picked for your PC.</li>
-        <li>Take the short tour, or skip it and start asking.</li>
-      </ol></div>
-    <div class="rm-safe rm-glass"><b>Safe by design.</b> It listens on your own PC only, treats text in files and web pages as information rather than orders, and asks before anything risky. It contains no code to get around anti-cheat, DRM or anti-tamper, and never touches other players.
-      <details>
-        <summary>What&rsquo;s in 1.0</summary>
-        <ul>
-          <li>First public release: chats, projects, tools, memory, boards, images and code.</li>
-          <li>Model survey: picks and measures the best local models for your PC.</li>
-          <li>Guided first setup with model downloads, a tour, and the drop-in intro.</li>
-          <li>Context and usage window, accessibility options and 16 colour themes.</li>
-        </ul>
-      </details>
+  <section class="rx-sec" id="how" aria-labelledby="rx-why-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">What &ldquo;control&rdquo; means here</span>
+      <h2 id="rx-why-h">Helpful like the assistants you know. Owned by you.</h2>
+      <p>Ramses is built around three simple ideas. None of them ask you to give anything up: you keep the convenience and gain the say.</p>
+    </div>
+    <div class="rx-principles">
+      <div class="rx-principle"><b>01</b><h3>It runs where you are</h3><p>Ramses works on your own PC with models that run on your graphics card, and it keeps working offline. When a job needs more muscle, you can add an online model with your own key, from the provider you choose.</p></div>
+      <div class="rx-principle"><b>02</b><h3>Your data stays yours</h3><p>Chats, memory, boards and settings are stored on your computer as files you can read, edit, export or delete. Passwords and keys are kept in a local vault and are never sent anywhere, by design.</p></div>
+      <div class="rx-principle"><b>03</b><h3>You set the pace</h3><p>Choose how much it may do on its own, from asking before every step to simply getting on with it. It shows its plan before bigger jobs, and one key stops everything, instantly.</p></div>
     </div>
   </section>
 
-  <section class="rm-sec" aria-labelledby="rm-chat-h">
-    <h2 class="rm-sec__h" id="rm-chat-h">Ask Him <span>Anything</span></h2>
-    <div class="rm-chat">
-      <p class="rm-q">Is it private?</p>
-      <div class="rm-a"><p><b>Private by default.</b> Local models through Ollama, on your PC. Add your own online key only if you want, with a monthly spending limit. Passwords and keys are never sent anywhere.</p></div>
-      <p class="rm-q">How does it know which model to use?</p>
-      <div class="rm-a"><p><b>Picks its own models.</b> Checks your graphics card and memory, picks the best model for everyday chat, big jobs and pictures, measures how fast each really runs, and suggests better ones to download.</p></div>
-      <p class="rm-q">What can it actually do?</p>
-      <div class="rm-a"><p><b>Does the work.</b> Files (always backed up), PowerShell, git, Python, web search, pictures, scheduled jobs, tool servers (MCP) and your own apps, with several tasks at once.</p></div>
-      <p class="rm-q">Who decides what it's allowed to do?</p>
-      <div class="rm-a"><p><b>You set the rules.</b> Five freedom levels from &ldquo;asks before everything&rdquo; to &ldquo;just does it&rdquo;, safety rails, your own guidelines, a plan before multi-step work, and a stop key that works from anywhere.</p></div>
-      <p class="rm-q">Does it remember things?</p>
-      <div class="rm-a"><p><b>Projects and memory.</b> Projects with their own threads, memory, guidelines and models; search by meaning across your notes; memory you can read and edit as plain files.</p></div>
-      <p class="rm-q">Can I sketch ideas with it?</p>
-      <div class="rm-a"><p><b>Brainstorm boards.</b> Canvases, sticky notes, flow diagrams and task boards, saved on your PC.</p></div>
-      <p class="rm-q">Can I see what it's thinking about?</p>
-      <div class="rm-a"><p><b>See what it sees.</b> The Context and usage window shows what the model reads for each chat, how full its memory is, which models are loaded, and 30 days of use.</p></div>
-      <p class="rm-q">Can I make it mine?</p>
-      <div class="rm-a"><p><b>Yours to shape.</b> A guided first setup, 16 colour themes, your own name for it, and a full set of accessibility options.</p></div>
+  <section class="rx-sec" aria-labelledby="rx-do-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">What it does</span>
+      <h2 id="rx-do-h">A capable assistant, shaped around your computer.</h2>
+    </div>
+    <div class="rx-rows">
+      <div class="rx-row">
+        <div class="rx-row__text">
+          <h3>Fits your hardware, whatever it is</h3>
+          <p>On first run, Ramses checks your graphics card, memory and space, then picks local models that suit your PC. It measures how fast each one really runs and suggests better ones when they would help. No suitable graphics card? It can work online-only with your own key.</p>
+          <ul><li>Separate picks for everyday chat, big jobs and pictures</li><li>Steps aside while you play: frees your graphics card and resumes after</li><li>Every choice can be changed in Settings</li></ul>
+        </div>
+        <div class="rx-row__media"><img src="../assets/ramses/models.jpg" loading="lazy" alt="Settings, Models: the models Ramses picked for this PC" /></div>
+      </div>
+      <div class="rx-row">
+        <div class="rx-row__text">
+          <h3>Does real work, with care</h3>
+          <p>Ask a question or hand it a job. Ramses can work with files (backing them up first), PowerShell, git and Python, search the web, make pictures, run scheduled jobs, and connect to tool servers (MCP) and your own apps, with several tasks at once.</p>
+          <ul><li>Projects with their own threads, memory, guidelines and models</li><li>Brainstorm boards: canvases, sticky notes, flows and task boards</li><li>Search by meaning across your notes</li></ul>
+        </div>
+        <div class="rx-row__media"><img src="../assets/ramses/context.jpg" loading="lazy" alt="The Context and usage window: what the model reads for this chat" /></div>
+      </div>
+      <div class="rx-row">
+        <div class="rx-row__text">
+          <h3>Nothing hidden from you</h3>
+          <p>The Context and usage window shows exactly what the model reads for each chat, how full its memory is, which models are loaded, and 30 days of use, including what any online model cost you. Nothing happens out of view.</p>
+          <ul><li>Memory is plain files you can read and edit</li><li>Text in files and web pages is treated as information, never as orders</li><li>A full accessibility set: reading font, larger targets, voice and more</li></ul>
+        </div>
+        <div class="rx-row__media"><img src="../assets/ramses/access.jpg" loading="lazy" alt="Settings, Accessibility: reading font, status shapes, larger targets and voice" /></div>
+      </div>
     </div>
   </section>
 
-  <section class="rm-sec" aria-labelledby="rm-look-h">
-    <h2 class="rm-sec__h" id="rm-look-h">A Closer <span>Look</span></h2>
-    <div class="rm-mosaic">
-      <figure><img src="../assets/ramses/context.jpg" loading="lazy" alt="The Context and usage window: what the model reads for this chat" /><figcaption>Context and usage: what the model reads, and how full its memory is.</figcaption></figure>
-      <figure><img src="../assets/ramses/models.jpg" loading="lazy" alt="Settings, Models: the models Ramses picked for this PC" /><figcaption>The model survey: picked for your PC, measured on your PC.</figcaption></figure>
-      <div class="rm-mosaic-2"><figure><img src="../assets/ramses/access.jpg" loading="lazy" alt="Settings, Accessibility" /><figcaption>Accessibility: reading font, status shapes, larger targets, voice and more.</figcaption></figure><figure><img src="../assets/ramses/intro.jpg" loading="lazy" alt="Ramses landing in the opening animation" /><figcaption>He drops in red, lands yellow, and turns green when he&rsquo;s ready.</figcaption></figure></div>
+  <section class="rx-sec" aria-labelledby="rx-free-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Freedom, on your terms</span>
+      <h2 id="rx-free-h">Five levels of independence. You pick the one that fits.</h2>
+      <p>Start cautious and loosen up as you get comfortable, or set it differently for each chat. Whatever you choose, Ramses asks for your OK with a simple card in the chat whenever it needs one.</p>
+    </div>
+    <div class="rx-scale">
+      <div class="rx-scale__track" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="rx-scale__ends"><span>Asks before everything</span><span>Just does it, and reports back</span></div>
+      <div class="rx-scale__notes">
+        <div><h4>A plan first</h4><p>For multi-step work it can show you the plan and wait for a single &ldquo;Go&rdquo;.</p></div>
+        <div><h4>A stop key</h4><p><b>Ctrl+Alt+End</b> stops every action and the model, from anywhere on your PC.</p></div>
+        <div><h4>Rails you understand</h4><p>Risky commands always ask, and it never helps get around anti-cheat, DRM or anti-tamper.</p></div>
+      </div>
     </div>
   </section>
 
-  <section class="rm-sec" id="quickstart" aria-labelledby="rm-qs-h">
-    <h2 class="rm-sec__h" id="rm-qs-h">Quick <span>Start</span></h2>
-    <div class="rm-keys">
-      <div class="rm-key rm-glass"><kbd>1</kbd><h3>Ask or Give a Job</h3><p>Type in the box at the bottom. Drop in a file or picture, press Speak to talk, or type <code>/</code> for commands. <b>Auto</b> lets Ramses choose where to run; <b>Local only</b> keeps everything on your PC.</p></div>
-      <div class="rm-key rm-glass"><kbd>2</kbd><h3>Organise With Projects</h3><p>A project groups threads and gives them their own memory, guidelines, model and working folder. <b>Options</b> on any chat sets its model, effort and guidelines.</p></div>
-      <div class="rm-key rm-glass"><kbd>3</kbd><h3>Decide Its Freedom</h3><p>The profile sets what it may do without asking. When it needs your OK, a card appears in the chat. <b>Ctrl+Alt+End</b> stops everything from anywhere.</p></div>
-      <div class="rm-key rm-glass"><kbd>4</kbd><h3>Watch and Tune</h3><p><b>Ctrl+Shift+U</b> opens Context and usage. Press <b>?</b> for every shortcut. Settings holds models, look, accessibility and connections.</p></div>
+  <section class="rx-sec" aria-labelledby="rx-stay-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Privacy</span>
+      <h2 id="rx-stay-h">What stays on your PC.</h2>
+      <p>Everything, unless you decide otherwise. Here is what that means in practice.</p>
     </div>
-  </section>
-
-  <section class="rm-sec" aria-labelledby="rm-req-h">
-    <h2 class="rm-sec__h" id="rm-req-h">System <span>Requirements</span></h2>
-    <dl class="rm-spec rm-glass">
-      <div><dt>Windows</dt><dd>Windows 10 or 11, 64-bit. Nothing else to install for the app itself: .NET is built in.</dd></div>
-      <div><dt>For Local Models</dt><dd><a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> (free). An NVIDIA graphics card with 8 GB or more is best; Ramses picks smaller models for smaller cards, and works online-only without one.</dd></div>
-      <div><dt>Space</dt><dd>About 300 MB for the app. Models take 2 to 20 GB each; the setup shows the total against your free space before downloading.</dd></div>
+    <dl class="rx-ledger">
+      <div><dt>Your chats</dt><dd>Stored locally. They only reach an online model if you added a key and let that question go online.</dd></div>
+      <div><dt>Your secrets</dt><dd>Kept in an encrypted local vault and removed from anything that goes online. This one can&rsquo;t be switched off.</dd></div>
+      <div><dt>Your memory</dt><dd>Plain files in your own folder. Read them, edit them, export them or delete them.</dd></div>
+      <div><dt>Web search</dt><dd>If you leave it on, only the search words are sent.</dd></div>
+      <div><dt>Your spending</dt><dd>Online use is shown in a live cost meter, with an optional monthly limit.</dd></div>
+      <div><dt>Telemetry</dt><dd>None. Ramses doesn&rsquo;t send usage data back to anyone.</dd></div>
     </dl>
   </section>
 
-  <section class="rm-sec" aria-labelledby="rm-faq-h">
-    <h2 class="rm-sec__h" id="rm-faq-h">Questions</h2>
-    <div class="rm-faq">
-      <details class="rm-glass"><summary>Is it really free?</summary><p>Yes. Ramses is free and open source under the MIT licence. Local models are free too. If you add an online key, that provider charges you for what you use, and Ramses can stop at a monthly limit you set.</p></details>
-      <details class="rm-glass"><summary>Does it send my chats anywhere?</summary><p>Not unless you add an online key and let a question go online. Everything else stays on your PC. Web search, if left on, sends only the search words. Passwords, keys and tokens are removed before anything goes online, always.</p></details>
-      <details class="rm-glass"><summary>Which models does it use?</summary><p>Any model from Ollama. Ramses checks your hardware, picks the best one it has for each job, measures how fast each really runs, and suggests downloads that would do better. You can change every pick in Settings, Models.</p></details>
-      <details class="rm-glass"><summary>Windows warns about the installer</summary><p>The app isn&rsquo;t code-signed, so SmartScreen shows &ldquo;unknown publisher&rdquo; (More info &rarr; Run anyway). Check the download against the SHA-256 shown next to the button.</p></details>
-      <details class="rm-glass"><summary>Can I rename it?</summary><p>Yes. Give your assistant any name in the setup or in Settings. You can also have the app itself, its window and its shortcuts take that name.</p></details>
-      <details class="rm-glass"><summary>Where is my data, and how do I remove it?</summary><p>Everything lives in <code>%LOCALAPPDATA%\Ramses\data</code>: threads, memory, boards, settings and an encrypted key vault. <code>Uninstall Ramses.cmd</code> removes the app and keeps your data unless you delete that folder.</p></details>
+  <section class="rx-sec" id="quickstart" aria-labelledby="rx-start-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Getting started</span>
+      <h2 id="rx-start-h">Up and running in a few minutes.</h2>
     </div>
+    <ol class="rx-steps">
+      <li><strong>Install Ollama</strong><span>For local models, install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> (free). Without it, Ramses works with an online key.</span></li>
+      <li><strong>Download and install</strong><span>Unzip and run <code>Install Ramses.cmd</code>. It installs for your account only, no administrator rights needed. If Windows warns about an unknown publisher, choose More info, then Run anyway.</span></li>
+      <li><strong>Follow the setup</strong><span>It explains each choice, checks your hardware and offers to download the models picked for your PC.</span></li>
+      <li><strong>Start asking</strong><span>Take the short tour, or skip it. Type in the box, drop in a file, or press Speak.</span></li>
+    </ol>
+  </section>
+
+  <section class="rx-sec" aria-labelledby="rx-spec-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Requirements</span>
+      <h2 id="rx-spec-h">What you need.</h2>
+    </div>
+    <div class="rx-specs">
+      <div><h3>System</h3><p>Windows 10 or 11, 64-bit. Nothing else to install for the app itself: .NET is built in. Linux and macOS are planned.</p></div>
+      <div><h3>Local models</h3><p><a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> (free). An NVIDIA graphics card with 8 GB or more works best; Ramses picks smaller models for smaller cards and works online-only without one.</p></div>
+      <div><h3>Space</h3><p>About 300 MB for the app. Models take 2 to 20 GB each, and the setup shows the total against your free space before downloading.</p></div>
+    </div>
+  </section>
+
+  <section class="rx-sec" aria-labelledby="rx-faq-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Questions</span>
+      <h2 id="rx-faq-h">Good to know.</h2>
+    </div>
+    <div class="rx-faq">
+      <details><summary>Is it really free?</summary><p>Yes. Ramses is free and open source under the MIT licence, and local models are free too. If you add an online key, that provider charges you for what you use, and Ramses can stop at a monthly limit you set.</p></details>
+      <details><summary>Is it as smart as the big online assistants?</summary><p>Local models are very capable for everyday work, but the largest online models are still stronger at the hardest tasks. That&rsquo;s why Ramses can hand a hard job to an online model with your own key, only when you allow it.</p></details>
+      <details><summary>Does it send my chats anywhere?</summary><p>Not unless you add an online key and let a question go online. Everything else stays on your PC. Web search, if left on, sends only the search words. Passwords, keys and tokens are removed before anything goes online, always.</p></details>
+      <details><summary>Which models does it use?</summary><p>Any model from Ollama locally, and your choice of online provider. Ramses checks your hardware, picks the best one it has for each job, and suggests downloads that would do better. You can change every pick in Settings.</p></details>
+      <details><summary>Can I rename it?</summary><p>Yes. Give your assistant any name and colour theme in the setup or in Settings. The app, its window and its shortcuts can take that name too.</p></details>
+      <details><summary>Windows warns about the installer</summary><p>The app isn&rsquo;t code-signed yet, so SmartScreen shows &ldquo;unknown publisher&rdquo; (More info, then Run anyway). You can check the download against the SHA-256 shown under the button.</p></details>
+      <details><summary>Where is my data, and how do I remove it?</summary><p>Everything lives in <code>%LOCALAPPDATA%\Ramses\data</code>: threads, memory, boards, settings and the encrypted key vault. <code>Uninstall Ramses.cmd</code> removes the app and keeps your data unless you delete that folder.</p></details>
+      <details><summary>Is it finished?</summary><p>Version 1.0 is out and in daily use, and it&rsquo;s still being actively developed. Phone access over a private connection and voice are on the roadmap.</p></details>
+    </div>
+  </section>
+
+  <section class="rx-close" aria-labelledby="rx-close-h">
+    <span class="rx-eyebrow">Ramses</span>
+    <h2 id="rx-close-h">An AI assistant that answers to you.</h2>
+    <p>Free, open source and ready for Windows. Install it, try it at your own pace, and keep the controls in your hands.</p>
+    <div class="rx-cta"><a class="rx-ghost" href="#top">Back to the download <span aria-hidden="true">&uarr;</span></a></div>
   </section>
 
   <footer>
