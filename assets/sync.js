@@ -239,35 +239,56 @@
      The heavy signup/verification flow stays on /account/; this is the quick returning-user sign-in that the
      header dialog leads with. Same Supabase client, same Turnstile captcha the owner wired for accounts. */
   var CAPTCHA_KEY = (((Site.config || {}).captcha) || {}).turnstile || "";
-  var _capToken = "", _capLoaded = false, _capWidget = null;
+  /* Turnstile tokens are single-use and expire after ~5 minutes: the widget is reset after EVERY attempt
+     (pass or fail) and on expiry/error, and a widget left behind by a closed dialog is removed before a new one
+     mounts, so a stale or spent token is never sent (Supabase rejects those as "captcha verification failed"). */
+  var _capToken = "", _capLoaded = false, _capWidget = null, _capWaiters = [];
   window.__syCaptcha = function (t) { _capToken = t || ""; };
   function mountCaptcha(host) {
     if (!CAPTCHA_KEY || !host) return;
     host.setAttribute("aria-hidden", "false");
-    function render() { try { if (window.turnstile && host && !host.firstChild) _capWidget = window.turnstile.render(host, { sitekey: CAPTCHA_KEY, callback: window.__syCaptcha }); } catch (e) {} }
+    if (_capWidget != null) { try { window.turnstile.remove(_capWidget); } catch (e) {} _capWidget = null; }
+    _capToken = "";
+    var tries = 0;
+    function render() {
+      if (host.firstChild) return;
+      if (!document.body.contains(host)) { if (++tries < 40) setTimeout(render, 50); return; }   /* dialog not attached yet */
+      try {
+        _capWidget = window.turnstile.render(host, {
+          sitekey: CAPTCHA_KEY,
+          callback: window.__syCaptcha,
+          "expired-callback": function () { _capToken = ""; try { window.turnstile.reset(_capWidget); } catch (e) {} },
+          "error-callback": function () { _capToken = ""; },
+          "timeout-callback": function () { _capToken = ""; }
+        });
+      } catch (e) {}
+    }
     if (window.turnstile) { render(); return; }
+    _capWaiters.push(render);
     if (!_capLoaded) {
       _capLoaded = true;
       var s = document.createElement("script");
       s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-      s.async = true; s.defer = true; s.onload = render;
+      s.async = true; s.defer = true;
+      s.onload = function () { var w = _capWaiters; _capWaiters = []; w.forEach(function (f) { f(); }); };
       document.head.appendChild(s);
-    } else { setTimeout(render, 400); }
+    }
   }
   function resetCaptcha() { _capToken = ""; try { if (window.turnstile && _capWidget != null) window.turnstile.reset(_capWidget); } catch (e) {} }
   function authError(m) {
     m = String(m || "");
     if (/invalid login|invalid credentials/i.test(m)) return "That email or password isn't right.";
     if (/email not confirmed/i.test(m)) return "Check your inbox and confirm your email first.";
-    if (/captcha/i.test(m)) return "Please complete the captcha and try again.";
+    if (/captcha/i.test(m)) return "Security check expired, please try again.";
     if (/rate|too many/i.test(m)) return "Too many tries — wait a moment and try again.";
     return "Couldn't sign in. Please try again.";
   }
   function signInPassword(email, pw) {
     return supaClient().then(function (sb) {
       if (!sb) return { ok: false, error: "Couldn't reach the server. Try again." };
-      var opts = { email: email, password: pw };
-      if (CAPTCHA_KEY && _capToken) opts.captchaToken = _capToken;
+      var opts = { email: email, password: pw, options: {} };
+      /* supabase-js reads the sign-in captcha from options.captchaToken; a top-level captchaToken is ignored */
+      if (CAPTCHA_KEY && _capToken) opts.options.captchaToken = _capToken;
       return sb.auth.signInWithPassword(opts).then(function (res) {
         if (res && res.error) return { ok: false, error: authError(res.error.message) };
         return { ok: true };
@@ -280,7 +301,8 @@
       var opts = { redirectTo: location.origin + "/account/?reset=1" };
       if (CAPTCHA_KEY && _capToken) opts.captchaToken = _capToken;
       return sb.auth.resetPasswordForEmail(email, opts).then(function (res) {
-        return { ok: !(res && res.error) };
+        var e = res && res.error;
+        return e ? { ok: false, error: /captcha/i.test(e.message || "") ? "Security check expired, please try again." : "" } : { ok: true };
       }, function () { return { ok: false }; });
     });
   }
@@ -363,11 +385,12 @@
           var email = emailI.value.trim(), pw = pwI.value;
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Enter a valid email.", "err"); emailI.focus(); return; }
           if (!pw) { say("Enter your password.", "err"); pwI.focus(); return; }
-          if (CAPTCHA_KEY && !_capToken) { say("Please complete the captcha first.", "err"); return; }
+          if (CAPTCHA_KEY && !_capToken) { say("Please finish the security check first.", "err"); return; }
           say("Signing in…"); signIn.disabled = true;
           signInPassword(email, pw).then(function (r) {
             signIn.disabled = false;
-            if (!r.ok) { say(r.error || "Couldn't sign in.", "err"); resetCaptcha(); return; }
+            resetCaptcha();                     /* the token is spent either way */
+            if (!r.ok) { say(r.error || "Couldn't sign in.", "err"); return; }
             try { if (remCb.checked) localStorage.setItem("site.rememberEmail", email); else localStorage.removeItem("site.rememberEmail"); } catch (e) {}
             Site.sfx("success"); say("Signed in ✓", "ok");
             adoptDiscordSession().then(function () { fetchProfile().then(function () { if (dlgOpen) paint(); }); });
@@ -378,9 +401,9 @@
         forgot.addEventListener("click", function () {
           var email = emailI.value.trim();
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Type your email above first, then tap Forgot password.", "err"); emailI.focus(); return; }
-          if (CAPTCHA_KEY && !_capToken) { say("Please complete the captcha first.", "err"); return; }
+          if (CAPTCHA_KEY && !_capToken) { say("Please finish the security check first.", "err"); return; }
           say("Sending reset email…"); forgot.disabled = true;
-          sendReset(email).then(function (r) { forgot.disabled = false; say(r.ok ? "Check your inbox for a reset link." : "Couldn't send that just now.", r.ok ? "ok" : "err"); if (!r.ok) resetCaptcha(); });
+          sendReset(email).then(function (r) { forgot.disabled = false; resetCaptcha(); say(r.ok ? "Check your inbox for a reset link." : (r.error || "Couldn't send that just now."), r.ok ? "ok" : "err"); });
         });
 
         body.appendChild(el("div", { class: "sy-authform" }, emailI, pwI, remLabel, capHost, signIn));
