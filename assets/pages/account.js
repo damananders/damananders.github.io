@@ -51,30 +51,63 @@ function hasSession() {
   try { var raw = localStorage.getItem(AUTH_LS); if (!raw) return false; var s = JSON.parse(raw); var sess = (s && s.currentSession) || s; return !!(sess && sess.access_token); } catch (e) { return false; }
 }
 
-/* ---------- Turnstile captcha (mounts only when the owner has set a site key) ---------- */
-var _captchaToken = "";
-window.__acCaptcha = function (t) { _captchaToken = t || ""; };
-var _turnstileLoaded = false;
-function mountCaptcha(hostId) {
+/* ---------- Turnstile captcha (mounts only when the owner has set a site key) ----------
+   Each form (sign-up, sign-in) gets its OWN widget and token. Turnstile tokens are single-use and expire
+   after ~5 minutes, so every widget is reset after each attempt (pass or fail) and on expiry/error. Before
+   this, one widget served both forms and was never reset: once a token was spent (a sign-up, a typo'd
+   password) every later sign-in was rejected by Supabase as "captcha verification process failed", which
+   the page reported as a wrong password. */
+var _cap = {};                              /* form key -> { id: widgetId, token: "" } */
+var _turnstileLoaded = false, _turnstileWaiters = [];
+function loadTurnstile(cb) {
+  if (window.turnstile) { cb(); return; }
+  _turnstileWaiters.push(cb);
+  if (_turnstileLoaded) return;
+  _turnstileLoaded = true;
+  var s = document.createElement("script");
+  s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+  s.async = true; s.defer = true;
+  s.onload = function () { var w = _turnstileWaiters; _turnstileWaiters = []; w.forEach(function (f) { try { f(); } catch (e) {} }); };
+  document.head.appendChild(s);
+}
+function mountCaptcha(hostId, key) {
   if (!CAPTCHA_KEY) return;                 /* no key yet → captcha skipped until the owner wires it */
+  key = key || hostId;
   var host = document.getElementById(hostId);
-  if (host) host.setAttribute("aria-hidden", "false");
-  function render() { try { if (window.turnstile && host) window.turnstile.render(host, { sitekey: CAPTCHA_KEY, callback: window.__acCaptcha }); } catch (e) {} }
-  if (window.turnstile) { render(); return; }
-  if (!_turnstileLoaded) {
-    _turnstileLoaded = true;
-    var s = document.createElement("script");
-    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    s.async = true; s.defer = true; s.onload = render;
-    document.head.appendChild(s);
-  } else { setTimeout(render, 400); }
+  if (!host) return;
+  host.setAttribute("aria-hidden", "false");
+  var old = _cap[key];
+  if (old && old.id != null) { try { window.turnstile.remove(old.id); } catch (e) {} }
+  var slot = _cap[key] = { id: null, token: "" };
+  var tries = 0;
+  loadTurnstile(function render() {
+    if (host.firstChild) return;
+    if (!document.body.contains(host)) { if (++tries < 40) setTimeout(render, 50); return; }
+    try {
+      slot.id = window.turnstile.render(host, {
+        sitekey: CAPTCHA_KEY,
+        callback: function (t) { slot.token = t || ""; },
+        "expired-callback": function () { slot.token = ""; try { window.turnstile.reset(slot.id); } catch (e) {} },
+        "error-callback": function () { slot.token = ""; },
+        "timeout-callback": function () { slot.token = ""; }
+      });
+    } catch (e) {}
+  });
+}
+function resetCaptcha(key) {
+  var slot = _cap[key]; if (!slot) return;
+  slot.token = "";
+  try { if (window.turnstile && slot.id != null) window.turnstile.reset(slot.id); } catch (e) {}
 }
 /* add captchaToken to an options object only when we actually have one */
-function withCaptcha(opts) { opts = opts || {}; if (CAPTCHA_KEY && _captchaToken) opts.captchaToken = _captchaToken; return opts; }
-function captchaReady(msg) {
-  if (CAPTCHA_KEY && !_captchaToken) { say(msg, "Please complete the captcha first.", "warn"); return false; }
+function withCaptcha(opts, key) { opts = opts || {}; var slot = _cap[key]; if (CAPTCHA_KEY && slot && slot.token) opts.captchaToken = slot.token; return opts; }
+function captchaReady(msg, key) {
+  var slot = _cap[key];
+  if (CAPTCHA_KEY && !(slot && slot.token)) { say(msg, "Please finish the security check just above the button first.", "warn"); return false; }
   return true;
 }
+var CAPTCHA_FAIL = "Security check expired, please try again. It refreshes on its own, so wait for the tick and press the button once more.";
+function isCaptchaErr(m) { return /captcha/i.test(String(m || "")); }
 
 /* ---------- SVG bits ---------- */
 var DISCORD_SVG = '<svg viewBox="0 0 127.14 96.36" aria-hidden="true" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>';
@@ -177,6 +210,7 @@ function renderSignedOut() {
   var sf = el("form", { class: "ac-fields", novalidate: "" });
   sf.appendChild(field("ac-si-email", "Email", "email", "you@example.com", { autocomplete: "email" }));
   sf.appendChild(field("ac-si-pw", "Password", "password", "your password", { autocomplete: "current-password" }));
+  sf.appendChild(el("div", { class: "ac-captcha", id: "ac-si-captcha", "aria-hidden": "true" }));
   var smsg = el("p", { class: "ac-msg", id: "ac-si-msg", role: "status" });
   sf.appendChild(smsg);
   var sbtn = el("button", { class: "btn ac-cta", type: "submit", text: "Sign in" });
@@ -189,7 +223,8 @@ function renderSignedOut() {
   grid.appendChild(signin);
 
   root.appendChild(grid);
-  mountCaptcha("ac-captcha"); /* now that #ac-captcha is in the document */
+  mountCaptcha("ac-captcha", "su");    /* now that the hosts are in the document: one widget per form */
+  mountCaptcha("ac-si-captcha", "si");
   revealIn();
 }
 
@@ -213,20 +248,21 @@ function doSignUp(btn, msg) {
   if (!validEmail(email)) { say(msg, "That email doesn't look right.", "warn"); return; }
   var issues = pwIssues(pw);
   if (issues.length) { say(msg, "Password needs " + issues.join(", ") + ".", "warn"); return; }
-  if (!captchaReady(msg)) return;
+  if (!captchaReady(msg, "su")) return;
   lock(btn, true, "Creating…");
   say(msg, "Creating your account…");
   supa().then(function (sb) {
     if (!sb) { done(); return; }
     sb.auth.signUp({
       email: email, password: pw,
-      options: withCaptcha({ emailRedirectTo: location.origin + "/account/?confirmed=1", data: { display_name: name, handle: handle } })
+      options: withCaptcha({ emailRedirectTo: location.origin + "/account/?confirmed=1", data: { display_name: name, handle: handle } }, "su")
     }).then(function (res) {
       lock(btn, false);
+      resetCaptcha("su");                   /* the token is spent either way */
       var err = res && res.error;
       if (err) {
         var m = String(err.message || "");
-        if (/captcha/i.test(m)) say(msg, "Please complete the captcha and try again.", "warn");
+        if (isCaptchaErr(m)) say(msg, CAPTCHA_FAIL, "warn");
         else say(msg, m || "Couldn't create the account — please try again.", "err");
         return;
       }
@@ -238,7 +274,7 @@ function doSignUp(btn, msg) {
       }
       say(msg, "Almost there! Check your email for a confirmation link to finish — if it's not in your inbox, look in your spam/junk folder and mark it “Not spam.” 💛", "ok");
       try { if (window.Site && Site.sfx) Site.sfx("win"); } catch (e) {}
-    }).catch(done);
+    }).catch(function () { resetCaptcha("su"); done(); });
   });
   function done() { lock(btn, false); say(msg, "Accounts are being set up — check back soon. 💛"); }
 }
@@ -249,17 +285,22 @@ function doSignIn(btn, msg) {
   var email = val("ac-si-email").trim(), pw = val("ac-si-pw");
   if (!validEmail(email)) { say(msg, "Enter the email you signed up with.", "warn"); return; }
   if (!pw) { say(msg, "Enter your password.", "warn"); return; }
-  if (!captchaReady(msg)) return;
+  if (!captchaReady(msg, "si")) return;
   lock(btn, true, "Signing in…");
   say(msg, "Signing you in…");
   supa().then(function (sb) {
     if (!sb) { done(); return; }
-    sb.auth.signInWithPassword(withCaptcha({ email: email, password: pw })).then(function (res) {
+    sb.auth.signInWithPassword({ email: email, password: pw, options: withCaptcha({}, "si") })  /* supabase-js reads the token from options.captchaToken only */.then(function (res) {
       lock(btn, false);
+      resetCaptcha("si");                   /* single-use token: get a fresh one for any retry */
       var err = res && res.error;
       if (err) {
-        if (/confirm/i.test(err.message || "")) say(msg, "Please confirm your email first — check your inbox for the link.", "warn");
-        else say(msg, "That email and password don't match.", "err");
+        var em = String(err.message || "");
+        if (isCaptchaErr(em)) say(msg, CAPTCHA_FAIL, "warn");
+        else if (/not confirmed|confirm/i.test(em)) say(msg, "Please confirm your email first — check your inbox (and spam) for the link.", "warn");
+        else if (/invalid login|invalid credentials/i.test(em)) say(msg, "That email and password don't match.", "err");
+        else if (/rate|too many/i.test(em)) say(msg, "Too many tries — wait a minute and try again.", "warn");
+        else say(msg, "Couldn't sign in (" + em.slice(0, 120) + "). Please try again.", "err");
         return;
       }
       afterPasswordLogin(sb, msg, function () {
@@ -268,7 +309,7 @@ function doSignIn(btn, msg) {
         try { back = localStorage.getItem("site.syncReturn") || back; localStorage.removeItem("site.syncReturn"); } catch (e) {}
         location.href = back;
       });
-    }).catch(done);
+    }).catch(function () { resetCaptcha("si"); done(); });
   });
   function done() { lock(btn, false); say(msg, "Accounts are being set up — check back soon. 💛"); }
 }
@@ -324,21 +365,30 @@ function renderMfaPrompt(sb, onDone) {
 function doReset(msg) {
   var id = (val("ac-si-email") || "").trim();
   if (!validEmail(id)) { say(msg, "Type your account email above, then tap this again.", "warn"); return; }
+  if (!captchaReady(msg, "si")) return;
   say(msg, "Sending a reset link…");
   supa().then(function (sb) {
     if (!sb) { say(msg, "Password reset is being set up — check back soon."); return; }
-    sb.auth.resetPasswordForEmail(id, withCaptcha({ redirectTo: location.origin + "/account/?reset=1" })).then(function (res) {
-      if (res && res.error) say(msg, "Couldn't send the reset link — try again in a moment.", "err");
+    sb.auth.resetPasswordForEmail(id, withCaptcha({ redirectTo: location.origin + "/account/?reset=1" }, "si")).then(function (res) {
+      resetCaptcha("si");
+      if (res && res.error) say(msg, isCaptchaErr(res.error.message) ? CAPTCHA_FAIL : "Couldn't send the reset link — try again in a moment.", "err");
       else say(msg, "If that email has an account, a reset link is on its way — check your spam folder if it's not in your inbox. 💛", "ok");
     }).catch(function () { say(msg, "Password reset is being set up — check back soon."); });
   });
 }
 
 /* ---------- set a new password (arriving via the reset link, ?reset=1) ---------- */
-function renderResetForm() {
+function renderResetForm(linkErr) {
   clear();
   var card = el("section", { class: "panel pg-card ac-form ac-reset", "data-reveal": "" });
   card.appendChild(el("h2", { text: "Set a new password" }));
+  if (linkErr || !hasSession()) {
+    /* stale/used link (email scanners can open one-time links first) or the session didn't come through */
+    card.appendChild(el("p", { class: "ac-sub", text: "This reset link has expired or was already used. Reset links work once and only for about an hour. Go back to sign in, choose Forgot your password, and open the newest email." }));
+    var again = el("a", { class: "btn ac-cta", href: "/account/", text: "Back to sign in" });
+    card.appendChild(again);
+    root.appendChild(card); revealIn(); return;
+  }
   card.appendChild(el("p", { class: "ac-sub", text: "Pick a new password for your DMA Account." }));
   var f = el("form", { class: "ac-fields", novalidate: "" });
   f.appendChild(field("ac-rs-pw", "New password", "password", "at least 8 characters", { autocomplete: "new-password" }));
@@ -355,7 +405,10 @@ function renderResetForm() {
       if (!sb) { lock(b, false); say(m, "Couldn't reach your account — try again."); return; }
       sb.auth.updateUser({ password: pw }).then(function (res) {
         lock(b, false);
-        if (res && res.error) say(m, res.error.message || "Couldn't update the password.", "err");
+        var em = res && res.error ? String(res.error.message || "") : "";
+        if (em && /session|jwt|token|expired/i.test(em)) say(m, "This reset link has expired. Go back to sign in, choose Forgot your password, and use the newest email.", "err");
+        else if (em && /different from the old|same password/i.test(em)) say(m, "Pick a password you haven't used on this account before.", "warn");
+        else if (em) say(m, em || "Couldn't update the password.", "err");
         else { say(m, "Password updated. You're all set. 💛", "ok"); setTimeout(function () { location.href = "/account/"; }, 1200); }
       }).catch(function () { lock(b, false); say(m, "Couldn't update the password — try again."); });
     });
@@ -612,14 +665,33 @@ function boot() {
   if (!feat("accounts")) { renderComingSoon(); return; }
   var q = new URLSearchParams(location.search);
 
-  if (q.has("reset")) { stripQuery(); renderResetForm(); return; }
+  /* Email links (reset, confirm) come back with the sign-in in the URL: #access_token=… (or ?code=…), or
+     #error_code=otp_expired when the link is stale. The Supabase client must read that BEFORE the address is
+     tidied; stripping it first is what left reset-link visitors with "Auth session missing" on save. */
+  var hp = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+  var linkErr = hp.get("error_description") || q.get("error_description") || "";
+  var fromLink = hp.has("access_token") || q.has("code") || !!linkErr;
+  if (q.has("reset")) {
+    if (linkErr) { stripQuery(); renderResetForm(linkErr); return; }
+    supa().then(function (sb) { return sb ? sb.auth.getSession() : null; })
+      .then(function () { stripQuery(); renderResetForm(); }, function () { stripQuery(); renderResetForm(); });
+    return;
+  }
+  if (fromLink && !linkErr) {               /* let the client pick up the session from a confirm link, then carry on */
+    supa().then(function (sb) { return sb ? sb.auth.getSession() : null; })
+      .then(function () { bootRest(q); }, function () { bootRest(q); });
+    return;
+  }
+  bootRest(q);
+}
+function bootRest(q) {
   if (q.has("confirmed")) { toast("Email confirmed — you're Verified. Welcome aboard! 💛", "ok"); try { if (window.Site && Site.sfx) Site.sfx("win"); } catch (e) {} stripQuery(); }
   if (q.has("linked")) { stripQuery(); verifyAfterLink(); return; }
 
   if (hasSession()) renderAccount();
   else renderSignedOut();
 }
-function stripQuery() { try { history.replaceState(null, "", location.pathname); } catch (e) {} }
+function stripQuery() { try { history.replaceState(null, "", location.pathname); } catch (e) {} }   /* drops ?query and #hash */
 
 /* after linkIdentity returns, verify-member needs the provider_token to set discord_member (same as a Discord sign-in) */
 function verifyAfterLink() {
