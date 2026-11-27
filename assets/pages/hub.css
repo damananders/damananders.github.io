@@ -361,7 +361,7 @@
 .hb-lib{margin-top:40px}
 .hb-lib__btn{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:26px;
   padding:30px 34px;border-radius:28px;text-decoration:none;color:var(--sx-text);text-shadow:none;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--sx-accent) 22%,rgba(16,12,16,.78)),rgba(14,12,18,.72) 55%,color-mix(in srgb,#d4af37 8%,rgba(14,12,18,.78)));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--sx-accent) 22%,rgba(16,12,16,.78)),rgba(14,12,18,.72) 55%,color-mix(in srgb,var(--sx-accent) 8%,rgba(14,12,18,.78)));
   -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
   box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 30px 70px -34px color-mix(in srgb,var(--sx-accent) 85%,transparent),0 12px 30px -20px rgba(0,0,0,.8);
   transition:transform .22s var(--sx-ease,ease),box-shadow .22s}

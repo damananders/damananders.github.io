@@ -34,7 +34,7 @@
   --line:rgba(12,18,28,.13);
   --craft:#9a4100; --anyps:#1858bd; --games:#096845;
   --sx-ok:#096845; --sx-warn:#7d4e00; --sx-err:#a82c22; --sx-info:#1858bd;
-  --sx-accent:#8a4f00;
+  --sx-accent:#8e2c3b;                                               /* maroon, matching fx.css light (was amber-gold) */
   /* a stronger wash than the core default: the photos are mostly dark, and text sits straight on them */
   --sx-photo-overlay:linear-gradient(180deg,rgba(243,241,236,.93),rgba(243,241,236,.9) 40%,rgba(243,241,236,.97));
   --ch-card:rgba(255,255,255,.84);                                    /* translucent card over the photo */
