@@ -51,7 +51,7 @@ window.SITE = {
     releasesUrl: "https://github.com/damananders/Ramses/releases",
     host: "Hosted on GitHub",
     sizeLabel: "62 MB",
-    sha256: "06038030bd2fe69bf1e601172890037b7891837cfc03710638398498f6ea7bed",   // of Ramses-1.0.1-win-x64.zip
+    sha256: "71ba92094f908652443a55c715e81173c2bdd6877b4ba1dc1a35a8f0f8b443b3",   // of Ramses-1.0.1-win-x64.zip
   },
 
   // DMA Web Studio (webstudio/): leave downloadUrl "" to show "Coming soon". Source is private; releases only.
