@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DMA Web Studio — Edit your website without code</title>
+<meta name="description" content="DMA Web Studio is a free Windows app for changing your website without code: click and type in Easy mode, switch to Pro for the code, ask the Helper, and publish safely to GitHub." />
+<meta name="theme-color" content="#1a0e1c" />
+<meta property="og:title" content="DMA Web Studio — Edit your website without code" />
+<meta property="og:description" content="Click, type and put it online. Easy and Pro modes, an optional Helper, and publishing that can&rsquo;t surprise you. Free for Windows." />
+<meta property="og:url" content="https://damananders.github.io/webstudio/" />
+<meta property="og:image" content="https://damananders.github.io/assets/og/webstudio.jpg?v=1" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.ico?v=5" sizes="any" />
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/icons/fav-hub.png?v=5" />
+<link rel="preload" href="/assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/fonts/fonts.css" />
+<link rel="stylesheet" href="../assets/hub.css" />
+<link rel="stylesheet" href="../assets/socials.css" />
+<style>
+/* DMA Web Studio's own look: "the editing canvas". A plum design-canvas with a dotted grid, rose and amber light,
+ * a live browser mock with selection handles and a typing caret, Easy/Pro panels joined by a switch, a chat,
+ * a five-stop publish track, a safety grid and a download dock. No hard borders. Prefix ws-. */
+body.ws{--accent:#ff7f97;--ws:#ff7f97;--ws-2:#ffc46b;--ws-ink:#140b16;--ws-glass:rgba(34,18,36,.74);--ws-tx:#f6eef4;--ws-tx2:#cdbcc8;--ws-tx3:#94808f;
+  background:var(--ws-ink);color:var(--ws-tx);
+  background-image:radial-gradient(circle,rgba(255,255,255,.07) 1px,transparent 1.3px),
+    radial-gradient(800px 520px at 85% -10%,rgba(255,127,151,.22),transparent 60%),
+    radial-gradient(700px 520px at -5% 40%,rgba(255,196,107,.12),transparent 60%);
+  background-size:22px 22px,auto,auto}
+.ws .ws-glass,.ws-mode,.ws-chat,.ws-track li,.ws-safe__grid > div,.ws-dl,.ws-faq details{background:var(--ws-glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 56px -34px rgba(255,127,151,.55)}
+/* hero */
+.ws-hero{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center;padding:56px 0 20px}
+.ws-kicker{font:600 .74rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ws-2)}
+.ws h1.ws-h1{margin:14px 0 16px;font:700 clamp(2.3rem,5vw,3.6rem)/1.04 var(--display);letter-spacing:-.03em;color:var(--ws-tx)}
+.ws-lead{margin:0;color:var(--ws-tx2);font-size:1.1rem;line-height:1.65;max-width:52ch}
+.ws-get{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-top:24px}
+.ws .btn{border-radius:14px;padding:14px 22px;font-weight:700;color:#2a0b14;background:linear-gradient(100deg,var(--ws-2),var(--ws));box-shadow:0 14px 34px -14px rgba(255,127,151,.9);transition:transform .2s,filter .2s}
+.ws .btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.ws .btn[aria-disabled="true"]{filter:grayscale(.5) brightness(.8);pointer-events:none}
+.ws-link{color:var(--ws-tx);font:600 .95rem var(--display);text-decoration:none}
+.ws-link:hover{color:var(--ws)}
+.ws-meta{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:14px;font:400 .8rem var(--mono);color:var(--ws-tx3)}
+/* browser mock */
+.ws-browser{border-radius:18px;overflow:hidden;background:#1e1220;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 50px 100px -40px rgba(255,127,151,.7);transform:perspective(1400px) rotateY(-6deg) rotateX(2deg)}
+:root[data-motion="reduce"] .ws-browser{transform:none}
+.ws-browser__bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:rgba(255,255,255,.04);font:500 .78rem var(--mono);color:var(--ws-tx3)}
+.ws-browser__bar i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.ws-browser__bar i:first-child{background:#ff6b7f}
+.ws-browser__bar span{margin-left:10px;padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.3)}
+.ws-browser__bar b{margin-left:auto;color:var(--ws-2);font-weight:600}
+.ws-browser__page{position:relative;padding:34px 30px 74px;background:linear-gradient(180deg,#fbf6f1,#f3ebe4);color:#2a1d24}
+.ws-sel{position:relative;padding:6px 8px;margin:0 -8px;border-radius:6px;box-shadow:0 0 0 2px var(--ws)}
+.ws-sel__tag{position:absolute;top:-22px;left:-2px;font:600 .66rem/1 var(--mono);padding:4px 8px;border-radius:6px 6px 6px 0;background:var(--ws);color:#2a0b14}
+.ws-sel i{position:absolute;width:9px;height:9px;border-radius:2px;background:#fff;box-shadow:0 0 0 2px var(--ws)}
+.ws-sel .h1{left:-5px;top:-5px}.ws-sel .h2{right:-5px;top:-5px}.ws-sel .h3{left:-5px;bottom:-5px}.ws-sel .h4{right:-5px;bottom:-5px}
+.ws-demo-h{margin:0;font:700 1.75rem/1.15 var(--display);color:#2a1d24}
+.ws-demo-h em{font-style:normal;color:#c2415c}
+.ws-caret{display:inline-block;width:2px;height:1.05em;margin-left:3px;vertical-align:-.12em;background:#c2415c;animation:ws-blink 1s steps(1) infinite}
+@keyframes ws-blink{50%{opacity:0}}
+:root[data-motion="reduce"] .ws-caret{animation:none}
+.ws-demo-p{margin:14px 0 18px;color:#6b5a63;font-size:.95rem}
+.ws-demo-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ws-demo-img{height:74px;border-radius:10px;background:linear-gradient(135deg,#f6b69a,#e4687d)}
+.ws-demo-img--b{background:linear-gradient(135deg,#ffd98a,#f39b55)}
+.ws-demo-img--c{background:linear-gradient(135deg,#b9a3e8,#7a5fc2)}
+.ws-float{position:absolute;right:16px;bottom:16px;display:flex;gap:6px;padding:6px;border-radius:14px;background:#24142a;box-shadow:0 18px 40px -16px rgba(0,0,0,.7)}
+.ws-float span{font:600 .74rem var(--display);padding:7px 11px;border-radius:10px;color:var(--ws-tx2);background:rgba(255,255,255,.06)}
+.ws-float span.on{background:var(--ws-2);color:#2a0b14}
+/* sections */
+.ws-sec{margin-top:96px}
+.ws .ws-h2{margin:0 0 26px;font:700 clamp(1.7rem,3.6vw,2.4rem)/1.1 var(--display);letter-spacing:-.025em;color:var(--ws-tx)}
+.ws-h2 span{color:var(--ws)}
+/* modes */
+.ws-modes{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch}
+.ws-mode{padding:26px;border-radius:24px;display:flex;flex-direction:column;gap:10px}
+.ws-mode__tag{font:600 .7rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ws-2)}
+.ws-mode--pro .ws-mode__tag{color:#b9a3ff}
+.ws .ws-mode h3{margin:0;font:700 1.35rem var(--display);color:var(--ws-tx)}
+.ws-mode p{margin:0;color:var(--ws-tx2);line-height:1.6}
+.ws-btns{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ws-btns li{display:grid;justify-items:center;gap:8px;padding:14px 8px;border-radius:16px;font:600 .82rem var(--display);text-align:center;color:var(--ws-tx);background:rgba(255,255,255,.05);transition:transform .2s}
+.ws-btns li:hover{transform:translateY(-2px)}
+.ws-btns svg{width:24px;height:24px;fill:none;stroke:var(--ws-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ws-btns li.on{background:var(--ws-2);color:#2a0b14}.ws-btns li.on svg{stroke:#2a0b14}
+.ws-switch{align-self:center;width:58px;height:32px;border-radius:999px;background:linear-gradient(90deg,var(--ws-2),#b9a3ff);position:relative;box-shadow:0 10px 24px -10px rgba(185,163,255,.8)}
+.ws-switch span{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;animation:ws-flip 4s ease-in-out infinite}
+@keyframes ws-flip{0%,40%{left:4px}50%,90%{left:30px}100%{left:4px}}
+:root[data-motion="reduce"] .ws-switch span{animation:none}
+.ws-code{margin:auto 0 0;padding:18px;border-radius:14px;background:#0f0911;font:500 .86rem/1.7 var(--mono);color:#e6dbe3;white-space:pre-wrap;overflow-x:auto}
+.ws-code b{color:#ff8fa5;font-weight:500}.ws-code i{font-style:normal;color:var(--ws-2)}.ws-code em{font-style:normal;color:#b9a3ff}.ws-code s{text-decoration:none;color:#8fe3b8}
+/* helper */
+.ws-helper{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.ws-helper__copy p{color:var(--ws-tx2);line-height:1.65;margin:0 0 16px}
+.ws-ticks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ws-ticks li{position:relative;padding-left:28px;color:var(--ws-tx2);line-height:1.55}
+.ws-ticks li::before{content:"";position:absolute;left:0;top:.3em;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,var(--ws) 35%,rgba(255,127,151,.2) 40%)}
+.ws-ticks b{color:var(--ws-tx)}
+.ws-chat{padding:22px;border-radius:24px;display:grid;gap:12px}
+.ws-chat p{margin:0;max-width:85%;padding:12px 16px;border-radius:18px;line-height:1.5;font-size:.95rem}
+.ws-chat__you{justify-self:end;background:linear-gradient(100deg,var(--ws-2),var(--ws));color:#2a0b14;border-bottom-right-radius:6px}
+.ws-chat__bot{justify-self:start;background:rgba(255,255,255,.07);color:var(--ws-tx);border-bottom-left-radius:6px}
+/* publish track */
+.ws-track{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;counter-reset:ws;position:relative}
+.ws-track li{counter-increment:ws;padding:20px 18px;border-radius:20px;display:grid;gap:8px;align-content:start}
+.ws-track li::before{content:counter(ws);width:34px;height:34px;display:grid;place-items:center;border-radius:12px;font:700 .95rem var(--mono);color:#2a0b14;background:var(--ws-2)}
+.ws-track li:last-child::before{background:var(--ws)}
+.ws-track b{font:700 1.05rem var(--display);color:var(--ws-tx)}
+.ws-track span{color:var(--ws-tx2);font-size:.9rem;line-height:1.5}
+.ws-track code{color:var(--ws-2)}
+/* safety */
+.ws-safe__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.ws-safe__grid > div{padding:22px;border-radius:20px}
+.ws .ws-safe__grid h3{margin:0 0 6px;font:700 1.02rem var(--display);color:var(--ws-tx)}
+.ws-safe__grid p{margin:0;color:var(--ws-tx2);font-size:.92rem;line-height:1.55}
+/* download dock */
+.ws-dl{display:grid;grid-template-columns:1fr 1.2fr;gap:36px;padding:34px;border-radius:28px;background:radial-gradient(500px 260px at 0% 0%,rgba(255,196,107,.18),transparent 70%),var(--ws-glass)}
+.ws-dl__main p{color:var(--ws-tx2);line-height:1.6;margin:0 0 18px}
+.ws-dl__main .ws-h2{margin-bottom:12px}
+.hash{font:400 .7rem var(--mono);color:var(--ws-tx3);word-break:break-all;margin:14px 0 0}
+#dlall{margin:8px 0 0}#dlall a,.ws-dl__reqs a{color:var(--ws-2)}
+.ws-dl__reqs{margin:0;display:grid;gap:0}
+.ws-dl__reqs div{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:14px 0;box-shadow:0 -1px 0 rgba(255,255,255,.06)}
+.ws-dl__reqs div:first-child{box-shadow:none}
+.ws-dl__reqs dt{font:600 .9rem var(--display);color:var(--ws-tx)}
+.ws-dl__reqs dd{margin:0;color:var(--ws-tx2);font-size:.92rem;line-height:1.55}
+/* faq */
+.ws-faq{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+.ws-faq details{padding:0 20px;border-radius:18px}
+.ws-faq summary{cursor:pointer;list-style:none;padding:18px 0;font:600 .98rem var(--display);color:var(--ws-tx)}
+.ws-faq summary::-webkit-details-marker{display:none}
+.ws-faq summary::after{content:" +";color:var(--ws)}
+.ws-faq details[open] summary::after{content:" \2212"}
+.ws-faq details p{margin:0 0 18px;color:var(--ws-tx2);font-size:.92rem;line-height:1.55}
+/* light theme */
+:root[data-theme="light"] body.ws{--ws-ink:#faf4f6;--ws-glass:rgba(255,255,255,.85);--ws-tx:#24141f;--ws-tx2:#55424e;--ws-tx3:#8a7783;background-color:var(--ws-ink);
+  background-image:radial-gradient(circle,rgba(0,0,0,.07) 1px,transparent 1.3px);background-size:22px 22px}
+@media (max-width:980px){
+  .ws-hero,.ws-helper,.ws-dl{grid-template-columns:1fr}
+  .ws-browser{transform:none}
+  .ws-modes{grid-template-columns:1fr}.ws-switch{justify-self:center;transform:rotate(90deg)}
+  .ws-track{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ws-safe__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ws-faq{grid-template-columns:1fr 1fr}
+}
+@media (max-width:600px){
+  .ws-hero{padding-top:36px}
+  .ws-track,.ws-safe__grid,.ws-faq{grid-template-columns:1fr}
+  .ws-btns{grid-template-columns:repeat(2,1fr)}
+  .ws-dl{padding:24px 20px}.ws-dl__reqs div{grid-template-columns:1fr;gap:2px}
+  .ws-browser__page{padding-bottom:30px}.ws-float{position:static;margin-top:16px;flex-wrap:wrap}
+  .ws-sec{margin-top:72px}
+}
+</style>
+<script src="../assets/config.js"></script>
+<!-- site:head (shared site upgrades, see assets/README.md) -->
+<script>(function(){var r=document.documentElement;r.setAttribute("data-page","webstudio");try{var g=function(k){var v=localStorage.getItem("site."+k);return v==null?null:JSON.parse(v)},t=g("theme")||"dark";if(t==="auto")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",t==="light"?"light":"dark");var m=g("motion");if(m==="off"||(m!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))r.setAttribute("data-motion","reduce");if(g("owner")===true)r.setAttribute("data-owner","")}catch(e){r.setAttribute("data-theme","dark")}})();</script>
+<style>@view-transition{navigation:auto}</style>
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png?v=5" />
+<link rel="stylesheet" href="/assets/fx.css" />
+<link rel="stylesheet" href="/assets/chrome.css" />
+<link rel="stylesheet" href="/assets/interact.css" />
+<!-- /site:head -->
+</head>
+<body class="ws">
+<div class="wrap" id="top">
+  <nav>
+    <a class="brand" href="../">&larr; DMA <span>/ DMA Web Studio</span></a>
+    <div class="socials">
+      <a class="social kofi" href="/support/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h12A1.5 1.5 0 0 1 18 6.5V8h.75A3.75 3.75 0 0 1 22.5 11.75v.5A3.75 3.75 0 0 1 18.75 16h-1.02A6.5 6.5 0 0 1 11.5 20h-2A6.5 6.5 0 0 1 3 13.5zM18 10v3.98c.25.01.5.02.75.02A1.75 1.75 0 0 0 20.5 12.25v-.5A1.75 1.75 0 0 0 18.75 10z"/><path fill="#fff" d="M10.5 15.6l-2.9-2.75a1.85 1.85 0 0 1 0-2.65 1.9 1.9 0 0 1 2.65 0l.25.25.25-.25a1.9 1.9 0 0 1 2.65 0 1.85 1.85 0 0 1 0 2.65z"/></svg>Donate</a>
+      <a class="social discord" href="https://discord.gg/U35dt6Qb2A" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" aria-hidden="true" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>Discord</a>
+    </div>
+  </nav>
+
+  <header class="ws-hero">
+    <div class="ws-hero__copy">
+      <span class="ws-kicker">DMA Web Studio &middot; Website editor for Windows</span>
+      <h1 class="ws-h1">Change your website the way you change a document.</h1>
+      <p class="ws-lead">Type your site&rsquo;s address, click the words or pictures you want to change, and put it online when you&rsquo;re happy. No code, no command line. When you do want the code, Pro mode is one switch away.</p>
+      <div class="ws-get">
+        <a id="dl" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
+        <a class="ws-link" href="#how">See how it works <span aria-hidden="true">&darr;</span></a>
+      </div>
+      <div class="ws-meta"><span id="dlmeta"></span><span>Windows 10/11, 64-bit &middot; Free (MIT)</span></div>
+    </div>
+    <div class="ws-browser" aria-hidden="true">
+      <div class="ws-browser__bar"><i></i><i></i><i></i><span>your-site.github.io</span><b>Easy mode</b></div>
+      <div class="ws-browser__page">
+        <div class="ws-sel ws-sel--a"><span class="ws-sel__tag">Heading</span><h2 class="ws-demo-h">Welcome to my <em>workshop</em><span class="ws-caret"></span></h2><i class="h1"></i><i class="h2"></i><i class="h3"></i><i class="h4"></i></div>
+        <p class="ws-demo-p">Handmade things, new every week. Have a look around.</p>
+        <div class="ws-demo-row"><div class="ws-demo-img"></div><div class="ws-demo-img ws-demo-img--b"></div><div class="ws-demo-img ws-demo-img--c"></div></div>
+        <div class="ws-float"><span>Change words</span><span>Change picture</span><span class="on">Put it online</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="ws-sec" id="how" aria-labelledby="ws-modes-h">
+    <h2 class="ws-h2" id="ws-modes-h">Two ways to work. <span>Same site.</span></h2>
+    <div class="ws-modes">
+      <div class="ws-mode ws-mode--easy">
+        <span class="ws-mode__tag">Easy mode &middot; the default</span>
+        <h3>Big, friendly buttons</h3>
+        <p>Everything most people need, with nothing in the way. Click right on your page and type.</p>
+        <ul class="ws-btns">
+          <li><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Change words</li>
+          <li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 16 5-5 5 5 3-3 5 5"/></svg>Change picture</li>
+          <li><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add page</li>
+          <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16"/></svg>Colors</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Undo</li>
+          <li class="on"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Put it online</li>
+        </ul>
+      </div>
+      <div class="ws-switch" aria-hidden="true"><span></span></div>
+      <div class="ws-mode ws-mode--pro">
+        <span class="ws-mode__tag">Pro mode &middot; one switch away</span>
+        <h3>The whole toolbox</h3>
+        <p>A real code editor beside a live preview that updates as you type, with every file in your site at hand.</p>
+        <pre class="ws-code"><code><b>&lt;h1&gt;</b>Welcome to my <i>workshop</i><b>&lt;/h1&gt;</b>
+<b>&lt;p</b> <em>class</em>=<s>"lead"</s><b>&gt;</b>Handmade things,
+  new every week.<b>&lt;/p&gt;</b></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="ws-sec ws-helper" aria-labelledby="ws-help-h">
+    <div class="ws-helper__copy">
+      <h2 class="ws-h2" id="ws-help-h">Ask the Helper. <span>It does the fiddly bits.</span></h2>
+      <p>Describe what you want in plain words and the Helper makes the change for you, using the same buttons and files you can see. It can also read a web page you point it at.</p>
+      <ul class="ws-ticks">
+        <li><b>Offline</b> with a free local model through Ollama, on your own graphics card.</li>
+        <li><b>Online</b> with your own API key, kept in Windows Credential Manager.</li>
+        <li>It works inside your site&rsquo;s folder only, and asks before running anything.</li>
+        <li>It can never put your site online by itself. Only you can.</li>
+      </ul>
+    </div>
+    <div class="ws-chat" aria-hidden="true">
+      <p class="ws-chat__you">Make the heading bigger and add a Contact page with my email.</p>
+      <p class="ws-chat__bot">Done. The heading is now 20% larger, and there&rsquo;s a new <b>Contact</b> page linked from the menu. Have a look in the preview, then press <b>Put it online</b> when you&rsquo;re ready.</p>
+      <p class="ws-chat__you">Perfect, thanks!</p>
+    </div>
+  </section>
+
+  <section class="ws-sec" aria-labelledby="ws-pub-h">
+    <h2 class="ws-h2" id="ws-pub-h">Publishing that can&rsquo;t surprise you.</h2>
+    <ol class="ws-track">
+      <li><b>Preview</b><span>See every change on a private preview that only your PC can open.</span></li>
+      <li><b>Sync</b><span>It fetches the latest version of your site first, so nobody&rsquo;s work is overwritten.</span></li>
+      <li><b>Check</b><span>A scan stops passwords and keys from slipping into what you publish.</span></li>
+      <li><b>Confirm</b><span>Going straight to your live site means typing <code>PUBLISH</code>. A review copy (pull request) is the default.</span></li>
+      <li><b>Undo</b><span>Local snapshots and history mean any change can be rolled back. It never force-overwrites.</span></li>
+    </ol>
+  </section>
+
+  <section class="ws-sec ws-safe" aria-labelledby="ws-safe-h">
+    <h2 class="ws-h2" id="ws-safe-h">Only the owner can change a site.</h2>
+    <div class="ws-safe__grid">
+      <div><h3>Owners only</h3><p>Before any edit goes online, it checks your GitHub account can actually push to that site. If not, it opens in view-only mode.</p></div>
+      <div><h3>Any site to learn from</h3><p>Type someone else&rsquo;s address and you get a local copy to study and experiment with. It can&rsquo;t publish to their real site.</p></div>
+      <div><h3>Keys stay locked</h3><p>Sign-ins go through Git Credential Manager, and API keys live in Windows Credential Manager, never in plain files.</p></div>
+      <div><h3>Nothing phones home</h3><p>No telemetry, no accounts with us. The preview runs on your own PC only.</p></div>
+    </div>
+  </section>
+
+  <section class="ws-sec ws-dl" id="download" aria-labelledby="ws-dl-h">
+    <div class="ws-dl__main">
+      <h2 class="ws-h2" id="ws-dl-h">Get DMA Web Studio</h2>
+      <p>Free. Download the zip, unzip it anywhere and run <code>DMAWebStudio.exe</code>. Nothing else to install for the app itself.</p>
+      <a id="dl2" class="btn" href="#" target="_blank" rel="noopener" aria-disabled="true">Coming soon</a>
+      <p id="dlhash" class="hash" hidden></p>
+      <p id="dlall" hidden><a id="dlalllink" href="#" target="_blank" rel="noopener">Release notes</a></p>
+    </div>
+    <dl class="ws-dl__reqs">
+      <div><dt>System</dt><dd>Windows 10 or 11, 64-bit.</dd></div>
+      <div><dt>To publish</dt><dd><a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Git for Windows</a> (free) and a GitHub account that owns the site.</dd></div>
+      <div><dt>Helper</dt><dd>Optional. <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> for offline, or your own API key.</dd></div>
+      <div><dt>First run</dt><dd>The app isn&rsquo;t code-signed yet, so Windows may say &ldquo;unknown publisher&rdquo;: choose More info, then Run anyway. Check the zip against the SHA-256 above.</dd></div>
+    </dl>
+  </section>
+
+  <section class="ws-sec" aria-labelledby="ws-faq-h">
+    <h2 class="ws-h2" id="ws-faq-h">Questions</h2>
+    <div class="ws-faq">
+      <details><summary>Do I need to know how to code?</summary><p>No. Easy mode is made for people who never want to see code. Pro mode is there if you do.</p></details>
+      <details><summary>Which websites does it work with?</summary><p>Sites kept on GitHub, like GitHub Pages sites, are the best fit: type the address and it finds the repository for you. You can open any public address to study a local copy, but you can only publish to sites you own.</p></details>
+      <details><summary>Can the Helper break my site?</summary><p>It only works inside your site&rsquo;s folder, asks before running commands, and can&rsquo;t publish. Every change shows in the preview first, and Undo is always there.</p></details>
+      <details><summary>Is it free? Where is the source?</summary><p>Yes, it&rsquo;s free under the MIT licence. Releases are published on GitHub; the source code isn&rsquo;t public for now.</p></details>
+      <details><summary>Does it work on Mac or Linux?</summary><p>Not yet. It&rsquo;s Windows only for now.</p></details>
+      <details><summary>How do I remove it?</summary><p>Delete the folder you unzipped. Your sites stay where they are on your PC and on GitHub.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <p>DMA Web Studio is an independent project. It is not affiliated with or endorsed by GitHub, Microsoft, Ollama or any model maker.</p>
+  </footer>
+</div>
+<script>
+  const m = (window.SITE || {}).webstudio || {};
+  const fmtDate = d => { if (!d) return ""; const t = new Date(d + "T00:00:00"); return isNaN(t) ? d : t.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); };
+  if (m.downloadUrl) {
+    const dl = document.getElementById("dl");
+    dl.href = m.downloadUrl; dl.removeAttribute("aria-disabled");
+    dl.textContent = "Download DMA Web Studio" + (m.version ? " " + m.version : "");
+    dl.insertAdjacentHTML("afterbegin", '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin-right:.55em"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>');
+    dl.setAttribute("aria-label", dl.textContent + " for Windows");
+    const dl2 = document.getElementById("dl2"); dl2.href = dl.href; dl2.removeAttribute("aria-disabled"); dl2.innerHTML = dl.innerHTML; dl2.setAttribute("aria-label", dl.getAttribute("aria-label"));
+  }
+  document.getElementById("dlmeta").textContent = [m.version ? "Version " + m.version : "", m.date ? "Posted " + fmtDate(m.date) : "", m.sizeLabel, m.downloadUrl ? m.host || "" : ""].filter(Boolean).join(" · ");
+  if (m.releasesUrl) { document.getElementById("dlalllink").href = m.releasesUrl; document.getElementById("dlall").hidden = false; }
+  if (m.sha256) { const h = document.getElementById("dlhash"); h.textContent = "SHA-256 " + m.sha256; h.hidden = false; }
+</script>
+<!-- site:scripts (shared site upgrades, see assets/README.md) -->
+<script defer src="/assets/site-config.js"></script>
+<script defer src="/assets/site.js"></script>
+<script defer src="/assets/chrome.js"></script>
+<script defer src="/assets/interact.js"></script>
+<script defer src="/assets/analytics.js"></script>
+<!-- /site:scripts -->
+</body>
+</html>

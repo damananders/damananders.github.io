@@ -20,6 +20,7 @@ const CARDS = [
   { file: "arcade", kicker: "Arcade", title: "Play something", sub: "Little browser games tucked into the site — row the boat home, stamp review scores, and more to come.", accent: "#cd4257" },
   { file: "andersmod", kicker: "Live modding tool · Windows", title: "AndersMod Studio", sub: "Find values, make cheats and build mod tables for single-player PC games. Games with anti-cheat are never touched.", accent: "#f2a93b", bg: "assets/andersmod/studio.jpg" },
   { file: "ramses", kicker: "Ramses · Personal AI assistant", title: "Take back control of AI", sub: "An AI assistant that runs on your own PC, keeps your data with you and works at the pace you set. Free and open source.", accent: "#d4af37", bg: "assets/ramses/chat.jpg" },
+  { file: "webstudio", kicker: "Website editor · Windows", title: "DMA Web Studio", sub: "Change your website the way you change a document. Easy and Pro modes, an optional Helper, safe publishing.", accent: "#ff7f97", bg: "assets/library/webstudio.webp" },
   { file: "trophies", kicker: "Trophy cabinet", title: "Collect them all", sub: "Hidden trophies across the whole site — secret words, cheat codes and milestones. See how many you can find.", accent: "#f0b065" }
 ];
 const b64 = f => fs.readFileSync(path.join(root, f)).toString("base64");
