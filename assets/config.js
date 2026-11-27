@@ -44,14 +44,14 @@ window.SITE = {
 
   // Ramses (ramses/): leave downloadUrl "" to show "Coming soon".
   ramses: {
-    version: "1.0.1",
-    date: "2026-11-26",
-    // GitHub Release asset. It only works once the v1.0.1 release exists with this exact file attached.
-    downloadUrl: "https://github.com/damananders/Ramses/releases/download/v1.0.1/Ramses-1.0.1-win-x64.zip",
+    version: "1.0.2",
+    date: "2026-11-27",
+    // GitHub Release asset. It only works once the v1.0.2 release exists with this exact file attached.
+    downloadUrl: "https://github.com/damananders/Ramses/releases/download/v1.0.2/Ramses-1.0.2-win-x64.zip",
     releasesUrl: "https://github.com/damananders/Ramses/releases",
     host: "Hosted on GitHub",
     sizeLabel: "62 MB",
-    sha256: "71ba92094f908652443a55c715e81173c2bdd6877b4ba1dc1a35a8f0f8b443b3",   // of Ramses-1.0.1-win-x64.zip
+    sha256: "4530dbc6c76e7f96fdb7108f4ff63fe8f6fa69aaddf285d462e349dada162c66",   // of Ramses-1.0.2-win-x64.zip
   },
 
   // DMA Web Studio (webstudio/): leave downloadUrl "" to show "Coming soon". Source is private; releases only.
