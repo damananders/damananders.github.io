@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ramses pack gallery</title>
+<meta name="description" content="Skill and knowledge packs for Ramses, shared as plain text. Install them from Ramses, Settings, Connections, Share packs." />
+<meta name="theme-color" content="#0a0a0b" />
+<link rel="icon" href="/favicon.ico?v=5" sizes="any" />
+<link rel="stylesheet" href="/assets/fonts/fonts.css" />
+<link rel="stylesheet" href="../../assets/hub.css" />
+<style>
+body.rms{--gold:#c9a54a;--ink:#0a0a0b;--ink-2:#121214;--tx:#f4f4f5;--tx-2:#b9b9bf;--tx-3:#85858c;background:var(--ink);color:var(--tx)}
+.rms .wrap{max-width:900px}
+.pg-head{padding:72px 0 28px;display:grid;gap:16px}
+.pg-eyebrow{font:500 .74rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3)}
+.rms h1{margin:0;font:600 clamp(2.2rem,5vw,3.6rem)/1.05 var(--display);letter-spacing:-.04em}
+.pg-head p{margin:0;max-width:62ch;color:var(--tx-2);line-height:1.65;font-size:1.08rem}
+.pg-list{display:grid;gap:14px;margin:18px 0 60px}
+.pg-pack{padding:22px 24px;border-radius:18px;background:var(--ink-2);display:grid;gap:8px}
+.pg-pack h2{margin:0;font:600 1.25rem var(--display)}
+.pg-pack p{margin:0;color:var(--tx-2);line-height:1.6}
+.pg-meta{font:400 .78rem var(--mono);color:var(--tx-3);word-break:break-all}
+.pg-pack a{color:var(--gold)}
+.pg-how{display:grid;gap:10px;color:var(--tx-2);line-height:1.65;margin-bottom:80px}
+.pg-how h2{font:600 1.3rem var(--display);color:var(--tx);margin:0}
+.pg-how ol{margin:0;padding-left:22px}
+</style>
+</head>
+<body class="rms">
+<div class="wrap">
+  <nav><a class="brand" href="../">&larr; Ramses</a></nav>
+  <header class="pg-head">
+    <span class="pg-eyebrow">Ramses &middot; Pack gallery</span>
+    <h1>Shared skills and knowledge</h1>
+    <p>Packs are plain text: playbooks Ramses follows (skills) or notes it can search (knowledge). Nothing in a pack can run. Install one from Ramses: Settings, Connections, Share packs, Browse the pack gallery. Ramses checks each download against the SHA-256 listed here.</p>
+  </header>
+  <div class="pg-list" id="packs"><p class="pg-meta">Loading the list...</p></div>
+  <section class="pg-how">
+    <h2>Share a pack of your own</h2>
+    <ol>
+      <li>In Ramses, open Settings, Connections, Share packs, and save your skills or a knowledge pack as a file. Secrets are removed on the way out, but read it first: notes about you are not.</li>
+      <li>Open an issue on the Ramses GitHub page with the file attached and a line on what it is for.</li>
+      <li>Once it has been read through, it is added here with its checksum.</li>
+    </ol>
+  </section>
+</div>
+<script>
+  fetch("index.json", { cache: "no-cache" }).then(r => r.json()).then(j => {
+    const host = document.getElementById("packs");
+    const esc = s => String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    host.innerHTML = (j.packs || []).map(p => `<article class="pg-pack"><h2>${esc(p.name)}</h2><p>${esc(p.description)}</p>
+      <div class="pg-meta">${p.kind === "skills" ? "Skills" : "Knowledge"} &middot; ${Math.max(1, Math.round((p.size || 0) / 1024))} KB${p.author ? " &middot; by " + esc(p.author) : ""} &middot; <a href="${esc(p.file)}" download>Download</a></div>
+      <div class="pg-meta">SHA-256 ${esc(p.sha256)}</div></article>`).join("") || '<p class="pg-meta">No packs yet.</p>';
+  }).catch(() => { document.getElementById("packs").innerHTML = '<p class="pg-meta">The list could not be loaded.</p>'; });
+</script>
+</body>
+</html>

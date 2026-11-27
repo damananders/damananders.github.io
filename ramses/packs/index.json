@@ -1,0 +1,14 @@
+{
+  "updated": "2026-11-27",
+  "packs": [
+    {
+      "name": "Starter skills",
+      "kind": "skills",
+      "description": "Playbooks for reverse engineering with REA (static and runtime), careful code changes, static websites, AzerothCore content and a working-style template.",
+      "file": "starter-skills.ramsespack",
+      "sha256": "37161eac27686763aefb7a99864ad88a318766c658878ef3e7bcc32371879d5d",
+      "size": 7651,
+      "author": "Ramses"
+    }
+  ]
+}
