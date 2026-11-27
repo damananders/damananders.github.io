@@ -54,6 +54,17 @@ window.SITE = {
     sha256: "74007b3cc53fdc03c184f5dfa9b388c7cdbc80604784a26427bee4803a036cd8",   // of Ramses-1.0.0-win-x64.zip
   },
 
+  // DMA Web Studio (webstudio/): leave downloadUrl "" to show "Coming soon". Source is private; releases only.
+  webstudio: {
+    version: "0.1.0",
+    date: "2026-11-26",
+    downloadUrl: "https://github.com/damananders/DMAWebStudio/releases/download/v0.1.0/DMAWebStudio-0.1.0-win-x64.zip",
+    releasesUrl: "https://github.com/damananders/DMAWebStudio/releases/tag/v0.1.0",
+    host: "Hosted on GitHub",
+    sizeLabel: "73 MB",
+    sha256: "ff8d5b8297d106c9402652b13350eb24a8afb35c3d409b7509008d1d5a191a5e",   // of DMAWebStudio-0.1.0-win-x64.zip
+  },
+
   // Personal Vault: the owner's own backups. Keep each Drive file's sharing
   // set to "Restricted" so only the owner's Google account can open it.
   // icon: "star" | "crystal" | "skull" | "disc" (see ICONS in vault/index.html)
