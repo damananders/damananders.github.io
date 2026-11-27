@@ -1,10 +1,10 @@
 {
-  "_help": "The 'Now' card on the hub. If 'slides' has entries, the card is a rotating banner (one slide per project, pips to switch, auto-cycles). Otherwise 'building'/'playing' show as before; a blank title hides an entry. url is optional. art: anyps | wizard | none.",
-  "updated": "2026-11-20",
+  "_help": "The 'Now' card on the hub. If 'slides' has entries, the card is a rotating banner (one slide per project, pips to switch, auto-cycles). Otherwise 'building'/'playing' show as before; a blank title hides an entry. url is optional. art: anyps | wizard | ramses | realms | none.",
+  "updated": "2026-11-27",
   "building": {
-    "title": "AnyPS native cores",
-    "note": "Rebuilding the PS1 and PS2 from scratch inside AnyPS. The PS1 now runs in 4K and widescreen; the PS2's own graphics renderer is coming together.",
-    "url": "/projects/"
+    "title": "Ramses",
+    "note": "My own AI assistant that runs on your PC. Version 1.0.1 is out; next up are longer overnight jobs, tidier tool output and a fully offline model of its own.",
+    "url": "/ramses/"
   },
   "playing": {
     "title": "",
@@ -14,29 +14,29 @@
   "slides": [
     {
       "kind": "Now building",
+      "title": "Ramses",
+      "note": "Take back control of AI: an assistant that lives on your own PC and keeps your data with you. Version 1.0.1 is out now. Next up: longer overnight jobs, tidier tool output, a clear status while it works, and a fully offline model of its own.",
+      "url": "/ramses/",
+      "cta": "Meet Ramses",
+      "art": "ramses",
+      "accent": "#d4af37"
+    },
+    {
+      "kind": "Also building",
       "title": "AnyPS native cores",
-      "note": "The rebuilt PS1 now runs classic games at up to 4K and in widescreen, with no outside emulator. Next up: the PS2's own graphics renderer — pixel-exact in early tests, now getting faster and covering more games.",
+      "note": "The from-scratch rebuild now runs PSP homebrew natively, and retail PSP games are next. The PS2 core has its own graphics renderer in place and is getting faster to boot. Both land in a future AnyPS release.",
       "url": "/anyps/",
       "cta": "See AnyPS",
       "art": "anyps",
       "accent": "#3d8bff"
     },
     {
-      "kind": "Also building",
-      "title": "Supreme Lobbing",
-      "note": "A physics lobbing battle in the arcade — pick a crew, work through the campaign, grow an upgrade tree and unlock prestige powers. A fresh polish pass lands most days.",
-      "url": "/arcade/",
-      "cta": "Play in the arcade",
-      "art": "none",
-      "accent": "#e0952f"
-    },
-    {
       "kind": "In the realms",
-      "title": "The Great Andersian Update",
-      "note": "AndersCraft's biggest patch is live: its own Andersian Mark currency, a crimson transmog set, roaming rares and a daily bounty board, hardcore 'Chosen' titles, and prestige levels past 125. And the editor behind it all is now a free download for other server owners.",
+      "title": "AndersCraft: Mastery",
+      "note": "The next big step for the realms: Mastery, with 100 levels across 20 tracks and 80 perks, plus quest XP and gold that scale with your level. Meanwhile AndersCraft Studio 0.9, the free editor behind it all, is out for other server owners.",
       "url": "/anderscraft/",
       "cta": "See AndersCraft",
-      "art": "none",
+      "art": "realms",
       "accent": "#c2502f"
     }
   ]
