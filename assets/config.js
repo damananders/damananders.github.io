@@ -44,18 +44,14 @@ window.SITE = {
 
   // Ramses (ramses/): leave downloadUrl "" to show "Coming soon".
   ramses: {
-    version: "1.0.3",
+    version: "1.0.4",
     date: "2026-11-28",
-    // GitHub Release asset. It only works once the v1.0.3 release exists with this exact file attached.
-    downloadUrl: "https://github.com/damananders/Ramses/releases/download/v1.0.3/Ramses-1.0.3-win-x64.zip",
-    releasesUrl: "https://github.com/damananders/Ramses/releases",
+    // GitHub Release asset (v1.0.4 is live; checksum verified against the uploaded file).
+    downloadUrl: "https://github.com/damananders/Ramses/releases/download/v1.0.4/Ramses-1.0.4-win-x64.zip",
+    releasesUrl: "https://github.com/damananders/Ramses/releases/tag/v1.0.4",
     host: "Hosted on GitHub",
-    sizeLabel: "62 MB",
-    sha256: "e633d167e7bae7bf9ac0661c3e376e81f44a9f23fdac59a2f54af19a21c02935",   // of Ramses-1.0.3-win-x64.zip
-
-    // 1.0.4 is packaged but not uploaded yet. When the v1.0.4 release has its asset, swap in:
-    //   version "1.0.4", downloadUrl ".../releases/download/v1.0.4/Ramses-1.0.4-win-x64.zip", sizeLabel "64 MB",
-    //   sha256 "74da7c909a82365d4f835fa6d484e863c7bf8dad42b7b8f834f7ee067e5ae8fb". The page's what's-new labels flip on their own.
+    sizeLabel: "64 MB",
+    sha256: "bdc1f4dee7377e9677449e31223903135fec793fed531a4822554175e66550c2",   // of Ramses-1.0.4-win-x64.zip
   },
 
   // DMA Web Studio (webstudio/): leave downloadUrl "" to show "Coming soon". Source is private; releases only.
