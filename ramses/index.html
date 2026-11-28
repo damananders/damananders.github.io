@@ -23,7 +23,8 @@
 /* Ramses: "Take back control of AI". An editorial, monochrome page: near-black, white type, quiet greys and
  * one restrained gold accent. Typography leads; no boxes, no borders, generous space. Layout: statement hero,
  * full-bleed product shot, three principles, alternating feature rows, a freedom scale, a "stays on your PC"
- * ledger, install steps, specs, FAQ and a closing band. Unique to this page. Prefix rx-. */
+ * ledger, install steps, specs, FAQ and a closing band. 1.0.4 adds a what's-new strip, a tabbed feature explorer,
+ * "a day with Ramses" and a hardware picker. Unique to this page. Prefix rx-. */
 body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2:#121214;--ink-3:#1a1a1d;--tx:#f4f4f5;--tx-2:#b9b9bf;--tx-3:#85858c;
   background:var(--ink);color:var(--tx);
   background-image:radial-gradient(1100px 520px at 50% -18%,rgba(255,255,255,.07),transparent 65%),radial-gradient(800px 500px at 85% 8%,rgba(201,165,74,.07),transparent 60%)}
@@ -115,12 +116,105 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
 .rms .rx-close h2{margin:0;font:600 clamp(1.9rem,4.4vw,3rem)/1.05 var(--display);letter-spacing:-.035em;color:var(--tx)}
 .rx-close p{margin:0;max-width:56ch;color:var(--tx-2);line-height:1.65}
 .rms footer{margin-top:72px}
+/* ---- 1.0.4 additions: what's-new strip, feature explorer, a day with Ramses, hardware picker ---- */
+.rx-strip{margin-top:56px;display:grid;grid-template-columns:auto 1fr;gap:14px 28px;align-items:center;padding:22px 26px;border-radius:20px;
+  background:linear-gradient(90deg,rgba(201,165,74,.10),rgba(255,255,255,.02) 55%,transparent)}
+.rx-strip__tag{display:grid;gap:4px}
+.rx-strip__tag b{font:500 .7rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.rx-strip__tag span{font:600 1.15rem var(--display);color:var(--tx);letter-spacing:-.01em}
+.rx-strip__list{display:flex;flex-wrap:wrap;gap:8px}
+.rx-strip__list a{font:500 .86rem var(--display);color:var(--tx-2);text-decoration:none;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.05);transition:background .2s,color .2s}
+.rx-strip__list a:hover{background:rgba(201,165,74,.16);color:var(--tx)}
+/* explorer */
+.rx-ex{display:grid;grid-template-columns:250px 1fr;gap:44px;align-items:start}
+.rx-ex__tabs{display:grid;gap:4px;position:sticky;top:96px}
+.rx-ex__tab{all:unset;cursor:pointer;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;color:var(--tx-2);font:500 .98rem var(--display);transition:background .2s,color .2s}
+.rx-ex__tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rx-ex__tab small{font:500 .7rem var(--mono);color:var(--tx-3)}
+.rx-ex__tab:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.rx-ex__tab[aria-selected="true"]{background:rgba(201,165,74,.12);color:var(--tx)}
+.rx-ex__tab[aria-selected="true"] svg{stroke:var(--gold)}
+.rx-ex__tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.rx-ex__panel{display:grid;gap:22px;animation:rx-fade .35s ease}
+.rx-ex__panel[hidden]{display:none}
+.rx-ex__intro{margin:0;color:var(--tx-2);font-size:1.05rem;line-height:1.65;max-width:62ch}
+.rx-ex__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rx-feat{padding:20px 22px;border-radius:16px;background:var(--ink-2);display:grid;gap:8px;align-content:start;transition:transform .2s,background .2s}
+.rx-feat:hover{transform:translateY(-2px);background:var(--ink-3)}
+.rms .rx-feat h4{margin:0;font:600 1.02rem/1.3 var(--display);color:var(--tx);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rx-feat p{margin:0;color:var(--tx-2);font-size:.94rem;line-height:1.6}
+.rx-new{font:500 .64rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:var(--gold);padding:5px 7px;border-radius:6px}
+@keyframes rx-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* a day with Ramses */
+.rx-day{display:grid;gap:28px}
+.rx-day__rail{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.rx-day__rail::before{content:"";position:absolute;left:10%;right:10%;top:15px;height:2px;background:linear-gradient(90deg,var(--tx-3),var(--gold));opacity:.5}
+.rx-day__stop{all:unset;cursor:pointer;position:relative;display:grid;justify-items:center;gap:10px;text-align:center}
+.rx-day__stop i{width:14px;height:14px;margin-top:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px var(--tx-3);transition:box-shadow .2s,background .2s}
+.rx-day__stop b{font:500 .78rem var(--mono);color:var(--tx-3);letter-spacing:.08em}
+.rx-day__stop span{font:600 .95rem var(--display);color:var(--tx-2)}
+.rx-day__stop[aria-selected="true"] i{background:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(201,165,74,.6)}
+.rx-day__stop[aria-selected="true"] span{color:var(--tx)}
+.rx-day__stop:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:8px}
+.rx-scene{display:grid;grid-template-columns:1fr 1.1fr;gap:44px;align-items:center;padding:36px;border-radius:24px;background:linear-gradient(180deg,var(--ink-2),rgba(18,18,20,.35));animation:rx-fade .35s ease}
+.rx-scene[hidden]{display:none}
+.rx-scene__text{display:grid;gap:12px}
+.rms .rx-scene__text h3{margin:0;font:600 clamp(1.4rem,2.6vw,1.8rem)/1.15 var(--display);letter-spacing:-.02em;color:var(--tx)}
+.rx-scene__text p{margin:0;color:var(--tx-2);line-height:1.7}
+.rx-scene__uses{display:flex;flex-wrap:wrap;gap:6px}
+.rx-scene__uses span{font:500 .74rem var(--mono);color:var(--tx-3);padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.05)}
+.rx-chat{display:grid;gap:12px;padding:22px;border-radius:18px;background:var(--ink);box-shadow:0 0 0 1px rgba(255,255,255,.05),0 30px 60px -40px rgba(0,0,0,.9)}
+.rx-chat p{margin:0;max-width:88%;padding:12px 15px;border-radius:14px;line-height:1.55;font-size:.94rem}
+.rx-chat .me{justify-self:end;background:var(--tx);color:var(--ink);border-bottom-right-radius:4px}
+.rx-chat .rx{justify-self:start;background:var(--ink-3);color:var(--tx-2);border-bottom-left-radius:4px}
+.rx-chat .rx b{color:var(--tx);font-weight:600}
+.rx-chat .note{justify-self:center;max-width:100%;padding:6px 12px;font:500 .74rem var(--mono);color:var(--gold);background:rgba(201,165,74,.08);border-radius:999px}
+/* hardware picker */
+.rx-hw{display:grid;gap:26px}
+.rx-hw__opts{display:flex;flex-wrap:wrap;gap:10px}
+.rx-hw__opt{all:unset;cursor:pointer;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.05);font:500 .95rem var(--display);color:var(--tx-2);transition:background .2s,color .2s}
+.rx-hw__opt:hover{color:var(--tx)}
+.rx-hw__opt[aria-checked="true"]{background:var(--tx);color:var(--ink)}
+.rx-hw__opt:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.rx-hw__out{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;padding:32px 36px;border-radius:22px;background:var(--ink-2)}
+.rx-hw__out[hidden]{display:none}
+.rms .rx-hw__out h3{margin:0 0 10px;font:600 1.35rem/1.2 var(--display);color:var(--tx)}
+.rx-hw__out p{margin:0;color:var(--tx-2);line-height:1.65}
+.rx-hw__meters{display:grid;gap:16px;align-content:center}
+.rx-meter{display:grid;gap:7px}
+.rx-meter__lbl{display:flex;justify-content:space-between;font:500 .82rem var(--display);color:var(--tx-2)}
+.rx-meter__lbl b{font:500 .78rem var(--mono);color:var(--tx)}
+.rx-meter__bar{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.rx-meter__bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--tx-3),var(--gold));transform-origin:left;animation:rx-grow .7s ease}
+@keyframes rx-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.rx-hw__fine{margin:0;font-size:.84rem;color:var(--tx-3)}
+/* what's new: earlier versions */
+.rx-earlier{margin-top:28px}
+.rx-earlier summary{cursor:pointer;font:500 .95rem var(--display);color:var(--tx-2);list-style:none;display:inline-flex;gap:10px;align-items:center}
+.rx-earlier summary::-webkit-details-marker{display:none}
+.rx-earlier summary::before{content:"+";color:var(--gold);font:300 1.3rem/1 var(--display)}
+.rx-earlier[open] summary::before{content:"\2212"}
+.rx-earlier .rx-ledger{margin-top:18px}
+:root[data-motion="reduce"] .rx-ex__panel,:root[data-motion="reduce"] .rx-scene,:root[data-motion="reduce"] .rx-meter__bar i{animation:none}
+:root[data-motion="reduce"] .rx-feat:hover{transform:none}
+@media (prefers-reduced-motion:reduce){.rx-ex__panel,.rx-scene,.rx-meter__bar i{animation:none}}
 /* light theme */
 :root[data-theme="light"] body.rms{--ink:#f7f7f6;--ink-2:#ececea;--ink-3:#e2e2df;--tx:#121214;--tx-2:#45454b;--tx-3:#7a7a80;--gold:#9a7a26;
   background-image:none;background-color:var(--ink)}
 :root[data-theme="light"] .rms .rx-cta .btn{background:#121214;color:#fff}
 :root[data-theme="light"] .rx-ledger div,:root[data-theme="light"] .rx-faq details{box-shadow:0 -1px 0 rgba(0,0,0,.08)}
+:root[data-theme="light"] .rx-feat,:root[data-theme="light"] .rx-hw__out{background:#fff}
+:root[data-theme="light"] .rx-feat:hover{background:#fafaf8}
+:root[data-theme="light"] .rx-chat{background:#fff}
+:root[data-theme="light"] .rx-strip__list a,:root[data-theme="light"] .rx-hw__opt,:root[data-theme="light"] .rx-scene__uses span{background:rgba(0,0,0,.05)}
+:root[data-theme="light"] .rx-hw__opt[aria-checked="true"]{background:#121214;color:#fff}
+:root[data-theme="light"] .rx-meter__bar{background:rgba(0,0,0,.07)}
 @media (max-width:900px){
+  .rx-ex{grid-template-columns:1fr;gap:20px}
+  .rx-ex__tabs{position:static;display:flex;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
+  .rx-ex__tab{grid-template-columns:22px auto;white-space:nowrap}.rx-ex__tab small{display:none}
+  .rx-scene,.rx-hw__out{grid-template-columns:1fr;gap:24px;padding:24px 20px}
+  .rx-strip{grid-template-columns:1fr}
   .rx-principles,.rx-specs{grid-template-columns:1fr;gap:32px}
   .rx-row{grid-template-columns:1fr;gap:28px}.rx-row:nth-child(even) .rx-row__media{order:0}
   .rx-scale{padding:28px 22px}.rx-scale__notes{grid-template-columns:1fr;gap:20px}
@@ -130,6 +224,10 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
   .rx-close{padding:44px 22px}
 }
 @media (max-width:560px){
+  .rx-ex__grid{grid-template-columns:1fr}
+  .rx-day__rail{grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+  .rx-day__stop span{font-size:.76rem}
+  .rx-day__rail::before{left:8%;right:8%}
   .rx-hero{padding-top:52px}
   .rx-steps{grid-template-columns:1fr}
   .rx-ledger div{grid-template-columns:1fr;gap:4px}
@@ -177,6 +275,20 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
     <figcaption>A project chat in Ramses, running on a local model.</figcaption>
   </figure>
 
+  <aside class="rx-strip" aria-label="What 1.0.4 adds">
+    <div class="rx-strip__tag"><b id="rx-strip-state">Coming in 1.0.4</b><span>The biggest update yet</span></div>
+    <div class="rx-strip__list">
+      <a href="#features" data-tab="helpers">Helper agents</a>
+      <a href="#features" data-tab="helpers">Adopt a program</a>
+      <a href="#features" data-tab="code">/review and /pr</a>
+      <a href="#features" data-tab="code">VS Code extension</a>
+      <a href="#features" data-tab="yours">Boards together</a>
+      <a href="#features" data-tab="files">Reads almost any file</a>
+      <a href="#features" data-tab="models">Choose where models run</a>
+      <a href="#whatsnew">All the changes</a>
+    </div>
+  </aside>
+
   <section class="rx-sec" id="how" aria-labelledby="rx-why-h">
     <div class="rx-sec__head">
       <span class="rx-eyebrow">What &ldquo;control&rdquo; means here</span>
@@ -223,6 +335,46 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
     </div>
   </section>
 
+  <section class="rx-sec" id="features" aria-labelledby="rx-ex-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Everything it can do</span>
+      <h2 id="rx-ex-h">Explore Ramses, one corner at a time.</h2>
+      <p>Pick a topic. Each card is one thing Ramses does today, in plain words. The gold tags mark what 1.0.4 adds.</p>
+    </div>
+    <div class="rx-ex">
+      <div class="rx-ex__tabs" role="tablist" aria-label="Feature topics">
+        <button class="rx-ex__tab" role="tab" id="rx-tab-chat" aria-controls="rx-pan-chat" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>Everyday chat<small></small></button>
+        <button class="rx-ex__tab" role="tab" id="rx-tab-files" aria-controls="rx-pan-files" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7l2 3h7v13H4z"/></svg>Files and knowledge<small>2 new</small></button>
+        <button class="rx-ex__tab" role="tab" id="rx-tab-code" aria-controls="rx-pan-code" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>Code and projects<small>3 new</small></button>
+        <button class="rx-ex__tab" role="tab" id="rx-tab-helpers" aria-controls="rx-pan-helpers" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 20c1-3 3-5 5-5s4 2 5 5M11 20c1-3 3-5 5-5s4 2 5 5"/></svg>Helpers and automation<small>2 new</small></button>
+        <button class="rx-ex__tab" role="tab" id="rx-tab-games" aria-controls="rx-pan-games" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12a3 3 0 0 1 3 3v3a2 2 0 0 1-3.5 1.3L15 14H9l-2.5 2.3A2 2 0 0 1 3 15v-3a3 3 0 0 1 3-3z"/><path d="M8 11v3M6.5 12.5h3"/></svg>Games and modding<small>1 new</small></button>
+        <button class="rx-ex__tab" role="tab" id="rx-tab-yours" aria-controls="rx-pan-yours" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1.3-1-1.5-1-2.5s.7-1.5 1.7-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></svg>Make it yours<small>2 new</small></button>
+        <button class="rx-ex__tab" role="tab" id="rx-tab-models" aria-controls="rx-pan-models" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="10" rx="2"/><path d="M8 7V4M12 7V4M16 7V4M8 20v-3M12 20v-3M16 20v-3"/></svg>Models and privacy<small>2 new</small></button>
+      </div>
+      <div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-chat" aria-labelledby="rx-tab-chat"><p class="rx-ex__intro">Ask, talk and get things done, in projects that remember what they are about.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>Projects and threads</h4><p>Each project keeps its own threads, memory, guidelines and models, so a recipe chat never bleeds into your tax folder.</p></div><div class="rx-feat"><h4>Search everything</h4><p>Ctrl+K finds any chat, file, board or setting in a keystroke.</p></div><div class="rx-feat"><h4>Talk to it</h4><p>Press Speak, or say "Hey Ramses". It can read answers aloud too.</p></div><div class="rx-feat"><h4>Exact numbers</h4><p>A built-in calculator gets sums, averages and big numbers exactly right, with nothing to approve.</p></div><div class="rx-feat"><h4>Print or PDF</h4><p>Print any answer or document, or save it as a PDF.</p></div><div class="rx-feat"><h4>Learn as you go</h4><p>Tutorials with Show me walkthroughs and ready-made project templates.</p></div></div></div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-files" aria-labelledby="rx-tab-files" hidden><p class="rx-ex__intro">Point it at your stuff and it reads, sorts and finds things, carefully.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>Reads almost any file <span class="rx-new">New in 1.0.4</span></h4><p>Documents, e-books, mail, Photoshop layers, media details, fonts, databases, programs and shortcuts. It even looks inside archives and disc images without unpacking them.</p></div><div class="rx-feat"><h4>Careful with your files</h4><p>It backs a file up before changing it and asks first, at the level of independence you chose.</p></div><div class="rx-feat"><h4>Search by meaning</h4><p>Find the note about "that cheap flight idea" even if you never wrote the word flight.</p></div><div class="rx-feat"><h4>Memory you can read</h4><p>What it remembers is plain files in your own folder. Read them, edit them or delete them.</p></div><div class="rx-feat"><h4>Web and pictures</h4><p>Search the web (only the search words are sent) and make pictures on your own PC.</p></div><div class="rx-feat"><h4>Every font, no installs <span class="rx-new">New in 1.0.4</span></h4><p>Browse every installed font, plus a folder of fonts you pick, without installing any of them.</p></div></div></div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-code" aria-labelledby="rx-tab-code" hidden><p class="rx-ex__intro">A coding partner that reads your project, runs your tools and respects your branches.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>Runs real tools</h4><p>PowerShell, Python and git, each behind a clear Allow or Decline card.</p></div><div class="rx-feat"><h4>Knows your codebase</h4><p>A code index maps every function, and /docs writes a README from the code itself.</p></div><div class="rx-feat"><h4>/review and /security-review <span class="rx-new">New in 1.0.4</span></h4><p>Ask for a second pair of eyes on your changes, or a security pass on them.</p></div><div class="rx-feat"><h4>Git and pull requests <span class="rx-new">New in 1.0.4</span></h4><p>Status, diff, log, branches, commits and worktrees. /pr opens a GitHub pull request, online and optional, and asks first.</p></div><div class="rx-feat"><h4>Inside your editor <span class="rx-new">New in 1.0.4</span></h4><p>A VS Code extension, and external tools for JetBrains IDEs. Set them up in Settings, Code editors.</p></div><div class="rx-feat"><h4>Extend it</h4><p>Plugins in Python or JavaScript, and tool servers (MCP) for the apps you already use.</p></div></div></div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-helpers" aria-labelledby="rx-tab-helpers" hidden><p class="rx-ex__intro">Hand off the long jobs. Ramses plans, delegates, checks and reports back.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>A team of helpers <span class="rx-new">New in 1.0.4</span></h4><p>Research, worker, reviewer, security reviewer and tester agents, plus your own. Several run at once, and workers change git projects only on their own branch.</p></div><div class="rx-feat"><h4>Adopt a program <span class="rx-new">New in 1.0.4</span></h4><p>/adopt studies a program and rebuilds what it does as a brand-new plugin, the clean-room way: one agent describes the behaviour, another writes fresh code from that description alone. Protected programs are only studied from the outside.</p></div><div class="rx-feat"><h4>Finishes what it starts</h4><p>A stuck job steps back, makes a fresh plan and tries again, and checks its work before saying done. You can reorder, edit or pause its steps while it runs.</p></div><div class="rx-feat"><h4>Plan first, then Go</h4><p>For multi-step work it shows the plan and waits for one "Go".</p></div><div class="rx-feat"><h4>Scheduled jobs</h4><p>Jobs that run on a timetable and report back when they are done.</p></div><div class="rx-feat"><h4>Skills that learn your jobs</h4><p>Skills load by themselves when they fit, a job you keep asking for can become a skill, and the pack gallery has more to share.</p></div></div></div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-games" aria-labelledby="rx-tab-games" hidden><p class="rx-ex__intro">Built by someone who plays. Polite to your games, handy for single-player tinkering.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>Steps aside while you play</h4><p>Launch a game and Ramses frees your graphics card, then picks up where it left off.</p></div><div class="rx-feat"><h4>A window beside the game</h4><p>A compact window that sits next to a game without getting in the way.</p></div><div class="rx-feat"><h4>Game collections <span class="rx-new">New in 1.0.4</span></h4><p>Survey a game drive, check downloads piece by piece, make torrents and repack to 7z, CHD or zip. The download client stays off until you turn it on.</p></div><div class="rx-feat"><h4>Modding toolkit</h4><p>Work out a data file's layout, find values and patch them, with a backup first.</p></div><div class="rx-feat"><h4>Single-player analysis</h4><p>Playbooks for looking inside single-player programs while they run.</p></div><div class="rx-feat"><h4>Clear rails</h4><p>It never helps get around anti-cheat, DRM or anti-tamper, and some tools wait until anti-cheat games are closed.</p></div></div></div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-yours" aria-labelledby="rx-tab-yours" hidden><p class="rx-ex__intro">Name it, dress it, set its pace, and take it with you.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>Name and style</h4><p>Give it any name and colour. Choose Glass, Aurora, Bold, Neon, Terminal, Soft, Paper or Blueprint, or build a style of your own.</p></div><div class="rx-feat"><h4>Five levels of independence</h4><p>From asking before every step to just doing it and reporting back. Set it per chat.</p></div><div class="rx-feat"><h4>Brainstorm boards, together <span class="rx-new">New in 1.0.4</span></h4><p>Canvases, sticky notes, flows and task boards. Several people, like your PC and a paired phone, can now edit one board at once and see changes live.</p></div><div class="rx-feat"><h4>From your phone</h4><p>Reach Ramses from your phone, from anywhere, behind a passcode. Off until you turn it on.</p></div><div class="rx-feat"><h4>A tidier Settings <span class="rx-new">New in 1.0.4</span></h4><p>A side rail, a "Find a setting" box and roomier cards.</p></div><div class="rx-feat"><h4>Accessible by default</h4><p>Reading font, larger targets, status shapes, voice and more.</p></div></div></div>
+        <div class="rx-ex__panel" role="tabpanel" id="rx-pan-models" aria-labelledby="rx-tab-models" hidden><p class="rx-ex__intro">Local first. Online only when you say so, with your own key and a visible bill.</p><div class="rx-ex__grid"><div class="rx-feat"><h4>Picked for your PC</h4><p>It checks your hardware, measures real speeds and picks models for everyday chat, big jobs and pictures.</p></div><div class="rx-feat"><h4>Choose where each model runs <span class="rx-new">New in 1.0.4</span></h4><p>On the graphics card, split with RAM, or on the processor alone. Helpers can run on the processor beside the main model.</p></div><div class="rx-feat"><h4>Online is opt-in <span class="rx-new">New in 1.0.4</span></h4><p>New installs start with online use off, and the first-run setup asks. Add your own key from the provider you choose.</p></div><div class="rx-feat"><h4>A live cost meter</h4><p>Online use is counted as you go, with an optional monthly limit.</p></div><div class="rx-feat"><h4>See what it sees</h4><p>The Context and usage window shows exactly what the model reads, how full its memory is and 30 days of use.</p></div><div class="rx-feat"><h4>Your own helper model</h4><p>Train a small helper model on your own PC. Optional, and off until you start it.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="rx-sec" id="day" aria-labelledby="rx-day-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">A day with Ramses</span>
+      <h2 id="rx-day-h">From first coffee to lights out.</h2>
+      <p>Tap through an ordinary day to see how the pieces fit together. The conversations are examples, but every feature in them is real.</p>
+    </div>
+    <div class="rx-day">
+      <div class="rx-day__rail" role="tablist" aria-label="Times of day">
+        <button class="rx-day__stop" role="tab" id="rx-stop-0" aria-controls="rx-scene-0" aria-selected="true"><i></i><b>8:00</b><span>Morning</span></button><button class="rx-day__stop" role="tab" id="rx-stop-1" aria-controls="rx-scene-1" aria-selected="false" tabindex="-1"><i></i><b>10:30</b><span>Work</span></button><button class="rx-day__stop" role="tab" id="rx-stop-2" aria-controls="rx-scene-2" aria-selected="false" tabindex="-1"><i></i><b>13:00</b><span>Build</span></button><button class="rx-day__stop" role="tab" id="rx-stop-3" aria-controls="rx-scene-3" aria-selected="false" tabindex="-1"><i></i><b>18:00</b><span>Play</span></button><button class="rx-day__stop" role="tab" id="rx-stop-4" aria-controls="rx-scene-4" aria-selected="false" tabindex="-1"><i></i><b>21:30</b><span>Wind down</span></button>
+      </div>
+      <div class="rx-scene" role="tabpanel" id="rx-scene-0" aria-labelledby="rx-stop-0"><div class="rx-scene__text"><span class="rx-eyebrow">8:00 &middot; Morning</span><h3>Coffee, and a briefing that wrote itself.</h3><p>A scheduled job ran before you woke up. It read your project notes and the inbox you pointed it at, and left a short summary waiting in the chat.</p><div class="rx-scene__uses"><span>Scheduled jobs</span><span>Memory</span><span>Search by meaning</span></div></div><div class="rx-chat" aria-label="Example conversation"><p class="me">What did I leave unfinished yesterday?</p><p class="rx">Three things: the <b>budget sheet</b> (two empty rows), the <b>reply to Sam</b> (drafted, not sent) and the <b>board for the garden</b>. Want me to open the budget first?</p><p class="me">Yes, and fill the empty rows from the receipts folder.</p></div></div><div class="rx-scene" role="tabpanel" id="rx-scene-1" aria-labelledby="rx-stop-1" hidden><div class="rx-scene__text"><span class="rx-eyebrow">10:30 &middot; Work</span><h3>Hand it the messy folder.</h3><p>A zip of scans, a PDF, an e-book and an old mail export. Ramses reads inside the archive without unpacking it, pulls out the dates and totals, and asks before writing anything.</p><div class="rx-scene__uses"><span>Reads almost any file</span><span>Exact calculator</span><span>Allow or Decline</span></div></div><div class="rx-chat" aria-label="Example conversation"><p class="me">How much did we spend on the van this year?</p><p class="note">Read 41 files inside receipts.zip</p><p class="rx"><b>1,284.60</b> across 9 receipts, worked out exactly. The biggest was tyres in March. Shall I add a sheet to the budget?</p></div></div><div class="rx-scene" role="tabpanel" id="rx-scene-2" aria-labelledby="rx-stop-2" hidden><div class="rx-scene__text"><span class="rx-eyebrow">13:00 &middot; Build</span><h3>A second pair of eyes on your code.</h3><p>You ask for a review. A reviewer helper and a security helper read the change side by side, a worker fixes what they find on its own branch, and nothing touches GitHub until you say so.</p><div class="rx-scene__uses"><span>/review</span><span>Helper agents</span><span>/pr asks first</span></div></div><div class="rx-chat" aria-label="Example conversation"><p class="me">/review my branch, then fix anything serious</p><p class="rx">Two findings: a missing null check and a path that isn't escaped. The worker fixed both on <b>helper/fix-paths</b> and the tests pass. Open a pull request?</p><p class="me">Go.</p></div></div><div class="rx-scene" role="tabpanel" id="rx-scene-3" aria-labelledby="rx-stop-3" hidden><div class="rx-scene__text"><span class="rx-eyebrow">18:00 &middot; Play</span><h3>Game time. It gets out of the way.</h3><p>You launch a game and Ramses frees your graphics card, pauses the heavy jobs and shrinks to a compact window at the side. When you quit, it carries on where it stopped.</p><div class="rx-scene__uses"><span>Steps aside while you play</span><span>Compact window</span><span>Picks up after</span></div></div><div class="rx-chat" aria-label="Example conversation"><p class="note">Game detected: heavy jobs paused, graphics card freed</p><p class="me">What was that boss's weak point again?</p><p class="rx">Your notes from Sunday say <b>fire, after the second phase</b>. You also wrote "dodge left".</p></div></div><div class="rx-scene" role="tabpanel" id="rx-scene-4" aria-labelledby="rx-stop-4" hidden><div class="rx-scene__text"><span class="rx-eyebrow">21:30 &middot; Wind down</span><h3>Plans from the couch.</h3><p>On your phone, behind your passcode, you open the garden board that is also on the PC. You both move sticky notes and the changes merge note by note.</p><div class="rx-scene__uses"><span>Phone access</span><span>Boards together</span><span>Hey Ramses</span></div></div><div class="rx-chat" aria-label="Example conversation"><p class="me">Hey Ramses, move "plant garlic" to this weekend</p><p class="rx">Done. It's on Saturday, next to <b>buy compost</b>. Sleep well.</p></div></div>
+    </div>
+  </section>
   <section class="rx-sec" aria-labelledby="rx-free-h">
     <div class="rx-sec__head">
       <span class="rx-eyebrow">Freedom, on your terms</span>
@@ -258,17 +410,32 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
 
   <section class="rx-sec" id="whatsnew" aria-labelledby="rx-new-h">
     <div class="rx-sec__head">
-      <span class="rx-eyebrow">Version 1.0.3</span>
+      <span class="rx-eyebrow" id="rx-new-ver">Version 1.0.4</span>
       <h2 id="rx-new-h">What&rsquo;s new.</h2>
-      <p>Smarter on long jobs, new tools for code and games, and ways to make Ramses your own. Your chats, settings and memory carry over when you install it over an earlier version.</p>
+      <p id="rx-new-lead">Ramses grows a team: helper agents, code review, a clean-room way to adopt programs, editor extensions and boards you edit together. Your chats, settings and memory carry over when you install it over an earlier version.</p>
     </div>
     <dl class="rx-ledger">
+      <div><dt>Helper agents</dt><dd>Research, worker, reviewer, security reviewer and tester agents, plus your own. Several run at once, and workers stay on their own git branch.</dd></div>
+      <div><dt>Adopt a program</dt><dd>/adopt rebuilds what a program does as a new plugin, clean-room: one agent describes it, another that never sees the program writes fresh code and tests it. DRM, anti-tamper and anti-cheat programs are only studied from the outside, and every stage resumes after a restart.</dd></div>
+      <div><dt>Code review and git</dt><dd>/review, /security-review, git tools with worktrees, and /pr for GitHub pull requests (online, optional, asks first).</dd></div>
+      <div><dt>In your editor</dt><dd>A VS Code extension and JetBrains external tools, under Settings, Code editors.</dd></div>
+      <div><dt>Boards together</dt><dd>The PC and a paired phone can edit one brainstorm board at once, merged note by note.</dd></div>
+      <div><dt>Where models run</dt><dd>Graphics card, split with RAM, or processor only, per model. Helpers can use the processor beside the main model.</dd></div>
+      <div><dt>Almost any file</dt><dd>Reads inside archives and disc images, plus documents, e-books, mail, Photoshop layers, fonts, databases, programs and more.</dd></div>
+      <div><dt>Games and fonts</dt><dd>Survey a game drive, check and make torrents, repack to 7z, CHD or zip (download client off by default). Browse fonts from any folder without installing them.</dd></div>
+      <div><dt>Settings and safety</dt><dd>A new Settings layout with a search box. Online use now starts off on new installs. Git no longer runs programs a downloaded repository sets up.</dd></div>
+      <div><dt>Checked</dt><dd>428 automated tests, window, smoke and sandbox-escape checks, and a clean first boot from the package.</dd></div>
+    </dl>
+    <details class="rx-earlier">
+      <summary>Earlier: version 1.0.3</summary>
+      <dl class="rx-ledger">
       <div><dt>Finishes what it starts</dt><dd>A stuck job looks back, makes a fresh plan and tries again. Before it says it is done, it checks its work. While it runs you can reorder, edit or pause its steps.</dd></div>
       <div><dt>Code, games and reverse engineering</dt><dd>A code index maps every function in a project. A modding toolkit works out a data file&rsquo;s layout, finds values and patches them with a backup. New playbooks cover live analysis of single-player programs.</dd></div>
       <div><dt>Learns your jobs</dt><dd>Skills that fit a request load by themselves, and a job you keep asking for can become a skill of its own. /docs writes a project&rsquo;s README from its code. Plugins add tools written in Python or JavaScript.</dd></div>
       <div><dt>Everyday</dt><dd>Search everything with Ctrl+K, project templates, Tutorials with Show me walkthroughs, &ldquo;Hey Ramses&rdquo;, a compact window beside a game, scheduled jobs that report back, and a style you build yourself.</dd></div>
       <div><dt>Optional extras</dt><dd>A <a href="packs/">pack gallery</a> of shared skills, phone access from anywhere with a passcode, and a helper model you train on your own PC. All of them are off until you turn them on.</dd></div>
     </dl>
+    </details>
   </section>
 
   <section class="rx-sec" id="quickstart" aria-labelledby="rx-start-h">
@@ -284,6 +451,18 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
     </ol>
   </section>
 
+  <section class="rx-sec" id="hardware" aria-labelledby="rx-hw-h">
+    <div class="rx-sec__head">
+      <span class="rx-eyebrow">Your hardware</span>
+      <h2 id="rx-hw-h">What will it be like on my PC?</h2>
+      <p>Pick your graphics card&rsquo;s memory. Ramses does this check for you on first run and picks models to match, so this is just a preview.</p>
+    </div>
+    <div class="rx-hw">
+      <div class="rx-hw__opts" role="radiogroup" aria-label="Graphics card memory"><button class="rx-hw__opt" role="radio" aria-checked="false" data-hw="none" tabindex="-1">No graphics card</button><button class="rx-hw__opt" role="radio" aria-checked="false" data-hw="8" tabindex="-1">6 to 8 GB</button><button class="rx-hw__opt" role="radio" aria-checked="true" data-hw="12">12 GB</button><button class="rx-hw__opt" role="radio" aria-checked="false" data-hw="16" tabindex="-1">16 GB or more</button></div>
+      <div class="rx-hw__out" data-hw-out="none" hidden><div><h3>Works online, or slowly on the processor.</h3><p>Ramses can run entirely online with your own key, or run a small model on the processor. That works, just slowly: on our test PC a small model wrote about 9 tokens a second on the processor, against about 100 on a graphics card.</p></div><div class="rx-hw__meters"><div class="rx-meter"><div class="rx-meter__lbl">Everyday chat<b>Online, or slow on the processor</b></div><div class="rx-meter__bar"><i style="width:25%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Big jobs<b>Online with your key</b></div><div class="rx-meter__bar"><i style="width:30%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Offline use<b>Small models only</b></div><div class="rx-meter__bar"><i style="width:20%"></i></div></div></div></div><div class="rx-hw__out" data-hw-out="8" hidden><div><h3>A quick everyday model, fully offline.</h3><p>A small everyday model fits on the card, so everyday chat is fast and fully offline. Big jobs can split a larger model with your RAM, or go online if you allow it.</p></div><div class="rx-hw__meters"><div class="rx-meter"><div class="rx-meter__lbl">Everyday chat<b>Fast, on the card</b></div><div class="rx-meter__bar"><i style="width:75%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Big jobs<b>Split with RAM, or online</b></div><div class="rx-meter__bar"><i style="width:45%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Offline use<b>Most everyday work</b></div><div class="rx-meter__bar"><i style="width:70%"></i></div></div></div></div><div class="rx-hw__out" data-hw-out="12"><div><h3>Our test PC. Fast chat and a big coding model.</h3><p>This is what Ramses is built and tested on. The everyday model runs on the card at about 100 tokens a second, and a 30B coding model split with RAM still manages about 39. Pictures and helpers fit around them.</p></div><div class="rx-hw__meters"><div class="rx-meter"><div class="rx-meter__lbl">Everyday chat<b>About 100 tokens/s</b></div><div class="rx-meter__bar"><i style="width:95%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Big jobs<b>30B split, about 39 tokens/s</b></div><div class="rx-meter__bar"><i style="width:70%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Offline use<b>Nearly everything</b></div><div class="rx-meter__bar"><i style="width:88%"></i></div></div></div></div><div class="rx-hw__out" data-hw-out="16" hidden><div><h3>Room for bigger models on the card.</h3><p>More graphics memory means bigger models sit fully on the card, so big jobs stay fast and local, and helpers can run on the processor alongside. Ramses measures your card and picks for you.</p></div><div class="rx-hw__meters"><div class="rx-meter"><div class="rx-meter__lbl">Everyday chat<b>Fast, on the card</b></div><div class="rx-meter__bar"><i style="width:97%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Big jobs<b>Larger models on the card</b></div><div class="rx-meter__bar"><i style="width:88%"></i></div></div><div class="rx-meter"><div class="rx-meter__lbl">Offline use<b>Nearly everything</b></div><div class="rx-meter__bar"><i style="width:95%"></i></div></div></div></div>
+      <p class="rx-hw__fine">Speeds were measured on one PC with a 12 GB card and 32 GB of RAM. Yours will differ; the bars are a rough guide, not a promise.</p>
+    </div>
+  </section>
   <section class="rx-sec" aria-labelledby="rx-spec-h">
     <div class="rx-sec__head">
       <span class="rx-eyebrow">Requirements</span>
@@ -304,12 +483,14 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
     <div class="rx-faq">
       <details><summary>Is it really free?</summary><p>Yes. Ramses is free and open source under the MIT licence, and local models are free too. If you add an online key, that provider charges you for what you use, and Ramses can stop at a monthly limit you set.</p></details>
       <details><summary>Is it as smart as the big online assistants?</summary><p>Local models are very capable for everyday work, but the largest online models are still stronger at the hardest tasks. That&rsquo;s why Ramses can hand a hard job to an online model with your own key, only when you allow it.</p></details>
-      <details><summary>Does it send my chats anywhere?</summary><p>Not unless you add an online key and let a question go online. Everything else stays on your PC. Web search, if left on, sends only the search words. Passwords, keys and tokens are removed before anything goes online, always.</p></details>
+      <details><summary>Does it send my chats anywhere?</summary><p>Not unless you add an online key and let a question go online. New installs start with online use switched off. Everything else stays on your PC. Web search, if left on, sends only the search words. Passwords, keys and tokens are removed before anything goes online, always.</p></details>
       <details><summary>Which models does it use?</summary><p>Any model from Ollama locally, and your choice of online provider. Ramses checks your hardware, picks the best one it has for each job, and suggests downloads that would do better. You can change every pick in Settings.</p></details>
       <details><summary>Can I rename it?</summary><p>Yes. Give your assistant any name and colour theme in the setup or in Settings. The app, its window and its shortcuts can take that name too.</p></details>
       <details><summary>Windows warns about the installer</summary><p>The app isn&rsquo;t code-signed yet, so SmartScreen shows &ldquo;unknown publisher&rdquo; (More info, then Run anyway). You can check the download against the SHA-256 shown under the button.</p></details>
       <details><summary>Where is my data, and how do I remove it?</summary><p>Everything lives in <code>%LOCALAPPDATA%\Ramses\data</code>: threads, memory, boards, settings and the encrypted key vault. <code>Uninstall Ramses.cmd</code> removes the app and keeps your data unless you delete that folder.</p></details>
-      <details><summary>Is it finished?</summary><p>Version 1.0 is out and in daily use, and it&rsquo;s still being actively developed. Phone access over a private connection and voice are on the roadmap.</p></details>
+      <details><summary>Is it finished?</summary><p>Version 1.0 is out and in daily use, with a new update every few days. Phone access and voice are already in. Linux and macOS are next on the list.</p></details>
+      <details><summary>What is &ldquo;adopt&rdquo;, and is it safe?</summary><p>Adopt rebuilds what a program does as a new plugin without copying it: one agent only describes the behaviour, and a separate agent that never sees the program writes new code from that description. Programs protected by DRM, anti-tamper or anti-cheat are only studied from the outside, never unpacked or patched, and adopt won&rsquo;t run while an anti-cheat game is open. New plugins ask before every use until you trust them.</p></details>
+      <details><summary>Can several things run at once?</summary><p>Yes. Helper agents can work side by side, and each worker changes a git project only on its own branch, so your main work is never touched without you.</p></details>
     </div>
   </section>
 
@@ -337,6 +518,54 @@ body.rms{--accent:#c9a54a;--gold:#c9a54a;--gold-hi:#e6cd8a;--ink:#0a0a0b;--ink-2
   document.getElementById("dlmeta").textContent = [m.version ? "Version " + m.version : "", m.date ? "Posted " + fmtDate(m.date) : "", m.sizeLabel, m.downloadUrl ? m.host || "" : ""].filter(Boolean).join(" · ");
   if (m.releasesUrl) { document.getElementById("dlalllink").href = m.releasesUrl; document.getElementById("dlall").hidden = false; }
   if (m.sha256) { const h = document.getElementById("dlhash"); h.textContent = "SHA-256 " + m.sha256; h.hidden = false; }
+
+  /* version-aware "what's new": 1.0.4 is announced before its download goes live */
+  (function () {
+    const v = String(m.version || "");
+    const cmp = (a, b) => { const x = a.split(".").map(Number), y = b.split(".").map(Number); for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); } return 0; };
+    const live = v && cmp(v, "1.0.4") >= 0;
+    document.getElementById("rx-strip-state").textContent = live ? "New in 1.0.4" : "Coming in 1.0.4";
+    document.getElementById("rx-new-ver").textContent = live ? "Version 1.0.4" : "Coming in 1.0.4";
+    if (!live) document.getElementById("rx-new-lead").textContent = "1.0.4 is on its way. Until it lands, the download above is " + (v ? "version " + v : "the current version") + ", and everything here without a gold tag is already in it. Your chats, settings and memory will carry over when you install 1.0.4 over it.";
+    if (!live) document.querySelectorAll(".rx-new").forEach(function (t) { t.textContent = "Coming in 1.0.4"; });
+  })();
+  /* tabs (feature explorer and the day) with arrow-key support */
+  function tabs(listSel, attr) {
+    const list = document.querySelector(listSel); if (!list) return null;
+    const btns = Array.from(list.querySelectorAll('[role="tab"]'));
+    function pick(b, focus) {
+      btns.forEach(function (x) { const on = x === b; x.setAttribute("aria-selected", on ? "true" : "false"); x.tabIndex = on ? 0 : -1; const p = document.getElementById(x.getAttribute("aria-controls")); if (p) p.hidden = !on; });
+      if (focus) b.focus();
+    }
+    btns.forEach(function (b, i) {
+      b.addEventListener("click", function () { pick(b); });
+      b.addEventListener("keydown", function (e) {
+        const k = e.key; let j = -1;
+        if (k === "ArrowRight" || k === "ArrowDown") j = (i + 1) % btns.length; else if (k === "ArrowLeft" || k === "ArrowUp") j = (i - 1 + btns.length) % btns.length; else if (k === "Home") j = 0; else if (k === "End") j = btns.length - 1;
+        if (j >= 0) { e.preventDefault(); pick(btns[j], true); }
+      });
+    });
+    return function (id) { const b = document.getElementById(id); if (b) pick(b); };
+  }
+  const pickFeature = tabs(".rx-ex__tabs");
+  tabs(".rx-day__rail");
+  document.querySelectorAll(".rx-strip__list a[data-tab]").forEach(function (a) { a.addEventListener("click", function () { if (pickFeature) pickFeature("rx-tab-" + a.dataset.tab); }); });
+  /* hardware picker (radio group) */
+  (function () {
+    const opts = Array.from(document.querySelectorAll(".rx-hw__opt"));
+    function set(o, focus) {
+      opts.forEach(function (x) { const on = x === o; x.setAttribute("aria-checked", on ? "true" : "false"); x.tabIndex = on ? 0 : -1; });
+      document.querySelectorAll("[data-hw-out]").forEach(function (p) { p.hidden = p.dataset.hwOut !== o.dataset.hw; });
+      if (focus) o.focus();
+    }
+    opts.forEach(function (o, i) {
+      o.addEventListener("click", function () { set(o); });
+      o.addEventListener("keydown", function (e) {
+        let j = -1; if (e.key === "ArrowRight" || e.key === "ArrowDown") j = (i + 1) % opts.length; else if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = (i - 1 + opts.length) % opts.length;
+        if (j >= 0) { e.preventDefault(); set(opts[j], true); }
+      });
+    });
+  })();
 </script>
 <!-- site:scripts (shared site upgrades, see assets/README.md) -->
 <script defer src="/assets/site-config.js"></script>

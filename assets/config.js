@@ -52,6 +52,10 @@ window.SITE = {
     host: "Hosted on GitHub",
     sizeLabel: "62 MB",
     sha256: "e633d167e7bae7bf9ac0661c3e376e81f44a9f23fdac59a2f54af19a21c02935",   // of Ramses-1.0.3-win-x64.zip
+
+    // 1.0.4 is packaged but not uploaded yet. When the v1.0.4 release has its asset, swap in:
+    //   version "1.0.4", downloadUrl ".../releases/download/v1.0.4/Ramses-1.0.4-win-x64.zip", sizeLabel "64 MB",
+    //   sha256 "74da7c909a82365d4f835fa6d484e863c7bf8dad42b7b8f834f7ee067e5ae8fb". The page's what's-new labels flip on their own.
   },
 
   // DMA Web Studio (webstudio/): leave downloadUrl "" to show "Coming soon". Source is private; releases only.
